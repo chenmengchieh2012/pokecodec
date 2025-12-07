@@ -173,8 +173,10 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                 }
             }
             if (message.command === 'removeItem') {
-                if (message.itemId) {
-                    await this._bag.useItem(message.itemId, message.count || 1);
+                // Support both direct itemId or item object
+                const itemId = message.itemId || (message.item && (message.item.apiName || message.item.id));
+                if (itemId) {
+                    await this._bag.useItem(itemId, message.count || 1);
                     PokemonViewProvider.providers.forEach(p => p.updateViews());
                 }
             }

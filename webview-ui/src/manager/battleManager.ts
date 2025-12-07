@@ -8,7 +8,7 @@ import { BattleEvent, BattleEventType, GameState } from "../dataAccessObj/battle
 import { BattleCanvasHandle } from "../frame/VBattleCanvas";
 import { BattleControlHandle } from "../frame/BattleControl";
 
-const DEBUG = true
+const DEBUG = false
 export interface BattleManagerMethod {
     handleOnAttack: (myPokemonMove: PokemonMove) =>Promise<void>,
     handleThrowBall: (ballDao: PokeBallDao)=>Promise<void>,
@@ -233,7 +233,7 @@ export const BattleManager = ({dialogBoxRef, battleCanvasRef}: BattleManagerProp
                 if(gameState === GameState.WildAppear){
                     console.log("Start initializing BattleControl...");
                     console.log("My Pokemon:", myPokemon);
-                    if ((myPokemon && myPokemon.currentHp === 0)) {
+                    if ((!myPokemon || myPokemon?.currentHp === 0)) {
                         for(const pkmn of message.data){
                             if(pkmn.currentHp && pkmn.currentHp > 0){
                                 myPokemonHandler.switchPokemon(pkmn);
@@ -241,6 +241,8 @@ export const BattleManager = ({dialogBoxRef, battleCanvasRef}: BattleManagerProp
                             }
                         }
                     }
+
+                    console.log("My Pokemon:", myPokemon);
                     if(DEBUG){
                         myPokemonHandler.switchPokemon(defaultPokemon)
                     }

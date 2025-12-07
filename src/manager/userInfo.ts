@@ -8,11 +8,9 @@ export interface UserDao {
 
 export class UserInfoManager {
     // Default state
-    private userInfo: UserDao = { 
-        money: 3000 
-    };
-    
-    private context: vscode.ExtensionContext;
+    private userInfo: UserDao = {
+        money: 50000
+    };    private context: vscode.ExtensionContext;
     private readonly STORAGE_KEY = 'pokemon-user-info';
 
     constructor(context: vscode.ExtensionContext) {

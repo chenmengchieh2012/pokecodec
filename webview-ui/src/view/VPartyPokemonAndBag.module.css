@@ -6,6 +6,7 @@
   --emerald-light: #78C8B8;     
   --card-bg: #F8F8F8;           
   --text-dark: #202020;         
+  --ui-border: #303840;
   
   --hp-green: #58D080;
   --hp-yellow: #F8B050;
@@ -34,58 +35,57 @@
 
 /* --- Sidebar (精簡 Icon 版) --- */
 .sideBar {
-  background: var(--emerald-dark);
-  padding: 12px 6px;
-  border-right: 4px solid var(--emerald-light);
-  box-shadow: 4px 0 6px rgba(0,0,0,0.3);
-  z-index: 10;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 60px;
+    width: 60px;
+    background-color: var(--emerald-dark);
+    border-right: 4px solid var(--ui-border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 10px;
+    flex-shrink: 0;
 }
 
 .tabs {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-  align-items: center;
-  margin-top: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    align-items: center;
 }
 
 .iconTab {
-  width: 36px;
-  height: 36px;
-  background: rgba(0, 0, 0, 0.3);
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  color: var(--emerald-light);
-  position: relative;
+    width: 40px;
+    height: 40px;
+    background-color: rgba(0,0,0,0.3);
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.1s;
 }
 
-.iconTab:hover { 
-  background: rgba(255, 255, 255, 0.15); 
-  transform: translateY(-2px);
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.3);
+.iconTab:hover {
+    background-color: rgba(255,255,255,0.1);
+    border-color: var(--emerald-light);
 }
 
 .iconTab.active {
-  background: var(--emerald-light); 
-  border-color: #fff; 
-  color: var(--emerald-dark);
-  box-shadow: 0 0 15px rgba(120, 200, 184, 0.4);
-  transform: scale(1.05);
+    background-color: var(--card-bg);
+    border-color: var(--ui-border);
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
 }
 
-.tabSvg { width: 24px; height: 24px; fill: currentColor; }
+.tabSvg {
+    width: 24px;
+    height: 24px;
+    fill: #78C8B8;
+}
+
+.iconTab.active .tabSvg {
+    fill: var(--text-dark);
+}
 
 .scrollArea {
   flex: 1;

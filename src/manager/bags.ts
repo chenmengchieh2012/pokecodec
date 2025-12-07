@@ -8,12 +8,26 @@ export enum ItemType {
 }
 
 export interface ItemDao {
-    id: string;
+    id: string | number;
     name: string;
+    apiName?: string;
     description: string;
-    type: ItemType;
+    type?: string; // Kept for backward compatibility, but optional
     quantity: number;
+    count?: number; // Alias for quantity to match webview
     effect?: any;
+    spriteUrl?: string;
+    price?: number;
+    sellPrice?: number;
+    category?: string;
+    
+    // Added to align with Webview ItemDao
+    pocket?: string;
+    isConsumable?: boolean;
+    isUsableInBattle?: boolean;
+    isUsableOverworld?: boolean;
+    isHoldable?: boolean;
+    fling?: any;
 }
 
 export class BagManager {
@@ -24,37 +38,25 @@ export class BagManager {
     constructor(context: vscode.ExtensionContext) {
         this.context = context;
         this.reload();
-        
-        // Initialize with some default items if empty (for testing)
-        if (this.items.length === 0) {
-            this.add({
-                id: 'poke-ball',
-                name: 'Poke Ball',
-                description: 'A device for catching wild Pokemon.',
-                type: ItemType.PokeBall,
-                quantity: 10,
-                effect: { catchRate: 1 }
-            });
-            this.add({
-                id: 'potion',
-                name: 'Potion',
-                description: 'Restores 20 HP.',
-                type: ItemType.Medicine,
-                quantity: 5,
-                effect: { heal: 20 }
-            });
-        }
     }
 
     public reload() {
         const data = this.context.globalState.get<ItemDao[]>(this.STORAGE_KEY);
         if (data) {
-            this.items = data;
+            this.items = data.map(item => ({
+                ...item,
+                count: item.quantity || item.count || 0 // Ensure count is populated
+            }));
         }
     }
 
     private async save() {
-        await this.context.globalState.update(this.STORAGE_KEY, this.items);
+        // Sync quantity and count before saving
+        const dataToSave = this.items.map(item => ({
+            ...item,
+            quantity: item.count || item.quantity
+        }));
+        await this.context.globalState.update(this.STORAGE_KEY, dataToSave);
     }
 
     public getAll(): ItemDao[] {
@@ -62,20 +64,35 @@ export class BagManager {
     }
 
     public async add(item: ItemDao): Promise<void> {
-        const existingItem = this.items.find(i => i.id === item.id);
+        // Use apiName for uniqueness if available, otherwise id
+        const existingItem = this.items.find(i => 
+            (item.apiName && i.apiName === item.apiName) || 
+            (i.id === item.id)
+        );
+        
+        const addAmount = item.count || item.quantity || 1;
+
         if (existingItem) {
-            existingItem.quantity += item.quantity;
+            existingItem.quantity = (existingItem.quantity || 0) + addAmount;
+            existingItem.count = existingItem.quantity;
         } else {
-            this.items.push(item);
+            this.items.push({
+                ...item,
+                quantity: addAmount,
+                count: addAmount
+            });
         }
         await this.save();
     }
 
-    public async useItem(itemId: string, count: number = 1): Promise<boolean> {
-        const index = this.items.findIndex(i => i.id === itemId);
+    public async useItem(itemId: string | number, count: number = 1): Promise<boolean> {
+        const index = this.items.findIndex(i => i.id === itemId || i.apiName === itemId);
         if (index !== -1) {
-            if (this.items[index].quantity >= count) {
-                this.items[index].quantity -= count;
+            const currentQty = this.items[index].count || this.items[index].quantity || 0;
+            if (currentQty >= count) {
+                this.items[index].quantity = currentQty - count;
+                this.items[index].count = this.items[index].quantity;
+                
                 if (this.items[index].quantity === 0) {
                     this.items.splice(index, 1);
                 }
@@ -86,7 +103,7 @@ export class BagManager {
         return false;
     }
     
-    public getItem(itemId: string): ItemDao | undefined {
-        return this.items.find(i => i.id === itemId);
+    public getItem(itemId: string | number): ItemDao | undefined {
+        return this.items.find(i => i.id === itemId || i.apiName === itemId);
     }
 }
