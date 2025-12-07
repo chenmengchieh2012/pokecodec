@@ -1,0 +1,170 @@
+/* search.module.css */
+
+:root {
+  --tile-size: 32px;
+  --gba-frame: #c0c0c0;
+  --screen-border: #333;
+  --ground-color: #E0E0C8;
+}
+
+.emeraldContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 30px;
+  user-select: none;
+  font-family: 'Courier New', monospace;
+}
+
+/* --- 遊戲外框 --- */
+.gameScreen {
+  position: relative;
+  background: var(--gba-frame);
+  padding: 8px;
+  border: 3px solid var(--screen-border);
+  border-radius: 8px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+  display: flex;
+}
+
+/* --- 地圖顯示器 --- */
+.mapGrid {
+  display: grid;
+  grid-template-columns: repeat(9, var(--tile-size));
+  grid-template-rows: repeat(9, var(--tile-size));
+  gap: 0;
+  background-color: var(--ground-color);
+  border: 2px solid var(--screen-border);
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+  image-rendering: pixelated; /* 關鍵：強制像素化 */
+}
+
+/* --- 核心素材設定 --- */
+
+.tile {
+  width: var(--tile-size);
+  height: var(--tile-size);
+  position: relative;
+  box-sizing: border-box;
+  background-color: var(--ground-color);
+}
+
+/* 讓所有內部素材都像素化 */
+.tile *, .tile::after, .tile::before {
+  image-rendering: pixelated;
+}
+
+/* === 0. 地板 (Ground) === */
+.tileGround {
+  /* 沙地素材 */
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1wOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCBDUzYgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjI3QUQ1NDQxQTdDNzExRTI5QzFGQTAyMzc5N0YwMDAwIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjI3QUQ1NDQyQTdDNzExRTI5QzFGQTAyMzc5N0YwMDAwIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MjdBRDU0MzlBN0M3MTFFMjlDMUZBMDIzNzk3RjAwMDAiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MjdBRDU0NDBBN0M3MTFFMjlDMUZBMDIzNzk3RjAwMDAiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz6E0j0FAAAACVBMVEUAAAD///+tra2qqqqnp6ejo6OdnZ2ZmZmTk5OQkJCLi4uHh4eDg4N/f397e3t3d3dzc3Nvb29ra2tkZGRgYGBcXFxYWFhUVFROTk5KSkpGRkZCQkI/Pz87Ozs3Nzc0NDQwMDAvLy8sLCwqKioHBwcAAAD///8ZGRkC//39/f329vbv7+/n5+fk5OTd3d3W1tbS0tLQ0NDMzMzJycnCwsK+vr66urq2traurq4+TfH2AAAAxklEQVR42mJgAAMmRkYgYIIiRkYIYAMiBiBmAmIWIgELAwMDIxMDIwMTAwMDEwMTA6O5uTkDEwMTIxMDIwMTAwMDEwMTAyMTk7m5OQMTIxMDIwMTAwMDEwMTAyMTIxMDIwMTAwMDEwMTAyMTIxMDIwMTAwMDEwMTAyMTIxMDIwMTAwMDEwMTAyMTIxMDIwMTAwMDEwMTAyMTIxMDIwMTAwMDEwMTAyMTAOYHICS/F2i3AAAAAElFTkSuQmCC');
+  background-size: 100% 100%;
+}
+
+/* === 1. 樹木 (Tree) === */
+.tileTree { z-index: 10; }
+/* 樹木底層陰影與樹幹 */
+.tileTree::before {
+    content: ''; position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1wOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCBDUzYgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjI3QUQ1NDQ1QTdDNzExRTI5QzFGQTAyMzc5N0YwMDAwIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjI3QUQ1NDQ2QTdDNzExRTI5QzFGQTAyMzc5N0YwMDAwIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MjdBRDU0NDNBN0M3MTFFMjlDMUZBMDIzNzk3RjAwMDAiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MjdBRDU0NDRBN0M3MTFFMjlDMUZBMDIzNzk3RjAwMDAiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz6E0j0FAAAACVBMVEUAAAD///+tra2qqqqnp6ejo6OdnZ2ZmZmTk5OQkJCLi4uHh4eDg4N/f397e3t3d3dzc3Nvb29ra2tkZGRgYGBcXFxYWFhUVFROTk5KSkpGRkZCQkI/Pz87Ozs3Nzc0NDQwMDAvLy8sLCwqKioHBwcAAAD///8ZGRkC//39/f329vbv7+/n5+fk5OTd3d3W1tbS0tLQ0NDMzMzJycnCwsK+vr66urq2traurq4+TfH2AAAAxklEQVR42mJgAAMmRkYgYIIiRkYIYAMiBiBmAmIWIgELAwMDIxMDIwMTAwMDEwMTA6O5uTkDEwMTIxMDIwMTAwMDEwMTAyMTk7m5OQMTIxMDIwMTAwMDEwMTAyMTIxMDIwMTAwMDEwMTAyMTIxMDIwMTAwMDEwMTAyMTIxMDIwMTAwMDEwMTAyMTIxMDIwMTAwMDEwMTAyMTIxMDIwMTAwMDEwMTAyMTAOYHICS/F2i3AAAAAElFTkSuQmCC');
+    background-size: 100% 100%; z-index: 1;
+}
+/* 樹冠 */
+.tileTree::after {
+  content: ''; position: absolute; left: -8px; top: -16px; width: 48px; height: 48px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath fill='%231e3c28' d='M16 36h16v12H16z'/%3E%3Cpath fill='%232d5a42' d='M12 32h24v12H12z'/%3E%3Cpath fill='%233c7856' d='M8 24h32v16H8z'/%3E%3Cpath fill='%234b966a' d='M12 16h24v16H16z'/%3E%3Cpath fill='%235ab47e' d='M16 8h16v16H16z'/%3E%3Cpath fill='%2369d292' d='M20 4h8v12h-8z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: bottom center;
+  filter: drop-shadow(0 4px 4px rgba(0,0,0,0.5)); z-index: 2;
+}
+
+/* === 2. 【更新】精緻草叢 (Grass) === */
+.tileGrass {
+  /* 使用高精緻度的像素草地素材 */
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1wOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCBDUzYgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjI3QUQ1NDQ5QTdDNzExRTI5QzFGQTAyMzc5N0YwMDAwIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjI3QUQ1NDRBQTdDNzExRTI5QzFGQTAyMzc5N0YwMDAwIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MjdBRDU0NDdBN0M3MTFFMjlDMUZBMDIzNzk3RjAwMDAiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MjdBRDU0NDhBN0M3MTFFMjlDMUZBMDIzNzk3RjAwMDAiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz60k5VzAAAACVBMVEUAAAD///8AAAB7e3uIqL3YAAAAEHRSTlMAABDgMGCAgIBwwKBAwCBgc1h9+QAAAHBJREFUeNpiYIABJkZGIACKMDIgA4gYgJgJiFmIBCwMDAyMTAyMDEAMDExMDIwMTAwMDEwMTAyMTExMDAwMTAwMDEwMTAyMTEwMTAwMTAwMDEwMTAyMTExMDAwMTAwMDEwMTAyMTEwMQAAgwAAX8wDq47r+5AAAAABJRU5ErkJggg==');
+  background-size: 100% 100%;
+}
+/* 踩入草叢的遮罩 */
+.tileGrass::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 10px;
+  background: rgba(0, 40, 0, 0.4); z-index: 55; pointer-events: none;
+}
+
+/* === 3. 岩石 (Rock) === */
+.tileRock { z-index: 5; }
+.tileRock::after {
+  content: ''; position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath fill='%235e5246' d='M4 28h24v-8l-4-4H8l-4 4z'/%3E%3Cpath fill='%238a7865' d='M8 20h16v-8l-4-4H12l-4 4z'/%3E%3Cpath fill='%23b29e87' d='M12 12h8V8h-8z'/%3E%3C/svg%3E");
+  filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.2));
+}
+
+/* === 4. 水面 (Water) === */
+.tileWater {
+  background-color: #5abaff;
+  background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 8h8v2H0zm8 8h8v2H8zm8 8h8v2h-8zm8-16h8v2h-8z' fill='%23ffffff' fill-opacity='0.4'/%3E%3C/svg%3E");
+  animation: waterFlow 1.5s steps(4) infinite;
+}
+@keyframes waterFlow {
+  0% { background-position: 0 0; }
+  100% { background-position: 32px 32px; }
+}
+
+/* === 5. 花朵 (Flower) === */
+.tileFlower {
+  /* 花朵底下也用新的精緻草地 */
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1wOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCBDUzYgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjI3QUQ1NDQ5QTdDNzExRTI5QzFGQTAyMzc5N0YwMDAwIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjI3QUQ1NDRBQTdDNzExRTI5QzFGQTAyMzc5N0YwMDAwIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MjdBRDU0NDdBN0M3MTFFMjlDMUZBMDIzNzk3RjAwMDAiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MjdBRDU0NDhBN0M3MTFFMjlDMUZBMDIzNzk3RjAwMDAiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz60k5VzAAAACVBMVEUAAAD///8AAAB7e3uIqL3YAAAAEHRSTlMAABDgMGCAgIBwwKBAwCBgc1h9+QAAAHBJREFUeNpiYIABJkZGIACKMDIgA4gYgJgJiFmIBCwMDAyMTAyMDEAMDExMDIwMTAwMDEwMTAyMTExMDAwMTAwMDEwMTAyMTEwMTAwMTAwMDEwMTAyMTExMDAwMTAwMDEwMTAyMTEwMQAAgwAAX8wDq47r+5AAAAABJRU5ErkJggg==');
+  background-size: 100% 100%;
+}
+.tileFlower::after {
+  content: ''; position: absolute; left: 8px; top: 8px; width: 16px; height: 16px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Crect x='6' y='2' width='4' height='4' fill='%23ff5050'/%3E%3Crect x='2' y='6' width='4' height='4' fill='%23ff5050'/%3E%3Crect x='10' y='6' width='4' height='4' fill='%23ff5050'/%3E%3Crect x='6' y='10' width='4' height='4' fill='%23ff5050'/%3E%3Crect x='6' y='6' width='4' height='4' fill='%23ffffaa'/%3E%3C/svg%3E");
+}
+
+/* === 6. 【更新】精緻磚牆 (Brick) === */
+.tileBrick {
+  /* 使用高精緻度的像素磚牆素材 */
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1wOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCBDUzYgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjI3QUQ1NDREQTdDNzExRTI5QzFGQTAyMzc5N0YwMDAwIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjI3QUQ1NDRFQTdDNzExRTI5QzFGQTAyMzc5N0YwMDAwIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MjdBRDU0NEJBN0M3MTFFMjlDMUZBMDIzNzk3RjAwMDAiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MjdBRDU0NENBN0M3MTFFMjlDMUZBMDIzNzk3RjAwMDAiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz5d66eBAAAACVBMVEUAAAD///+AgIBxcXG51R/cAAAAEHRSTlMAABDgMGCAgIBwwKBAwCBgc1h9+QAAAGpJREFUeNpiYIABJkYmYICRiYkJSjAyMTAwMDEwMgAxMDExMDAwMTAwMDEwMTAyMTEwMDAxMDAwMTAxMDIxMTAwMDIwMDAwMTAyMTEwMDAxMDAwMTAxMDIxMTAwMTAwMDEwMQAAgwAAqIwDq3dD2+cAAAAASUVORK5CYII=');
+  background-size: 100% 100%;
+  /* 增加一點立體感內陰影 */
+  box-shadow: inset 0 0 4px rgba(0,0,0,0.3);
+}
+
+/* --- Player & Items --- */
+.objSprite {
+  width: 24px; height: 24px;
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  object-fit: contain; z-index: 6; filter: drop-shadow(1px 1px 0 rgba(0,0,0,0.5));
+}
+
+.playerSprite {
+  width: 32px; height: 32px; position: absolute; top: -8px; left: 0;
+  z-index: 50; transition: transform 0.1s steps(4), top 0.1s steps(4);
+}
+
+.spriteImg {
+  width: 100%; height: 100%; object-fit: contain;
+  transform: scale(1.3); transform-origin: bottom center;
+  filter: drop-shadow(0 2px 0 rgba(0,0,0,0.4));
+}
+
+.emoteBubble {
+  position: absolute; top: -24px; left: 50%; transform: translateX(-50%);
+  background: white; border: 2px solid #333; padding: 0 4px;
+  font-weight: bold; font-size: 14px; z-index: 60;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.3);
+  animation: popUp 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+.flashOverlay {
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #fff; opacity: 0; pointer-events: none; z-index: 999;
+}
+
+.flashing { animation: encounterFlash 0.4s steps(2) forwards; }
+@keyframes popUp { 0% { transform: translateX(-50%) scale(0); } 100% { transform: translateX(-50%) scale(1); } }
+@keyframes encounterFlash { 0% { opacity: 0; } 25% { opacity: 0.8; } 50% { opacity: 0; } 75% { opacity: 0.8; } 100% { opacity: 0; } }

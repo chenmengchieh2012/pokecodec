@@ -1,0 +1,86 @@
+{
+  "name": "pokecodec",
+  "displayName": "pokecodec",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.106.1"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:pokemon.openReactPanel",
+    "onView:pokemonReact"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "pokemon.openReactPanel",
+        "title": "Open Pokemon React Panel"
+      },
+      {
+        "command": "pokemon.triggerEncounter",
+        "title": "Trigger Pokemon Encounter"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "pokemon-container",
+          "title": "Pokemon React",
+          "icon": "$(heart)"
+        }
+      ]
+    },
+    "views": {
+      "pokemon-container": [
+        {
+          "id": "pokemonReact",
+          "name": "Runtime",
+          "type": "webview"
+        },
+        {
+          "id": "pokemonBackpack",
+          "name": "Backpack",
+          "type": "webview"
+        },
+        {
+          "id": "pokemonBox",
+          "name": "Pokemon Box",
+          "type": "webview"
+        },
+        {
+          "id": "pokemonShop",
+          "name": "Shop",
+          "type": "webview"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run package",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "install:all": "npm install && cd webview-ui && npm install",
+    "build:webview": "cd webview-ui && npm run build",
+    "package": "npm run build:webview && npm run compile"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "@types/vscode": "^1.106.1",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
+    "eslint": "^9.39.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.46.3"
+  },
+  "dependencies": {
+    "uuid": "^13.0.0"
+  }
+}

@@ -1,0 +1,239 @@
+/* App.css */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+:root {
+  --gba-ui-blue: #283044;
+  --gba-ui-border: #ffffff;
+  --hp-green: #50c878;
+  --hp-yellow: #f5ac0e;
+  --hp-red: #ff4d4d;
+}
+
+/* --- 1. 基礎架構 (最重要，防止畫面變黑) --- */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #000;
+  font-family: 'Press Start 2P', cursive;
+  user-select: none;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.game-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%; /* 強制繼承高度 */
+  background-color: var(--gba-ui-blue);
+  position: relative;
+}
+
+/* --- 2. 戰鬥場景 (自動填滿剩餘空間) --- */
+.battle-scene {
+  flex: 1; /* 自動佔滿上方空間 */
+  width: 100%;
+  position: relative; /* 作為絕對定位的基準點 */
+  background: linear-gradient(to bottom, #74dcbd 0%, #74dcbd 60%, #5cb88f 60%, #5cb88f 100%);
+  overflow: hidden;
+  display: flex; /* 為了讓 Searching 文字置中 */
+  justify-content: center;
+  align-items: center;
+}
+
+
+/* --- 2. 戰鬥場景 (自動填滿剩餘空間) --- */
+.battle-scene {
+  flex: 1; /* 自動佔滿上方空間 */
+  width: 100%;
+  position: relative; /* 作為絕對定位的基準點 */
+  background: linear-gradient(to bottom, #74dcbd 0%, #74dcbd 60%, #5cb88f 60%, #5cb88f 100%);
+  overflow: hidden;
+  display: flex; /* 為了讓 Searching 文字置中 */
+  justify-content: center;
+  align-items: center;
+}
+
+/* --- 3. HUD (固定在左上角) --- */
+.hud {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #f8f9fa;
+  border: 3px solid #444;
+  border-radius: 8px 0 8px 0;
+  padding: 8px 10px;
+  min-width: 140px;
+  max-width: 60%; /* 防止手機版太寬 */
+  box-shadow: 4px 4px 0px rgba(0,0,0,0.2);
+  z-index: 20;
+}
+
+/* HUD 內部細節 */
+.pokemon-info {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: 10px;
+  color: #333;
+}
+
+.hp-container {
+  display: flex;
+  align-items: center;
+  background: #444;
+  padding: 2px;
+  border-radius: 4px;
+}
+
+.hp-label {
+  color: #f5ac0e;
+  font-size: 8px;
+  margin-right: 4px;
+  font-weight: bold;
+}
+
+.hp-bar-bg {
+  flex: 1;
+  height: 6px;
+  background: #333;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.hp-bar-fill {
+  height: 100%;
+  background-color: var(--hp-green);
+  transition: width 0.4s ease-out, background-color 0.2s;
+}
+
+/* --- 4. 寶可夢與草地 (固定在右下角) --- */
+
+/* 草地：放在右下，位置稍微比寶可夢低一點 */
+.grass-base {
+  position: absolute;
+  right: 5%;
+  bottom: 15%; /* 根據寶可夢的高度調整 */
+  width: 180px;
+  height: 60px;
+  background: rgba(40, 60, 40, 0.4);
+  border-radius: 50%;
+  transform: scaleY(0.5);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* 寶可夢：絕對定位在右下，確保不跑掉 */
+.pokemon-sprite {
+  position: absolute;
+  right: 5%;      /* 靠右留 5% 邊距 */
+  bottom: 8%;     /* 靠下留 8% 邊距 (站在草地上) */
+  
+  width: 40%;     /* 寬度設為畫面的 40% */
+  min-width: 140px; /* 最小寬度，防止太小 */
+  max-width: 250px; /* 最大寬度，防止太大 */
+  height: auto;   /* 高度自動保持比例 */
+  
+  object-fit: contain;
+  image-rendering: pixelated;
+  z-index: 10;
+  filter: drop-shadow(5px 5px 0px rgba(0,0,0,0.25));
+}
+
+/* --- 5. 下方控制區 --- */
+.console-area {
+  height: 160px; /* 固定高度 */
+  background: var(--gba-ui-blue);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  border-top: 4px solid #fff;
+  flex-shrink: 0; /* 禁止被壓縮 */
+}
+
+.dialog-box {
+  flex: 1;
+  background: #222;
+  color: #fff;
+  border: 4px solid #666;
+  border-radius: 4px;
+  padding: 12px;
+  box-shadow: inset 0 0 0 2px #fff;
+  margin-bottom: 8px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.battle-menu {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.btn {
+  background: #fff;
+  border: 2px solid #ccc;
+  padding: 10px;
+  cursor: pointer;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  text-align: left;
+  color: #333;
+  position: relative;
+}
+
+.btn:hover {
+  background: #f0f0f0;
+  border-color: #d32f2f;
+}
+
+.btn:hover::after {
+  content: '◀';
+  position: absolute;
+  right: 8px;
+  color: #d32f2f;
+}
+
+.btn-catch { color: #d32f2f; }
+
+/* --- 6. 動畫特效 --- */
+.anim-enter { animation: slideInRight 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+.anim-catch { animation: ballThrow 1s forwards; }
+
+@keyframes slideInRight {
+  from { transform: translateX(300px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes ballThrow {
+  0% { transform: scale(1) rotate(0); }
+  50% { transform: scale(0.5) translateY(-50px) rotate(180deg); }
+  100% { transform: scale(0) translateY(20px); opacity: 0; }
+}
+
+.anim-run { animation: runAway 1s forwards; }
+
+@keyframes runAway {
+  0% { transform: translateX(0); opacity: 1; }
+  30% { transform: translateX(-20px); opacity: 1; } /* 先往後退一點 */
+  100% { transform: translateX(400px); opacity: 0; } /* 再快速往右跑掉 */
+}
+
+.flash-effect {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: white;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 100;
+}
+.flash-active { animation: flash 0.3s ease-out; }
+@keyframes flash { 0% { opacity: 1; } 100% { opacity: 0; } }

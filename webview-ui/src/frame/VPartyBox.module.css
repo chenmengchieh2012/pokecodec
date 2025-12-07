@@ -1,0 +1,110 @@
+/* VPartyBox.module.css */
+
+/* --- 6x1 Grid 佈局 --- */
+.partyGrid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr); /* 強制 6 欄 */
+  gap: 4px;
+  align-items: flex-end; /* 底部對齊 (讓球在同一水平線) */
+  padding-bottom: 20px;
+}
+
+/* --- 單個欄位 (包含上方的預覽卡 + 下方的球) --- */
+.ballSlot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  cursor: pointer;
+  transition: transform 0.2s;
+  position: relative;
+}
+
+.ballSlot:hover {
+  transform: translateY(-4px); /* 懸停時整組稍微浮起 */
+}
+
+/* --- 常駐預覽卡 (原本的 Tooltip) --- */
+/* 重點：要大，一直顯示 */
+.previewCard {
+  width: 100%;
+  aspect-ratio: 1/1; /* 正方形 */
+  background: #fff;
+  border: 2px solid #202020;
+  border-radius: 4px;
+  margin-bottom: 4px; /* 與球的距離 */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+  position: relative;
+  /* overflow: hidden; Removed to allow arrow to stick out */
+}
+
+/* 讓預覽卡底下有個小尖角指著球 (可選，增加連結感) */
+.previewCard::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 6px;
+  height: 6px;
+  background: #fff;
+  border-right: 2px solid #202020;
+  border-bottom: 2px solid #202020;
+}
+
+/* 預覽卡內的圖示 */
+.previewIcon {
+  width: 95%;
+  height: 95%;
+  image-rendering: pixelated;
+  object-fit: contain;
+}
+
+/* 預覽卡內的 HP 條 (迷你版) */
+.miniHpBar {
+  position: absolute;
+  bottom: 2px;
+  left: 2px;
+  right: 2px;
+  height: 3px;
+  background: #555;
+  border-radius: 1px;
+}
+.miniHpFill { height: 100%; }
+
+/* --- 下方的球 (要小) --- */
+.ballBase {
+  width: 28px; /* 小球 */
+  height: 28px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.4));
+  z-index: 2;
+}
+
+/* 空格子 (虛線框) */
+.emptySlot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    opacity: 0.3;
+}
+.emptyPreview {
+    width: 100%;
+    aspect-ratio: 1/1;
+    border: 2px dashed #202020;
+    border-radius: 4px;
+    margin-bottom: 4px;
+}
+.emptyBall {
+    width: 16px; height: 16px; background: #202020; border-radius: 50%;
+}
+
+/* Helper classes for logic */
+.hpRed {}
+.hpYellow {}
+.hpGreen {}

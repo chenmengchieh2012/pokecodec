@@ -1,0 +1,101 @@
+/* VBagBox.module.css */
+
+/* --- Bag (背包系統) --- */
+.bagContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative; /* 讓底部資訊條可以絕對定位 */
+  overflow: hidden;   /* 防止資訊條跑出邊界 */
+}
+
+/* 口袋分類導航 (稍微縮小高度以節省空間) */
+.pocketNav {
+  display: flex;
+  gap: 2px;
+  border-bottom: 2px solid #303840;
+  background: var(--emerald-bg);
+  z-index: 5;
+  flex-shrink: 0; /* 防止被壓縮 */
+}
+
+.pocketTab {
+  flex: 1;
+  background: rgba(0,0,0,0.2);
+  padding: 6px 0; /* 縮小 Padding */
+  text-align: center;
+  color: #cbece6;
+  font-size: 9px; /* 字體縮小 */
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: bold;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+
+.pocketTab:hover {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+
+.pocketTab.active {
+  background: #303840; 
+  color: #fff;
+}
+
+/* 道具網格區域 */
+.bagGrid {
+  flex: 1; /* 佔滿剩餘空間 */
+  overflow-y: auto; /* 只有這區塊捲動 */
+  
+  display: grid;
+  /* 縮小最小寬度至 48px，讓一排能塞更多 */
+  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr)); 
+  gap: 6px;
+  padding: 8px;
+  
+  /* 關鍵：底部留白，讓最後一排不會被 Footer 擋住 */
+  padding-bottom: 60px; 
+}
+
+/* 單個道具格子 (稍微縮小) */
+.bagSlot {
+  background: #f0f0f0;
+  border: 2px solid #5da696;
+  border-radius: 4px; /* 圓角改小，更俐落 */
+  aspect-ratio: 1/1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+  transition: all 0.1s;
+}
+
+.bagSlot:hover {
+  background: #fff;
+  border-color: #204840;
+  box-shadow: 0 0 0 1px #fff, 0 0 0 3px #204840; /* 顯眼的選中框 */
+  z-index: 1;
+  transform: translateY(-1px);
+}
+
+.bagItemIcon {
+  width: 48px; /* 圖片縮小以適應格子 */
+  height: 48px;
+  image-rendering: pixelated;
+  object-fit: contain;
+}
+
+.bagItemCount {
+  position: absolute;
+  bottom: 1px;
+  right: 2px;
+  font-size: 9px;
+  font-weight: 900;
+  color: #204840;
+  text-shadow: 1px 1px 0 #fff; /* 改用陰影描邊，比背景塊更省空間 */
+  pointer-events: none;
+}

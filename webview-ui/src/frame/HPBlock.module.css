@@ -1,0 +1,122 @@
+
+/* --- Gen 2 Retro HUD (Polished) --- */
+.hud {
+  position: relative;
+  background-color: #f8f8f0; /* Slightly warmer white */
+  border: 3px solid #303030;
+  border-radius: 8px; /* Rounded corners */
+  border-bottom-right-radius: 20px; /* Distinctive shape */
+  padding: 6px 10px 8px 10px;
+  min-width: 160px;
+  box-shadow: 4px 4px 0px rgba(0,0,0,0.25);
+  font-family: 'VT323', monospace;
+  color: #202020;
+  image-rendering: pixelated;
+  user-select: none;
+}
+
+/* Top Row: Name, Gender, Level */
+.pokemon-info {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 4px;
+  font-size: 20px;
+  line-height: 1;
+  text-shadow: 1px 1px 0px #d0d0d0;
+}
+
+.pokemon-name {
+  font-weight: 900;
+  text-transform: uppercase;
+  margin-right: 6px;
+  letter-spacing: 1px;
+}
+
+.pokemon-gender {
+  font-size: 18px;
+  font-weight: bold;
+  margin-right: auto;
+  padding-bottom: 2px;
+}
+
+.pokemon-lv {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+/* Middle Row: HP Bar */
+.hp-container {
+  display: flex;
+  align-items: center;
+  background: #303030; /* Dark background for the bar container */
+  padding: 2px 3px;
+  border-radius: 10px;
+  margin-bottom: 4px;
+}
+
+.hp-label {
+  color: #f8d030; /* Gold HP text */
+  font-size: 12px;
+  font-weight: 900;
+  font-style: italic;
+  margin-right: 4px;
+  line-height: 1;
+  text-shadow: 1px 1px 0 #000;
+}
+
+.hp-bar-bg {
+  flex: 1;
+  height: 10px;
+  background: #505050;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid #202020;
+}
+
+.hp-bar-fill {
+  height: 100%;
+  background-color: var(--hp-green);
+  transition: width 0.5s cubic-bezier(0.4, 0.0, 0.2, 1), background-color 0.3s;
+  /* Glossy effect */
+  background-image: linear-gradient(to bottom, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 100%);
+  border-right: 1px solid rgba(0,0,0,0.3);
+}
+
+/* Bottom Row: HP Numbers (Player only) */
+.hp-text {
+  text-align: right;
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin-top: 2px;
+  text-shadow: 1px 1px 0px #d0d0d0;
+}
+
+/* Exp Bar (Player only) */
+.exp-container {
+  margin-top: 4px;
+  display: flex;
+  height: 6px;
+  background: #303030;
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid #000;
+}
+
+.exp-fill {
+  height: 100%;
+  background-color: #40c0f0;
+  background-image: linear-gradient(to bottom, #80e0ff 0%, #00a0e0 100%);
+}
+
+/* Animations */
+.anim-catch {
+  animation: hud-shake 0.5s ease-in-out;
+}
+
+@keyframes hud-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px) rotate(-2deg); }
+  75% { transform: translateX(5px) rotate(2deg); }
+}

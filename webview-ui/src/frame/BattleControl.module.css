@@ -1,0 +1,403 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+:root {
+  /* 這些變數保留給按鈕和彈出選單使用 */
+  --card-bg: #F8F8F0;       
+  --card-border: #303030;   
+  --text-color: #202020;    
+  --console-bg: #2C3E50;    
+  
+  --btn-default-bg: #FFFFFF;
+  --btn-hover-bg: #E8F4F0;
+  --btn-active-bg: #70A090;
+}
+
+.console-area {
+  height: 180px;
+  background: var(--console-bg);
+  padding: 8px;
+  display: flex;
+  gap: 8px;
+  box-sizing: border-box;
+  font-family: 'Press Start 2P', monospace;
+  align-items: stretch;
+}
+
+/* --- 1. 容器樣式 (透明化) --- */
+/* 這裡把原本的白框拿掉了，只保留定位功能 */
+.dialog-box-wrapper, 
+.battle-menu {
+  background: transparent; /* 變成透明 */
+  border: none;            /* 移除邊框 */
+  box-shadow: none;        /* 移除陰影 */
+  position: relative;      /* 保留這個，為了讓內部的 absolute 元素定位 */
+  box-sizing: border-box;
+}
+
+/* --- 2. 左側：對話框區域 --- */
+.dialog-box-wrapper {
+  flex: 1.8;
+  display: flex;
+  padding: 0; /* 移除內距，讓 DialogBox 自己決定大小 */
+}
+
+/* --- 新增：展開狀態的樣式 --- */
+.wrapper-expanded {
+  flex: 4.5; /* 數字越大，展開時左邊就越寬 (原本是 1.8) */
+}
+
+/* 對話框層：確保沒有額外樣式干擾 */
+.dialog-layer {
+  width: 100%;
+  height: 100%;
+  /* 這裡不用設背景，直接透出底下的 DialogBox 樣式 */
+  /* 如果你的 DialogBox 原本是黑底白字，這裡就會完美呈現 */
+}
+/* ... 前面的 CSS 不變 ... */
+
+/* --- 3. 招式選單 (彈出層 - 完美覆蓋版) --- */
+.move-select-overlay-container {
+  /* 定位修正：稍微往外擴張，確保能完全蓋住底下的 DialogBox 邊框 */
+  position: absolute;
+  width: calc(100%);   /* 寬度補回兩邊的邊框厚度 */
+  height: calc(100%);  /* 高度補回兩邊的邊框厚度 */
+  z-index: 10;
+  
+  /* 視覺風格：模仿標準 DialogBox */
+  background-color: #303840;
+  border-top: 4px solid #9ca3af;
+  border-left: 4px solid #9ca3af;
+  border-bottom: 4px solid #1f2937;
+  border-right: 4px solid #1f2937;
+  border-radius: 6px;
+  padding: 4px;
+  
+  /* 陰影：如果 DialogBox 有陰影，這裡也要加；沒有就設 none */
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.2); 
+  box-sizing: border-box;
+}
+
+.move-select-overlay-content {
+  width: 100%;
+  height: 100%;
+  background-color: #f0f0f0;
+  border: 2px solid #505860;
+  padding: 4px 4px; /* 增加左右 padding */
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #111827;
+  text-transform: uppercase;
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+  word-break: break-word;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 8px;
+}
+/* --- 招式按鈕 (復古化改造) --- */
+.move-btn {
+  appearance: none;
+  background: #ffffff; /* 保持白色背景，對比清晰 */
+  
+  /* 1. 加粗、加深的邊框，製造實體感 */
+  border: 3px solid #505860; 
+  
+  /* 2. 稍微縮小圓角，讓它看起來更「方」、更像素感 */
+  border-radius: 4px; 
+  
+  padding: 4px 6px; /* 稍微調整內距 */
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+  transition: all 0.1s;
+  
+  /* 3. 關鍵：復古硬陰影 (無模糊)，製造厚度 */
+  box-shadow: 0 3px 0 #303840;
+  
+  /* 確保文字顏色夠深 */
+  color: #202020;
+}
+
+/* Hover 效果：稍微變色，並往下壓一點點提示 */
+.move-btn:hover {
+  background: #f0f0f0; /* 稍微變灰 */
+  border-color: #303840; /* 邊框變深 */
+  transform: translateY(1px); /* 往下壓 1px */
+  box-shadow: 0 2px 0 #303840; /* 陰影減少 */
+}
+
+/* Active (按下) 效果：完全下壓，模擬真實按鍵 */
+.move-btn:active {
+  transform: translateY(3px); /* 往下壓到底 */
+  box-shadow: none; /* 陰影消失 */
+}
+
+.move-name {
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  /* color: var(--text-color);  <-- 移除這個，直接用父層設定的顏色 */
+  margin-bottom: 0;
+  font-weight: bold; /* 讓招式名稱更突出 */
+  text-align: left;
+}
+
+.move-info-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.move-pp {
+  font-size: 14px;
+  color: #666; /*稍微加深 PP 的顏色 */
+  font-weight: bold;
+}
+
+/* ... 前面的 CSS 不變 ... */
+
+/* --- 4. 右側選單區域 --- */
+.battle-menu {
+  flex: 1;
+  display: grid;
+  min-width: 64px;  /* 確保至少能容納 CANCEL 文字與邊框 */
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 8px;
+  padding: 0;
+}
+
+/* --- 新增：單欄模式 (給只有 CANCEL 按鈕時使用) --- */
+.battle-menu-single {
+  grid-template-columns: 1fr !important; /* 強制變成一欄 */
+  grid-template-rows: 1fr !important;    /* 強制變成一列 */
+}
+
+/* === 新增：右側按鈕的雙層架構樣式 === */
+
+/* 1. 外層：負責深色底座與立體邊框 (複製左側大框的樣式) */
+.menu-btn-outer {
+  appearance: none;
+  position: relative;
+  
+  /* 複製左側 container 的樣式 */
+  background-color: #303840;
+  border-top: 4px solid #9ca3af;
+  border-left: 4px solid #9ca3af;
+  border-bottom: 4px solid #1f2937;
+  border-right: 4px solid #1f2937;
+  border-radius: 6px;
+  padding: 4px; /* 這是外框與內框的間距 */
+  min-width: 64px;
+
+  cursor: pointer;
+  box-sizing: border-box;
+  display: flex; /* 讓內層 div 充滿 */
+  padding: 4px;
+  
+  /* 按下的效果 */
+  transition: transform 0.1s;
+}
+
+.menu-btn-outer:active {
+  transform: translateY(2px);
+  border-bottom-width: 4px; /* 保持邊框厚度 */
+}
+
+/* 2. 內層：負責淺色螢幕與文字 (複製左側 content 的樣式) */
+.menu-btn-inner {
+  width: 100%;
+  height: 100%;
+  
+  /* 複製左側 content 的樣式 */
+  background-color: #f0f0f0;
+  border: 2px solid #505860;
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+  
+  /* 文字排版 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: bold;
+  color: #111827;
+  text-transform: uppercase;
+}
+
+/* Hover 互動：讓內層螢幕變亮，或是邊框變色 */
+.menu-btn-outer:hover .menu-btn-inner {
+  background-color: #ffffff;
+  border-color: #68A090; /* 選用：Hover 時顯示一點綠色邊框，呼應選取感 */
+  cursor: pointer;
+}
+
+/* 特別處理：Cancel 按鈕也可以用同樣架構，只是內層換個顏色 */
+.cancel-btn-outer {
+  grid-column: 1 / -1; /* 從第 1 條線跨到最後一條線 (佔滿整寬) */
+  grid-row: 1 / -1;
+  /* 繼承基本外型 */
+  appearance: none;
+  background-color: #303840;
+  border-top: 4px solid #9ca3af;
+  border-left: 4px solid #9ca3af;
+  border-bottom: 4px solid #1f2937;
+  border-right: 4px solid #1f2937;
+  border-radius: 6px;
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  box-sizing: border-box;
+}
+
+.cancel-btn-inner {
+  width: 100%;
+  height: 100%;
+  background-color: #ff7675; /* 紅色系 */
+  border: 2px solid #d63031;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  font-size: 12px;
+  color: white;
+  font-weight: bold;
+}
+
+/* --- Party Selection Styles (圖像化改造版) --- */
+/* --- Party Selection Styles (寬版資訊卡改造) --- */
+.party-select-overlay-content {
+  width: 100%;
+  height: 100%;
+  background-color: #f0f0f0;
+  box-sizing: border-box;
+  
+  /* 改為 2 欄排列，讓卡片變寬 */
+  display: grid;
+  grid-template-columns: 1fr 1fr; 
+  /* 預設 3 列，剛好放滿 6 隻寶可夢 */
+  grid-template-rows: repeat(3, 1fr); 
+  gap: 6px;
+  padding: 6px;
+  overflow-y: auto;
+}
+
+/* 寶可夢寬版卡片按鈕 */
+.party-card-btn {
+  appearance: none;
+  background: #ffffff;
+  
+  /* 復古邊框風格 */
+  border: 2px solid #505860;
+  border-radius: 4px;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.1); 
+  
+  position: relative;
+  cursor: pointer;
+  
+  /* 改為橫向排列：左圖右文 */
+  display: flex;
+  flex-direction: row; 
+  align-items: center;
+  justify-content: flex-start;
+  
+  padding: 4px;
+  transition: all 0.1s;
+  overflow: hidden;
+}
+
+.party-card-btn:hover {
+  background-color: #f8f9fa;
+  transform: translateY(-1px);
+  box-shadow: 2px 3px 0 #303840;
+  border-color: #303840;
+  z-index: 1; /* 確保浮起時蓋過隔壁 */
+}
+
+.party-card-btn:active {
+  transform: translateY(1px);
+  box-shadow: none;
+}
+
+/* 左側圖片容器 */
+.party-sprite-wrapper {
+  width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 8px; /* 與文字區的間距 */
+}
+
+.party-sprite {
+  width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+  /* 稍微調整位置以對齊 */
+  transform: translateY(-2px); 
+}
+
+/* 右側資訊區 */
+.party-info {
+  flex: 1; /* 佔滿剩餘空間 */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  overflow: hidden; /* 防止文字爆開 */
+}
+
+.party-name {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.party-name > div:first-child {
+  font-size: 10px;
+  font-weight: bold;
+  text-align: left;
+  text-transform: uppercase;
+  color: #202020;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 修改既有的 HP Bar 樣式以適應新佈局 */
+.hp-bar-container {
+  width: 100%;
+  height: 6px; /*稍微加粗一點點看起來比較像血條*/
+  background-color: #e0e0e0; 
+  border-radius: 2px;
+  border: 1px solid #888;
+  flex-shrink: 0; 
+  position: relative;
+}
+
+.hp-bar-fill {
+  height: 100%;
+  display: block;
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+/* HP 數值文字 */
+.hp-text {
+  font-size: 8px;
+  text-align: right;
+  color: #555;
+  font-weight: bold;
+  margin-left: 4px;
+  flex-shrink: 0;
+}
+
+/* 瀕死狀態 */
+.party-card-btn.fainted {
+  opacity: 0.6;
+  background-color: #e0e0e0;
+  filter: grayscale(100%);
+}

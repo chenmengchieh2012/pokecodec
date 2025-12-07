@@ -1,0 +1,296 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+/* --- Modal Overlay --- */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(2px);
+}
+
+/* --- Summary Card (Popup) --- */
+.summaryCard {
+    width: 360px;
+    background-color: #f8f8f0;
+    border: 3px solid #303030;
+    border-radius: 12px;
+    border-bottom-right-radius: 20px;
+    box-shadow: 8px 8px 0 rgba(0,0,0,0.3);
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    animation: popupAnim 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    font-family: 'VT323', monospace;
+    color: #202020;
+}
+
+@keyframes popupAnim {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.summaryHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 4px;
+}
+
+.summaryTitle {
+    font-size: 14px;
+    font-weight: bold;
+    color: #303030;
+}
+
+.headerIcons {
+    display: flex;
+    gap: 8px;
+}
+
+.iconBox {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #555;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.iconBox:hover {
+    background: rgba(0,0,0,0.1);
+    color: #000;
+}
+
+.summaryBody {
+    display: flex;
+    gap: 16px;
+}
+
+/* Left Column */
+.summaryLeft {
+    width: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.spriteFrame {
+    width: 60px;
+    height: 60px;
+    background: #fff;
+    border: 2px solid #303030;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+    position: relative;
+}
+
+.expandedBallDecor {
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    width: 24px;
+    height: 24px;
+    filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.2));
+    z-index: 10;
+}
+
+.summarySprite {
+    width: 60px;
+    height: 60px;
+    image-rendering: pixelated;
+}
+
+.basicInfo {
+    text-align: center;
+    width: 100%;
+    line-height: 1.2;
+}
+
+.dexNo {
+    font-size: 10px;
+    color: #666;
+}
+
+.pkmName {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 2px 0;
+    text-transform: uppercase;
+}
+
+.lvlBadge {
+    font-size: 12px;
+    color: #303030;
+}
+
+.typesRow {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.typeTag {
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: white;
+    font-size: 12px;
+    text-transform: uppercase;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+}
+
+/* Type Colors */
+.normal { background-color: #A8A77A; }
+.fire { background-color: #EE8130; }
+.water { background-color: #6390F0; }
+.electric { background-color: #F7D02C; }
+.grass { background-color: #7AC74C; }
+.ice { background-color: #96D9D6; }
+.fighting { background-color: #C22E28; }
+.poison { background-color: #A33EA1; }
+.ground { background-color: #E2BF65; }
+.flying { background-color: #A98FF3; }
+.psychic { background-color: #F95587; }
+.bug { background-color: #A6B91A; }
+.rock { background-color: #B6A136; }
+.ghost { background-color: #735797; }
+.dragon { background-color: #6F35FC; }
+.dark { background-color: #705746; }
+.steel { background-color: #B7B7CE; }
+.fairy { background-color: #D685AD; }
+
+.withdrawBtn {
+    width: 100%;
+    padding: 4px;
+    background: #3080ff;
+    color: white;
+    border: 2px solid #004080;
+    border-radius: 4px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    cursor: pointer;
+    box-shadow: 0 2px 0 #004080;
+}
+
+.withdrawBtn:active {
+    transform: translateY(2px);
+    box-shadow: none;
+}
+
+/* Right Column */
+.summaryRight {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.tabsRow {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.tab {
+    flex: 1;
+    text-align: center;
+    padding: 4px;
+    background: #e0e0e0;
+    border: 2px solid transparent;
+    border-bottom: 2px solid #ccc;
+    cursor: pointer;
+    font-size: 12px;
+    border-radius: 4px 4px 0 0;
+}
+
+.activeTab {
+    background: #fff;
+    border: 2px solid #303030;
+    border-bottom: none;
+    font-weight: bold;
+}
+
+.tabContent {
+    flex: 1;
+    background: #fff;
+    border: 2px solid #303030;
+    border-radius: 0 4px 4px 4px;
+    padding: 8px;
+    min-height: 0;
+}
+
+.statsGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px 12px;
+}
+
+.statItem {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.fullWidth {
+    grid-column: 1 / -1;
+    border-top: 1px solid #e0e0e0;
+    padding-top: 2px;
+    margin-top: 2px;
+}
+
+.blueText {
+    color: #3080ff;
+}
+
+.movesList {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+}
+
+.moveItem {
+    display: flex;
+    flex-direction: column;
+    padding: 4px 6px;
+    background: #f0f0f0;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.moveName {
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.movePP {
+    color: #666;
+    font-size: 10px;
+    text-align: right;
+}
+
+.noMoves {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: #888;
+    margin-top: 20px;
+}
