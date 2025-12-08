@@ -17,10 +17,10 @@ export default defineConfig({
   },
   // 👇 請新增或修改這個區塊
   server: {
-    port: 5173,       // 固定 Port，避免它亂跑
+    port: 5174,       // 固定 Port，避免它亂跑
     host: 'localhost', 
     cors: true,       // 🔥 關鍵：允許跨域 (CORS)，這樣 VS Code 才能讀取
-    origin: 'http://localhost:5173', // 幫助 CSS/Assets 載入正確路徑
+    origin: 'http://localhost:5174', // 幫助 CSS/Assets 載入正確路徑
     hmr: {
         host: 'localhost', // 確保熱更新連線正確
     }

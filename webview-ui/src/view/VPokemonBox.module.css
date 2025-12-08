@@ -1,21 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
 :root {
-  --emerald-bg: #408880;        
-  --emerald-dark: #204840;      
-  --emerald-light: #78C8B8;     
-  --card-bg: #F8F8F8;           
-  --text-dark: #202020;         
-  
-  --hp-green: #58D080;
-  --hp-yellow: #F8B050;
-  --hp-red: #F85838;
+  --emerald-bg: #408880;
+  --tab-inactive: #2a5a55;
+  --tab-active: #f8f8f0;
+  --text-dark: #202020;
 }
 
 .emeraldContainer {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   height: 100vh;
   background-color: var(--emerald-bg);
   background-image: repeating-linear-gradient(
@@ -27,280 +21,222 @@
   );
   font-family: 'Press Start 2P', monospace;
   color: var(--text-dark);
-  font-size: 12px;
+  font-size: 10px;
   overflow: hidden;
-  image-rendering: pixelated;
   user-select: none;
 }
 
-/* --- Sidebar --- */
-.sideBar {
-  background: var(--emerald-dark);
-  padding: 12px 6px;
-  border-right: 4px solid var(--emerald-light);
-  box-shadow: 4px 0 6px rgba(0,0,0,0.3);
-  z-index: 10;
+/* --- Navigation / Tabs --- */
+.boxNav {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 28px;
+  padding: 4px 4px 0 4px;
   flex-shrink: 0;
+}
+
+.tabsLeft {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 60px;
-}
-
-.tabs {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  width: 100%;
-  align-items: center;
-  margin-top: 5px;
-}
-
-.iconTab {
-  width: 36px;
-  height: 36px;
-  background: rgba(0, 0, 0, 0.3);
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  color: var(--emerald-light);
-  position: relative;
-}
-
-.iconTab:hover { 
-  background: rgba(255, 255, 255, 0.15); 
-  transform: translateY(-2px);
-  color: #fff;
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-.iconTab.active {
-  background: var(--emerald-light); 
-  border-color: #fff; 
-  color: var(--emerald-dark);
-  box-shadow: 0 0 15px rgba(120, 200, 184, 0.4);
-  transform: scale(1.05);
-}
-
-.tabSvg { width: 24px; height: 24px; fill: currentColor; }
-
-/* --- Main Content Area --- */
-.scrollArea {
+  gap: 2px;
   flex: 1;
+}
+
+.tabsRight {
   display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  gap: 4px;
+  padding-bottom: 2px;
+}
+
+.boxTab {
+  padding: 0 8px;
+  height: 24px;
+  line-height: 24px;
+  font-size: 10px;
+  color: #ccc;
+  background: var(--tab-inactive);
+  cursor: pointer;
+  border-radius: 6px 6px 0 0;
+  border: 2px solid rgba(0,0,0,0.2);
+  border-bottom: none;
   position: relative;
+  top: 2px;
+  transition: top 0.1s;
 }
 
-.contentContainer {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    padding: 8px;
-    gap: 0;
-    overflow-y: auto;
+.boxTab:hover {
+  background: #387870;
+  color: #fff;
+  top: 0;
 }
 
-/* --- Header --- */
-.pcHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #e0e0e0;
-    padding: 6px 12px;
-    border-radius: 8px 8px 0 0;
-    border: 3px solid #303030;
-    border-bottom: none;
-    box-shadow: 4px 4px 0 rgba(0,0,0,0.2); /* Keep shadow for now, might need adjustment */
-    z-index: 2;
+.boxTab.active {
+  background: var(--tab-active);
+  color: var(--text-dark);
+  font-weight: bold;
+  top: 0;
+  z-index: 2;
+  box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+  height: 26px; /* Connect to body */
 }
 
-.boxTitle {
-    font-size: 12px;
-    color: #fff;
-    background: #303030;
-    padding: 6px 12px;
-    border-radius: 4px;
-    box-shadow: inset 2px 2px 0 rgba(0,0,0,0.5);
+.navBtn {
+  background: #f8f8f0;
+  border: 2px solid #303030;
+  padding: 0 8px;
+  font-family: inherit;
+  font-size: 10px;
+  cursor: pointer;
+  color: #202020;
+  box-shadow: 1px 1px 0 #303030;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
 }
 
-.headerControls {
-    display: flex;
-    gap: 10px;
+.navBtn:hover {
+  transform: translateY(-1px);
 }
 
-.retroBtn {
-    background: #f8f8f0;
-    border: 2px solid #303030;
-    padding: 8px 16px;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 10px;
-    cursor: pointer;
-    color: black;
-    box-shadow: 2px 2px 0 #303030;
-    transition: all 0.1s;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-.retroBtn:active {
-    transform: translate(2px, 2px);
-    box-shadow: none;
+.navBtn:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
 }
 
 .dangerBtn {
-    background: #ffcccc;
-    color: #cc0000;
-    border-color: #cc0000;
-    box-shadow: 2px 2px 0 #cc0000;
+  background: #ffcccc;
+  color: #cc0000;
+  border-color: #cc0000;
 }
 
-/* --- Box Grid --- */
+/* --- Content Area --- */
 .boxWallpaper {
-    flex: 1;
-    /* 背景保持不變 */
-    background-color: #5F9EA0; 
-    background-image: repeating-linear-gradient(
-        45deg,
-        rgba(255, 255, 255, 0.1) 0,
-        rgba(255, 255, 255, 0.1) 20px,
-        transparent 20px,
-        transparent 40px
-    );
-    border: 3px solid #303030;
-    border-radius: 0 0 8px 8px;
-    padding: 8px; /* 內距稍微減少 */
-    box-shadow: inset 0 0 20px rgba(0,0,0,0.2), 4px 4px 0 rgba(0,0,0,0.2);
-    overflow-y: auto;
-    min-height: 0;
-    width: 100%; /* 確保佔滿寬度 */
-    box-sizing: border-box;
+  flex: 1;
+  background-color: #f8f8f0; /* Match active tab */
+  border-top: 4px solid var(--tab-active);
+  padding: 4px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: inset 0 4px 8px rgba(0,0,0,0.05);
 }
 
 .grid {
-    display: grid;
-    /* 緊密排列關鍵：最小寬度改為 60px，讓一行能塞更多隻 */
-    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); 
-    gap: 4px; /* 間距從 12px 縮小到 4px */
-    justify-items: center;
-    padding-bottom: 20px;
+  flex: 1;
+  overflow-y: auto;
+  display: grid;
+  /* Optimized for 360px width: ~6 items per row */
+  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+  grid-auto-rows: 48px;
+  gap: 4px;
+  padding: 2px;
+  align-content: start;
 }
 
 .pokemonSlot {
-    width: 60px;  /* 寬度縮小 */
-    height: 60px; /* 高度變成正方形，更像遊戲原本的格子 */
-    background: #FFFFFF;
-    border: 2px solid #202020; /* 邊框稍微變細一點點，才不會太搶眼 */
-    border-radius: 8px; /* 圓角也縮小 */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    position: relative;
-    transition: all 0.1s ease-out;
-    overflow: hidden;
-    box-shadow: 2px 2px 0 rgba(0,0,0,0.15);
-}
-
-/* 底部橘色橫條 - 按比例縮小 */
-.pokemonSlot::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 6px; /* 高度縮小 */
-    background: #FF6B4A;
-    border-top: 2px solid #202020;
-    z-index: 1;
-}
-
-/* 底部白色菱形 - 按比例縮小 */
-.pokemonSlot::before {
-    content: '';
-    position: absolute;
-    bottom: 3px; /* 位置微調 */
-    left: 50%;
-    transform: translateX(-50%) rotate(45deg);
-    width: 6px; /* 大小縮小 */
-    height: 6px;
-    background: #FFFFFF;
-    border: 2px solid #202020;
-    z-index: 2;
-    border-radius: 1px;
+  background: #fff;
+  border: 2px solid #e0e0e0;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.1s;
 }
 
 .pokemonSlot:hover {
-    transform: translateY(-2px);
-    box-shadow: 4px 4px 0 rgba(0,0,0,0.2);
-    z-index: 10; /* hover 時浮到最上層 */
+  border-color: #408880;
+  transform: scale(1.05);
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .selectedSlot {
-    box-shadow: 0 0 0 2px #3080ff, 4px 4px 0 rgba(0,0,0,0.2);
-    border-color: #3080ff;
+  border-color: #F8B050;
+  background-color: #fff8e0;
+  box-shadow: 0 0 0 1px #F8B050;
 }
 
-.selectedSlot::after {
-    background: #3080ff;
-    border-top-color: #3080ff;
-}
-.selectedSlot::before {
-    border-color: #3080ff;
+.draggedSlot {
+  opacity: 0.5;
+  border-style: dashed;
 }
 
 .sprite {
-    width: 40px; /* 圖片縮小，不然會爆框 */
-    height: 40px;
-    image-rendering: pixelated;
-    z-index: 2;
-    margin-bottom: 4px; /* 微調位置 */
+  width: 48px;
+  height: 48px;
+  transform: scale(1.1);
+  image-rendering: pixelated;
 }
 
+.checkMark {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: #F8B050;
+  color: #fff;
+  font-size: 10px;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  z-index: 20;
+}
 
-/* --- Modal Overlay --- */
+.emptyMessage {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 20px;
+  color: #aaa;
+  font-size: 12px;
+}
+
+/* --- Modal --- */
 .modalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    backdrop-filter: blur(2px);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(2px);
 }
 
-/* --- Dialog Box --- */
 .dialogBox {
-    background: #f8f8f0;
-    border: 3px solid #303030;
-    border-radius: 8px;
-    padding: 20px;
-    text-align: center;
-    box-shadow: 8px 8px 0 rgba(0,0,0,0.3);
-    min-width: 300px;
+  background: #f8f8f0;
+  border: 3px solid #303030;
+  border-radius: 8px;
+  padding: 20px;
+  min-width: 250px;
+  box-shadow: 8px 8px 0 rgba(0,0,0,0.5);
+  text-align: center;
 }
 
 .dialogText {
-    margin-bottom: 20px;
-    line-height: 1.5;
-    font-size: 14px;
+  margin-bottom: 20px;
+  line-height: 1.5;
+  color: var(--text-dark);
 }
 
 .dialogActions {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
 }
+
+.slotShadow {
+  display: none;
+}
+
 
 

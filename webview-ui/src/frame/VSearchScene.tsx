@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import styles from './search.module.css';
+import React, { useState, useEffect, useCallback } from 'react';
+import styles from './VSearchScene.module.css';
 import type { PokemonDao } from '../dataAccessObj/pokemon';
 
 interface SearchSceneProps {
@@ -25,31 +25,21 @@ const INITIAL_MAP = [
 const OBSTACLES = [1, 3, 4, 6]; 
 const EMOTES = ["♥", "♪", "!", "...", "?"];
 
-export const SearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
-    const [pos, setPos] = useState({ x: 4, y: 3 });
+export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
+    const [pos, setPos] = useState({ x: 5, y: 3 });
     const [direction, setDirection] = useState<'left' | 'right'>('right');
-    const [isSearching, setIsSearching] = useState(false);
-    const isSearchingRef = useRef(isSearching);
     const [emote, setEmote] = useState<string | null>(null);
     const [isFlashing, setIsFlashing] = useState(false);
 
-    useEffect(() => {
-        isSearchingRef.current = isSearching;
-    }, [isSearching]);
 
     const triggerEncounter = () => {
-        setIsSearching(true);
         setIsFlashing(true);
         setTimeout(() => {
             setIsFlashing(false);
-            setTimeout(() => {
-                setTimeout(() => setIsSearching(false), 1500);
-            }, 1000);
         }, 1000);
     };
 
     const handleMove = useCallback((dx: number, dy: number) => {
-        if (isSearchingRef.current) return;
         setPos(prev => {
             const newX = prev.x + dx;
             const newY = prev.y + dy;
@@ -70,7 +60,6 @@ export const SearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
     }, []);
 
     const handlePokeInteract = () => {
-        if (emote || isSearching) return;
         setEmote(EMOTES[Math.floor(Math.random() * EMOTES.length)]);
         setTimeout(() => setEmote(null), 1500);
     };
@@ -90,7 +79,7 @@ export const SearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
     }, [handleMove]);
 
     // 使用 PokeAPI 圖片
-    const spriteUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${myPokemon?.id || 25}.png`;
+    const spriteUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-viii/icons/${myPokemon?.id}.png`;
     const berryUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/oran-berry.png";
     const ballUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png";
 
@@ -135,7 +124,7 @@ export const SearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
                                             {emote && (
                                                 <div className={styles.emoteBubble} style={{ transform: direction === 'left' ? 'scaleX(-1)' : 'scaleX(1)' }}>{emote}</div>
                                             )}
-                                            <img src={spriteUrl} alt="Player" className={styles.spriteImg} />
+                                            { myPokemon?.id && <img src={spriteUrl} alt="Player" className={styles.spriteImg} /> }  
                                         </div>
                                     )}
                                 </div>

@@ -6,7 +6,7 @@ import { PokemonInfoModal } from '../model/PokemonInfoModal';
 
 
 const IconTrash = () => (
-    <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
         <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
     </svg>
 );
@@ -20,6 +20,8 @@ export const VPokemonBox = () => {
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [draggedPokemonUid, setDraggedPokemonUid] = useState<string | null>(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+    const [activeBox, setActiveBox] = useState(0);
 
     useEffect(() => {
         vscode.postMessage({ command: 'getBox' });
@@ -125,67 +127,74 @@ export const VPokemonBox = () => {
 
     return (
         <div className={styles.emeraldContainer}>
+            {/* Tabs Navigation */}
+            <div className={styles.boxNav}>
+                <div className={styles.tabsLeft}>
+                    <div 
+                        className={`${styles.boxTab} ${activeBox === 0 ? styles.active : ''}`} 
+                        onClick={() => setActiveBox(0)}
+                    >
+                        BOX 1
+                    </div>
+                    <div 
+                        className={`${styles.boxTab} ${activeBox === 1 ? styles.active : ''}`} 
+                        onClick={() => setActiveBox(1)}
+                    >
+                        BOX 2
+                    </div>
+                </div>
+                
+                <div className={styles.tabsRight}>
+                    {isSelectionMode ? (
+                        <>
+                            <button className={`${styles.navBtn} ${styles.dangerBtn}`} onClick={handleDeleteSelected}>
+                                <IconTrash /> {selectedIds.size}
+                            </button>
+                            <button className={styles.navBtn} onClick={() => {
+                                setIsSelectionMode(false);
+                                setSelectedIds(new Set());
+                            }}>✖</button>
+                        </>
+                    ) : (
+                        <button className={styles.navBtn} onClick={() => setIsSelectionMode(true)}>
+                            ORGANIZE
+                        </button>
+                    )}
+                </div>
+            </div>
+
             {/* Main Content Area */}
-            <div className={styles.scrollArea}>
-                <div className={styles.contentContainer}>
-                    {/* Header */}
-                    <div className={styles.pcHeader}>
-                        <div className={styles.boxTitle}>
-                            {isSelectionMode ? `SELECTION: ${selectedIds.size}` : 'BOX 1'}
+            <div className={styles.boxWallpaper}>
+                <div className={styles.grid}>
+                    {pokemons.map((p) => (
+                        <div 
+                            key={p.uid} 
+                            className={`
+                                ${styles.pokemonSlot} 
+                                ${selectedIds.has(p.uid) ? styles.selectedSlot : ''}
+                                ${draggedPokemonUid === p.uid ? styles.draggedSlot : ''}
+                            `}
+                            onClick={() => handleSlotClick(p)}
+                            draggable={!isSelectionMode}
+                            onDragStart={(e) => handleDragStart(e, p)}
+                            onDragOver={handleDragOver}
+                            onDrop={(e) => handleDrop(e, p)}
+                            title={p.name}
+                        >
+                            {selectedIds.has(p.uid) && <div className={styles.checkMark}>✔</div>}
+                            <img 
+                                src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/${p.id}.png`} 
+                                alt={p.name} 
+                                className={styles.sprite}
+                            />
                         </div>
-                        
-                        <div className={styles.headerControls}>
-                            {isSelectionMode ? (
-                                <>
-                                    <button className={`${styles.retroBtn} ${styles.dangerBtn}`} onClick={handleDeleteSelected}>
-                                        <IconTrash /> RELEASE
-                                    </button>
-                                    <button className={styles.retroBtn} onClick={() => {
-                                        setIsSelectionMode(false);
-                                        setSelectedIds(new Set());
-                                    }}>CANCEL</button>
-                                </>
-                            ) : (
-                                <button className={styles.retroBtn} onClick={() => setIsSelectionMode(true)}>ORGANIZE</button>
-                            )}
+                    ))}
+                    
+                    {pokemons.length === 0 && (
+                        <div className={styles.emptyMessage}>
+                            BOX IS EMPTY
                         </div>
-                    </div>
-
-                    {/* Grid */}
-                    <div className={styles.boxWallpaper}>
-                        <div className={styles.grid}>
-                            {pokemons.map((p) => (
-                                <div 
-                                    key={p.uid} 
-                                    className={`
-                                        ${styles.pokemonSlot} 
-                                        ${selectedIds.has(p.uid) ? styles.selectedSlot : ''}
-                                        ${draggedPokemonUid === p.uid ? styles.draggedSlot : ''}
-                                    `}
-                                    onClick={() => handleSlotClick(p)}
-                                    draggable={!isSelectionMode}
-                                    onDragStart={(e) => handleDragStart(e, p)}
-                                    onDragOver={handleDragOver}
-                                    onDrop={(e) => handleDrop(e, p)}
-                                    title={p.name}
-                                >
-                                    {selectedIds.has(p.uid) && <div className={styles.checkMark}>✔</div>}
-                                    <img 
-                                        src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/${p.id}.png`} 
-                                        alt={p.name} 
-                                        className={styles.sprite}
-                                    />
-                                    <div className={styles.slotShadow}></div>
-                                </div>
-                            ))}
-                        </div>
-
-                        {pokemons.length === 0 && (
-                            <div className={styles.emptyMessage}>
-                                BOX IS EMPTY
-                            </div>
-                        )}
-                    </div>
+                    )}
                 </div>
             </div>
 

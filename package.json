@@ -22,7 +22,11 @@
       },
       {
         "command": "pokemon.triggerEncounter",
-        "title": "Trigger Pokemon Encounter"
+        "title": "Pokemon: Trigger Encounter"
+      },
+      {
+        "command": "pokemon.resetStorage",
+        "title": "Pokemon: Reset Storage"
       }
     ],
     "viewsContainers": {

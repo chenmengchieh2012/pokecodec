@@ -1,9 +1,12 @@
-import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
+import { forwardRef, useImperativeHandle, useRef, useState, useEffect } from 'react';
 import { type PokeBallDao } from "../dataAccessObj/pokeBall";
 import type { PokemonMove } from "../dataAccessObj/pokeMove";
 import { type PokemonDao } from "../dataAccessObj/pokemon";
+import { type ItemDao } from "../dataAccessObj/item";
+import { vscode } from "../utilities/vscode";
 import styles from "./BattleControl.module.css";
 import { DialogBox, type DialogBoxHandle } from "./DialogBox";
+import { PartyGridInModal } from "../model/PartyGridInModal";
 
 export interface BattleControlHandle extends DialogBoxHandle {
     openPartyMenu: () => void;
@@ -14,6 +17,7 @@ interface BattleControlProps {
     myParty: PokemonDao[];
     handleOnAttack: (move: PokemonMove) => void;
     handleThrowBall: (ball: PokeBallDao) => void;
+    handleUseItem: (item: ItemDao) => void;
     handleRunAway: () => void;
     handleSwitchMyPokemon: (pokemon: PokemonDao) => void;
 }
@@ -23,13 +27,27 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
     myParty,
     handleOnAttack,
     handleThrowBall,
+    handleUseItem,
     handleRunAway,
     handleSwitchMyPokemon,
 }, ref) => {
 
-    const [menuState, setMenuState] = useState<'main' | 'moves' | 'party'>('main');
+    const [menuState, setMenuState] = useState<'main' | 'moves' | 'party' | 'bag'>('main');
+    const [bagItems, setBagItems] = useState<ItemDao[]>([]);
     const dialogBoxRef = useRef<DialogBoxHandle>(null);
 
+    useEffect(() => {
+        if (menuState === 'bag') {
+            const handleMessage = (event: MessageEvent) => {
+                if (event.data.type === 'bagData') {
+                    setBagItems(event.data.data);
+                }
+            };
+            window.addEventListener('message', handleMessage);
+            vscode.postMessage({ command: 'getBag' });
+            return () => window.removeEventListener('message', handleMessage);
+        }
+    }, [menuState]);
 
     useImperativeHandle(ref, () => ({
         setText: async (text: string) => {
@@ -42,22 +60,35 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
 
     const isExpanded = menuState !== 'main';
 
-    const getHpColor = (current: number, max: number) => {
-        const ratio = current / max;
-        if (ratio <= 0.2) return '#e74c3c'; // Red (hp-low)
-        if (ratio <= 0.5) return '#f1c40f'; // Yellow (hp-mid)
-        return '#2ecc71'; // Green (hp-high)
-    };
-
     const onAttackClick = (move: PokemonMove) => {
         setMenuState('main');
         handleOnAttack(move);
     };
 
     const onPokemonClick = (pokemon: PokemonDao) => {
+        if(pokemon.currentHp <= 0) return; // 不能選擇已經昏厥的寶可夢
         if (handleSwitchMyPokemon) {
             setMenuState('main');
             handleSwitchMyPokemon(pokemon);
+        }
+    };
+
+    const onItemClick = (item: ItemDao) => {
+        setMenuState('main');
+        if (item.category === 'PokeBalls' || item.pocket === 'balls') {
+            // Adapt ItemDao to PokeBallDao
+            // Assuming catchRateMultiplier is in effect
+            const catchRate = item.effect?.catchRateMultiplier || 1;
+            handleThrowBall({
+                ...item,
+                category: item.category,
+                catchRateModifier: catchRate
+            });
+        } else if (item.category === 'Medicine' || item.pocket === 'medicine') {
+            handleUseItem(item);
+        } else {
+            // Other items not supported yet in battle
+            console.log("Item not supported in battle yet:", item.name);
         }
     };
 
@@ -89,55 +120,66 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
                 )}
 
                 {menuState === 'party' && (
-                    <div className={styles['move-select-overlay-container']}>
-                        <div className={styles['party-select-overlay-content']}>
-                        {myParty.map((p) => {
-                            const current = p.currentHp ?? p.stats?.hp ?? 100;
-                            const max = p.maxHp ?? p.stats?.hp ?? 100;
-                            const hpPercent = max > 0 ? (current / max) * 100 : 0;
-                            const isFainted = current <= 0;
 
-                            return (
-                                <button 
-                                    key={p.uid} 
-                                    className={`${styles['party-card-btn']} ${isFainted ? styles.fainted : ''}`}
-                                    onClick={() => !isFainted && onPokemonClick(p)}
-                                    disabled={isFainted}
-                                >
-                                    {/* 左側：寶可夢圖示 */}
-                                    <div className={styles['party-sprite-wrapper']}>
-                                        <img 
-                                            src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-viii/icons/${p.id}.png`}
-                                            alt={p.name}
-                                            className={styles['party-sprite']}
-                                        />
+                    <div className={styles['move-select-overlay-container']}>
+                        <PartyGridInModal 
+                            party={myParty} 
+                            onPokemonClick={onPokemonClick} 
+                        />
+                    </div>
+                )}
+
+                {menuState === 'bag' && (
+                    <div className={styles['move-select-overlay-container']}>
+                        <div className={styles['move-select-overlay-content']} style={{ padding: 0, display: 'block', background: '#f0f0f0' }}>
+                            <div className={styles['bag-container']}>
+                                {/* PokeBalls Section */}
+                                <div className={styles['bag-section']}>
+                                    <div className={styles['bag-section-title']}>POKÉ BALLS</div>
+                                    <div className={styles['bag-grid']}>
+                                        {bagItems.filter(item => item.category === 'PokeBalls' || item.pocket === 'balls').map((item) => (
+                                            <button 
+                                                key={item.id} 
+                                                className={styles['bag-item-btn']}
+                                                onClick={() => onItemClick(item)}
+                                                title={item.name}
+                                            >
+                                                {item.spriteUrl && <img src={item.spriteUrl} alt={item.name} className={styles['bag-item-icon']} />}
+                                                <div className={styles['bag-item-badge']}>{item.count}</div>
+                                            </button>
+                                        ))}
                                     </div>
-                                    
-                                    {/* 右側：資訊欄 (名字 + 血條 + 數值) */}
-                                    <div className={styles['party-info']}>
-                                        <div className={styles['party-name']}>
-                                            <div>{p.name}</div>   
-                                            <div className={styles['hp-text']}>
-                                                {current}/{max}
-                                            </div>
-                                        </div>
-                                        
-                                        <div className={styles['hp-bar-container']}>
-                                            <div 
-                                                className={styles['hp-bar-fill']}
-                                                style={{ 
-                                                    width: `${hpPercent}%`,
-                                                    backgroundColor: getHpColor(current, max)
-                                                }}
-                                            />
-                                        </div>
+                                </div>
+
+                                {/* Medicine Section */}
+                                <div className={styles['bag-section']}>
+                                    <div className={styles['bag-section-title']}>MEDICINE</div>
+                                    <div className={styles['bag-grid']}>
+                                        {bagItems.filter(item => item.category === 'Medicine' || item.pocket === 'medicine').map((item) => (
+                                            <button 
+                                                key={item.id} 
+                                                className={styles['bag-item-btn']}
+                                                onClick={() => onItemClick(item)}
+                                                title={item.name}
+                                            >
+                                                {item.spriteUrl && <img src={item.spriteUrl} alt={item.name} className={styles['bag-item-icon']} />}
+                                                <div className={styles['bag-item-badge']}>{item.count}</div>
+                                            </button>
+                                        ))}
                                     </div>
-                                </button>
-                            );
-                        })}
+                                </div>
+                                
+                                {bagItems.length === 0 && (
+                                    <div style={{ padding: '10px', textAlign: 'center', fontSize: '10px', color: '#666' }}>Bag is empty</div>
+                                )}
+                            </div>
                         </div>
                     </div>
                 )}
+
+
+
+
             </div>
 
             {/* 右側面板：雙層 DIV 架構更新 */}
@@ -169,7 +211,7 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
                         {/* BAG */}
                         <button 
                             className={styles['menu-btn-outer']} 
-                            onClick={() => handleThrowBall({ id: 1, type: 'Pokeball', catchRateModifier: 1 })}
+                            onClick={() => setMenuState('bag')}
                         >
                             <div className={styles['menu-btn-inner']}>
                                 BAG

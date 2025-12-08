@@ -1,143 +1,132 @@
 import * as vscode from 'vscode';
 import { PokemonDao } from '../dataAccessObj/pokemon';
-
+import { SequentialExecutor } from '../utils/SequentialExecutor';
 
 export class PokemonBox {
+    // 記憶體快取
     private pokemons: PokemonDao[] = [];
     private context: vscode.ExtensionContext;
     private readonly STORAGE_KEY = 'pokemon-box-data';
 
+    private saveQueue = new SequentialExecutor();
+
     constructor(context: vscode.ExtensionContext) {
         this.context = context;
-        // 初始化時從本機儲存空間讀取資料
         this.reload();
     }
 
-    /**
-     * 從 globalState 讀取資料
-     */
     public reload() {
         const data = this.context.globalState.get<PokemonDao[]>(this.STORAGE_KEY);
         if (data) {
             this.pokemons = data;
+        } else {
+            this.pokemons = [];
         }
     }
 
-    /**
-     * 儲存資料到 globalState
-     */
-    private async save() {
-        await this.context.globalState.update(this.STORAGE_KEY, this.pokemons);
-    }
-
-    /**
-     * 新增寶可夢
-     * @param pokemon 
-     */
-    public async add(pokemon: PokemonDao): Promise<void> {
-        this.pokemons.push(pokemon);
-        await this.save(); // 自動存檔
-    }
-
-    /**
-     * 刪除寶可夢
-     * @param uid 
-     * @returns 是否刪除成功
-     */
-    public async remove(uid: string): Promise<boolean> {
-        const index = this.pokemons.findIndex(p => p.uid === uid);
-        if (index !== -1) {
-            this.pokemons.splice(index, 1);
-            await this.save(); // 自動存檔
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * 修改順序
-     * @param fromIndex 原始位置
-     * @param toIndex 目標位置
-     * @returns 是否移動成功
-     */
-    public async move(fromIndex: number, toIndex: number): Promise<boolean> {
-        if (fromIndex < 0 || fromIndex >= this.pokemons.length || 
-            toIndex < 0 || toIndex >= this.pokemons.length) {
-            return false;
-        }
-        
-        const [movedPokemon] = this.pokemons.splice(fromIndex, 1);
-        this.pokemons.splice(toIndex, 0, movedPokemon);
-        await this.save(); // 自動存檔
-        return true;
-    }
-
-    /**
-     * 批量刪除寶可夢
-     * @param uids 
-     */
-    public async batchRemove(uids: string[]): Promise<void> {
-        const uidSet = new Set(uids);
-        this.pokemons = this.pokemons.filter(p => !uidSet.has(p.uid));
-        await this.save();
-    }
-
-    /**
-     * 根據 UID 列表重新排序
-     * @param uids 
-     */
-    public async reorder(uids: string[]): Promise<void> {
-        const newOrder: PokemonDao[] = [];
-        const map = new Map(this.pokemons.map(p => [p.uid, p]));
-        
-        for (const uid of uids) {
-            const p = map.get(uid);
-            if (p) {
-                newOrder.push(p);
-                map.delete(uid);
-            }
-        }
-        
-        // Append any remaining pokemons that weren't in the uids list (just in case)
-        for (const p of map.values()) {
-            newOrder.push(p);
-        }
-        
-        this.pokemons = newOrder;
-        await this.save();
-    }
-
-    /**
-     * 取得所有寶可夢
-     */
     public getAll(): PokemonDao[] {
         return [...this.pokemons];
     }
 
-    /**
-     * 根據 UID 取得寶可夢
-     * @param uid 
-     */
     public get(uid: string): PokemonDao | undefined {
         return this.pokemons.find(p => p.uid === uid);
     }
 
     /**
-     * (擴充功能) 匯出存檔字串，可用於備份到雲端
+     * 通用交易處理器
      */
+    private async performTransaction(modifier: (list: PokemonDao[]) => void): Promise<void> {
+        await this.saveQueue.execute(async () => {
+            // 1. Read
+            const currentList = this.context.globalState.get<PokemonDao[]>(this.STORAGE_KEY) || [];
+            
+            // 2. Modify
+            modifier(currentList);
+
+            // 3. Write
+            await this.context.globalState.update(this.STORAGE_KEY, currentList);
+
+            // 4. Update Cache
+            this.pokemons = currentList;
+        });
+    }
+
+    public async add(pokemon: PokemonDao): Promise<void> {
+        await this.performTransaction((list) => {
+            list.push(pokemon);
+        });
+    }
+
+    public async remove(uid: string): Promise<boolean> {
+        let success = false;
+        await this.performTransaction((list) => {
+            const index = list.findIndex(p => p.uid === uid);
+            if (index !== -1) {
+                list.splice(index, 1);
+                success = true;
+            }
+        });
+        return success;
+    }
+
+    public async move(fromIndex: number, toIndex: number): Promise<boolean> {
+        let success = false;
+        await this.performTransaction((list) => {
+            if (fromIndex >= 0 && fromIndex < list.length && 
+                toIndex >= 0 && toIndex < list.length) {
+                const [movedPokemon] = list.splice(fromIndex, 1);
+                list.splice(toIndex, 0, movedPokemon);
+                success = true;
+            }
+        });
+        return success;
+    }
+
+    public async batchRemove(uids: string[]): Promise<void> {
+        await this.performTransaction((list) => {
+            const uidSet = new Set(uids);
+            // 直接修改傳入的 list 參照 (Array.filter 會回傳新陣列，所以要用 splice 或是重新賦值)
+            // 由於 performTransaction 預期我們修改 list，這裡我們用 filter 算出結果後，清空 list 再塞回去
+            const filtered = list.filter(p => !uidSet.has(p.uid));
+            list.length = 0; // 清空原陣列
+            list.push(...filtered); // 塞入過濾後的資料
+        });
+    }
+
+    public async reorder(uids: string[]): Promise<void> {
+        await this.performTransaction((list) => {
+            const newOrder: PokemonDao[] = [];
+            const map = new Map(list.map(p => [p.uid, p]));
+            
+            for (const uid of uids) {
+                const p = map.get(uid);
+                if (p) {
+                    newOrder.push(p);
+                    map.delete(uid);
+                }
+            }
+            // 剩下的放後面
+            for (const p of map.values()) {
+                newOrder.push(p);
+            }
+            
+            list.length = 0;
+            list.push(...newOrder);
+        });
+    }
+
     public exportData(): string {
         return JSON.stringify(this.pokemons);
     }
 
-    /**
-     * (擴充功能) 從字串匯入存檔
-     */
-    public importData(jsonString: string): boolean {
+    public async importData(jsonString: string): Promise<boolean> {
         try {
             const data = JSON.parse(jsonString);
             if (Array.isArray(data)) {
-                this.pokemons = data;
-                this.save();
+                await this.performTransaction((list) => {
+                    list.length = 0;
+                    list.push(...data);
+                });
                 return true;
             }
         } catch (e) {

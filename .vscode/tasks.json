@@ -9,12 +9,44 @@
 			"problemMatcher": "$tsc-watch",
 			"isBackground": true,
 			"presentation": {
-				"reveal": "never"
+				"reveal": "never",
+				"group": "watchers"
 			},
+			"group": "build",
+			"label": "npm: watch"
+		},
+		{
+			"type": "shell",
+			"command": "npm run dev",
+			"options": {
+				"cwd": "${workspaceFolder}/webview-ui"
+			},
+			"isBackground": true,
+			"problemMatcher": {
+				"owner": "custom",
+				"pattern": {
+					"regexp": "^$"
+				},
+				"background": {
+					"activeOnStart": true,
+					"beginsPattern": "VITE",
+					"endsPattern": "ready in"
+				}
+			},
+			"presentation": {
+				"reveal": "always",
+				"group": "watchers"
+			},
+			"label": "webview: dev"
+		},
+		{
+			"label": "Watch All",
+			"dependsOn": ["npm: watch", "webview: dev"],
 			"group": {
 				"kind": "build",
 				"isDefault": true
-			}
+			},
+			"problemMatcher": []
 		}
 	]
 }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { PokemonDao } from '../dataAccessObj/pokemon';
 import styles from './PokemonInfoModal.module.css';
+import { getBallUrl } from '../utilities/util';
 
 const IconClose = () => (
     <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
@@ -15,28 +16,6 @@ interface PokemonInfoModalProps {
 
 export const PokemonInfoModal: React.FC<PokemonInfoModalProps> = ({ pokemon, onClose, onAction, actionLabel }) => {
     const [activeTab, setActiveTab] = useState<'stats' | 'moves' | 'iv'>('stats');
-
-    const getBallUrl = (ballName: string = 'poke-ball') => {
-        const nameMap: { [key: string]: string } = {
-            'Pokeball': 'poke-ball',
-            'Greatball': 'great-ball',
-            'Ultraball': 'ultra-ball',
-            'Masterball': 'master-ball',
-            'SafariBall': 'safari-ball',
-            'NetBall': 'net-ball',
-            'DiveBall': 'dive-ball',
-            'NestBall': 'nest-ball',
-            'RepeatBall': 'repeat-ball',
-            'TimerBall': 'timer-ball',
-            'LuxuryBall': 'luxury-ball',
-            'PremierBall': 'premier-ball'
-        };
-
-        const mappedName = nameMap[ballName];
-        return mappedName 
-            ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/${mappedName}.png`
-            : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png`;
-    };
 
     return (
         <div className={styles.modalOverlay} onClick={onClose}>

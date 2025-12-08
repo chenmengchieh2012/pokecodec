@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { BattleCanvasHandle, VBattleCanvas } from '../frame/VBattleCanvas';
-import { SearchScene } from '../frame/search';
+import { VSearchScene } from '../frame/VSearchScene';
 import { BattleControl, BattleControlHandle } from '../frame/BattleControl';
 import { BattleManager } from '../manager/battleManager';
 import { GameState } from '../dataAccessObj/battleTypes';
@@ -38,12 +38,13 @@ export const VBattlePage = () => {
   return (
     <div className="game-container">
       {gameState === GameState.Searching ? (
-             <SearchScene 
+             <VSearchScene 
                 myPokemon={myPokemon} 
              />
         ) : (
             <>
             <VBattleCanvas  
+                ref={battleCanvasRef}
                 myPokemon={myPokemon} 
                 myPokemonState={myPokemonState}
                 opponentPokemon={opponentPokemon}
@@ -55,6 +56,7 @@ export const VBattlePage = () => {
                 ref={dialogBoxRef}
                 handleOnAttack={battleManagerMethod.handleOnAttack}
                 handleThrowBall={battleManagerMethod.handleThrowBall}
+                handleUseItem={battleManagerMethod.handleUseItem}
                 handleRunAway={battleManagerMethod.handleRunAway}
                 handleSwitchMyPokemon={battleManagerMethod.handleSwitchMyPokemon} 
             />

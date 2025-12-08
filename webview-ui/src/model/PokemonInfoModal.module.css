@@ -19,18 +19,20 @@
 /* --- Summary Card (Popup) --- */
 .summaryCard {
     width: 360px;
+    height: 180px;
     background-color: #f8f8f0;
     border: 3px solid #303030;
     border-radius: 12px;
     border-bottom-right-radius: 20px;
     box-shadow: 8px 8px 0 rgba(0,0,0,0.3);
-    padding: 6px;
+    padding: 4px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
     animation: popupAnim 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     font-family: 'VT323', monospace;
     color: #202020;
+    box-sizing: border-box;
 }
 
 @keyframes popupAnim {
@@ -58,8 +60,8 @@
 }
 
 .iconBox {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -76,21 +78,25 @@
 
 .summaryBody {
     display: flex;
-    gap: 16px;
+    gap: 8px;
+    flex: 1;
+    min-height: 0;
 }
 
 /* Left Column */
 .summaryLeft {
-    width: 100px;
+    width: 90px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: 2px;
+    justify-content: space-between;
+    padding-bottom: 2px;
 }
 
 .spriteFrame {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     background: #fff;
     border: 2px solid #303030;
     border-radius: 8px;
@@ -103,17 +109,17 @@
 
 .expandedBallDecor {
     position: absolute;
-    top: -10px;
-    left: -10px;
-    width: 24px;
-    height: 24px;
+    top: -8px;
+    left: -8px;
+    width: 20px;
+    height: 20px;
     filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.2));
     z-index: 10;
 }
 
 .summarySprite {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     image-rendering: pixelated;
 }
 
@@ -129,9 +135,9 @@
 }
 
 .pkmName {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: bold;
-    margin: 2px 0;
+    margin: 1px 0;
     text-transform: uppercase;
 }
 
@@ -148,10 +154,9 @@
 }
 
 .typeTag {
-    padding: 2px 6px;
+    padding: 1px 4px;
     border-radius: 4px;
     color: white;
-    font-size: 12px;
     text-transform: uppercase;
     font-family: 'Press Start 2P', monospace;
     font-size: 8px;
@@ -179,7 +184,7 @@
 
 .withdrawBtn {
     width: 100%;
-    padding: 4px;
+    padding: 2px;
     background: #3080ff;
     color: white;
     border: 2px solid #004080;
@@ -205,13 +210,13 @@
 .tabsRow {
     display: flex;
     gap: 4px;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 }
 
 .tab {
     flex: 1;
     text-align: center;
-    padding: 4px;
+    padding: 2px;
     background: #e0e0e0;
     border: 2px solid transparent;
     border-bottom: 2px solid #ccc;
@@ -232,21 +237,22 @@
     background: #fff;
     border: 2px solid #303030;
     border-radius: 0 4px 4px 4px;
-    padding: 8px;
+    padding: 4px;
     min-height: 0;
+    overflow-y: auto;
 }
 
 .statsGrid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 2px 12px;
+    gap: 1px 8px;
 }
 
 .statItem {
     display: flex;
     justify-content: space-between;
-    font-size: 12px;
-    line-height: 1.4;
+    font-size: 10px;
+    line-height: 1.3;
 }
 
 .fullWidth {
@@ -263,16 +269,16 @@
 .movesList {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 4px;
+    gap: 2px;
 }
 
 .moveItem {
     display: flex;
     flex-direction: column;
-    padding: 4px 6px;
+    padding: 2px 4px;
     background: #f0f0f0;
     border-radius: 4px;
-    font-size: 12px;
+    font-size: 10px;
 }
 
 .moveName {

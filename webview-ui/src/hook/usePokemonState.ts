@@ -12,6 +12,7 @@ export interface PokemonStateHandler {
     randomMove: () => PokemonMove;
     resetPokemon: () => void;
     switchPokemon: (pokemon: PokemonDao) => Promise<void>;
+    heal: (amount: number) => Promise<void>;
 }
 
 export interface UsePokemonStateProps{
@@ -41,21 +42,17 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
             throw new Error("No pokemon available for random move selection.");
         }
         const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
-
+    
         // Implement the logic for throwing a ball here
-        console.log(`Throwing a ${ballDao.type} with catch rate modifier of ${ballDao.catchRateModifier}`);
+        console.log(`Throwing a ${ballDao.apiName} with catch rate modifier of ${ballDao.catchRateModifier}`);
         setPokemonState(prev => ({ ...prev, action: PokemonStateAction.Catching }));
         await dialogRef.current?.setText(`POKé BALL!!!`);
-        await sleep(1000);
         await dialogRef.current?.setText("...");
-        
-        await sleep(1000);
+        await sleep(500);
         await dialogRef.current?.setText("... ...");
-        
-        await sleep(1000);
+        await sleep(500);
         await dialogRef.current?.setText("... ... ...");
-    
-        await sleep(1000);
+        await sleep(500);
 
         const isSuccess = Math.random() > 0.4; // 60% 捕獲率
         if (isSuccess) {
@@ -266,14 +263,26 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
         });
     }, []);
 
+    const handleHeal = useCallback(async (amount: number) => {
+        const currentPokemon = pokemonRef.current;
+        if (!currentPokemon) return;
+
+        const maxHp = currentPokemon.maxHp || currentPokemon.stats.hp;
+        const currentHp = currentPokemon.currentHp ?? maxHp;
+        const newHp = Math.min(maxHp, currentHp + amount);
+
+        setPokemon(prev => prev ? { ...prev, currentHp: newHp } : undefined);
+    }, []);
+
     const handler: PokemonStateHandler = useMemo(() => ({
         newEncounter: handleNewEncounter,
         throwBall: handleThrowBall,
         hited: handleHited,
         randomMove: handleRandomMove,
         switchPokemon: handleSwitchPokemon,
-        resetPokemon: handleResetPokemon
-    }), [handleNewEncounter, handleThrowBall, handleHited, handleRandomMove, handleSwitchPokemon, handleResetPokemon]);
+        resetPokemon: handleResetPokemon,
+        heal: handleHeal
+    }), [handleNewEncounter, handleThrowBall, handleHited, handleRandomMove, handleSwitchPokemon, handleResetPokemon, handleHeal]);
 
     return {
         pokemon,

@@ -3,6 +3,7 @@ import { PokemonBox } from './manager/pokeBox';
 import { JoinPokemon } from './manager/joinPokemon';
 import { BagManager } from './manager/bags';
 import { UserInfoManager } from './manager/userInfo';
+import { PokemonDao } from './dataAccessObj/pokemon';
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -31,6 +32,13 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.commands.registerCommand('pokemon.triggerEncounter', () => {
             gameProvider.triggerEncounter();
+        })
+    );
+
+    // 🔥 新增指令：重置儲存
+    context.subscriptions.push(
+        vscode.commands.registerCommand('pokemon.resetStorage', () => {
+            gameProvider.resetStorage();
         })
     );
 }
@@ -63,11 +71,30 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             this._party.reload();
             this._bag.reload();
             this._userInfo.reload();
+            const inBattle = this._context.globalState.get<boolean>('pokemon-battle-state') || false;
             this._view.webview.postMessage({ type: 'partyData', data: this._party.getAll() });
             this._view.webview.postMessage({ type: 'boxData', data: this._pokemonBox.getAll() });
             this._view.webview.postMessage({ type: 'bagData', data: this._bag.getAll() });
             this._view.webview.postMessage({ type: 'userData', data: this._userInfo.getUserInfo() });
+            this._view.webview.postMessage({ type: 'battleState', inBattle });
         }
+    }
+
+    public async resetStorage() {
+        await this._context.globalState.update('pokemon-bag-data', undefined);
+        await this._context.globalState.update('pokemon-user-info', undefined);
+        await this._context.globalState.update('pokemon-party-data', undefined);
+        await this._context.globalState.update('pokemon-box-data', undefined);
+        await this._context.globalState.update('pokemon-battle-state', false);
+        
+        // Add default pokemon
+        const starter = { ...defaultPokemon };
+        starter.uid = 'starter-' + Date.now();
+        starter.caughtDate = Date.now();
+        await this._party.add(starter);
+
+        vscode.window.showInformationMessage('Global storage 已重置！');
+        PokemonViewProvider.providers.forEach(p => p.updateViews());
     }
 
     public resolveWebviewView(
@@ -89,8 +116,17 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         // 設定 HTML 內容
         webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
+        // 每次打開都強制刷新資料
+        setTimeout(() => {
+            this.updateViews();
+        }, 100);
+
         // 處理來自 React 的訊息
         webviewView.webview.onDidReceiveMessage(async message => {
+            console.log('[Extension] Received message:', message);
+            if (message.command === 'resetStorage') {
+                await this.resetStorage();
+            }
             if (message.command === 'catch') {
                 vscode.window.showInformationMessage(message.text);
                 if (message.pokemon) {
@@ -160,15 +196,104 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                 const items = this._bag.getAll();
                 webviewView.webview.postMessage({ type: 'bagData', data: items });
             }
+            if (message.command === 'useItemInBag') {
+                const itemId = message.itemId || (message.item && (message.item.apiName || message.item.id));
+                console.log(`[Extension] useItemInBag: itemId=${itemId}, pokemonUid=${message.pokemonUid}`);
+
+                if (message.pokemonUid) {
+                    const party = this._party.getAll();
+                    const pokemon = party.find(p => p.uid === message.pokemonUid);
+                    
+                    if (!pokemon) {
+                        console.error('[Extension] Pokemon not found');
+                        return;
+                    }
+
+                    if (!message.item) {
+                        console.error('[Extension] Item not provided');
+                        return;
+                    }
+
+                    const effect = message.item.effect;
+                    console.log('[Extension] Item effect:', effect);
+
+                    let itemUsed = false;
+                    let usedMessage = '';
+
+                    if (effect) {
+                        const oldHp = pokemon.currentHp;
+                        
+                        // 1. Heal HP (Fixed)
+                        if (effect.healHp) {
+                            if (pokemon.currentHp < pokemon.maxHp) {
+                                const healAmount = effect.healHp;
+                                pokemon.currentHp = Math.min(pokemon.maxHp, pokemon.currentHp + healAmount);
+                                itemUsed = true;
+                                usedMessage = `Restored ${pokemon.currentHp - oldHp} HP.`;
+                            } else {
+                                vscode.window.showInformationMessage('HP is already full!');
+                            }
+                        }
+                        // 2. Heal HP (Percent)
+                        else if (effect.healHpPercent) {
+                            if (pokemon.currentHp < pokemon.maxHp) {
+                                const healAmount = Math.floor(pokemon.maxHp * (effect.healHpPercent / 100));
+                                pokemon.currentHp = Math.min(pokemon.maxHp, pokemon.currentHp + healAmount);
+                                itemUsed = true;
+                                usedMessage = `Restored ${pokemon.currentHp - oldHp} HP.`;
+                            } else {
+                                vscode.window.showInformationMessage('HP is already full!');
+                            }
+                        }
+                        // 3. Revive
+                        else if (effect.revive) {
+                            if (pokemon.currentHp === 0) {
+                                const healPercent = effect.reviveHpPercent || 50;
+                                pokemon.currentHp = Math.floor(pokemon.maxHp * (healPercent / 100));
+                                itemUsed = true;
+                                usedMessage = `Revived with ${pokemon.currentHp} HP.`;
+                            } else {
+                                vscode.window.showInformationMessage('Pokemon is not fainted!');
+                            }
+                        }
+                        // 4. Status Heal (Placeholder)
+                        else if (effect.healStatus) {
+                             // TODO: Implement status healing
+                             vscode.window.showInformationMessage('Status healing not implemented yet.');
+                        }
+                    } else {
+                        console.warn('[Extension] Item has no effect defined.');
+                        vscode.window.showWarningMessage('This item has no effect defined.');
+                    }
+
+                    if (itemUsed) {
+                        // 更新寶可夢狀態
+                        await this._party.update(pokemon);
+                        
+                        // 扣除道具
+                        await this._bag.useItem(itemId, 1);
+                        
+                        vscode.window.showInformationMessage(`Used ${message.item.name} on ${pokemon.name}. ${usedMessage}`);
+                        
+                        PokemonViewProvider.providers.forEach(p => p.updateViews());
+                    }
+                }
+            }
+
             if (message.command === 'useItem') {
-                const success = await this._bag.useItem(message.itemId, message.count);
+                // 1. 取得 Item ID
+                const itemId = message.itemId || (message.item && (message.item.apiName || message.item.id));
+                
+                // 2. 單純消耗道具 (既有邏輯)
+                const success = await this._bag.useItem(itemId, message.count || 1);
                 if (success) {
                     PokemonViewProvider.providers.forEach(p => p.updateViews());
                 }
             }
             if (message.command === 'addItem') {
                 if (message.item) {
-                    await this._bag.add(message.item);
+                    console.log("Adding item:", message.item, "Count:", message.count);
+                    await this._bag.add(message.item,message.count);
                     PokemonViewProvider.providers.forEach(p => p.updateViews());
                 }
             }
@@ -189,6 +314,14 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                     await this._userInfo.updateMoney(message.amount);
                     PokemonViewProvider.providers.forEach(p => p.updateViews());
                 }
+            }
+            if (message.command === 'setBattleState') {
+                await this._context.globalState.update('pokemon-battle-state', message.inBattle);
+                PokemonViewProvider.providers.forEach(p => p.updateViews());
+            }
+            if (message.command === 'getBattleState') {
+                const inBattle = this._context.globalState.get<boolean>('pokemon-battle-state') || false;
+                webviewView.webview.postMessage({ type: 'battleState', inBattle });
             }
         });
 
@@ -220,9 +353,9 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 <title>Pokemon React Dev</title>
                 
-                <base href="http://localhost:5173/">
+                <base href="http://localhost:5174/">
 
-                <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src https: data:; style-src 'unsafe-inline' http://localhost:5173; script-src 'unsafe-inline' 'unsafe-eval' http://localhost:5173; connect-src http://localhost:5173 ws://localhost:5173 https://pokeapi.co;">
+                <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src https: data:; style-src 'unsafe-inline' http://localhost:5174; script-src 'unsafe-inline' 'unsafe-eval' http://localhost:5174; connect-src http://localhost:5174 ws://localhost:5174 https://pokeapi.co;">
 
                 <script type="module" src="/@vite/client"></script>
 
@@ -235,7 +368,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                     window.viewType = "${this._viewType}";
                 </script>
             </head>
-            <body>
+            <body style="min-width: 360px; margin: 0; padding: 0;">
                 <div id="root"></div>
                 <script type="module" src="/src/main.tsx"></script>
             </body>
@@ -259,7 +392,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                     window.viewType = "${this._viewType}";
                 </script>
             </head>
-            <body>
+            <body style="min-width: 360px; margin: 0; padding: 0;">
                 <div id="root"></div>
                 <script nonce="${getNonce()}" type="module" src="${scriptUri}"></script>
             </body>
@@ -276,3 +409,72 @@ function getNonce() {
     }
     return text;
 }
+
+
+
+export const defaultPokemon: PokemonDao = {
+    uid: 'player-pikachu',
+    id: 25,
+    name: 'PIKACHU',
+    level: 5,
+    currentHp: 20,
+    maxHp: 20,
+    stats: { hp: 20, attack: 12, defense: 10, specialAttack: 11, specialDefense: 11, speed: 15 },
+    iv: { hp: 31, attack: 31, defense: 31, specialAttack: 31, specialDefense: 31, speed: 31 },
+    ev: { hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 },
+    types: ['Electric'],
+    gender: 'Male',
+    nature: 'Hardy',
+    ability: 'Static',
+    height: 4,
+    weight: 60,
+    baseExp: 112,
+    currentExp: 0,
+    toNextLevelExp: 100,
+    isShiny: false,
+    originalTrainer: 'Player',
+    caughtDate: Date.now(),
+    caughtBall: 'poke-ball',
+        pokemonMoves: [
+            {
+                id: 1,
+                name: 'THUNDER SHOCK',
+                power: 40,
+                type: 'Electric',
+                accuracy: 100,
+                pp: 30,
+                maxPP: 30,
+                effect: ''
+            },
+            {
+                id: 2,
+                name: 'QUICK ATTACK',
+                power: 40,
+                type: 'Normal',
+                accuracy: 100,
+                pp: 30,
+                maxPP: 30,
+                effect: ''
+            },
+            {
+                id: 3,
+                name: 'ELECTRO BALL',
+                power: 60,
+                type: 'Electric',
+                accuracy: 100,
+                pp: 10,
+                maxPP: 10,
+                effect: ''
+            },
+            {
+                id: 4,
+                name: 'DOUBLE TEAM',
+                power: 0,
+                type: 'Normal',
+                accuracy: 0,
+                pp: 15,
+                maxPP: 15,
+                effect: 'Raises evasion.'
+            }
+        ]
+};

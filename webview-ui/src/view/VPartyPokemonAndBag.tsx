@@ -1,7 +1,8 @@
-import { useState } from 'react';
-import { BagItem, VBagBox } from '../frame/VBagBox';
+import { useState, useEffect } from 'react';
+import { VBagBox } from '../frame/VBagBox';
 import { VPartyBox } from '../frame/VPartyBox';
 import styles from './VPartyPokemonAndBag.module.css';
+import { vscode } from '../utilities/vscode';
 
 const IconPokeball = () => (
     <svg viewBox="0 0 24 24" className={styles.tabSvg}>
@@ -17,25 +18,84 @@ const IconBackpack = () => (
     </svg>
 );
 
-// 模擬資料 (因為目前沒有後端傳入道具)
-const mockBagItems: BagItem[] = [
-    { id: 1, name: 'Potion', apiName: 'potion', count: 5, category: 'items' },
-    { id: 2, name: 'Super Potion', apiName: 'super-potion', count: 2, category: 'items' },
-    { id: 3, name: 'Revive', apiName: 'revive', count: 1, category: 'items' },
-    { id: 4, name: 'Antidote', apiName: 'antidote', count: 3, category: 'items' },
-    { id: 5, name: 'Poke Ball', apiName: 'poke-ball', count: 15, category: 'balls' },
-    { id: 6, name: 'Great Ball', apiName: 'great-ball', count: 5, category: 'balls' },
-    { id: 7, name: 'Ultra Ball', apiName: 'ultra-ball', count: 1, category: 'balls' },
-    { id: 8, name: 'Exp. Share', apiName: 'exp-share', count: 1, category: 'key' },
-    { id: 9, name: 'Old Rod', apiName: 'old-rod', count: 1, category: 'key' },
-    { id: 10, name: 'Bicycle', apiName: 'bicycle', count: 1, category: 'key' },
-];
-
 export const VPartyPokemonAndBag = () => {
     const [activeTab, setActiveTab] = useState<'party' | 'bag'>('party');
+    const [inBattle, setInBattle] = useState(false);
 
+    useEffect(() => {
+        vscode.postMessage({ command: 'getBattleState' });
+        const handleMessage = (event: MessageEvent) => {
+            const message = event.data;
+            if (message.type === 'battleState') {
+                setInBattle(message.inBattle);
+            }
+        };
+        window.addEventListener('message', handleMessage);
+        return () => window.removeEventListener('message', handleMessage);
+    }, []);
 
-
+    if (inBattle) {
+        return (
+            <div className={styles.emeraldContainer} style={{ 
+                display: 'flex', 
+                justifyContent: 'center', 
+                alignItems: 'center', 
+                flexDirection: 'column',
+                width: '100%',
+                height: '100%',
+                position: 'relative'
+            }}>
+                {/* Overlay to dim background if we wanted to show it, but here we replace it */}
+                <div style={{ 
+                    width: '280px',
+                    backgroundColor: 'var(--emerald-dark)', 
+                    padding: '4px', 
+                    borderRadius: '4px', 
+                    border: '2px solid var(--ui-border)',
+                    boxShadow: '4px 4px 0px rgba(0,0,0,0.4)',
+                    imageRendering: 'pixelated'
+                }}>
+                    <div style={{
+                        border: '2px solid #78C8B8',
+                        backgroundColor: '#204840',
+                        padding: '12px',
+                        borderRadius: '2px',
+                        color: '#fff',
+                        textAlign: 'center',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '8px'
+                    }}>
+                        <div style={{ 
+                            fontSize: '10px', 
+                            color: '#F8B050', 
+                            textTransform: 'uppercase',
+                            letterSpacing: '1px',
+                            marginBottom: '4px'
+                        }}>
+                            ⚠️ Access Denied
+                        </div>
+                        <div style={{ 
+                            fontSize: '10px', 
+                            lineHeight: '1.6',
+                            color: '#ffffff',
+                            textShadow: '1px 1px 0 #000'
+                        }}>
+                            You cannot use the Bag or Party<br/>while in a battle!
+                        </div>
+                        <div style={{
+                            marginTop: '8px',
+                            fontSize: '8px',
+                            color: '#78C8B8',
+                            opacity: 0.8
+                        }}>
+                            Finish the battle first.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.emeraldContainer}>
@@ -63,7 +123,7 @@ export const VPartyPokemonAndBag = () => {
                 {activeTab === 'party' ? (
                     <VPartyBox />
                 ) : (
-                    <VBagBox items={mockBagItems} />
+                    <VBagBox/>
                 )}
             </div>
         </div>

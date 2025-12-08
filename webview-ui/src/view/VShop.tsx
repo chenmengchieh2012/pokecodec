@@ -3,11 +3,11 @@ import styles from './VShop.module.css';
 import { vscode } from '../utilities/vscode';
 import { ItemDao, adaptPokeApiItem, PokeApiItem } from '../dataAccessObj/item';
 
+// 狀態物品 'revive', 'antidote', 'paralyze-heal', 'burn-heal', 'ice-heal', 'sleep-heal', 'awakening', 'full-heal'
 // 預設商店販售的商品列表 (可以擴充)
 const SHOP_ITEMS_API_NAMES = [
     'poke-ball', 'great-ball', 'ultra-ball',
-    'potion', 'super-potion', 'hyper-potion', 'max-potion', 'full-restore',
-    'revive', 'antidote', 'paralyze-heal', 'burn-heal', 'ice-heal', 'awakening', 'full-heal'
+    'potion', 'super-potion', 'hyper-potion', 'max-potion', 'full-restore'
 ];
 
 const IconBuy = () => (
@@ -107,7 +107,8 @@ export const VShop = () => {
                 // 2. 加道具
                 vscode.postMessage({ 
                     command: 'addItem', 
-                    item: { ...selectedItem, count: quantity } 
+                    item: selectedItem,
+                    count: quantity 
                 });
                 // 更新本地顯示 (雖然 extension 會回傳，但為了即時性先扣)
                 setMoney(prev => prev - totalPrice);
@@ -124,7 +125,8 @@ export const VShop = () => {
             // 2. 扣道具
             vscode.postMessage({ 
                 command: 'removeItem', 
-                item: { ...selectedItem, count: quantity } 
+                item: selectedItem,
+                count: quantity 
             });
              // 更新本地顯示
              setMoney(prev => prev + totalPrice);
@@ -161,9 +163,12 @@ export const VShop = () => {
 
             {/* Main Content */}
             <div className={styles.contentWrapper}>
-                <div className={styles.moneyDisplay}>
-                    <span>$</span>
-                    <span>{money}</span>
+                <div className={styles.header}>
+                    <div className={styles.shopTitle}>{mode === 'buy' ? 'POKé MART' : 'YOUR BAG'}</div>
+                    <div className={styles.moneyDisplay}>
+                        <span>$</span>
+                        <span>{money}</span>
+                    </div>
                 </div>
 
                 <div className={styles.contentArea}>
@@ -172,6 +177,7 @@ export const VShop = () => {
                             key={item.id} 
                             className={styles.itemCard}
                             onClick={() => handleItemClick(item)}
+                            title={item.name}
                         >
                             {mode === 'sell' && <div className={styles.itemCount}>{item.count}</div>}
                             <img src={item.spriteUrl} alt={item.name} className={styles.itemIcon} />
@@ -182,7 +188,7 @@ export const VShop = () => {
                         </div>
                     ))}
                     {displayItems.length === 0 && (
-                        <div style={{ padding: 20, textAlign: 'center', color: '#7f8c8d', width: '100%' }}>
+                        <div style={{ padding: 20, textAlign: 'center', color: '#7f8c8d', width: '100%', gridColumn: '1 / -1' }}>
                             {mode === 'buy' ? 'Loading Shop...' : 'Your Bag is Empty'}
                         </div>
                     )}
@@ -193,44 +199,58 @@ export const VShop = () => {
             {isDialogOpen && selectedItem && (
                 <div className={styles.dialogOverlay} onClick={() => setIsDialogOpen(false)}>
                     <div className={styles.dialogBox} onClick={e => e.stopPropagation()}>
-                        <div className={styles.dialogTitle}>
-                            {mode === 'buy' ? 'Buy' : 'Sell'} {selectedItem.name}
-                        </div>
-                        
-                        <div className={styles.dialogInfo}>
-                            <img src={selectedItem.spriteUrl} alt={selectedItem.name} width={40} />
-                            <div>
-                                <div style={{ fontSize: '0.9em', color: '#7f8c8d' }}>Price per unit</div>
-                                <div style={{ fontWeight: 'bold' }}>${mode === 'buy' ? selectedItem.price : selectedItem.sellPrice}</div>
+                        <div className={styles.dialogHeader}>
+                            <img src={selectedItem.spriteUrl} alt={selectedItem.name} className={styles.dialogIcon} />
+                            <div className={styles.dialogHeaderText}>
+                                <div className={styles.dialogTitle}>
+                                    {mode === 'buy' ? 'BUY' : 'SELL'}
+                                </div>
+                                <div className={styles.itemNameSmall}>{selectedItem.name}</div>
+                            </div>
+                            <div className={styles.priceLabel}>
+                                ${mode === 'buy' ? selectedItem.price : selectedItem.sellPrice}
                             </div>
                         </div>
 
-                        <div className={styles.quantityControl}>
-                            <button 
-                                className={styles.qtyBtn} 
-                                onClick={() => handleQuantityChange(-1)}
-                                disabled={quantity <= 1}
-                            >-</button>
-                            <div className={styles.qtyInput}>{quantity}</div>
-                            <button 
-                                className={styles.qtyBtn} 
-                                onClick={() => handleQuantityChange(1)}
-                                disabled={mode === 'buy' ? (quantity * selectedItem.price > money) : (quantity >= selectedItem.count)}
-                            >+</button>
+                        <div className={styles.divider}></div>
+
+                        <div className={styles.quantitySection}>
+                            <div className={styles.qtyLabel}>數量</div>
+                            <div className={styles.quantityControl}>
+                                <button 
+                                    className={styles.qtyBtn} 
+                                    onClick={() => handleQuantityChange(-1)}
+                                    disabled={quantity <= 1}
+                                >−</button>
+                                <input 
+                                    type="text"
+                                    className={styles.qtyInput} 
+                                    value={quantity}
+                                    readOnly
+                                />
+                                <button 
+                                    className={styles.qtyBtn} 
+                                    onClick={() => handleQuantityChange(1)}
+                                    disabled={mode === 'buy' ? (quantity * selectedItem.price > money) : (quantity >= selectedItem.count)}
+                                >+</button>
+                            </div>
                         </div>
 
-                        <div className={styles.totalPrice}>
-                            Total: ${quantity * (mode === 'buy' ? selectedItem.price : selectedItem.sellPrice)}
+                        <div className={styles.totalSection}>
+                            <div className={styles.totalLabel}>合計</div>
+                            <div className={styles.totalPrice}>
+                                ${quantity * (mode === 'buy' ? selectedItem.price : selectedItem.sellPrice)}
+                            </div>
                         </div>
 
                         <div className={styles.actionButtons}>
-                            <button className={styles.cancelBtn} onClick={() => setIsDialogOpen(false)}>Cancel</button>
+                            <button className={styles.cancelBtn} onClick={() => setIsDialogOpen(false)}>取消</button>
                             <button 
                                 className={styles.confirmBtn} 
                                 onClick={handleConfirm}
                                 disabled={mode === 'buy' && money < (selectedItem.price * quantity)}
                             >
-                                Confirm
+                                確認
                             </button>
                         </div>
                     </div>

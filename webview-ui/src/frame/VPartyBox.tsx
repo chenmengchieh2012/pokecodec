@@ -3,6 +3,7 @@ import { PokemonDao } from '../dataAccessObj/pokemon';
 import styles from './VPartyBox.module.css';
 import { vscode } from '../utilities/vscode';
 import { PokemonInfoModal } from '../model/PokemonInfoModal';
+import { getBallUrl } from '../utilities/util';
 
 
 export const VPartyBox = () => {
@@ -37,30 +38,6 @@ export const VPartyBox = () => {
         return '#58D080';
     };
 
-    const getBallUrl = (ballName: string = 'poke-ball') => {
-        const nameMap: { [key: string]: string } = {
-            'Pokeball': 'poke-ball',
-            'Greatball': 'great-ball',
-            'Ultraball': 'ultra-ball',
-            'Masterball': 'master-ball',
-            'SafariBall': 'safari-ball',
-            'NetBall': 'net-ball',
-            'DiveBall': 'dive-ball',
-            'NestBall': 'nest-ball',
-            'RepeatBall': 'repeat-ball',
-            'TimerBall': 'timer-ball',
-            'LuxuryBall': 'luxury-ball',
-            'PremierBall': 'premier-ball'
-        };
-
-        const mappedName = nameMap[ballName];
-        if (mappedName) {
-            return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/${mappedName}.png`;
-        } else {
-            return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png`;
-        }
-    };
-
     const onPokemonClick = (pokemon: PokemonDao)=>{
         setSelectedPokemon(pokemon);
     }
@@ -75,8 +52,8 @@ export const VPartyBox = () => {
         <div className={styles.partyGrid}>
             {party.map((pokemon) => {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const ballType = (pokemon as any).caughtBall || 'poke-ball'; 
-
+                const ballType = pokemon.caughtBall ? pokemon.caughtBall : 'poke-ball'; 
+                console.log("pokemon.caughtBall",pokemon.caughtBall, ballType)
                 return (
                     <div 
                         key={pokemon.uid}

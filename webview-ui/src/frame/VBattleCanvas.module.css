@@ -37,8 +37,8 @@
 /* 敵方容器：右上 */
 .opponent-container {
   position: absolute;
-  right: 10%;
-  top: 20%; /* 稍微上移 */
+  left: 55%;
+  bottom: 60%;
   width: 35%;
   height: 35%;
   min-width: 150px;

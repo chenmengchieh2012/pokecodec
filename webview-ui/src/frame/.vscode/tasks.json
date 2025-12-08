@@ -1,0 +1,23 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "append_styles",
+			"type": "shell",
+			"command": "echo \"Appending modal styles...\"",
+			"args": [
+				"VBagBox.module.css"
+			],
+			"group": "build"
+		},
+		{
+			"label": "append_styles_2",
+			"type": "shell",
+			"command": "echo \"Appending pokemon list styles...\"",
+			"args": [
+				"VBagBox.module.css"
+			],
+			"group": "build"
+		}
+	]
+}

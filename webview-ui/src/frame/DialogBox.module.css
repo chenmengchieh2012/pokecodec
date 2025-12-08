@@ -2,12 +2,12 @@
     width: 100%;
     height: 100%;
     background-color: #303840;
-    border-top: 4px solid #9ca3af;
-    border-left: 4px solid #9ca3af;
-    border-bottom: 4px solid #1f2937;
-    border-right: 4px solid #1f2937;
+    border-top: 2px solid #9ca3af;
+    border-left: 2px solid #9ca3af;
+    border-bottom: 2px solid #1f2937;
+    border-right: 2px solid #1f2937;
     border-radius: 6px;
-    padding: 4px;
+    padding: 2px;
     position: relative;
     box-sizing: border-box;
 }

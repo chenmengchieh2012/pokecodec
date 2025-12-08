@@ -8,6 +8,26 @@
   align-items: flex-end; /* 底部對齊 (讓球在同一水平線) */
   padding-bottom: 20px;
 }
+.move-select-overlay-container {
+  /* 定位修正：稍微往外擴張，確保能完全蓋住底下的 DialogBox 邊框 */
+  position: absolute;
+  width: calc(100%);   /* 寬度補回兩邊的邊框厚度 */
+  height: calc(100%);  /* 高度補回兩邊的邊框厚度 */
+  z-index: 10;
+  
+  /* 視覺風格：模仿標準 DialogBox */
+  background-color: #303840;
+  border-top: 4px solid #9ca3af;
+  border-left: 4px solid #9ca3af;
+  border-bottom: 4px solid #1f2937;
+  border-right: 4px solid #1f2937;
+  border-radius: 6px;
+  padding: 4px;
+  
+  /* 陰影：如果 DialogBox 有陰影，這裡也要加；沒有就設 none */
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.2); 
+  box-sizing: border-box;
+}
 
 /* --- 單個欄位 (包含上方的預覽卡 + 下方的球) --- */
 .ballSlot {
@@ -22,6 +42,7 @@
 
 .ballSlot:hover {
   transform: translateY(-4px); /* 懸停時整組稍微浮起 */
+  z-index: 100;
 }
 
 /* --- 常駐預覽卡 (原本的 Tooltip) --- */
@@ -62,6 +83,7 @@
   height: 95%;
   image-rendering: pixelated;
   object-fit: contain;
+  transform: scale(1.25);
 }
 
 /* 預覽卡內的 HP 條 (迷你版) */

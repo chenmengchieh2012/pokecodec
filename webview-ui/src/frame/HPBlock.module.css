@@ -7,7 +7,7 @@
   border-radius: 8px; /* Rounded corners */
   border-bottom-right-radius: 20px; /* Distinctive shape */
   padding: 6px 10px 8px 10px;
-  min-width: 160px;
+  min-width: 120px;
   box-shadow: 4px 4px 0px rgba(0,0,0,0.25);
   font-family: 'VT323', monospace;
   color: #202020;
@@ -20,7 +20,7 @@
   display: flex;
   align-items: baseline;
   margin-bottom: 4px;
-  font-size: 20px;
+  font-size: 14px;
   line-height: 1;
   text-shadow: 1px 1px 0px #d0d0d0;
 }
@@ -41,7 +41,7 @@
 
 .pokemon-lv {
   font-weight: bold;
-  font-size: 18px;
+  font-size: 14px;
 }
 
 /* Middle Row: HP Bar */
@@ -66,7 +66,7 @@
 
 .hp-bar-bg {
   flex: 1;
-  height: 10px;
+  height: 6px;
   background: #505050;
   border-radius: 6px;
   overflow: hidden;
@@ -86,9 +86,9 @@
 /* Bottom Row: HP Numbers (Player only) */
 .hp-text {
   text-align: right;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
-  letter-spacing: 1px;
+  letter-spacing: 0px;
   margin-top: 2px;
   text-shadow: 1px 1px 0px #d0d0d0;
 }
@@ -97,7 +97,7 @@
 .exp-container {
   margin-top: 4px;
   display: flex;
-  height: 6px;
+  height: 2px;
   background: #303030;
   border-radius: 3px;
   overflow: hidden;
