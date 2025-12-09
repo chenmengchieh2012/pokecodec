@@ -257,12 +257,13 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
     const handleRunAway = useCallback(async () => {
         await queue.execute(async () => {
             battleCanvasRef.current?.handleRunAway()
+            await dialogBoxRef.current?.setText("Got away safely!");
             onBattleEvent({
                 type: BattleEventType.Escaped,
                 state: 'finish',
             });
         });
-    }, [onBattleEvent, battleCanvasRef, queue]);
+    }, [queue, battleCanvasRef, dialogBoxRef, onBattleEvent]);
 
     const handleSwitchMyPokemon = useCallback(async (newPokemon: PokemonDao) => {
         await queue.execute(async () => {
@@ -296,13 +297,6 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
         });
     }, [myPokemon])
 
-    useEffect(() => {
-        vscode.setState({
-            gameState,
-            myPokemon,
-            opponentPokemon
-        });
-    }, [gameState, myPokemon, opponentPokemon]);
 
     
     
@@ -372,15 +366,15 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                     }
                 }
             })()
-                .catch(() => {
-                    if (handleAllMyPokemonFainted) {
-                        handleAllMyPokemonFainted();
-                        return
-                    }
-                })
-                .finally(() => {
-                    window.addEventListener('message', handleMessage);
-                })
+            .catch(() => {
+                if (handleAllMyPokemonFainted) {
+                    handleAllMyPokemonFainted();
+                    return
+                }
+            })
+            .finally(() => {
+                window.addEventListener('message', handleMessage);
+            })
         };
         window.addEventListener('message', handleMessage);
         if (gameState === GameState.WildAppear) {

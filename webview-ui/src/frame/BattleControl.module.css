@@ -1,19 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-:root {
-  /* 這些變數保留給按鈕和彈出選單使用 */
-  --card-bg: #F8F8F0;       
-  --card-border: #303030;   
-  --text-color: #202020;    
-  --console-bg: #2C3E50;    
-  
-  --btn-default-bg: #FFFFFF;
-  --btn-hover-bg: #E8F4F0;
-  --btn-active-bg: #70A090;
-}
-
 .console-area {
-  height: 180px;
+  width: 480px;
   background: var(--console-bg);
   padding: 8px;
   display: flex;

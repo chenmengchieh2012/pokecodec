@@ -1,25 +1,35 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styles from './VSearchScene.module.css';
 import type { PokemonDao } from '../dataAccessObj/pokemon';
+import { BIOME_BACKGROUNDS } from '../utilities/biomeAssets';
 
 interface SearchSceneProps {
     myPokemon?: PokemonDao;
+    biomeType?: number; // 新增：接收外部傳入的生態系 index (0-4)
 }
 
 // 0:地板, 1:樹, 2:草, 3:岩, 4:水, 5:花, 6:磚, 7:果樹, 8:球
-const MAP_SIZE = 9;
-
-// 精心設計的地圖配置
+const MAP_WIDTH = 15;
+const MAP_HEIGHT = 6;
+// 精心設計的 15x6 地圖配置
 const INITIAL_MAP = [
-    [1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 8, 0, 2, 2, 3, 3, 1], // 左上有球，右上有岩石
-    [1, 0, 0, 0, 2, 2, 3, 3, 1],
-    [1, 7, 0, 6, 6, 0, 0, 0, 1], // 左邊有樹果，中間有遺跡牆
-    [1, 2, 2, 6, 4, 4, 0, 7, 1], // 下方有水池
-    [1, 2, 2, 0, 4, 4, 0, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 3, 1],
-    [1, 3, 0, 1, 0, 5, 0, 3, 1], // 有花朵點綴
-    [1, 1, 1, 1, 1, 1, 1, 1, 1],
+    // 第 1 列：上方邊界
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    
+    // 第 2 列：左上有球，中間有樹果與遺跡牆
+    [1, 0, 8, 0, 2, 2, 0, 6, 6, 0, 7, 0, 0, 0, 1], 
+    
+    // 第 3 列：中間有較寬的水池區域
+    [1, 0, 0, 0, 2, 5, 0, 4, 4, 4, 0, 0, 3, 3, 1], 
+    
+    // 第 4 列：下方有花朵點綴與岩石區
+    [1, 3, 0, 0, 0, 0, 0, 4, 4, 4, 0, 5, 3, 3, 1], 
+    
+    // 第 5 列：右下角稍微空曠，適合走路
+    [1, 3, 3, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1], 
+    
+    // 第 6 列：下方邊界
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ];
 
 const OBSTACLES = [1, 3, 4, 6]; 
@@ -29,14 +39,48 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
     const [pos, setPos] = useState({ x: 5, y: 3 });
     const [direction, setDirection] = useState<'left' | 'right'>('right');
     const [emote, setEmote] = useState<string | null>(null);
-    const [isFlashing, setIsFlashing] = useState(false);
+
+    const [bgImage, setBgImage] = useState(BIOME_BACKGROUNDS[0]);
+    const prevBiomeIndexRef = useRef<number>(0);
+    const currentBiomeRef = useRef<number>(0);
+
+    const [transitionStage, setTransitionStage] = useState<'idle' | 'fading-in' | 'fading-out'>('idle');
+    const [isAutoWalking, setIsAutoWalking] = useState(true);
 
 
-    const triggerEncounter = () => {
-        setIsFlashing(true);
-        setTimeout(() => {
-            setIsFlashing(false);
-        }, 1000);
+    useEffect(() => {
+        const handleMessage = (event: MessageEvent) => {
+            const message = event.data;
+            if (message.type === 'UPDATE_BIOME') {
+                if (message.data.biomeIndex !== prevBiomeIndexRef.current) {
+                    // 修正：使用 setTimeout(..., 0) 來避免同步 setState 警告
+                    setTransitionStage('fading-in');
+                    prevBiomeIndexRef.current = currentBiomeRef.current;
+                    currentBiomeRef.current = message.data.biomeIndex;
+                    
+                } else {
+                    // 初始化設定 (第一次 render)
+                    // 這裡也用 setTimeout 避免警告，雖然初始化通常只跑一次
+                    setBgImage(BIOME_BACKGROUNDS[message.data.biomeIndex]);
+                }
+            }
+        };
+        window.addEventListener('message', handleMessage);
+        return () => window.removeEventListener('message', handleMessage);
+    }, []);
+
+    const onTransitionOverlayAnimationEnd = () => {
+        if (transitionStage === 'fading-in') {
+            // 1. 變黑結束，換圖片
+            setBgImage(BIOME_BACKGROUNDS[currentBiomeRef.current % BIOME_BACKGROUNDS.length]);
+            prevBiomeIndexRef.current = currentBiomeRef.current;
+            
+            // 2. 開始變亮
+            setTransitionStage('fading-out');
+        } else if (transitionStage === 'fading-out') {
+            // 3. 變亮結束，回歸閒置
+            setTransitionStage('idle');
+        }
     };
 
     const handleMove = useCallback((dx: number, dy: number) => {
@@ -44,16 +88,11 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
             const newX = prev.x + dx;
             const newY = prev.y + dy;
 
-            if (newX < 0 || newX >= MAP_SIZE || newY < 0 || newY >= MAP_SIZE) return prev;
+            if (newX < 0 || newX >= MAP_WIDTH || newY < 0 || newY >= MAP_HEIGHT) return prev;
             if (OBSTACLES.includes(INITIAL_MAP[newY][newX])) return prev;
 
             if (dx > 0) setDirection('right');
             if (dx < 0) setDirection('left');
-
-            const tileType = INITIAL_MAP[newY][newX];
-            if ([2, 5, 7].includes(tileType)) { // 草、花、樹果樹
-                if (Math.random() < 0.2) triggerEncounter();
-            }
 
             return { x: newX, y: newY };
         });
@@ -64,8 +103,33 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
         setTimeout(() => setEmote(null), 1500);
     };
 
+    // 自動走動邏輯
+    useEffect(() => {
+        if (!isAutoWalking) return;
+
+        const moveInterval = setInterval(() => {
+            // 隨機決定是否移動 (70% 機率移動，30% 停在原地)
+            if (Math.random() > 0.3) {
+                const directions = [
+                    { dx: 0, dy: -1 }, // Up
+                    { dx: 0, dy: 1 },  // Down
+                    { dx: -1, dy: 0 }, // Left
+                    { dx: 1, dy: 0 }   // Right
+                ];
+                const randomDir = directions[Math.floor(Math.random() * directions.length)];
+                handleMove(randomDir.dx, randomDir.dy);
+            }
+        }, 1000); // 每 1 秒嘗試移動一次
+
+        return () => clearInterval(moveInterval);
+    }, [handleMove, isAutoWalking]);
+
+    // 保留鍵盤控制 (可選，若想完全自動可移除)
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
+            if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+                setIsAutoWalking(false);
+            }
             switch(e.key) {
                 case "ArrowUp": handleMove(0, -1); break;
                 case "ArrowDown": handleMove(0, 1); break;
@@ -97,9 +161,21 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
     };
 
     return (
-        <div className={styles.emeraldContainer}>
+        <div 
+            className={styles.emeraldContainer}
+            style={{ backgroundImage: bgImage }} /* 動態背景 */
+        >
+            {/* 全螢幕轉場遮罩 */}
+            <div 
+                className={`
+                    ${styles.biomeTransitionOverlay} 
+                    ${transitionStage === 'fading-in' ? styles.fadeIn : ''}
+                    ${transitionStage === 'fading-out' ? styles.fadeOut : ''}
+                `} 
+                onAnimationEnd={onTransitionOverlayAnimationEnd}
+            />
             <div className={styles.gameScreen}>
-                <div className={`${styles.flashOverlay} ${isFlashing ? styles.flashing : ''}`} />
+                <div className={`${styles.flashOverlay}`} />
 
                 <div className={styles.mapGrid}>
                     {INITIAL_MAP.map((row, y) => (

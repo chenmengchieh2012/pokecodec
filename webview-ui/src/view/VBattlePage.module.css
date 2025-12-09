@@ -1,0 +1,9 @@
+
+.game-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%; /* 強制繼承高度 */
+  background-color: var(--gba-ui-blue);
+  position: relative;
+}

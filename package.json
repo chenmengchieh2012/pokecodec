@@ -32,19 +32,28 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "pokemon-container",
-          "title": "Pokemon React",
+          "id": "pokemon-sidebar",
+          "title": "Pokemon Tools",
           "icon": "$(heart)"
+        }
+      ],
+      "panel": [
+        {
+          "id": "pokemon-panel",
+          "title": "Pokemon Game",
+          "icon": "$(console)"
         }
       ]
     },
     "views": {
-      "pokemon-container": [
+      "pokemon-panel": [
         {
           "id": "pokemonReact",
-          "name": "Runtime",
+          "name": "Game Screen",
           "type": "webview"
-        },
+        }
+      ],
+      "pokemon-sidebar": [
         {
           "id": "pokemonBackpack",
           "name": "Backpack",

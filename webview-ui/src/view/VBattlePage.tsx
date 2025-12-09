@@ -4,6 +4,7 @@ import { VSearchScene } from '../frame/VSearchScene';
 import { BattleControl, BattleControlHandle } from '../frame/BattleControl';
 import { BattleManager } from '../manager/battleManager';
 import { GameState } from '../dataAccessObj/battleTypes';
+import styles from './VBattlePage.module.css';
 
 // 定義遊戲狀態
 
@@ -25,10 +26,10 @@ export const VBattlePage = () => {
   
     useEffect(() => {
         const handleMessage = (event: MessageEvent) => {
-        const message = event.data;
-        if (message.type === 'encounter') {
-            battleManagerMethod.handleStart(GameState.WildAppear);
-        }
+            const message = event.data;
+            if (message.type === 'encounter') {
+                battleManagerMethod.handleStart(GameState.WildAppear);
+            }
         };
         window.addEventListener('message', handleMessage);
         return () => window.removeEventListener('message', handleMessage);
@@ -36,7 +37,7 @@ export const VBattlePage = () => {
 
 
   return (
-    <div className="game-container">
+    <div className={styles["game-container"]}>
       {gameState === GameState.Searching ? (
              <VSearchScene 
                 myPokemon={myPokemon} 

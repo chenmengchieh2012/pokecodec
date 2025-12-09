@@ -4,7 +4,7 @@
   flex: 1; /* 自動佔滿上方空間 */
   width: 100%;
   position: relative; /* 作為絕對定位的基準點 */
-  background: linear-gradient(to bottom, #74dcbd 0%, #74dcbd 60%, #5cb88f 60%, #5cb88f 100%);
+  background: linear-gradient(to bottom, #74dcbd 0%, #74dcbd 42.5%, #5cb88f 42.5%, #5cb88f 100%);
   overflow: hidden;
   display: flex; /* 為了讓 Searching 文字置中 */
   justify-content: center;
@@ -37,12 +37,12 @@
 /* 敵方容器：右上 */
 .opponent-container {
   position: absolute;
-  left: 55%;
-  bottom: 60%;
-  width: 35%;
-  height: 35%;
-  min-width: 150px;
-  min-height: 150px;
+  left: 60%;
+  bottom: 55%;
+  width: 15%;
+  height: 15%;
+  min-width: 100px;
+  min-height: 100px;
   display: flex;
   justify-content: center;
   align-items: flex-end;
@@ -55,12 +55,12 @@
 /* 我方容器：左下 */
 .player-container {
   position: absolute;
-  left: 5%;
+  left: 15%;
   bottom: 10%;
-  width: 45%;
-  height: 40%;
-  min-width: 160px;
-  min-height: 160px;
+  width: 15%;
+  height: 15%;
+  min-width: 80px;
+  min-height: 100px;
   display: flex;
   justify-content: center;
   align-items: flex-end;
@@ -71,7 +71,7 @@
 /* 新增：寶可夢包裝器 (確保陰影跟隨寶可夢) */
 .pokemon-wrapper {
   position: relative;
-  width: 70%; /* 恢復敵方大小 */
+  width: 100%; /* 恢復敵方大小 */
   display: flex;
   justify-content: center;
   align-items: flex-end;
@@ -79,7 +79,7 @@
 
 .my-pokemon-wrapper {
   position: relative;
-  width: 70%;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: flex-end;
@@ -88,10 +88,10 @@
 /* 草地：相對於 wrapper 定位 */
 .grass-base {
   position: absolute;
-  bottom: -10%; /* 位於腳下 */
+  bottom: -20%; /* 位於腳下 */
   width: 120%; /* 比寶可夢寬 */
-  height: 40%;
-  left: -10%; /* 居中 (因為 width 120%) */
+  height: 50%;
+  left: -15%; /* 居中 (因為 width 120%) */
   background: rgba(40, 60, 40, 0.4);
   border-radius: 50%;
   transform: scaleY(0.5);
@@ -101,9 +101,9 @@
 .my-grass-base {
   position: absolute;
   bottom: -15%;
-  width: 160%;
+  width: 120%;
   height: 40%;
-  left: -15%;
+  left: 0%;
   background: rgba(40, 60, 40, 0.4);
   border-radius: 50%;
   transform: scaleY(0.5);
@@ -113,7 +113,7 @@
 /* 寶可夢：撐開 wrapper */
 .pokemon-sprite {
   position: relative;
-  width: 100%;
+  width: 70%;
   height: auto;
   display: block;
   object-fit: contain;

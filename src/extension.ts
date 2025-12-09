@@ -4,6 +4,8 @@ import { JoinPokemon } from './manager/joinPokemon';
 import { BagManager } from './manager/bags';
 import { UserInfoManager } from './manager/userInfo';
 import { PokemonDao } from './dataAccessObj/pokemon';
+import { EncounterHandler } from './core/EncounterHandler';
+
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -18,13 +20,23 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.window.registerWebviewViewProvider('pokemonReact', gameProvider),
         vscode.window.registerWebviewViewProvider('pokemonBackpack', backpackProvider),
         vscode.window.registerWebviewViewProvider('pokemonBox', boxProvider),
-        vscode.window.registerWebviewViewProvider('pokemonShop', shopProvider)
+        vscode.window.registerWebviewViewProvider('pokemonShop', shopProvider),
+        
     );
 
-    // (選用) 保留一個指令來強制開啟側邊欄
+    context.subscriptions.push(
+        vscode.window.onDidChangeActiveTextEditor((editor) => {
+            if (editor) {
+                const filePath = editor.document.fileName;
+                gameProvider.updateGameState(filePath);
+            }
+        })
+    );
+
+    // (選用) 保留一個指令來強制開啟遊戲面板
     context.subscriptions.push(
         vscode.commands.registerCommand('pokemon.openReactPanel', () => {
-            vscode.commands.executeCommand('workbench.view.extension.pokemon-container');
+            vscode.commands.executeCommand('workbench.view.extension.pokemon-panel');
         })
     );
 
@@ -42,6 +54,8 @@ export function activate(context: vscode.ExtensionContext) {
         })
     );
 }
+
+
 
 // 🔥 修改點 2: 建立一個 Provider 類別來管理側邊欄
 class PokemonViewProvider implements vscode.WebviewViewProvider {
@@ -63,6 +77,21 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         this._bag = new BagManager(_context);
         this._userInfo = new UserInfoManager(_context);
         PokemonViewProvider.providers.push(this);
+    }
+
+    public updateGameState(filePath: string) {
+        if (!this._view) return;
+        // 1. 呼叫你的演算法
+        const {index: biomeIndex, types: biomeTypes} = EncounterHandler().getBiome(filePath);
+        // 3. 發送訊息給 React Webview
+        
+        this._view.webview.postMessage({
+            type: 'UPDATE_BIOME',
+            data: {
+                biomeIndex: biomeIndex, // 這裡應該填入 result.biomeIndex
+                biomeTypes: biomeTypes,
+            }
+        });
     }
 
     public updateViews() {
@@ -119,7 +148,25 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         // 每次打開都強制刷新資料
         setTimeout(() => {
             this.updateViews();
+            const editor = vscode.window.activeTextEditor || vscode.window.visibleTextEditors[0];
+            if (editor) {
+                console.log("[Extension] Updating game state for file:", editor.document.fileName);
+                this.updateGameState(editor.document.fileName);
+            }
         }, 100);
+
+        // 當 Webview 變為可見時自動刷新
+        webviewView.onDidChangeVisibility(() => {
+            if (webviewView.visible) {
+                this.updateViews();
+                setTimeout(() => {
+                    const editor = vscode.window.activeTextEditor || vscode.window.visibleTextEditors[0];
+                    if (editor) {
+                        this.updateGameState(editor.document.fileName);
+                    }
+                }, 500);
+            }
+        });
 
         // 處理來自 React 的訊息
         webviewView.webview.onDidReceiveMessage(async message => {
@@ -410,8 +457,6 @@ function getNonce() {
     return text;
 }
 
-
-
 export const defaultPokemon: PokemonDao = {
     uid: 'player-pikachu',
     id: 25,
@@ -422,7 +467,7 @@ export const defaultPokemon: PokemonDao = {
     stats: { hp: 20, attack: 12, defense: 10, specialAttack: 11, specialDefense: 11, speed: 15 },
     iv: { hp: 31, attack: 31, defense: 31, specialAttack: 31, specialDefense: 31, speed: 31 },
     ev: { hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 },
-    types: ['Electric'],
+    types: ['electric'],
     gender: 'Male',
     nature: 'Hardy',
     ability: 'Static',

@@ -1,5 +1,10 @@
 import type { PokemonMove } from "./pokeMove";
 
+export type PokemonType = 
+    | 'normal' | 'fire' | 'water' | 'grass' | 'electric' | 'ice' 
+    | 'fighting' | 'poison' | 'ground' | 'flying' | 'psychic' 
+    | 'bug' | 'rock' | 'ghost' | 'dragon' | 'steel' | 'fairy' 
+    | 'dark'; // 補上惡系，這是 PokeAPI 的標準 18 屬性
 export interface PokemonStats {
     hp: number;
     attack: number;
@@ -23,7 +28,7 @@ export interface PokemonDao {
     ev: PokemonStats;    // Effort Values (0-252)
     
     // Info
-    types: string[];
+    types: PokemonType[];
     gender: string;
     nature: string;      // e.g. "Adamant"
     ability: string;     // Ability name
@@ -98,7 +103,7 @@ export const defaultPokemon: PokemonDao = {
     stats: { hp: 20, attack: 55, defense: 40, specialAttack: 50, specialDefense: 50, speed: 90 },
     iv: { hp: 31, attack: 31, defense: 31, specialAttack: 31, specialDefense: 31, speed: 31 },
     ev: { hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 },
-    types: ['Electric'],
+    types: ['electric'],
     gender: 'Male',
     nature: 'Hardy',
     ability: 'Static',
