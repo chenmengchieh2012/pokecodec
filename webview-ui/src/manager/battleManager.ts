@@ -119,10 +119,14 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
         if (opponentPokemonRef.current == undefined) {
             throw new Error(" no opponent Pokemon")
         }
-        // 1. 先執行攻擊動畫 (不等待)
+
+        // 1. Decrement PP for the move used by opponent Pokemon
+        opponentPokemonHandler.decrementPP(move);
+
+        // 2. 先執行攻擊動畫 (不等待)
         battleCanvasRef.current?.handleAttackFromOpponent()
         
-        // 2. 執行傷害計算與文字顯示 (這會等待打字機效果)
+        // 3. 執行傷害計算與文字顯示 (這會等待打字機效果)
         const remainingHp = await myPokemonHandler.hited(opponentPokemonRef.current, move);
         
         if (remainingHp === 0) {
@@ -130,7 +134,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
         }
 
         return remainingHp;
-    }, [battleCanvasRef, handleMyPokemonFaint, myPokemonHandler]);
+    }, [battleCanvasRef, handleMyPokemonFaint, myPokemonHandler, opponentPokemonHandler]);
 
     const handleAttackToOpponent = useCallback(async (move: PokemonMove) => {
         if (myPokemonRef.current == undefined) {
@@ -151,10 +155,6 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
 
         return remainingHp;
     }, [opponentPokemonHandler, battleCanvasRef, handleOpponentPokemonFaint, myPokemonHandler]);
-
-    // =========================================================================
-    //  Public Methods (Wrapped with SequentialExecutor)
-    // =========================================================================
 
     const handleOnAttack = useCallback(async (myPokemonMove: PokemonMove) => {
         // 使用 queue.execute 包裝整個回合邏輯
