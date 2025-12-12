@@ -303,7 +303,39 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                                 vscode.window.showInformationMessage('Pokemon is not fainted!');
                             }
                         }
-                        // 4. Status Heal (Placeholder)
+                        // 4. PP Recovery
+                        else if (effect.restorePp || effect.restorePpAll) {
+                            let ppRestored = false;
+                            if (effect.restorePpAll) {
+                                // Restore all PP for all moves
+                                pokemon.pokemonMoves = pokemon.pokemonMoves.map(move => ({
+                                    ...move,
+                                    pp: move.maxPP
+                                }));
+                                ppRestored = true;
+                                usedMessage = 'Restored all PP for all moves!';
+                            } else if (effect.restorePp) {
+                                // Restore PP for moves that are not at max
+                                const restoreAmount = effect.restorePp;
+                                pokemon.pokemonMoves = pokemon.pokemonMoves.map(move => {
+                                    if (move.pp < move.maxPP) {
+                                        ppRestored = true;
+                                        return {
+                                            ...move,
+                                            pp: Math.min(move.maxPP, move.pp + restoreAmount)
+                                        };
+                                    }
+                                    return move;
+                                });
+                                if (ppRestored) {
+                                    usedMessage = `Restored ${restoreAmount} PP!`;
+                                } else {
+                                    vscode.window.showInformationMessage('All moves already have full PP!');
+                                }
+                            }
+                            itemUsed = ppRestored;
+                        }
+                        // 5. Status Heal (Placeholder)
                         else if (effect.healStatus) {
                              // TODO: Implement status healing
                              vscode.window.showInformationMessage('Status healing not implemented yet.');

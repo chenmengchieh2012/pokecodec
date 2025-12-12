@@ -136,10 +136,13 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
         if (myPokemonRef.current == undefined) {
             throw new Error(" no opponent Pokemon")
         }
-        // 1. 先執行攻擊動畫 (不等待)
+        // 1. Decrement PP for the move used by my Pokemon
+        myPokemonHandler.decrementPP(move);
+        
+        // 2. 先執行攻擊動畫 (不等待)
         battleCanvasRef.current?.handleAttackToOpponent()
         
-        // 2. 執行傷害計算與文字顯示 (這會等待打字機效果)
+        // 3. 執行傷害計算與文字顯示 (這會等待打字機效果)
         const remainingHp = await opponentPokemonHandler.hited(myPokemonRef.current, move);
         
         if (remainingHp === 0) {
@@ -147,7 +150,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
         }
 
         return remainingHp;
-    }, [opponentPokemonHandler, battleCanvasRef, handleOpponentPokemonFaint]);
+    }, [opponentPokemonHandler, battleCanvasRef, handleOpponentPokemonFaint, myPokemonHandler]);
 
     // =========================================================================
     //  Public Methods (Wrapped with SequentialExecutor)
