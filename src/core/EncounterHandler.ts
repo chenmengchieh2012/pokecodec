@@ -75,13 +75,11 @@ export const EncounterHandler = (): EncounterHandlerMethods =>{
         console.log(`[探索] 路徑: ${folderPath} | 檔名: ${fileName} | 深度: ${depth}`);
 
         let candidatePool: PokeEncounterData[] = [];
-        let environmentMsg = "";
-        const {index: biomeIndex, types: biomeTypes} = getBiome(filePath);
+        const {types: biomeTypes} = getBiome(filePath);
 
         // 2. 判斷深度區域 (黃金區間邏輯)
         if (depth >= 6) {
             // === TOXIC ZONE (深淵) ===
-            environmentMsg = "空氣太稀薄且充滿 Code Smell... 只有生命力頑強的怪物活著。";
             candidatePool = KantoPokemonEncounterData.filter(p => TOXIC_POOL_IDS.includes(p.id));
             
         } else {
@@ -100,9 +98,6 @@ export const EncounterHandler = (): EncounterHandlerMethods =>{
                 
                 return typeMatch && depthMatch;
             });
-
-            // 定義環境描述
-            const zoneName = depth >= 3 ? "深處" : "外圍";
         }
 
         // 3. 進行加權抽取

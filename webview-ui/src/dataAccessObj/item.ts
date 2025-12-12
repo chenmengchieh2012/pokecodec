@@ -242,10 +242,10 @@ const getHardcodedItemEffect = (apiName: string): ItemEffect | undefined => {
         'max-revive': { revive: true, reviveHpPercent: 100 },
 
         // PP Recovery
-        'ether': { restorePp: 10 },
-        'max-ether': { restorePp: 10 }, // Actually restores all PP for one move
-        'elixir': { restorePp: 10 }, // Restores 10 PP for all moves
-        'max-elixir': { restorePpAll: true },
+        'ether': { restorePp: 10 }, // Restores 10 PP to all moves
+        'max-ether': { restorePp: 10 }, // Restores 10 PP to all moves
+        'elixir': { restorePp: 10 }, // Restores 10 PP to all moves
+        'max-elixir': { restorePpAll: true }, // Restores all PP to all moves
 
         // Balls (Catch Rate Multipliers are complex, simplified here)
         'poke-ball': { catchRateMultiplier: 1.0 },

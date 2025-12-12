@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './VShop.module.css';
 import { vscode } from '../utilities/vscode';
 import { ItemDao, adaptPokeApiItem, PokeApiItem } from '../dataAccessObj/item';
@@ -7,7 +7,8 @@ import { ItemDao, adaptPokeApiItem, PokeApiItem } from '../dataAccessObj/item';
 // 預設商店販售的商品列表 (可以擴充)
 const SHOP_ITEMS_API_NAMES = [
     'poke-ball', 'great-ball', 'ultra-ball',
-    'potion', 'super-potion', 'hyper-potion', 'max-potion', 'full-restore'
+    'potion', 'super-potion', 'hyper-potion', 'max-potion', 'full-restore',
+    'ether', 'max-ether', 'elixir', 'max-elixir'
 ];
 
 const IconBuy = () => (

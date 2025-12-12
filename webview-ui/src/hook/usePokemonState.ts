@@ -13,6 +13,7 @@ export interface PokemonStateHandler {
     resetPokemon: () => void;
     switchPokemon: (pokemon: PokemonDao) => Promise<void>;
     heal: (amount: number) => Promise<void>;
+    decrementPP: (move: PokemonMove) => void;
 }
 
 export interface UsePokemonStateProps{
@@ -274,6 +275,21 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
         setPokemon(prev => prev ? { ...prev, currentHp: newHp } : undefined);
     }, []);
 
+    const handleDecrementPP = useCallback((move: PokemonMove) => {
+        const currentPokemon = pokemonRef.current;
+        if (!currentPokemon) return;
+
+        // Find the move and decrement its PP
+        const updatedMoves = currentPokemon.pokemonMoves.map(m => {
+            if (m.name === move.name && m.pp > 0) {
+                return { ...m, pp: m.pp - 1 };
+            }
+            return m;
+        });
+
+        setPokemon(prev => prev ? { ...prev, pokemonMoves: updatedMoves } : undefined);
+    }, []);
+
     const handler: PokemonStateHandler = useMemo(() => ({
         newEncounter: handleNewEncounter,
         throwBall: handleThrowBall,
@@ -281,8 +297,9 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
         randomMove: handleRandomMove,
         switchPokemon: handleSwitchPokemon,
         resetPokemon: handleResetPokemon,
-        heal: handleHeal
-    }), [handleNewEncounter, handleThrowBall, handleHited, handleRandomMove, handleSwitchPokemon, handleResetPokemon, handleHeal]);
+        heal: handleHeal,
+        decrementPP: handleDecrementPP
+    }), [handleNewEncounter, handleThrowBall, handleHited, handleRandomMove, handleSwitchPokemon, handleResetPokemon, handleHeal, handleDecrementPP]);
 
     return {
         pokemon,
