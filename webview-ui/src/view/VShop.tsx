@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './VShop.module.css';
 import { vscode } from '../utilities/vscode';
 import { ItemDao, adaptPokeApiItem, PokeApiItem } from '../dataAccessObj/item';

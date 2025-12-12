@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PokemonDao } from '../dataAccessObj/pokemon';
 import styles from './VPartyBox.module.css';
 import { vscode } from '../utilities/vscode';

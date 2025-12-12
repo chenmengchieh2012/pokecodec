@@ -108,6 +108,7 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
                                 key={"move-" + move.name} 
                                 className={styles['move-btn']}
                                 onClick={() => onAttackClick(move)}
+                                disabled={move.pp <= 0}
                             >
                                 <div className={styles['move-name']}>{move.name}</div>
                                 <div className={styles['move-info-row']}>
