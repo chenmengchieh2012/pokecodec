@@ -46,7 +46,6 @@ export const VPartyBox = () => {
     return (
         <div className={styles.partyGrid}>
             {party.map((pokemon) => {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const ballType = pokemon.caughtBall ? pokemon.caughtBall : 'poke-ball'; 
                 console.log("pokemon.caughtBall",pokemon.caughtBall, ballType)
                 return (

@@ -7,6 +7,7 @@ export const MessageType = {
     BoxData: 'boxData',
     UserData: 'userData',
     PokemonData: 'pokemonData',
+    BiomeData: 'biomeData',
     GameState: 'gameState',
     
     // Request types (from webview to extension)
@@ -15,6 +16,7 @@ export const MessageType = {
     GetParty: 'getParty',
     GetBox: 'getBox',
     GetGameState: 'getGameState',
+    GetBiome: 'getBiome',
     
     // Action types
     SetGameState: 'setGameState',
@@ -30,7 +32,6 @@ export const MessageType = {
     DeletePokemon: 'deletePokemon',
     Catch: 'catch',
     TriggerEncounter: 'triggerEncounter',
-    UpdateBiome: 'updateBiome',
     ResetStorage: 'resetStorage',
     Error: 'error',
 } as const;

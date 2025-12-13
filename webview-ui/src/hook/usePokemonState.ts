@@ -4,9 +4,10 @@ import { initialPokemonState, PokemonStateAction, type PokemonDao, type PokemonS
 import type { PokeBallDao } from "../dataAccessObj/pokeBall";
 import type { PokemonMove, PokemonMoveDAO } from "../dataAccessObj/pokeMove";
 import { BattleControlHandle } from "../frame/BattleControl";
+import { EncounterResult } from "../../../src/core/EncounterHandler";
 
 export interface PokemonStateHandler {
-    newEncounter: () => void;
+    newEncounter: (encounterResult: EncounterResult) => void;
     throwBall: (ballDao: PokeBallDao) => Promise<boolean>;
     hited: (pokemon: PokemonDao, move: PokemonMove) => Promise<number>;
     randomMove: () => PokemonMove;
@@ -125,9 +126,9 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
         return newHp;
     }, [dialogRef]);
 
-    const handleNewEncounter = useCallback(async () => {
-        const id = Math.floor(Math.random() * 151) + 1; // 隨機生成 1-151 的寶可夢 ID
-        fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
+    const handleNewEncounter = useCallback(async (encounterResult: EncounterResult) => {
+        const finalPokemonId = encounterResult.pokemon?.id ? encounterResult.pokemon.id : Math.floor(Math.random() * 151) + 1; // 隨機 1-151
+        fetch(`https://pokeapi.co/api/v2/pokemon/${finalPokemonId}`)
         .then(res => {
             if (!res.ok) {
                 throw new Error(`HTTP error! status: ${res.status}`);
@@ -213,7 +214,7 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
             const height = pokemonData.height;
             const weight = pokemonData.weight;
             const baseExp = pokemonData.base_experience;
-            const isShiny = Math.random() < 0.01; // 1% chance of shiny
+            const isShiny = encounterResult.isShiny; // 1% chance of shiny
 
             setPokemon({
                 uid: `${pokemonData.id}-${uuidv4()}`,

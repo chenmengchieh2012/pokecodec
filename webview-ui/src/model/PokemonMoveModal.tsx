@@ -1,4 +1,3 @@
-import React from 'react';
 import { PokemonDao } from '../dataAccessObj/pokemon';
 import styles from './PokemonMoveModal.module.css';
 

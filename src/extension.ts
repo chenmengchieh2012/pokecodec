@@ -25,6 +25,8 @@ import {
 } from './handler';
 import GlobalStateKey from './utils/GlobalStateKey';
 import { GameState } from './dataAccessObj/GameState';
+import { BiomeDataManager } from './manager/BiomeManager';
+import { BiomeData } from './dataAccessObj/BiomeData';
 
 
 
@@ -38,11 +40,17 @@ export function activate(context: vscode.ExtensionContext) {
 
     // 🔥 修改點 1: 改成註冊 "WebviewViewProvider" (這是給側邊欄用的)
     // 'pokemonReact' 必須跟 package.json 裡的 view id 一樣
-    const gameProvider = new PokemonViewProvider(context.extensionUri, 'game', context);
-    const backpackProvider = new PokemonViewProvider(context.extensionUri, 'backpack', context);
-    const boxProvider = new PokemonViewProvider(context.extensionUri, 'box', context);
-    const shopProvider = new PokemonViewProvider(context.extensionUri, 'shop', context);
+
+    const biomeManager = new BiomeDataManager(context);
+
+    const gameProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'game', context, biomeManager });
+    const backpackProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'backpack', context, biomeManager });
+    const boxProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'box', context, biomeManager });
+    const shopProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'shop', context, biomeManager });
     
+    
+    var BiomeIndex = -1;
+
     context.subscriptions.push(
         vscode.window.registerWebviewViewProvider('pokemonReact', gameProvider),
         vscode.window.registerWebviewViewProvider('pokemonBackpack', backpackProvider),
@@ -55,7 +63,8 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.window.onDidChangeActiveTextEditor((editor) => {
             if (editor) {
                 const filePath = editor.document.fileName;
-                gameProvider.updateBiomeState(filePath);
+                const biomeData = biomeManager.handleOnChangeBiome(filePath);
+                gameProvider.updateBiomeState(biomeData);
             }
         })
     );
@@ -83,6 +92,12 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 
+interface PokemonViewProviderOptions {
+    extensionUri: vscode.Uri;
+    viewType: string;
+    context: vscode.ExtensionContext;
+    biomeManager: BiomeDataManager;
+}
 
 // 🔥 修改點 2: 建立一個 Provider 類別來管理側邊欄
 class PokemonViewProvider implements vscode.WebviewViewProvider {
@@ -95,41 +110,54 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
     private userDaoManager: UserDaoManager;
     private commandHandler: CommandHandler;
     private gameStateManager: GameStateManager;
+    private biomeManager: BiomeDataManager;
+    private _context: vscode.ExtensionContext;
+    private _extensionUri: vscode.Uri;
+    private _viewType: string;
 
     constructor(
-        private readonly _extensionUri: vscode.Uri,
-        private readonly _viewType: string,
-        private readonly _context: vscode.ExtensionContext
+        private readonly options: PokemonViewProviderOptions,
     ) { 
+        const { extensionUri, viewType, context: _context, biomeManager } = options;
         this.pokemonBoxManager = new PokemonBoxManager(_context);
         this.partyManager = new JoinPokemonManager(_context);
         this.bagManager = new BagManager(_context);
         this.userDaoManager = new UserDaoManager(_context);
         this.gameStateManager = new GameStateManager(_context);
+        this.biomeManager = biomeManager;
+        this._extensionUri = extensionUri;
+        this._viewType = viewType;
+        this._context = _context;
         this.commandHandler = new CommandHandler(
             this.pokemonBoxManager,
             this.partyManager,
             this.bagManager,
             this.userDaoManager,
             this.gameStateManager,
+            this.biomeManager,
             _context
         );
         PokemonViewProvider.providers.push(this);
     }
 
-    public updateBiomeState(filePath: string) {
-        if (!this._view) return;
-        // 1. 呼叫你的演算法
-        const {index: biomeIndex, types: biomeTypes} = EncounterHandler().getBiome(filePath);
-        // 3. 發送訊息給 React Webview
-        
+    public handleGetBiomeData() {
+        if (!this._view) {
+            return;
+        }
+        const biomeData = this.biomeManager.getBiomeData();
         this._view.webview.postMessage({
-            type: MessageType.UpdateBiome,
-            data: {
-                biomeIndex: biomeIndex, // 這裡應該填入 result.biomeIndex
-                biomeTypes: biomeTypes,
-            }
+            type: MessageType.BiomeData,
+            data: biomeData
         });
+    }
+
+    public updateBiomeState(biomeData?: BiomeData) {
+        if (this._view) {
+            this._view?.webview.postMessage({
+                type: MessageType.BiomeData,
+                data: biomeData ?? this.biomeManager.getBiomeData()
+            });
+        }
     }
 
     public updateViews() {
@@ -143,8 +171,9 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             this._view.webview.postMessage({ type: MessageType.BoxData, data: this.pokemonBoxManager.getAll() });
             this._view.webview.postMessage({ type: MessageType.BagData, data: this.bagManager.getAll() });
             this._view.webview.postMessage({ type: MessageType.UserData, data: this.userDaoManager.getUserInfo() });
-            this._view.webview.postMessage({ type: MessageType.GameState, data: this.gameStateManager.getGameState() });
+            this._view.webview.postMessage({ type: MessageType.GameState, data: this.gameStateManager.getGameState() });   
         }
+        this.updateBiomeState();
     }
 
     public async resetStorage() {
@@ -184,27 +213,27 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
         // 每次打開都強制刷新資料
-        setTimeout(() => {
-            this.updateViews();
-            const editor = vscode.window.activeTextEditor || vscode.window.visibleTextEditors[0];
-            if (editor) {
-                console.log("[Extension] Updating game state for file:", editor.document.fileName);
-                this.updateBiomeState(editor.document.fileName);
-            }
-        }, 100);
+        // setTimeout(() => {
+        //     this.updateViews();
+        //     const editor = vscode.window.activeTextEditor || vscode.window.visibleTextEditors[0];
+        //     if (editor) {
+        //         console.log("[Extension] Updating game state for file:", editor.document.fileName);
+        //         this.updateBiomeState(editor.document.fileName);
+        //     }
+        // }, 100);
 
         // 當 Webview 變為可見時自動刷新
-        webviewView.onDidChangeVisibility(() => {
-            if (webviewView.visible) {
-                this.updateViews();
-                setTimeout(() => {
-                    const editor = vscode.window.activeTextEditor || vscode.window.visibleTextEditors[0];
-                    if (editor) {
-                        this.updateBiomeState(editor.document.fileName);
-                    }
-                }, 500);
-            }
-        });
+        // webviewView.onDidChangeVisibility(() => {
+        //     if (webviewView.visible) {
+        //         this.updateViews();
+        //         setTimeout(() => {
+        //             const editor = vscode.window.activeTextEditor || vscode.window.visibleTextEditors[0];
+        //             if (editor) {
+        //                 this.updateBiomeState(editor.document.fileName);
+        //             }
+        //         }, 500);
+        //     }
+        // });
 
         // 處理來自 React 的訊息
         webviewView.webview.onDidReceiveMessage(async message => {
@@ -274,14 +303,18 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             if (message.command === MessageType.TriggerEncounter) {
                 this.triggerEncounter();
             }
+            if (message.command === MessageType.GetBiome) {
+                const filePath = message.filePath as string;
+                this.handleGetBiomeData();
+            }
         });
 
     }
 
     public triggerEncounter() {
         if (this._view) {
-            const randomId = Math.floor(Math.random() * 151) + 1;
-            this._view.webview.postMessage({ type: MessageType.TriggerEncounter, id: randomId });
+            const encounterEvent = this.biomeManager.getEncountered();
+            this._view.webview.postMessage({ type: MessageType.TriggerEncounter, data: encounterEvent });
         }
     }
 

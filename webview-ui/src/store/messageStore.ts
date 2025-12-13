@@ -5,6 +5,7 @@ import { PokemonDao } from '../dataAccessObj/pokemon';
 import { UserDao } from '../dataAccessObj/userData';
 import { GameState } from '../dataAccessObj/GameState';
 import { MessageType } from '../dataAccessObj/messageType';
+import { BiomeData } from '../../../src/dataAccessObj/BiomeData';
 
 // ============================================================
 // Type Definitions
@@ -28,6 +29,7 @@ export interface StoreRefs {
     box: PokemonDao[] | undefined;
     userInfo: UserDao | undefined;
     gameState: GameState | undefined;
+    biome: BiomeData | undefined;
 }
 
 /** MessageStore Context 的值類型 */
@@ -73,6 +75,7 @@ class MessageStore {
         box: undefined,
         userInfo: undefined,
         gameState: undefined,
+        biome: undefined,
     };
     /** 是否已初始化 */
     private initialized: InitializedStateType = InitializedState.UnStart;
@@ -160,6 +163,9 @@ class MessageStore {
             case MessageType.GameState:
                 this.refs.gameState = (message.data as GameState) ?? undefined;
                 break;
+            case MessageType.BiomeData:
+                this.refs.biome = (message.data as BiomeData) ?? undefined;
+                break;
         }
     }
 
@@ -179,7 +185,7 @@ class MessageStore {
             console.log('[MessageStore] Current Initialized State:', this.initialized);
             const message = event.data as VSCodeMessage;
             if (message && message.type) {
-                if( this.initialized == InitializedState.Initializing ){
+                if( this.initialized === InitializedState.Initializing ){
                     this.updateRefs(message);
                 }else{
                     this.notify(message);
@@ -190,6 +196,7 @@ class MessageStore {
                     this.refs.box !== undefined &&
                     this.refs.userInfo !== undefined &&
                     this.refs.gameState !== undefined && 
+                    this.refs.biome !== undefined &&
                     this.initialized === InitializedState.Initializing ){
                         this.initialized = InitializedState.finished;
                         console.log('[MessageStore] Initialization finished');
@@ -206,21 +213,30 @@ class MessageStore {
 
         window.addEventListener('message', this.messageHandler);
 
+        
+        this.requestAllData();
         this.initTimerRef = setInterval(() => {
             console.log('[MessageStore] Periodic data request to VS Code');
-            // 1. 請求使用者資訊 (金錢)
-            vscode.postMessage({ command: MessageType.GetUserInfo });
-            // 2. 請求背包資訊
-            vscode.postMessage({ command: MessageType.GetBag });
-            // 3. 請求夥伴資訊
-            vscode.postMessage({ command: MessageType.GetParty });
-            // 4. 請求盒子資訊
-            vscode.postMessage({ command: MessageType.GetBox });
-            // 5. 請求遊戲狀態
-            vscode.postMessage({ command: MessageType.GetGameState });
-        }, 500); // 每 0.5 秒請求一次，保持資料同步
+            this.requestAllData();
+        }, 1000); // 每 1 秒請求一次，保持資料同步
 
         console.log('[MessageStore] Initialized and listening for VS Code messages');
+    }
+
+
+    private requestAllData(): void {
+       // 1. 請求使用者資訊 (金錢)
+        vscode.postMessage({ command: MessageType.GetUserInfo });
+        // 2. 請求背包資訊
+        vscode.postMessage({ command: MessageType.GetBag });
+        // 3. 請求夥伴資訊
+        vscode.postMessage({ command: MessageType.GetParty });
+        // 4. 請求盒子資訊
+        vscode.postMessage({ command: MessageType.GetBox });
+        // 5. 請求遊戲狀態
+        vscode.postMessage({ command: MessageType.GetGameState });
+        // 6. 請求更新地形狀態
+        vscode.postMessage({ command: MessageType.GetBiome });
     }
 
     /**

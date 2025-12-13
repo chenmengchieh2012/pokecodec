@@ -11,6 +11,7 @@ import { BattleCanvasHandle } from "../frame/VBattleCanvas";
 import { BattleControlHandle } from "../frame/BattleControl";
 import { SequentialExecutor } from "../utilities/SequentialExecutor";
 import { useMessageSubscription } from "../store/messageStore";
+import { EncounterResult } from "../../../src/core/EncounterHandler";
 
 const DEBUG = false
 
@@ -20,7 +21,7 @@ export interface BattleManagerMethod {
     handleUseItem: (item: ItemDao) => Promise<void>,
     handleRunAway: () => Promise<void>,
     handleSwitchMyPokemon: (newPokemon: PokemonDao) => Promise<void>,
-    handleStart: (gameState: GameState) => void,
+    handleStart: (gameState: GameState, encounterEvent: EncounterResult) => void,
 }
 
 export interface BattleManagerProps {
@@ -296,9 +297,15 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
         });
     }, [battleCanvasRef, myPokemonHandler, opponentPokemonHandler, handleAttackFromOpponent, queue]);
 
-    const handleStart = useCallback((gameState: GameState) => {
+    const handleStart = useCallback((gameState: GameState, encounterResult: EncounterResult) => {
         queue.execute(async () => {
-            opponentPokemonHandler.resetPokemon()
+            if (gameState === GameState.WildAppear) {
+                if (!opponentPokemonRef.current) {
+                    opponentPokemonHandler.newEncounter(encounterResult);
+                }
+            }else{
+                opponentPokemonHandler.resetPokemon();
+            }
             setGameState(gameState)
         });
     }, [opponentPokemonHandler, queue])
@@ -337,11 +344,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
 
         console.log('gameState', gameState)
         if (gameState === GameState.WildAppear) {
-            if (!opponentPokemonRef.current) {
-                opponentPokemonHandler.newEncounter();
-                await dialogBoxRef.current?.setText("A Wild Pokemon appear!! ")
-            }
-
+            await dialogBoxRef.current?.setText("A Wild Pokemon appear!! ")
             console.log("Start initializing BattleControl...");
             console.log("My Pokemon:", myPokemonRef.current);
             if ((!myPokemonRef.current || myPokemonRef.current?.currentHp === 0)) {

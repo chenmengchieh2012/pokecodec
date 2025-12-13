@@ -7,6 +7,7 @@ import { GameState } from '../dataAccessObj/GameState';
 import styles from './VBattlePage.module.css';
 import { useMessageSubscription } from '../store/messageStore';
 import { MessageType } from '../dataAccessObj/messageType';
+import { EncounterResult } from '../../../src/core/EncounterHandler';
 
 // 定義遊戲狀態
 
@@ -26,8 +27,12 @@ export const VBattlePage = () => {
     const opponentPokemonState = battleManagerState.opponentPokemonState
     
   
-    useMessageSubscription(MessageType.TriggerEncounters, () => {
-        battleManagerMethod.handleStart(GameState.WildAppear);
+    useMessageSubscription<EncounterResult>(MessageType.TriggerEncounter, (message) => {
+        if (message.data === undefined) {
+            return;
+        }
+        const data = message.data as EncounterResult;
+        battleManagerMethod.handleStart(GameState.WildAppear, data);
     });
 
 

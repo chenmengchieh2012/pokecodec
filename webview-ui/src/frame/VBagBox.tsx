@@ -111,7 +111,7 @@ const ItemUseModalFlow = {
 }
 
 
-const ItemUseModal = React.forwardRef<ItemUserModalHandler, ItemUseModalProps>((props, ref) => {
+const ItemUseModal = React.forwardRef<ItemUserModalHandler, ItemUseModalProps>((_props, ref) => {
     const [ medicineType, setMedicineType] = useState<MedicineType>(MedicineExtendType.None);
     const [ modelShow, setModelShow ] = useState<ExtendModelType>(ExtendModelType.SelectPokemon);
     

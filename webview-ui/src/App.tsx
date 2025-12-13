@@ -19,9 +19,7 @@ function App() {
   {viewType === 'backpack' && <VPartyPokemonAndBag />}
   {viewType === 'box' && <VPokemonBox />}
   {viewType === 'shop' && <VShop />}
-  {viewType === undefined && <div>Unknown view type</div>}
   </>
-  return ;
 }
 
 export default App;

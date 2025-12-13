@@ -73,12 +73,12 @@ export const VBattleCanvas = React.forwardRef<BattleCanvasHandle, VBattleProps>(
 
     
 
-    const spriteUrl = useCallback((id: string) =>
-    id ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${id}.gif`
+    const spriteUrl = useCallback((id: string, isShiny?: boolean) =>
+    id ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${isShiny ? 'shiny/' : ''}${id}.gif`
     : '', []);
 
-    const spriteBackUrl = useCallback((id: string) =>
-    id ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/${id}.gif`
+    const spriteBackUrl = useCallback((id: string, isShiny?: boolean) =>
+    id ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/${isShiny ? 'shiny/' : ''}${id}.gif`
     : '', []);
 
     const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>, id: number, isBack: boolean = false) => {
@@ -104,7 +104,7 @@ export const VBattleCanvas = React.forwardRef<BattleCanvasHandle, VBattleProps>(
                 <div className={styles['pokemon-wrapper']}>
                     <div className={styles['grass-base']}></div>
                     <img 
-                      src={spriteUrl(opponentPokemon ? opponentPokemon.id.toString() : '')} 
+                      src={spriteUrl(opponentPokemon ? opponentPokemon.id.toString() : '', opponentPokemon?.isShiny)} 
                       alt="opponent pokemon" 
                       className={styles['pokemon-sprite']}
                       style={{ 

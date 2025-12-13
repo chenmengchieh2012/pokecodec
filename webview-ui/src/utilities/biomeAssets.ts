@@ -1,5 +1,7 @@
 // src/constants/biomeAssets.ts
 
+import { BiomeType } from "../dataAccessObj/BiomeData";
+
 // 使用 SVG Data URI 來產生輕量級的背景圖
 // 這些圖案都是無縫拼接 (Seamless pattern) 的設計
 
@@ -61,10 +63,10 @@ export const BIOME_CHINESE_NAMES = [
 ];
 
 // 根據 pokemonEncounter.ts 的 Biome Index 對應
-export const BIOME_BACKGROUNDS = [
-    FOREST_BG,  // 0
-    WATER_BG,   // 1
-    URBAN_BG,   // 2
-    CAVE_BG,    // 3
-    MYSTIC_BG   // 4
-];
+export const BIOME_BACKGROUNDS = {
+    [BiomeType.Grassland]: FOREST_BG,  // 0
+    [BiomeType.WaterBeach]: WATER_BG,   // 1
+    [BiomeType.UrbanPowerPlant]: URBAN_BG,   // 2
+    [BiomeType.MountainCave]: CAVE_BG,    // 3
+    [BiomeType.GhostMystic]: MYSTIC_BG   // 4
+};

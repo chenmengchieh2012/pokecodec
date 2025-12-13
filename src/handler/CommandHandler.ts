@@ -20,6 +20,7 @@ import {
 } from './types';
 import { GameStateManager } from '../manager/gameStateManager';
 import { MessageType } from '../dataAccessObj/messageType';
+import { BiomeDataManager } from '../manager/BiomeManager';
 
 export class CommandHandler {
     private readonly pokemonBoxManager: PokemonBoxManager;
@@ -27,6 +28,7 @@ export class CommandHandler {
     private readonly bagManager: BagManager;
     private readonly userDaoManager: UserDaoManager;
     private readonly gameStateManager: GameStateManager;
+    private readonly biomeManager: BiomeDataManager;
     private _handlerContext: HandlerContext | null = null;
 
     constructor(
@@ -35,6 +37,7 @@ export class CommandHandler {
         bagManager: BagManager,
         userDaoManager: UserDaoManager,
         gameStateManager: GameStateManager,
+        biomeManager: BiomeDataManager,
         context: vscode.ExtensionContext,
     ) {
         this.pokemonBoxManager = pokemonBoxManager;
@@ -42,6 +45,7 @@ export class CommandHandler {
         this.bagManager = bagManager;
         this.userDaoManager = userDaoManager;
         this.gameStateManager = gameStateManager;
+        this.biomeManager = biomeManager;
     }
 
     public setHandlerContext(handlerContext: HandlerContext): void {

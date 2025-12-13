@@ -1,19 +1,17 @@
 import { BIOME_GROUPS, KantoPokemonEncounterData, TOXIC_POOL_IDS } from "../utils/KantoPokemonCatchRate";
 import { PokeEncounterData } from "../dataAccessObj/pokeEncounterData";
 import { PokemonType } from "../dataAccessObj/pokemon";
+import { BiomeData, BiomeType } from "../dataAccessObj/BiomeData";
 
 export interface EncounterResult {
     depth: number;
     pokemon: PokeEncounterData | null;
-    debugInfo?: {
-        biomeTypes: PokemonType[] | "TOXIC";
-        candidateCount: number;
-    };
+    isShiny: boolean;
 }
 
 export interface EncounterHandlerMethods {
     calculateEncounter: (filePath: string) => EncounterResult;
-    getBiome: (filePath: string) => {index: number, types: PokemonType[]};
+    getBiome: (filePath: string) => BiomeData;
 }
 
 export const EncounterHandler = (): EncounterHandlerMethods =>{
@@ -59,11 +57,16 @@ export const EncounterHandler = (): EncounterHandlerMethods =>{
         return { depth: parts.length, fileName, folderPath }
     }
 
-    function getBiome(filePath: string): {index: number, types: PokemonType[]} {
+    function getBiome(filePath: string): BiomeData {
         const { depth, folderPath } = getfilePattern(filePath);
         const folderHash = getHash(folderPath);
-        const index = folderHash % BIOME_GROUPS.length;
-        return {index: index, types: depth < 6 ? BIOME_GROUPS[folderHash % BIOME_GROUPS.length] : [] };
+        const index = folderHash % Object.keys(BIOME_GROUPS).length;
+        const biomeTypeValues = Object.values(BiomeType);
+        const biomeType = biomeTypeValues[index];
+        return {
+            biomeType: biomeType,
+            pokemonTypes: depth < 6 ? BIOME_GROUPS[biomeType] : []
+        };
     }
 
     function calculateEncounter(filePath: string): EncounterResult {
@@ -75,7 +78,7 @@ export const EncounterHandler = (): EncounterHandlerMethods =>{
         console.log(`[探索] 路徑: ${folderPath} | 檔名: ${fileName} | 深度: ${depth}`);
 
         let candidatePool: PokeEncounterData[] = [];
-        const {types: biomeTypes} = getBiome(filePath);
+        const {pokemonTypes: biomeTypes} = getBiome(filePath);
 
         // 2. 判斷深度區域 (黃金區間邏輯)
         if (depth >= 6) {
@@ -103,24 +106,21 @@ export const EncounterHandler = (): EncounterHandlerMethods =>{
         // 3. 進行加權抽取
         const result = pickWeightedPokemon(candidatePool);
 
+        // 4. 閃光率判定 (1/4096)
+        const isShiny = Math.random() < 1/4096;
+
         if (!result) {
             return {
                 pokemon: null,
                 depth: depth,
-                debugInfo: {
-                    biomeTypes: biomeTypes,
-                    candidateCount: candidatePool.length
-                }
+                isShiny: false
             };
         }
 
         return {
             depth: depth,
             pokemon: result,
-            debugInfo: {
-                biomeTypes: biomeTypes,
-                candidateCount: candidatePool.length
-            }
+            isShiny: isShiny
         };
     }
     return {
