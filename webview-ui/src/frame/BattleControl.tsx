@@ -1,12 +1,13 @@
-import { forwardRef, useImperativeHandle, useRef, useState, useEffect } from 'react';
+import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { type PokeBallDao } from "../dataAccessObj/pokeBall";
 import type { PokemonMove } from "../dataAccessObj/pokeMove";
 import { type PokemonDao } from "../dataAccessObj/pokemon";
 import { type ItemDao } from "../dataAccessObj/item";
-import { vscode } from "../utilities/vscode";
+import { MessageType } from '../dataAccessObj/messageType';
 import styles from "./BattleControl.module.css";
 import { DialogBox, type DialogBoxHandle } from "./DialogBox";
 import { PartyGridInModal } from "../model/PartyGridInModal";
+import { useMessageStore, useMessageSubscription } from '../store/messageStore';
 
 export interface BattleControlHandle extends DialogBoxHandle {
     openPartyMenu: () => void;
@@ -31,23 +32,18 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
     handleRunAway,
     handleSwitchMyPokemon,
 }, ref) => {
-
+    const messageStore = useMessageStore(); // 確保訂閱生效
+    const defaultBagItems = messageStore.getRefs().bag || [];
     const [menuState, setMenuState] = useState<'main' | 'moves' | 'party' | 'bag'>('main');
-    const [bagItems, setBagItems] = useState<ItemDao[]>([]);
+    const [bagItems, setBagItems] = useState<ItemDao[]>(defaultBagItems);
     const dialogBoxRef = useRef<DialogBoxHandle>(null);
 
-    useEffect(() => {
+    // 訂閱背包資料訊息
+    useMessageSubscription<ItemDao[]>(MessageType.BagData, (message) => {
         if (menuState === 'bag') {
-            const handleMessage = (event: MessageEvent) => {
-                if (event.data.type === 'bagData') {
-                    setBagItems(event.data.data);
-                }
-            };
-            window.addEventListener('message', handleMessage);
-            vscode.postMessage({ command: 'getBag' });
-            return () => window.removeEventListener('message', handleMessage);
+            setBagItems(message.data ?? []);
         }
-    }, [menuState]);
+    });
 
     useImperativeHandle(ref, () => ({
         setText: async (text: string) => {
@@ -75,7 +71,7 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
 
     const onItemClick = (item: ItemDao) => {
         setMenuState('main');
-        if (item.category === 'PokeBalls' || item.pocket === 'balls') {
+        if (item.category === 'PokeBalls') {
             // Adapt ItemDao to PokeBallDao
             // Assuming catchRateMultiplier is in effect
             const catchRate = item.effect?.catchRateMultiplier || 1;
@@ -84,7 +80,7 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
                 category: item.category,
                 catchRateModifier: catchRate
             });
-        } else if (item.category === 'Medicine' || item.pocket === 'medicine') {
+        } else if (item.category === 'Medicine') {
             handleUseItem(item);
         } else {
             // Other items not supported yet in battle

@@ -1,10 +1,12 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { BattleCanvasHandle, VBattleCanvas } from '../frame/VBattleCanvas';
 import { VSearchScene } from '../frame/VSearchScene';
 import { BattleControl, BattleControlHandle } from '../frame/BattleControl';
 import { BattleManager } from '../manager/battleManager';
-import { GameState } from '../dataAccessObj/battleTypes';
+import { GameState } from '../dataAccessObj/GameState';
 import styles from './VBattlePage.module.css';
+import { useMessageSubscription } from '../store/messageStore';
+import { MessageType } from '../dataAccessObj/messageType';
 
 // 定義遊戲狀態
 
@@ -24,16 +26,9 @@ export const VBattlePage = () => {
     const opponentPokemonState = battleManagerState.opponentPokemonState
     
   
-    useEffect(() => {
-        const handleMessage = (event: MessageEvent) => {
-            const message = event.data;
-            if (message.type === 'encounter') {
-                battleManagerMethod.handleStart(GameState.WildAppear);
-            }
-        };
-        window.addEventListener('message', handleMessage);
-        return () => window.removeEventListener('message', handleMessage);
-    }, [battleManagerMethod]);
+    useMessageSubscription(MessageType.TriggerEncounters, () => {
+        battleManagerMethod.handleStart(GameState.WildAppear);
+    });
 
 
   return (

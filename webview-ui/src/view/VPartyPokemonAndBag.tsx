@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { VBagBox } from '../frame/VBagBox';
 import { VPartyBox } from '../frame/VPartyBox';
 import styles from './VPartyPokemonAndBag.module.css';
-import { vscode } from '../utilities/vscode';
+import { useMessageSubscription } from '../store/messageStore';
+import { GameState } from '../dataAccessObj/GameState';
+import { MessageType } from '../dataAccessObj/messageType';
 
 const IconPokeball = () => (
     <svg viewBox="0 0 24 24" className={styles.tabSvg}>
@@ -19,22 +21,23 @@ const IconBackpack = () => (
 );
 
 export const VPartyPokemonAndBag = () => {
+    const loadingRef = useRef<NodeJS.Timeout | null>(null);
     const [activeTab, setActiveTab] = useState<'party' | 'bag'>('party');
-    const [inBattle, setInBattle] = useState(false);
+    const [gameState, setGameState] = useState<GameState | undefined>(undefined);
 
-    useEffect(() => {
-        vscode.postMessage({ command: 'getBattleState' });
-        const handleMessage = (event: MessageEvent) => {
-            const message = event.data;
-            if (message.type === 'battleState') {
-                setInBattle(message.inBattle);
-            }
-        };
-        window.addEventListener('message', handleMessage);
-        return () => window.removeEventListener('message', handleMessage);
-    }, []);
+    useMessageSubscription(MessageType.GameState, (message) => {
+        const gameState = message.data as GameState;
+        if (gameState === undefined) {
+            return;
+        }
+        console.log("Received battle state:", gameState);
+        setGameState(gameState);
+        if (loadingRef.current) {
+            clearInterval(loadingRef.current);
+        }
+    });
 
-    if (inBattle) {
+    if (gameState === GameState.Battle) {
         return (
             <div className={styles.emeraldContainer} style={{ 
                 display: 'flex', 

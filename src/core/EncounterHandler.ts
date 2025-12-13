@@ -128,4 +128,4 @@ export const EncounterHandler = (): EncounterHandlerMethods =>{
         getBiome,
         
     };
-}
+};

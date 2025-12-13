@@ -1,27 +1,22 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { PokemonDao } from '../dataAccessObj/pokemon';
+import { MessageType } from '../dataAccessObj/messageType';
 import styles from './VPartyBox.module.css';
 import { vscode } from '../utilities/vscode';
 import { PokemonInfoModal } from '../model/PokemonInfoModal';
 import { getBallUrl } from '../utilities/util';
+import { useMessageStore, useMessageSubscription } from '../store/messageStore';
 
 
 export const VPartyBox = () => {
-    const [party, setParty] = useState<PokemonDao[]>([]);
+    const messageStore = useMessageStore(); // 確保訂閱生效
+    const defaultParty = messageStore.getRefs().party || [];
+    const [party, setParty] = useState<PokemonDao[]>(defaultParty);
     const [selectedPokemon, setSelectedPokemon] = useState<PokemonDao | null>(null);
     
-
-    useEffect(() => {
-        vscode.postMessage({ command: 'getParty' });
-        const handleMessage = (event: MessageEvent) => {
-            const message = event.data;
-            if (message.type === 'partyData') {
-                setParty(message.data);
-            }
-        };
-        window.addEventListener('message', handleMessage);
-        return () => window.removeEventListener('message', handleMessage);
-    }, []);
+    useMessageSubscription<PokemonDao[]>(MessageType.PartyData, (message) => {
+        setParty(message.data ?? []);
+    });
 
 
 
@@ -44,7 +39,7 @@ export const VPartyBox = () => {
 
 
     const handleRemoveFromParty = (pokemon: PokemonDao) => {
-        vscode.postMessage({ command: 'removeFromParty', uid: pokemon.uid });
+        vscode.postMessage({ command: MessageType.RemoveFromParty, uid: pokemon.uid });
         if (selectedPokemon?.uid === pokemon.uid) setSelectedPokemon(null);
     };
 

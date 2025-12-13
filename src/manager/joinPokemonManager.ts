@@ -1,12 +1,13 @@
 import * as vscode from 'vscode';
 import { PokemonDao } from '../dataAccessObj/pokemon';
 import { SequentialExecutor } from '../utils/SequentialExecutor';
+import GlobalStateKey from '../utils/GlobalStateKey';
 
-export class JoinPokemon {
+export class JoinPokemonManager {
     // 記憶體快取
     private party: PokemonDao[] = [];
     private context: vscode.ExtensionContext;
-    private readonly STORAGE_KEY = 'pokemon-party-data';
+    private readonly STORAGE_KEY = GlobalStateKey.PARTY_DATA;
     private readonly MAX_PARTY_SIZE = 6;
 
     private saveQueue = new SequentialExecutor();
@@ -32,19 +33,19 @@ export class JoinPokemon {
     /**
      * 通用交易處理器
      */
-    private async performTransaction(modifier: (party: PokemonDao[]) => void): Promise<void> {
+    private async performTransaction(modifier: (party: PokemonDao[]) => PokemonDao[]): Promise<void> {
         await this.saveQueue.execute(async () => {
             // 1. Read
             const currentParty = this.context.globalState.get<PokemonDao[]>(this.STORAGE_KEY) || [];
             
             // 2. Modify
-            modifier(currentParty);
+            const newParty = modifier(currentParty);
 
             // 3. Write
-            await this.context.globalState.update(this.STORAGE_KEY, currentParty);
+            await this.context.globalState.update(this.STORAGE_KEY, newParty);
 
             // 4. Update Cache
-            this.party = currentParty;
+            this.party = newParty;
         });
     }
 
@@ -56,6 +57,7 @@ export class JoinPokemon {
                 party.push(pokemon);
                 success = true;
             }
+            return Object.assign([], [...party]);
         });
         return success;
     }
@@ -68,6 +70,7 @@ export class JoinPokemon {
                 party.splice(index, 1);
                 success = true;
             }
+            return Object.assign([], [...party]);
         });
         return success;
     }
@@ -82,6 +85,7 @@ export class JoinPokemon {
                 party[index2] = temp;
                 success = true;
             }
+            return Object.assign([], [...party]);
         });
         return success;
     }
@@ -94,6 +98,7 @@ export class JoinPokemon {
                 party[index] = pokemon;
                 success = true;
             }
+            return Object.assign([], [...party]);
         });
         return success;
     }

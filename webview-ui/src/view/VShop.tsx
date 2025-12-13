@@ -2,13 +2,19 @@ import { useState, useEffect } from 'react';
 import styles from './VShop.module.css';
 import { vscode } from '../utilities/vscode';
 import { ItemDao, adaptPokeApiItem, PokeApiItem } from '../dataAccessObj/item';
+import { SHOP_ITEM_FULL_MEDICINE_NAMES, SHOP_ITEMS_BALL_NAMES, SHOP_ITEMS_HP_MEDICINE_NAMES, SHOP_ITEMS_PP_MEDICINE_NAMES } from '../utilities/ItemName';
+import { useMessageSubscription, messageStore } from '../store/messageStore';
+import { UserDao } from '../dataAccessObj/userData';
+import { MessageType } from '../dataAccessObj/messageType';
 
 // 狀態物品 'revive', 'antidote', 'paralyze-heal', 'burn-heal', 'ice-heal', 'sleep-heal', 'awakening', 'full-heal'
 // 預設商店販售的商品列表 (可以擴充)
+
 const SHOP_ITEMS_API_NAMES = [
-    'poke-ball', 'great-ball', 'ultra-ball',
-    'potion', 'super-potion', 'hyper-potion', 'max-potion', 'full-restore',
-    'ether', 'max-ether', 'elixir', 'max-elixir'
+    ...SHOP_ITEMS_HP_MEDICINE_NAMES,
+    ...SHOP_ITEMS_PP_MEDICINE_NAMES,
+    ...SHOP_ITEM_FULL_MEDICINE_NAMES,
+    ...SHOP_ITEMS_BALL_NAMES
 ];
 
 const IconBuy = () => (
@@ -24,22 +30,18 @@ const IconSell = () => (
 );
 
 export const VShop = () => {
-    const [money, setMoney] = useState<number>(0);
-    const [bagItems, setBagItems] = useState<ItemDao[]>([]);
+    // 使用 lazy initialization 來初始化 state
+    const [money, setMoney] = useState<number>(() => messageStore.getRefs().userInfo?.money ?? 0);
+    const [bagItems, setBagItems] = useState<ItemDao[]>(() => messageStore.getRefs().bag ?? []);
     const [shopItems, setShopItems] = useState<ItemDao[]>([]);
     const [mode, setMode] = useState<'buy' | 'sell'>('buy');
     const [selectedItem, setSelectedItem] = useState<ItemDao | null>(null);
     const [quantity, setQuantity] = useState<number>(1);
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 
-    // 初始化：載入使用者金錢、背包、商店商品
+    // 初始化：載入商店商品
     useEffect(() => {
-        // 1. 請求使用者資訊 (金錢)
-        vscode.postMessage({ command: 'getUserInfo' });
-        // 2. 請求背包資訊
-        vscode.postMessage({ command: 'getBag' });
-
-        // 3. 載入商店商品 (這裡模擬從 API 抓取並轉換)
+        // 載入商店商品 (這裡模擬從 API 抓取並轉換)
         const loadShopItems = async () => {
             const items: ItemDao[] = [];
             for (const name of SHOP_ITEMS_API_NAMES) {
@@ -54,22 +56,16 @@ export const VShop = () => {
             setShopItems(items);
         };
         loadShopItems();
-
-        // 監聽 Extension 回傳的訊息
-        const handleMessage = (event: MessageEvent) => {
-            const message = event.data;
-            switch (message.type) {
-                case 'userData': // Changed from 'userInfo' to 'userData' to match extension
-                    setMoney(message.data.money);
-                    break;
-                case 'bagData':
-                    setBagItems(message.data);
-                    break;
-            }
-        };
-        window.addEventListener('message', handleMessage);
-        return () => window.removeEventListener('message', handleMessage);
     }, []);
+
+    // 訂閱訊息（只有在初始化完成後才會收到通知）
+    useMessageSubscription<UserDao>(MessageType.UserData, (message) => {
+        setMoney(message.data?.money ?? 0);
+    });
+
+    useMessageSubscription<ItemDao[]>(MessageType.BagData, (message) => {
+        setBagItems(message.data ?? []);
+    });
 
     const handleItemClick = (item: ItemDao) => {
         setSelectedItem(item);
@@ -102,12 +98,12 @@ export const VShop = () => {
             if (money >= totalPrice) {
                 // 1. 扣錢
                 vscode.postMessage({ 
-                    command: 'updateMoney', 
+                    command: MessageType.UpdateMoney, 
                     amount: -totalPrice 
                 });
                 // 2. 加道具
                 vscode.postMessage({ 
-                    command: 'addItem', 
+                    command: MessageType.AddItem, 
                     item: selectedItem,
                     count: quantity 
                 });
@@ -120,12 +116,12 @@ export const VShop = () => {
             // 賣出
             // 1. 加錢
             vscode.postMessage({ 
-                command: 'updateMoney', 
+                command: MessageType.UpdateMoney, 
                 amount: totalPrice 
             });
             // 2. 扣道具
             vscode.postMessage({ 
-                command: 'removeItem', 
+                command: MessageType.RemoveItem, 
                 item: selectedItem,
                 count: quantity 
             });

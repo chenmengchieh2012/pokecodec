@@ -2,6 +2,9 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styles from './VSearchScene.module.css';
 import type { PokemonDao } from '../dataAccessObj/pokemon';
 import { BIOME_BACKGROUNDS } from '../utilities/biomeAssets';
+import { useMessageSubscription } from '../store/messageStore';
+import { MessageType } from '../dataAccessObj/messageType';
+import { vscode } from '../utilities/vscode';
 
 interface SearchSceneProps {
     myPokemon?: PokemonDao;
@@ -48,26 +51,21 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
     const [isAutoWalking, setIsAutoWalking] = useState(true);
 
 
-    useEffect(() => {
-        const handleMessage = (event: MessageEvent) => {
-            const message = event.data;
-            if (message.type === 'UPDATE_BIOME') {
-                if (message.data.biomeIndex !== prevBiomeIndexRef.current) {
-                    // 修正：使用 setTimeout(..., 0) 來避免同步 setState 警告
-                    setTransitionStage('fading-in');
-                    prevBiomeIndexRef.current = currentBiomeRef.current;
-                    currentBiomeRef.current = message.data.biomeIndex;
-                    
-                } else {
-                    // 初始化設定 (第一次 render)
-                    // 這裡也用 setTimeout 避免警告，雖然初始化通常只跑一次
-                    setBgImage(BIOME_BACKGROUNDS[message.data.biomeIndex]);
-                }
-            }
-        };
-        window.addEventListener('message', handleMessage);
-        return () => window.removeEventListener('message', handleMessage);
-    }, []);
+    useMessageSubscription(MessageType.UpdateBiome, (message) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const biomeIndex = (message.data as any)?.biomeIndex;
+        if (biomeIndex !== prevBiomeIndexRef.current) {
+            // 修正：使用 setTimeout(..., 0) 來避免同步 setState 警告
+            setTransitionStage('fading-in');
+            prevBiomeIndexRef.current = currentBiomeRef.current;
+            currentBiomeRef.current = biomeIndex;
+            
+        } else {
+            // 初始化設定 (第一次 render)
+            // 這裡也用 setTimeout 避免警告，雖然初始化通常只跑一次
+            setBgImage(BIOME_BACKGROUNDS[biomeIndex]);
+        }
+    });
 
     const onTransitionOverlayAnimationEnd = () => {
         if (transitionStage === 'fading-in') {
@@ -160,6 +158,10 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
         }
     };
 
+    const testEncouter = () => {
+        vscode.postMessage({ command: MessageType.TriggerEncounters });
+    }
+
     return (
         <div 
             className={styles.emeraldContainer}
@@ -207,6 +209,15 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
                             );
                         })
                     ))}
+                </div>
+
+                <div>
+                    <button 
+                        className={styles.autoWalkToggle} 
+                        onClick={() => testEncouter()}
+                    >
+                        GOGO
+                    </button>
                 </div>
             </div>
         </div>

@@ -1,12 +1,13 @@
 import * as vscode from 'vscode';
 import { PokemonDao } from '../dataAccessObj/pokemon';
 import { SequentialExecutor } from '../utils/SequentialExecutor';
+import GlobalStateKey from '../utils/GlobalStateKey';
 
-export class PokemonBox {
+export class PokemonBoxManager {
     // 記憶體快取
     private pokemons: PokemonDao[] = [];
     private context: vscode.ExtensionContext;
-    private readonly STORAGE_KEY = 'pokemon-box-data';
+    private readonly STORAGE_KEY = GlobalStateKey.BOX_DATA;
 
     private saveQueue = new SequentialExecutor();
 
@@ -35,25 +36,25 @@ export class PokemonBox {
     /**
      * 通用交易處理器
      */
-    private async performTransaction(modifier: (list: PokemonDao[]) => void): Promise<void> {
+    private async performTransaction(modifier: (list: PokemonDao[]) => PokemonDao[]): Promise<void> {
         await this.saveQueue.execute(async () => {
             // 1. Read
             const currentList = this.context.globalState.get<PokemonDao[]>(this.STORAGE_KEY) || [];
             
             // 2. Modify
-            modifier(currentList);
+            const newList = modifier(currentList);
 
             // 3. Write
-            await this.context.globalState.update(this.STORAGE_KEY, currentList);
+            await this.context.globalState.update(this.STORAGE_KEY, newList);
 
             // 4. Update Cache
-            this.pokemons = currentList;
+            this.pokemons = newList;
         });
     }
 
     public async add(pokemon: PokemonDao): Promise<void> {
         await this.performTransaction((list) => {
-            list.push(pokemon);
+            return [...list, pokemon];
         });
     }
 
@@ -62,8 +63,10 @@ export class PokemonBox {
         await this.performTransaction((list) => {
             const index = list.findIndex(p => p.uid === uid);
             if (index !== -1) {
-                list.splice(index, 1);
                 success = true;
+                return [...list.slice(0, index), ...list.slice(index + 1)];
+            }else{
+                return list;
             }
         });
         return success;
@@ -77,6 +80,9 @@ export class PokemonBox {
                 const [movedPokemon] = list.splice(fromIndex, 1);
                 list.splice(toIndex, 0, movedPokemon);
                 success = true;
+                return [...list];
+            }else{
+                return list;
             }
         });
         return success;
@@ -88,8 +94,7 @@ export class PokemonBox {
             // 直接修改傳入的 list 參照 (Array.filter 會回傳新陣列，所以要用 splice 或是重新賦值)
             // 由於 performTransaction 預期我們修改 list，這裡我們用 filter 算出結果後，清空 list 再塞回去
             const filtered = list.filter(p => !uidSet.has(p.uid));
-            list.length = 0; // 清空原陣列
-            list.push(...filtered); // 塞入過濾後的資料
+            return filtered;
         });
     }
 
@@ -109,9 +114,7 @@ export class PokemonBox {
             for (const p of map.values()) {
                 newOrder.push(p);
             }
-            
-            list.length = 0;
-            list.push(...newOrder);
+            return newOrder;
         });
     }
 
@@ -124,8 +127,7 @@ export class PokemonBox {
             const data = JSON.parse(jsonString);
             if (Array.isArray(data)) {
                 await this.performTransaction((list) => {
-                    list.length = 0;
-                    list.push(...data);
+                    return data;
                 });
                 return true;
             }
