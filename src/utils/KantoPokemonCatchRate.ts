@@ -1,3 +1,4 @@
+import { BiomeType } from "../dataAccessObj/BiomeData";
 import { PokeEncounterData } from "../dataAccessObj/pokeEncounterData";
 import { PokemonType } from "../dataAccessObj/pokemon";
 
@@ -223,22 +224,23 @@ export const KantoPokemonEncounterData: PokeEncounterData[] = [// --- 妙蛙種�
 // ==========================================
 
 // 定義不同「生態系 (Biome)」包含哪些屬性
-export  const BIOME_GROUPS: PokemonType[][] = [
+export  const BIOME_GROUPS: { [key in BiomeType]: PokemonType[] } = {
     // Biome 0: 森林/草原 (Grassland)
-    ['grass', 'bug', 'normal', 'poison', 'flying'],
+    [BiomeType.Grassland]: ['grass', 'bug', 'normal', 'poison', 'flying'],
     
     // Biome 1: 水域/海灘 (Water/Beach)
-    ['water', 'ice', 'psychic'], 
+    [BiomeType.WaterBeach]: ['water', 'ice', 'psychic'], 
     
     // Biome 2: 城市/發電廠 (Urban/Power Plant)
-    ['electric', 'steel', 'normal', 'fighting'],
+    [BiomeType.UrbanPowerPlant]: ['electric', 'steel', 'normal', 'fighting'],
     
     // Biome 3: 山地/洞穴 (Mountain/Cave)
-    ['rock', 'ground', 'fire', 'fighting', 'dragon'],
+    [BiomeType.MountainCave]: ['rock', 'ground', 'fire', 'fighting', 'dragon'],
     
     // Biome 4: 靈骨塔/廢墟 (Ghost/Mystic)
-    ['ghost', 'psychic', 'poison', 'fairy']
-];
+    [BiomeType.GhostMystic]: ['ghost', 'psychic', 'poison', 'fairy'],
+
+};
 
 // 深淵垃圾池 (Toxic Pool): 當深度過深時，只能遇到這些
 export const TOXIC_POOL_IDS = [19, 41, 88, 109, 129]; // 小拉達, 超音蝠, 臭泥, 瓦斯彈, 鯉魚王

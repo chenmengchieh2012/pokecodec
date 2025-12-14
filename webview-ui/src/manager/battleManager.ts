@@ -1,16 +1,17 @@
 import React, { useCallback, useEffect, useRef } from "react";
-import { PokeBallDao } from "../dataAccessObj/pokeBall";
-import { defaultPokemon, PokemonDao, PokemonState } from "../dataAccessObj/pokemon";
-import { PokemonMove } from "../dataAccessObj/pokeMove";
-import { ItemDao } from "../dataAccessObj/item";
 import { usePokemonState } from "../hook/usePokemonState";
 import { vscode } from "../utilities/vscode";
-import { BattleEvent, BattleEventType, GameState } from "../dataAccessObj/battleTypes";
 import { BattleCanvasHandle } from "../frame/VBattleCanvas";
 import { BattleControlHandle } from "../frame/BattleControl";
 import { SequentialExecutor } from "../utilities/SequentialExecutor";
-
-const DEBUG = false
+import { useMessageSubscription } from "../store/messageStore";
+import { EncounterResult } from "../../../src/core/EncounterHandler";
+import { ItemDao } from "../../../src/dataAccessObj/item";
+import { MessageType } from "../../../src/dataAccessObj/messageType";
+import { PokeBallDao } from "../../../src/dataAccessObj/pokeBall";
+import { PokemonDao, PokemonState } from "../../../src/dataAccessObj/pokemon";
+import { PokemonMove } from "../../../src/dataAccessObj/pokeMove";
+import { BattleEvent, BattleEventType, GameState } from "../../../src/dataAccessObj/GameState";
 
 export interface BattleManagerMethod {
     handleOnAttack: (myPokemonMove: PokemonMove) => Promise<void>,
@@ -18,7 +19,7 @@ export interface BattleManagerMethod {
     handleUseItem: (item: ItemDao) => Promise<void>,
     handleRunAway: () => Promise<void>,
     handleSwitchMyPokemon: (newPokemon: PokemonDao) => Promise<void>,
-    handleStart: (gameState: GameState) => void,
+    handleStart: (gameState: GameState, encounterEvent: EncounterResult) => void,
 }
 
 export interface BattleManagerProps {
@@ -42,17 +43,29 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
 
     const { pokemonState: myPokemonState, pokemon: myPokemon, handler: myPokemonHandler } = usePokemonState(dialogBoxRef, { defaultPokemon: undefined });
     const { pokemonState: opponentPokemonState, pokemon: opponentPokemon, handler: opponentPokemonHandler } = usePokemonState(dialogBoxRef, { defaultPokemon: undefined });
-
+    const previousGameStateRef = useRef<GameState>(GameState.Searching);
     const [gameState, setGameState] = React.useState<GameState>(GameState.Searching);
 
     // Sync battle state with extension
     useEffect(() => {
-        const inBattle = gameState !== GameState.Searching;
+        const inBattle = (gameState !== GameState.Searching);
+        console.log("[BattleManager] In Battle:", inBattle);
+        if(previousGameStateRef.current === gameState && !inBattle) {
+            console.log("[BattleManager] Not in Battle");
+            return;
+        }
+
+        if(gameState === GameState.Searching) {
+            console.log("[BattleManager] Exiting Battle");
+            opponentPokemonHandler.resetPokemon();
+        }
+        console.log("[BattleManager] Updating Game State to extension:", gameState);
         vscode.postMessage({
-            command: 'setBattleState',
-            inBattle
+            command: MessageType.SetGameState,
+            gameState: gameState
         });
-    }, [gameState]);
+        previousGameStateRef.current = gameState;
+    }, [gameState, opponentPokemonHandler]);
 
     // 1. 初始化 SequentialExecutor
     // 使用 useRef 確保在整個 Component 生命週期中只有這一個 Queue
@@ -72,20 +85,47 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
 
     const onBattleEvent = useCallback((event: BattleEvent) => {
         switch (event.type) {
+            case BattleEventType.Start:
+                setGameState(GameState.Battle);
+                break;
+            case BattleEventType.MyPokemonFaint:
+                // 戰鬥還在進行中，不改變狀態
+                break;
             case BattleEventType.AllMyPokemonFainted:
                 setGameState(GameState.Searching);
-                opponentPokemonHandler.resetPokemon();
                 break;
             case BattleEventType.WildPokemonFaint:
                 setGameState(GameState.Searching);
-                opponentPokemonHandler.resetPokemon();
                 break;
             case BattleEventType.Escaped:
                 setGameState(GameState.Searching);
-                opponentPokemonHandler.resetPokemon();
                 break;
         }
-    }, [opponentPokemonHandler])
+    }, [])
+
+    const handleBattleStart = useCallback(async () => {
+        console.log("Battle Start!");
+        
+        // 1. 先切換狀態讓 UI Render 出 BattleControl
+        onBattleEvent({
+            type: BattleEventType.Start,
+            state: 'ongoing',
+        });
+
+        // 2. 等待 React Render 完成 (確保 dialogBoxRef 已經掛載)
+        // 使用輪詢 (Polling) 方式等待 Ref 準備好，比固定 setTimeout 更穩定
+        let attempts = 0;
+        while (!dialogBoxRef.current && attempts < 40) { // Timeout after 2s
+            await new Promise(r => setTimeout(r, 50));
+            attempts++;
+        }
+
+        // 3. 顯示文字
+        await dialogBoxRef.current?.setText("A Wild Pokemon appear!! ")
+        
+        console.log("Start initializing BattleControl...");
+        console.log("My Pokemon:", myPokemonRef.current);
+    },[dialogBoxRef, onBattleEvent])
 
     const handleAllMyPokemonFainted = useCallback(async () => {
         await dialogBoxRef.current?.setText(`All of your Pokémon have fainted!`)
@@ -201,7 +241,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
             
             // 扣除道具
             vscode.postMessage({
-                command: 'removeItem',
+                command: MessageType.RemoveItem,
                 item: ballDao,
                 count: 1
             });
@@ -211,10 +251,9 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
 
             if (caught) {
                 // Wait for "Caught" animation
-                currentOpponentPokemon.currentHp = 1; 
                 currentOpponentPokemon.caughtBall = ballDao.apiName;
                 vscode.postMessage({
-                    command: 'catch',
+                    command: MessageType.Catch,
                     text: `Caught ${currentOpponentPokemon.name} (Lv.${currentOpponentPokemon.level})!`,
                     pokemon: currentOpponentPokemon,
                 });
@@ -234,7 +273,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
         await queue.execute(async () => {
             // 1. Send message to extension to consume item
             vscode.postMessage({
-                command: 'removeItem',
+                command: MessageType.RemoveItem,
                 item: item,
                 count: 1
             });
@@ -286,105 +325,49 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
         });
     }, [battleCanvasRef, myPokemonHandler, opponentPokemonHandler, handleAttackFromOpponent, queue]);
 
-    const handleStart = useCallback((gameState: GameState) => {
-        queue.execute(async () => {
-            opponentPokemonHandler.resetPokemon()
-            setGameState(gameState)
+    const handleStart = useCallback(async (gameState: GameState, encounterResult: EncounterResult) => {
+        await queue.execute(async () => {
+            if (gameState === GameState.WildAppear) {
+                if (!opponentPokemonRef.current) {
+                    opponentPokemonHandler.newEncounter(encounterResult);
+                }
+
+                if(myPokemonRef.current !== undefined ) {
+                    await handleBattleStart();
+
+                    // 要先等開始才能設定
+                    battleCanvasRef.current?.handleStart(encounterResult.biomeType)
+                }else{
+                    handleAllMyPokemonFainted();
+                }
+            }else{
+                opponentPokemonHandler.resetPokemon();
+            }
         });
-    }, [opponentPokemonHandler, queue])
+    }, [battleCanvasRef, handleAllMyPokemonFainted, handleBattleStart, opponentPokemonHandler, queue])
 
     useEffect(() => {
         vscode.postMessage({
-            command: 'updatePartyPokemon',
+            command: MessageType.UpdatePartyPokemon,
             pokemon: myPokemon,
         });
     }, [myPokemon])
 
-
-    
-    
-    useEffect(() => {
-        vscode.postMessage({ command: 'getParty' });
-        const handleMessage = (event: MessageEvent) => {
-            // 確保第一次執行
-            window.removeEventListener('message', handleMessage);
-            const message = event.data;
-            if (message.type === 'partyData') {
-                setParty(message.data);
-                console.log("Start initializing BattleControl...");
-                console.log("My Pokemon:", myPokemonRef.current);
-                if ((!myPokemonRef.current || myPokemonRef.current?.currentHp === 0)) {
-                    for (const pkmn of message.data) {
-                        if (pkmn.currentHp && pkmn.currentHp > 0) {
-                            myPokemonHandler.switchPokemon(pkmn);
-                            break;
-                        }
+    useMessageSubscription<PokemonDao[]>(MessageType.PartyData, async (message) => {
+        const newParty = message.data ?? [];
+        setParty(newParty);
+        if (gameState === GameState.Searching) {
+            if( !myPokemonRef.current ) {
+                 for (const pkmn of newParty) {
+                    if (pkmn.currentHp && pkmn.currentHp > 0) {
+                        await myPokemonHandler.switchPokemon(pkmn);
+                        break;
                     }
                 }
             }
-        };
-        window.addEventListener('message', handleMessage);
-        return () => window.removeEventListener('message', handleMessage);
-    }, [myPokemonHandler]);
-    
-
-    useEffect(() => {
-        const handleMessage = async (event: MessageEvent) => {
-            window.removeEventListener('message', handleMessage);
-            await (async () => {
-                const message = event.data;
-                if (message.type === 'partyData') {
-                    setParty(message.data);
-                    const remainingHp = message.data.filter((p: PokemonDao) => (p.currentHp ?? p.stats?.hp ?? 0) > 0).length;
-                    if (remainingHp === 0) {
-                        myPokemonHandler.resetPokemon();
-                        throw new Error("All My Pokemon Fainted")
-                    }
-
-                    console.log('gameState', gameState)
-                    if (gameState === GameState.WildAppear) {
-                        if (!opponentPokemonRef.current) {
-                            opponentPokemonHandler.newEncounter();
-                            await dialogBoxRef.current?.setText("A Wild Pokemon appear!! ")
-                        }
-
-                        console.log("Start initializing BattleControl...");
-                        console.log("My Pokemon:", myPokemonRef.current);
-                        if ((!myPokemonRef.current || myPokemonRef.current?.currentHp === 0)) {
-                            for (const pkmn of message.data) {
-                                if (pkmn.currentHp && pkmn.currentHp > 0) {
-                                    await myPokemonHandler.switchPokemon(pkmn);
-                                    break;
-                                }
-                            }
-                        }
-
-                        console.log("My Pokemon:", myPokemonRef.current);
-                        if (DEBUG) {
-                            await myPokemonHandler.switchPokemon(defaultPokemon)
-                        }
-
-                        battleCanvasRef.current?.handleStart()
-                        setGameState(GameState.Battle);
-                    }
-                }
-            })()
-            .catch(() => {
-                if (handleAllMyPokemonFainted) {
-                    handleAllMyPokemonFainted();
-                    return
-                }
-            })
-            .finally(() => {
-                window.addEventListener('message', handleMessage);
-            })
-        };
-        window.addEventListener('message', handleMessage);
-        if (gameState === GameState.WildAppear) {
-            vscode.postMessage({ command: 'getParty' });
+            return;
         }
-        return () => window.removeEventListener('message', handleMessage);
-    }, [battleCanvasRef, dialogBoxRef, gameState, handleAllMyPokemonFainted, myPokemonHandler, opponentPokemonHandler]);
+    });
 
     return [
         {

@@ -1,10 +1,13 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { BattleCanvasHandle, VBattleCanvas } from '../frame/VBattleCanvas';
 import { VSearchScene } from '../frame/VSearchScene';
 import { BattleControl, BattleControlHandle } from '../frame/BattleControl';
 import { BattleManager } from '../manager/battleManager';
-import { GameState } from '../dataAccessObj/battleTypes';
 import styles from './VBattlePage.module.css';
+import { useMessageSubscription } from '../store/messageStore';
+import { EncounterResult } from '../../../src/core/EncounterHandler';
+import { MessageType } from '../../../src/dataAccessObj/messageType';
+import { GameState } from '../../../src/dataAccessObj/GameState';
 
 // 定義遊戲狀態
 
@@ -24,16 +27,13 @@ export const VBattlePage = () => {
     const opponentPokemonState = battleManagerState.opponentPokemonState
     
   
-    useEffect(() => {
-        const handleMessage = (event: MessageEvent) => {
-            const message = event.data;
-            if (message.type === 'encounter') {
-                battleManagerMethod.handleStart(GameState.WildAppear);
-            }
-        };
-        window.addEventListener('message', handleMessage);
-        return () => window.removeEventListener('message', handleMessage);
-    }, [battleManagerMethod]);
+    useMessageSubscription<EncounterResult>(MessageType.TriggerEncounter, (message) => {
+        if (message.data === undefined) {
+            return;
+        }
+        const data = message.data as EncounterResult;
+        battleManagerMethod.handleStart(GameState.WildAppear, data);
+    });
 
 
   return (

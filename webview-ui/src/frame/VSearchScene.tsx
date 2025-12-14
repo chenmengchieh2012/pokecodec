@@ -1,7 +1,11 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styles from './VSearchScene.module.css';
-import type { PokemonDao } from '../dataAccessObj/pokemon';
 import { BIOME_BACKGROUNDS } from '../utilities/biomeAssets';
+import { useMessageStore, useMessageSubscription } from '../store/messageStore';
+import { vscode } from '../utilities/vscode';
+import { BiomeType, BiomeData } from '../../../src/dataAccessObj/BiomeData';
+import { MessageType } from '../../../src/dataAccessObj/messageType';
+import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
 
 interface SearchSceneProps {
     myPokemon?: PokemonDao;
@@ -36,44 +40,43 @@ const OBSTACLES = [1, 3, 4, 6];
 const EMOTES = ["♥", "♪", "!", "...", "?"];
 
 export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
+    const messageStore = useMessageStore(); // 確保訂閱生效
+    const defaultBiome = messageStore.getRefs().biome
+    
     const [pos, setPos] = useState({ x: 5, y: 3 });
     const [direction, setDirection] = useState<'left' | 'right'>('right');
     const [emote, setEmote] = useState<string | null>(null);
 
-    const [bgImage, setBgImage] = useState(BIOME_BACKGROUNDS[0]);
-    const prevBiomeIndexRef = useRef<number>(0);
-    const currentBiomeRef = useRef<number>(0);
+    const [bgImage, setBgImage] = useState(defaultBiome ? BIOME_BACKGROUNDS[defaultBiome.biomeType] : BIOME_BACKGROUNDS[BiomeType.None]);
+    const prevBiomeRef = useRef<BiomeData | undefined>(undefined);
+    const currentBiomeRef = useRef<BiomeData | undefined>(undefined);
 
     const [transitionStage, setTransitionStage] = useState<'idle' | 'fading-in' | 'fading-out'>('idle');
     const [isAutoWalking, setIsAutoWalking] = useState(true);
 
 
-    useEffect(() => {
-        const handleMessage = (event: MessageEvent) => {
-            const message = event.data;
-            if (message.type === 'UPDATE_BIOME') {
-                if (message.data.biomeIndex !== prevBiomeIndexRef.current) {
-                    // 修正：使用 setTimeout(..., 0) 來避免同步 setState 警告
-                    setTransitionStage('fading-in');
-                    prevBiomeIndexRef.current = currentBiomeRef.current;
-                    currentBiomeRef.current = message.data.biomeIndex;
-                    
-                } else {
-                    // 初始化設定 (第一次 render)
-                    // 這裡也用 setTimeout 避免警告，雖然初始化通常只跑一次
-                    setBgImage(BIOME_BACKGROUNDS[message.data.biomeIndex]);
-                }
-            }
-        };
-        window.addEventListener('message', handleMessage);
-        return () => window.removeEventListener('message', handleMessage);
-    }, []);
+    useMessageSubscription(MessageType.BiomeData, (message) => {
+        const newBiomeData = (message.data as BiomeData);
+        if (newBiomeData.biomeType !== prevBiomeRef.current?.biomeType) {
+            // 修正：使用 setTimeout(..., 0) 來避免同步 setState 警告
+            setTransitionStage('fading-in');
+            prevBiomeRef.current = currentBiomeRef.current;
+            currentBiomeRef.current = newBiomeData;
+            
+        } else {
+            // 初始化設定 (第一次 render)
+            // 這裡也用 setTimeout 避免警告，雖然初始化通常只跑一次
+            setBgImage(BIOME_BACKGROUNDS[newBiomeData.biomeType]);
+        }
+    });
 
     const onTransitionOverlayAnimationEnd = () => {
+        const currentBiome = currentBiomeRef.current;
+        if( currentBiome === undefined ) return;
         if (transitionStage === 'fading-in') {
             // 1. 變黑結束，換圖片
-            setBgImage(BIOME_BACKGROUNDS[currentBiomeRef.current % BIOME_BACKGROUNDS.length]);
-            prevBiomeIndexRef.current = currentBiomeRef.current;
+            setBgImage(BIOME_BACKGROUNDS[currentBiome.biomeType]);
+            prevBiomeRef.current = currentBiomeRef.current;
             
             // 2. 開始變亮
             setTransitionStage('fading-out');
@@ -160,6 +163,10 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
         }
     };
 
+    const testEncouter = () => {
+        vscode.postMessage({ command: MessageType.TriggerEncounter });
+    }
+
     return (
         <div 
             className={styles.emeraldContainer}
@@ -207,6 +214,15 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
                             );
                         })
                     ))}
+                </div>
+
+                <div>
+                    <button 
+                        className={styles.autoWalkToggle} 
+                        onClick={() => testEncouter()}
+                    >
+                        GOGO
+                    </button>
                 </div>
             </div>
         </div>

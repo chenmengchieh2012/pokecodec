@@ -1,23 +1,15 @@
 import * as vscode from 'vscode';
 // 記得引入你的 SequentialExecutor
 import { SequentialExecutor } from '../utils/SequentialExecutor';
+import { ItemDao } from '../dataAccessObj/item';
+import GlobalStateKey from '../utils/GlobalStateKey';
 
-export interface ItemDao {
-    // ... (維持原狀)
-    id: string | number;
-    name: string;
-    apiName?: string;
-    description: string;
-    type: string; 
-    count: number; 
-    // ...
-}
 
 export class BagManager {
     // this.items 變成只是一個「快取」，用於快速回傳給 UI，但不參與寫入邏輯
     private items: ItemDao[] = [];
     private context: vscode.ExtensionContext;
-    private readonly STORAGE_KEY = 'pokemon-bag-data';
+    private readonly STORAGE_KEY = GlobalStateKey.BAG_DATA;
     
     private saveQueue = new SequentialExecutor();
 
@@ -66,7 +58,7 @@ export class BagManager {
      * 5. 更新本地快取
      */
     private async performTransaction(
-        modifier: (currentItems: ItemDao[]) => void
+        modifier: (currentItems: ItemDao[]) => ItemDao[]
     ): Promise<void> {
         await this.saveQueue.execute(async () => {
             // A. 【讀取】先從硬碟拿最新資料，確保不會覆蓋別人的修改
@@ -76,14 +68,13 @@ export class BagManager {
             currentData = currentData.map(item => ({...item, count: item.count || 0}));
 
             // B. 【修改】執行傳進來的修改邏輯
-            modifier(currentData);
+            const newData = modifier(currentData);
 
             // C. 【寫入】存回硬碟
             // (這時候因為我们在 Queue 裡面，這段期間不會有其他人插隊)
-            await this.context.globalState.update(this.STORAGE_KEY, currentData);
-
+            await this.context.globalState.update(this.STORAGE_KEY, newData);
             // D. 【更新快取】讓記憶體跟上最新狀態
-            this.items = currentData;
+            this.items = newData;
         });
     }
 
@@ -102,11 +93,9 @@ export class BagManager {
             
             if (existingItem) {
                 existingItem.count += quantityToAdd;
+                return currentItems;
             } else {
-                currentItems.push({
-                    ...item,
-                    count: quantityToAdd
-                });
+                return [...currentItems, {...item, count: quantityToAdd}];
             }
         });
     }
@@ -130,6 +119,9 @@ export class BagManager {
                     }
                     success = true; // 標記成功
                 }
+                return currentItems;
+            } else {
+                return currentItems;
             }
         });
 

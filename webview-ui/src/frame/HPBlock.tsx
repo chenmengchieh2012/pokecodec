@@ -1,5 +1,5 @@
 import { useImperativeHandle, useState } from "react";
-import type { PokemonDao } from "../dataAccessObj/pokemon"
+import type { PokemonDao } from "../../../src/dataAccessObj/pokemon"
 import React from "react";
 import styles from "./HPBlock.module.css";
 

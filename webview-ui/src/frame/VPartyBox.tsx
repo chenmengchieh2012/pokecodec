@@ -1,27 +1,22 @@
-import { useEffect, useState } from 'react';
-import { PokemonDao } from '../dataAccessObj/pokemon';
+import { useState } from 'react';
 import styles from './VPartyBox.module.css';
 import { vscode } from '../utilities/vscode';
 import { PokemonInfoModal } from '../model/PokemonInfoModal';
 import { getBallUrl } from '../utilities/util';
+import { useMessageStore, useMessageSubscription } from '../store/messageStore';
+import { MessageType } from '../../../src/dataAccessObj/messageType';
+import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
 
 
 export const VPartyBox = () => {
-    const [party, setParty] = useState<PokemonDao[]>([]);
+    const messageStore = useMessageStore(); // 確保訂閱生效
+    const defaultParty = messageStore.getRefs().party || [];
+    const [party, setParty] = useState<PokemonDao[]>(defaultParty);
     const [selectedPokemon, setSelectedPokemon] = useState<PokemonDao | null>(null);
     
-
-    useEffect(() => {
-        vscode.postMessage({ command: 'getParty' });
-        const handleMessage = (event: MessageEvent) => {
-            const message = event.data;
-            if (message.type === 'partyData') {
-                setParty(message.data);
-            }
-        };
-        window.addEventListener('message', handleMessage);
-        return () => window.removeEventListener('message', handleMessage);
-    }, []);
+    useMessageSubscription<PokemonDao[]>(MessageType.PartyData, (message) => {
+        setParty(message.data ?? []);
+    });
 
 
 
@@ -44,14 +39,13 @@ export const VPartyBox = () => {
 
 
     const handleRemoveFromParty = (pokemon: PokemonDao) => {
-        vscode.postMessage({ command: 'removeFromParty', uid: pokemon.uid });
+        vscode.postMessage({ command: MessageType.RemoveFromParty, uid: pokemon.uid });
         if (selectedPokemon?.uid === pokemon.uid) setSelectedPokemon(null);
     };
 
     return (
         <div className={styles.partyGrid}>
             {party.map((pokemon) => {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const ballType = pokemon.caughtBall ? pokemon.caughtBall : 'poke-ball'; 
                 console.log("pokemon.caughtBall",pokemon.caughtBall, ballType)
                 return (

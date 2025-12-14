@@ -1,8 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { VBagBox } from '../frame/VBagBox';
 import { VPartyBox } from '../frame/VPartyBox';
 import styles from './VPartyPokemonAndBag.module.css';
-import { vscode } from '../utilities/vscode';
+import { useMessageSubscription } from '../store/messageStore';
+import { MenuSideBar } from '../frame/SideBar';
+import { GameState } from '../../../src/dataAccessObj/GameState';
+import { MessageType } from '../../../src/dataAccessObj/messageType';
 
 const IconPokeball = () => (
     <svg viewBox="0 0 24 24" className={styles.tabSvg}>
@@ -19,22 +22,23 @@ const IconBackpack = () => (
 );
 
 export const VPartyPokemonAndBag = () => {
-    const [activeTab, setActiveTab] = useState<'party' | 'bag'>('party');
-    const [inBattle, setInBattle] = useState(false);
+    const loadingRef = useRef<NodeJS.Timeout | null>(null);
+    const [activeTab, setActiveTab] = useState<string>('party');
+    const [gameState, setGameState] = useState<GameState | undefined>(undefined);
 
-    useEffect(() => {
-        vscode.postMessage({ command: 'getBattleState' });
-        const handleMessage = (event: MessageEvent) => {
-            const message = event.data;
-            if (message.type === 'battleState') {
-                setInBattle(message.inBattle);
-            }
-        };
-        window.addEventListener('message', handleMessage);
-        return () => window.removeEventListener('message', handleMessage);
-    }, []);
+    useMessageSubscription(MessageType.GameState, (message) => {
+        const gameState = message.data as GameState;
+        if (gameState === undefined) {
+            return;
+        }
+        console.log("Received battle state:", gameState);
+        setGameState(gameState);
+        if (loadingRef.current) {
+            clearInterval(loadingRef.current);
+        }
+    });
 
-    if (inBattle) {
+    if (gameState === GameState.Battle) {
         return (
             <div className={styles.emeraldContainer} style={{ 
                 display: 'flex', 
@@ -100,24 +104,18 @@ export const VPartyPokemonAndBag = () => {
     return (
         <div className={styles.emeraldContainer}>
             {/* Sidebar: Icons Only */}
-            <div className={styles.sideBar}>
-                <div className={styles.tabs}>
-                    <div 
-                        className={`${styles.iconTab} ${activeTab === 'party' ? styles.active : ''}`}
-                        onClick={() => setActiveTab('party')}
-                        title="Pokémon"
-                    >
-                        <IconPokeball />
-                    </div>
-                    <div 
-                        className={`${styles.iconTab} ${activeTab === 'bag' ? styles.active : ''}`}
-                        onClick={() => setActiveTab('bag')}
-                        title="Bag"
-                    >
-                        <IconBackpack />
-                    </div>
-                </div>
-            </div>
+            <MenuSideBar barItems={[
+                {
+                    activeTab: 'party',
+                    onActive: (tab: string) => setActiveTab(tab),
+                    Icons: <IconPokeball />
+                },
+                {
+                    activeTab: 'bag',
+                    onActive: (tab: string) => setActiveTab(tab),
+                    Icons: <IconBackpack />
+                }
+            ]}/>
 
             <div className={styles.scrollArea}>
                 {activeTab === 'party' ? (

@@ -13,11 +13,13 @@ function App() {
   }
   const viewType = (window as WindowWithViewType).viewType || 'game';
 
-  if (viewType === 'backpack') return <VPartyPokemonAndBag/>;
-  if (viewType === 'box') return <VPokemonBox />;
-  if (viewType === 'shop') return <VShop />;
-
-  return <VBattlePage />;
+  return <>
+  {/* 根據 viewType 決定要顯示哪個元件 */}
+  {viewType === 'game' && <VBattlePage />}
+  {viewType === 'backpack' && <VPartyPokemonAndBag />}
+  {viewType === 'box' && <VPokemonBox />}
+  {viewType === 'shop' && <VShop />}
+  </>
 }
 
 export default App;

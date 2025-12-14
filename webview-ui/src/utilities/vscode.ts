@@ -1,3 +1,5 @@
+import { MessageType } from "../../../src/dataAccessObj/messageType";
+
 // 1. 刪除原本的 import，直接在這裡定義介面
 interface WebviewApi<StateType = unknown> {
   postMessage(message: unknown): void;
@@ -21,34 +23,11 @@ class VSCodeAPIWrapper {
   /**
    * 傳送訊息給 Extension (後端)
    */
-  public postMessage(message: unknown) {
+  public postMessage(message: { command: MessageType; [key: string]: unknown }): void {
     if (this.vsCodeApi) {
       this.vsCodeApi.postMessage(message);
     } else {
       console.log("Dev Only (Not in VS Code): Message sent", message);
-    }
-  }
-
-  /**
-   * 取得暫存狀態
-   */
-  public getState(): unknown | undefined {
-    if (this.vsCodeApi) {
-      return this.vsCodeApi.getState();
-    } else {
-      const state = localStorage.getItem("vscodeState");
-      return state ? JSON.parse(state) : undefined;
-    }
-  }
-
-  /**
-   * 設定暫存狀態
-   */
-  public setState(newState: unknown): void {
-    if (this.vsCodeApi) {
-      this.vsCodeApi.setState(newState);
-    } else {
-      localStorage.setItem("vscodeState", JSON.stringify(newState));
     }
   }
 }

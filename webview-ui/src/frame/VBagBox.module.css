@@ -213,11 +213,12 @@
 .closeBtn:hover { color: #fff; }
 
 .modalBody {
-    padding: 4px;
-    flex: 1;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
+  position: relative;
+  padding: 4px;
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 /* --- 1. 分類標籤 (Nav) --- */

@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { vscode } from '../utilities/vscode';
-import { type PokemonDao } from '../dataAccessObj/pokemon';
 import styles from './VPokemonBox.module.css';
 import { PokemonInfoModal } from '../model/PokemonInfoModal';
+import { useMessageStore, useMessageSubscription } from '../store/messageStore';
+import { MessageType } from '../../../src/dataAccessObj/messageType';
+import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
 
 
 const IconTrash = () => (
@@ -12,7 +14,9 @@ const IconTrash = () => (
 );
 
 export const VPokemonBox = () => {
-    const [pokemons, setPokemons] = useState<PokemonDao[]>([]);
+    const messageStore = useMessageStore(); // 確保訂閱生效
+    const defaultBox = messageStore.getRefs().box || [];
+    const [pokemons, setPokemons] = useState<PokemonDao[]>(defaultBox);
     const [selectedPokemon, setSelectedPokemon] = useState<PokemonDao | null>(null);
     
     // Organization State
@@ -23,33 +27,25 @@ export const VPokemonBox = () => {
 
     const [activeBox, setActiveBox] = useState(0);
 
-    useEffect(() => {
-        vscode.postMessage({ command: 'getBox' });
-        const handleMessage = (event: MessageEvent) => {
-            const message = event.data;
-            if (message.type === 'boxData') {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const validPokemons = (message.data as any[]).map(p => {
-                    if (!p.stats) {
-                        return {
-                            ...p,
-                            stats: { hp: p.maxHp || 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 },
-                            iv: { hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 },
-                            ev: { hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 },
-                            nature: 'Unknown',
-                            ability: 'Unknown',
-                            originalTrainer: 'Unknown',
-                            types: p.types || ['Normal']
-                        } as PokemonDao;
-                    }
-                    return p as PokemonDao;
-                });
-                setPokemons(validPokemons);
+    useMessageSubscription(MessageType.BoxData, (message) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const validPokemons = ((message.data as any[]) ?? []).map(p => {
+            if (!p.stats) {
+                return {
+                    ...p,
+                    stats: { hp: p.maxHp || 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 },
+                    iv: { hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 },
+                    ev: { hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 },
+                    nature: 'Unknown',
+                    ability: 'Unknown',
+                    originalTrainer: 'Unknown',
+                    types: p.types || ['Normal']
+                } as PokemonDao;
             }
-        };
-        window.addEventListener('message', handleMessage);
-        return () => window.removeEventListener('message', handleMessage);
-    }, []);
+            return p as PokemonDao;
+        });
+        setPokemons(validPokemons);
+    });
 
     // Handlers
     const handleSlotClick = (p: PokemonDao) => {
@@ -97,7 +93,7 @@ export const VPokemonBox = () => {
         setDraggedPokemonUid(null);
         
         vscode.postMessage({ 
-            command: 'reorderBox', 
+            command: MessageType.ReorderBox, 
             pokemonUids: newPokemons.map(p => p.uid) 
         });
     };
@@ -109,7 +105,7 @@ export const VPokemonBox = () => {
 
     const confirmDelete = () => {
         vscode.postMessage({ 
-            command: 'deletePokemon', 
+            command: MessageType.DeletePokemon, 
             pokemonUids: Array.from(selectedIds) 
         });
         setSelectedIds(new Set());
@@ -119,7 +115,7 @@ export const VPokemonBox = () => {
 
     const handleAddToParty = (pokemon: PokemonDao) => {
         vscode.postMessage({ 
-            command: 'addToParty', 
+            command: MessageType.AddToParty, 
             pokemonUid: pokemon.uid 
         });
         setSelectedPokemon(null);

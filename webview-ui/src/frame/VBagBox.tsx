@@ -1,35 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import styles from './VBagBox.module.css';
-import { ItemDao } from '../dataAccessObj/item';
-import { PokemonDao } from '../dataAccessObj/pokemon';
-import { vscode } from '../utilities/vscode';
+import React, { useCallback, useImperativeHandle, useState } from 'react';
 import { PartyGridInModal } from '../model/PartyGridInModal';
+import { PokemonMoveModal } from '../model/PokemonMoveModal';
+import { useMessageStore, useMessageSubscription } from '../store/messageStore';
+import { SHOP_ITEM_FULL_MEDICINE_NAMES, SHOP_ITEMS_HP_MEDICINE_NAMES, SHOP_ITEMS_PP_MEDICINE_NAMES } from '../utilities/ItemName';
+import { vscode } from '../utilities/vscode';
+import styles from './VBagBox.module.css';
+import { ItemDao } from '../../../src/dataAccessObj/item';
+import { MessageType } from '../../../src/dataAccessObj/messageType';
+import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
 
 export const VBagBox: React.FC = () => {
+    const messageStore = useMessageStore(); // 確保訂閱生效
+    const defaultBagItems = messageStore.getRefs().bag || [];
     const [activePocket, setActivePocket] = useState<'medicine' | 'balls' >('balls');
-    const [items, setItems] = useState<ItemDao[]>([]);
-    const [party, setParty] = useState<PokemonDao[]>([]);
-    
-    // selectedItem: 當前準備使用的道具 (觸發使用模式)
-    // previewItem: 當前游標懸停/點擊查看說明的道具
-    const [selectedItem, setSelectedItem] = useState<ItemDao | null>(null);
-    const [previewItem, setPreviewItem] = useState<ItemDao | null>(null);
+    const [items, setItems] = useState<ItemDao[]>(defaultBagItems);
 
-    useEffect(() => {
-        vscode.postMessage({ command: 'getBag' });
-        vscode.postMessage({ command: 'getParty' });
-        
-        const handleMessage = (event: MessageEvent) => {
-            const message = event.data;
-            if (message.type === 'bagData') {
-                setItems(message.data);
-            } else if (message.type === 'partyData') {
-                setParty(message.data);
-            }
-        };
-        window.addEventListener('message', handleMessage);
-        return () => window.removeEventListener('message', handleMessage);
-    }, []);
+    const ItemUseModalRef = React.useRef<ItemUserModalHandler>(null);
+
+    useMessageSubscription<ItemDao[]>(MessageType.BagData, (message) => {
+        setItems(message.data ?? []);
+    });
 
     const filteredItems = items.filter(item => item.pocket === activePocket);
 
@@ -37,31 +27,16 @@ export const VBagBox: React.FC = () => {
         return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/${apiName}.png`;
     };
 
-    // 點擊處理：
-    // 1. 如果是藥品 -> 進入選擇模式 (selectedItem)
-    // 2. 如果是其他 -> 僅預覽資訊 (previewItem)
     const handleSlotClick = (item: ItemDao) => {
-        if (item.pocket === 'medicine') {
-            setSelectedItem(item);
-            setPreviewItem(item); 
-        } else {
-            setSelectedItem(null); // 取消使用模式
-            setPreviewItem(item);  // 顯示說明
+        if (ItemUseModalRef.current) {
+            if (item.pocket === 'medicine') {
+                ItemUseModalRef.current.setSelectedItem(item);
+            } else {
+                ItemUseModalRef.current.setSelectedItem(null); // 取消使用模式
+            }
         }
-    };
-
-    const handleUseItem = (pokemonUid: string) => {
-        if (!selectedItem) return;
-        vscode.postMessage({ 
-            command: 'useItemInBag', 
-            item: selectedItem,
-            pokemonUid: pokemonUid
-        });
-        if (selectedItem.count <= 1) {
-            setSelectedItem(null);
-            setPreviewItem(null);
-        }
-    };
+    }
+    
 
     return (
         <div className={styles.bagContainer}>
@@ -69,13 +44,13 @@ export const VBagBox: React.FC = () => {
             <div className={styles.pocketNav}>
                 <div 
                     className={`${styles.pocketTab} ${activePocket === 'medicine' ? styles.active : ''}`} 
-                    onClick={() => { setActivePocket('medicine'); setSelectedItem(null); setPreviewItem(null); }}
+                    onClick={() => { setActivePocket('medicine');}}
                 >
                     MEDICINE
                 </div>
                 <div 
                     className={`${styles.pocketTab} ${activePocket === 'balls' ? styles.active : ''}`} 
-                    onClick={() => { setActivePocket('balls'); setSelectedItem(null); setPreviewItem(null); }}
+                    onClick={() => { setActivePocket('balls');}}
                 >
                     BALLS
                 </div>
@@ -86,7 +61,7 @@ export const VBagBox: React.FC = () => {
                 {filteredItems.map(item => (
                     <div 
                         key={item.id} 
-                        className={`${styles.bagSlot} ${selectedItem?.id === item.id || previewItem?.id === item.id ? styles.selected : ''}`}
+                        className={`${styles.bagSlot}`}
                         onClick={() => handleSlotClick(item)}
                     >
                         <img 
@@ -101,21 +76,147 @@ export const VBagBox: React.FC = () => {
             </div>
 
             {/* 4. 道具使用彈窗 (Modal) */}
-            {selectedItem && (
-                <div className={styles.modalOverlay} onClick={() => setSelectedItem(null)}>
-                    <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-                        <div className={styles.modalHeader}>
-                            <div className={styles.modalTitle}>USE: {selectedItem.name}</div>
-                            <button className={styles.closeBtn} onClick={() => setSelectedItem(null)}>×</button>
-                        </div>
-                        <div className={styles.modalBody}>
-                            <PartyGridInModal 
-                                party={party} 
-                                onPokemonClick={(pokemon) => handleUseItem(pokemon.uid)} />
-                        </div>
-                    </div>
-                </div>
-            )}
+            <ItemUseModal ref={ItemUseModalRef}/>
         </div>
     );
 };
+
+interface ItemUserModalHandler {
+    setSelectedItem: (item: ItemDao | null) => void;
+}
+
+interface ItemUseModalProps {
+    onClose?: () => void;
+}
+
+
+const MedicineExtendType = { 
+    None: "none",
+    PP: "pp",
+    HP: "hp"
+} as const;
+type MedicineType = typeof MedicineExtendType[keyof typeof MedicineExtendType];
+
+const ExtendModelType = {
+    SelectPokemon: "select_pokemon",
+    SelectMove: "select_move",
+} as const
+
+type ExtendModelType = typeof ExtendModelType[keyof typeof ExtendModelType];
+
+const ItemUseModalFlow = {
+    [MedicineExtendType.None]: [],
+    [MedicineExtendType.HP]: [],
+    [MedicineExtendType.PP]: [ExtendModelType.SelectMove],
+}
+
+
+const ItemUseModal = React.forwardRef<ItemUserModalHandler, ItemUseModalProps>((_props, ref) => {
+    const [ medicineType, setMedicineType] = useState<MedicineType>(MedicineExtendType.None);
+    const [ modelShow, setModelShow ] = useState<ExtendModelType>(ExtendModelType.SelectPokemon);
+    
+    const [ selectedItem, setSelectedItem ] = useState<ItemDao | null>(null);
+    const [ selectedPokemon, setSelectedPokemon] = useState<PokemonDao | null>(null);
+    const [ party, setParty ] = useState<PokemonDao[]>([]);
+
+
+    useImperativeHandle(ref, () => ({
+        setSelectedItem(item: ItemDao | null) {
+            if (item === null) {
+                setSelectedItem(null);
+                setMedicineType(MedicineExtendType.None);
+                return;
+            } else if(item.pocket === 'medicine') {
+                if(
+                    SHOP_ITEMS_HP_MEDICINE_NAMES.includes(item.apiName) ||
+                    SHOP_ITEM_FULL_MEDICINE_NAMES.includes(item.apiName)
+                ){
+                    setMedicineType(MedicineExtendType.HP);
+                }
+
+                if(SHOP_ITEMS_PP_MEDICINE_NAMES.includes(item.apiName)){
+                    setMedicineType(MedicineExtendType.PP);
+                }
+                setModelShow(ExtendModelType.SelectPokemon);
+                setSelectedItem(item);
+            } else {
+                setSelectedItem(null); // 取消使用模式
+            }
+        }
+    }));
+
+    const usingMedicine = useCallback((pokemonUid: string, moveId?: number) => {
+        if (!selectedItem) return;
+        vscode.postMessage({ 
+            command: MessageType.UseMedicineInBag, 
+            item: selectedItem,
+            pokemonUid: pokemonUid,
+            moveId: moveId
+        });
+    }, [selectedItem]);
+
+    const handlePokemonSelect = useCallback((pokemonUid: string) => {
+        if (!selectedItem) return;
+        
+        const pokemon = party.find(p => p.uid === pokemonUid);
+        if (!pokemon) return;
+
+        const extendId = ItemUseModalFlow[medicineType][0];
+
+        if (!extendId) {
+            usingMedicine(pokemonUid);
+            setSelectedItem(null);
+            return;
+        }
+
+        if (extendId === ExtendModelType.SelectMove) {
+            setSelectedPokemon(pokemon);
+            setModelShow(ExtendModelType.SelectMove);
+            return;
+        }
+
+
+    },[selectedItem, party, medicineType, usingMedicine]);
+
+    const handleMoveSelect = (pokemon: PokemonDao, moveId: number) => {
+        if (!selectedItem) return;
+        const pokemonUsingItem = party.find(p => p.uid === pokemon.uid);
+
+        if (!pokemonUsingItem) return;
+
+        usingMedicine(pokemon.uid, moveId);
+        setSelectedItem(null);
+    };
+
+
+    useMessageSubscription<PokemonDao[]>(MessageType.PartyData, (message) => {
+        setParty(message.data ?? []);
+    });
+
+
+    return <>
+    {selectedItem && <div className={styles.modalOverlay} onClick={() => { setSelectedItem(null); }}>
+        <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+                <div className={styles.modalTitle}>
+                    {`USE: ${selectedItem?.name}`}
+                </div>
+                <button className={styles.closeBtn} onClick={() => { setSelectedItem(null); }}>×</button>
+            </div>
+            <div className={styles.modalBody}>
+                {modelShow === ExtendModelType.SelectPokemon && 
+                <PartyGridInModal 
+                    party={party} 
+                    onPokemonClick={(pokemon) => handlePokemonSelect(pokemon.uid)} />
+                }
+                {modelShow === ExtendModelType.SelectMove && 
+                <PokemonMoveModal 
+                    selectedPokemon={selectedPokemon} 
+                    onMoveSelect={( pokemon,move) => handleMoveSelect(pokemon, move)} />
+                }
+            </div>
+        </div>
+    </div>
+    }
+    </>
+})
