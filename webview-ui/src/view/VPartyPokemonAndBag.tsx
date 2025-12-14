@@ -3,8 +3,9 @@ import { VBagBox } from '../frame/VBagBox';
 import { VPartyBox } from '../frame/VPartyBox';
 import styles from './VPartyPokemonAndBag.module.css';
 import { useMessageSubscription } from '../store/messageStore';
-import { GameState } from '../dataAccessObj/GameState';
-import { MessageType } from '../dataAccessObj/messageType';
+import { MenuSideBar } from '../frame/SideBar';
+import { GameState } from '../../../src/dataAccessObj/GameState';
+import { MessageType } from '../../../src/dataAccessObj/messageType';
 
 const IconPokeball = () => (
     <svg viewBox="0 0 24 24" className={styles.tabSvg}>
@@ -22,7 +23,7 @@ const IconBackpack = () => (
 
 export const VPartyPokemonAndBag = () => {
     const loadingRef = useRef<NodeJS.Timeout | null>(null);
-    const [activeTab, setActiveTab] = useState<'party' | 'bag'>('party');
+    const [activeTab, setActiveTab] = useState<string>('party');
     const [gameState, setGameState] = useState<GameState | undefined>(undefined);
 
     useMessageSubscription(MessageType.GameState, (message) => {
@@ -103,24 +104,18 @@ export const VPartyPokemonAndBag = () => {
     return (
         <div className={styles.emeraldContainer}>
             {/* Sidebar: Icons Only */}
-            <div className={styles.sideBar}>
-                <div className={styles.tabs}>
-                    <div 
-                        className={`${styles.iconTab} ${activeTab === 'party' ? styles.active : ''}`}
-                        onClick={() => setActiveTab('party')}
-                        title="Pokémon"
-                    >
-                        <IconPokeball />
-                    </div>
-                    <div 
-                        className={`${styles.iconTab} ${activeTab === 'bag' ? styles.active : ''}`}
-                        onClick={() => setActiveTab('bag')}
-                        title="Bag"
-                    >
-                        <IconBackpack />
-                    </div>
-                </div>
-            </div>
+            <MenuSideBar barItems={[
+                {
+                    activeTab: 'party',
+                    onActive: (tab: string) => setActiveTab(tab),
+                    Icons: <IconPokeball />
+                },
+                {
+                    activeTab: 'bag',
+                    onActive: (tab: string) => setActiveTab(tab),
+                    Icons: <IconBackpack />
+                }
+            ]}/>
 
             <div className={styles.scrollArea}>
                 {activeTab === 'party' ? (

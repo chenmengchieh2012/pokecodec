@@ -10,7 +10,7 @@ export class BiomeDataManager {
     // 記憶體快取 (只供讀取與 UI 顯示)
     private biomeData: BiomeData = { biomeType: BiomeType.Grassland, pokemonTypes: BIOME_GROUPS[ BiomeType.Grassland ] };
     private currentFilePath: string = "";
-    private encounterHandler: EncounterHandlerMethods = EncounterHandler();
+    private encounterHandler: EncounterHandlerMethods = EncounterHandler((path) => vscode.workspace.asRelativePath(path));
     private context: vscode.ExtensionContext;
 
     private saveQueue = new SequentialExecutor();
@@ -33,8 +33,8 @@ export class BiomeDataManager {
         return biomeData;
     }
 
-    public getEncountered(): EncounterResult {
-        return this.encounterHandler.calculateEncounter(this.currentFilePath);
+    public async getEncountered(): Promise<EncounterResult> {
+        return await this.encounterHandler.calculateEncounter(this.currentFilePath);
     }
 
     /**

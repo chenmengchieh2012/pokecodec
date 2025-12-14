@@ -1,13 +1,13 @@
 import React, { useCallback, useImperativeHandle, useState } from 'react';
-import { ItemDao } from '../dataAccessObj/item';
-import { PokemonDao } from '../dataAccessObj/pokemon';
-import { MessageType } from '../dataAccessObj/messageType';
 import { PartyGridInModal } from '../model/PartyGridInModal';
 import { PokemonMoveModal } from '../model/PokemonMoveModal';
 import { useMessageStore, useMessageSubscription } from '../store/messageStore';
 import { SHOP_ITEM_FULL_MEDICINE_NAMES, SHOP_ITEMS_HP_MEDICINE_NAMES, SHOP_ITEMS_PP_MEDICINE_NAMES } from '../utilities/ItemName';
 import { vscode } from '../utilities/vscode';
 import styles from './VBagBox.module.css';
+import { ItemDao } from '../../../src/dataAccessObj/item';
+import { MessageType } from '../../../src/dataAccessObj/messageType';
+import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
 
 export const VBagBox: React.FC = () => {
     const messageStore = useMessageStore(); // 確保訂閱生效

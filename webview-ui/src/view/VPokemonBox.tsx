@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { vscode } from '../utilities/vscode';
-import { type PokemonDao } from '../dataAccessObj/pokemon';
-import { MessageType } from '../dataAccessObj/messageType';
 import styles from './VPokemonBox.module.css';
 import { PokemonInfoModal } from '../model/PokemonInfoModal';
 import { useMessageStore, useMessageSubscription } from '../store/messageStore';
+import { MessageType } from '../../../src/dataAccessObj/messageType';
+import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
 
 
 const IconTrash = () => (

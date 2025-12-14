@@ -1,4 +1,4 @@
-import { PokemonDao } from '../dataAccessObj/pokemon';
+import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
 import styles from './PokemonMoveModal.module.css';
 
 

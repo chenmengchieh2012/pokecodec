@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { PokemonDao } from '../dataAccessObj/pokemon';
-import { MessageType } from '../dataAccessObj/messageType';
 import styles from './VPartyBox.module.css';
 import { vscode } from '../utilities/vscode';
 import { PokemonInfoModal } from '../model/PokemonInfoModal';
 import { getBallUrl } from '../utilities/util';
 import { useMessageStore, useMessageSubscription } from '../store/messageStore';
+import { MessageType } from '../../../src/dataAccessObj/messageType';
+import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
 
 
 export const VPartyBox = () => {

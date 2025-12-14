@@ -3,11 +3,11 @@ import { BattleCanvasHandle, VBattleCanvas } from '../frame/VBattleCanvas';
 import { VSearchScene } from '../frame/VSearchScene';
 import { BattleControl, BattleControlHandle } from '../frame/BattleControl';
 import { BattleManager } from '../manager/battleManager';
-import { GameState } from '../dataAccessObj/GameState';
 import styles from './VBattlePage.module.css';
 import { useMessageSubscription } from '../store/messageStore';
-import { MessageType } from '../dataAccessObj/messageType';
 import { EncounterResult } from '../../../src/core/EncounterHandler';
+import { MessageType } from '../../../src/dataAccessObj/messageType';
+import { GameState } from '../../../src/dataAccessObj/GameState';
 
 // 定義遊戲狀態
 

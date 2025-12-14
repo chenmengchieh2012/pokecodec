@@ -311,9 +311,9 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
 
     }
 
-    public triggerEncounter() {
+    public async triggerEncounter() {
         if (this._view) {
-            const encounterEvent = this.biomeManager.getEncountered();
+            const encounterEvent = await this.biomeManager.getEncountered();
             this._view.webview.postMessage({ type: MessageType.TriggerEncounter, data: encounterEvent });
         }
     }
@@ -346,7 +346,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                     window.viewType = "${this._viewType}";
                 </script>
             </head>
-            <body style="min-width: 360px; margin: 0; padding: 0;">
+            <body style="min-width: 280px; margin: 0; padding: 0;">
                 <div id="root"></div>
                 <script type="module" src="/src/main.tsx"></script>
             </body>
@@ -370,7 +370,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                     window.viewType = "${this._viewType}";
                 </script>
             </head>
-            <body style="min-width: 360px; margin: 0; padding: 0;">
+            <body style="min-width: 280px; margin: 0; padding: 0;">
                 <div id="root"></div>
                 <script nonce="${getNonce()}" type="module" src="${scriptUri}"></script>
             </body>

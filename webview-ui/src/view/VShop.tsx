@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import styles from './VShop.module.css';
 import { vscode } from '../utilities/vscode';
-import { ItemDao, adaptPokeApiItem, PokeApiItem } from '../dataAccessObj/item';
 import { SHOP_ITEM_FULL_MEDICINE_NAMES, SHOP_ITEMS_BALL_NAMES, SHOP_ITEMS_HP_MEDICINE_NAMES, SHOP_ITEMS_PP_MEDICINE_NAMES } from '../utilities/ItemName';
 import { useMessageSubscription, messageStore } from '../store/messageStore';
 import { UserDao } from '../dataAccessObj/userData';
-import { MessageType } from '../dataAccessObj/messageType';
+import { MenuSideBar } from '../frame/SideBar';
+import { ItemDao, PokeApiItem, adaptPokeApiItem } from '../../../src/dataAccessObj/item';
+import { MessageType } from '../../../src/dataAccessObj/messageType';
 
 // 狀態物品 'revive', 'antidote', 'paralyze-heal', 'burn-heal', 'ice-heal', 'sleep-heal', 'awakening', 'full-heal'
 // 預設商店販售的商品列表 (可以擴充)
@@ -139,25 +140,18 @@ export const VShop = () => {
     return (
         <div className={styles.shopContainer}>
             {/* Sidebar */}
-            <div className={styles.sideBar}>
-                <div className={styles.tabs}>
-                    <div 
-                        className={`${styles.iconTab} ${mode === 'buy' ? styles.active : ''}`}
-                        onClick={() => setMode('buy')}
-                        title="Buy"
-                    >
-                        <IconBuy />
-                    </div>
-                    <div 
-                        className={`${styles.iconTab} ${mode === 'sell' ? styles.active : ''}`}
-                        onClick={() => setMode('sell')}
-                        title="Sell"
-                    >
-                        <IconSell />
-                    </div>
-                </div>
-            </div>
-
+            <MenuSideBar barItems={[
+                {
+                    activeTab: 'buy',
+                    onActive: () => setMode('buy'),
+                    Icons: <IconBuy />
+                },
+                {
+                    activeTab: 'sell',
+                    onActive: () => setMode('sell'),
+                    Icons: <IconSell />
+                }
+            ]}/>
             {/* Main Content */}
             <div className={styles.contentWrapper}>
                 <div className={styles.header}>

@@ -1,4 +1,4 @@
-import { MessageType } from "../dataAccessObj/messageType";
+import { MessageType } from "../../../src/dataAccessObj/messageType";
 
 // 1. 刪除原本的 import，直接在這裡定義介面
 interface WebviewApi<StateType = unknown> {

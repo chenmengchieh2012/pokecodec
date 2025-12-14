@@ -1,0 +1,82 @@
+
+/* --- Sidebar (精簡 Icon 版) --- */
+.sideBar {
+    width: 12px;
+    background-color: var(--emerald-dark);
+    border-right: 4px solid var(--ui-border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 10px;
+    flex-shrink: 0;
+    transition: width 0.3s ease;
+    overflow: hidden;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 10;
+}
+
+.sideBar:hover {
+    width: 60px;
+}
+
+.tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+}
+
+.sideBar:hover .tabs {
+    opacity: 1;
+    pointer-events: auto;
+    transition-delay: 0.1s;
+}
+
+.iconTab {
+    width: 40px;
+    height: 40px;
+    background-color: rgba(0,0,0,0.3);
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.1s;
+}
+
+.iconTab:hover {
+    background-color: rgba(255,255,255,0.1);
+    border-color: var(--emerald-light);
+}
+
+.iconTab.active {
+    background-color: var(--card-bg);
+    border-color: var(--ui-border);
+    box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+}
+
+.tabSvg {
+    width: 24px;
+    height: 24px;
+    fill: #78C8B8;
+}
+
+.iconTab.active .tabSvg {
+    fill: var(--text-dark);
+}
+
+.scrollArea {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px; /* 留一點空間給展開動畫 */
+  scrollbar-width: thin;
+  scrollbar-color: var(--emerald-light) var(--emerald-dark);
+}

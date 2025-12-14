@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styles from './VSearchScene.module.css';
-import type { PokemonDao } from '../dataAccessObj/pokemon';
 import { BIOME_BACKGROUNDS } from '../utilities/biomeAssets';
 import { useMessageStore, useMessageSubscription } from '../store/messageStore';
-import { MessageType } from '../dataAccessObj/messageType';
 import { vscode } from '../utilities/vscode';
-import { BiomeData, BiomeType } from '../dataAccessObj/BiomeData';
+import { BiomeType, BiomeData } from '../../../src/dataAccessObj/BiomeData';
+import { MessageType } from '../../../src/dataAccessObj/messageType';
+import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
 
 interface SearchSceneProps {
     myPokemon?: PokemonDao;
@@ -47,7 +47,7 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
     const [direction, setDirection] = useState<'left' | 'right'>('right');
     const [emote, setEmote] = useState<string | null>(null);
 
-    const [bgImage, setBgImage] = useState(defaultBiome ? BIOME_BACKGROUNDS[defaultBiome.biomeType] : BIOME_BACKGROUNDS[BiomeType.Grassland]);
+    const [bgImage, setBgImage] = useState(defaultBiome ? BIOME_BACKGROUNDS[defaultBiome.biomeType] : BIOME_BACKGROUNDS[BiomeType.None]);
     const prevBiomeRef = useRef<BiomeData | undefined>(undefined);
     const currentBiomeRef = useRef<BiomeData | undefined>(undefined);
 

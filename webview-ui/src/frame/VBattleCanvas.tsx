@@ -1,7 +1,8 @@
-import React, { useCallback, useImperativeHandle, useState } from "react";
-import { type PokemonDao, PokemonState, PokemonStateAction } from "../dataAccessObj/pokemon";
+import React, { useCallback, useEffect, useImperativeHandle, useState } from "react";
 import { VHPBlock } from "./HPBlock";
 import styles from "./VBattleCanvas.module.css";
+import { BiomeType } from "../../../src/dataAccessObj/BiomeData";
+import { PokemonDao, PokemonState, PokemonStateAction } from "../../../src/dataAccessObj/pokemon";
 
 export interface VBattleProps {
     myPokemon?: PokemonDao;
@@ -16,7 +17,7 @@ export interface BattleCanvasHandle {
     handleAttackToOpponent: ()=>Promise<void>,
     handleRunAway: ()=>Promise<void>,
     handleSwitchPokemon: ()=>Promise<void>
-    handleStart: ()=>void
+    handleStart: (biomeType: BiomeType)=>void
 }
 // 
 export const VBattleCanvas = React.forwardRef<BattleCanvasHandle, VBattleProps>((props, ref)=>{
@@ -26,11 +27,23 @@ export const VBattleCanvas = React.forwardRef<BattleCanvasHandle, VBattleProps>(
     const [playerAnim, setPlayerAnim] = useState('anim-enter-player');
     const [opponentAnim, setOpponentAnim] = useState('anim-enter-enemy');
     const [flash, setFlash] = useState(!props.opponentPokemon);
+    const [shinyAnim, setShinyAnim] = useState('anim-enter-shiny');
+    const [fixBiomeType, setFixBiomeType] = useState<BiomeType>(BiomeType.None);
+    const [sceneOpacity, setSceneOpacity] = useState(0);
     const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
     const triggerAnim = (setAnim: React.Dispatch<React.SetStateAction<string>>, animName: string, duration: number = 500) => {
         setAnim(animName);
         setTimeout(() => setAnim(''), duration);
     };
+
+    useEffect(() => {
+        if (opponentPokemon?.isShiny) {
+            // Wait for enter animation to finish a bit then play shiny anim
+            setTimeout(() => {
+                triggerAnim(setShinyAnim, 'anim-shiny', 1500);
+            }, 800);
+        }
+    }, [opponentPokemon]);
 
     useImperativeHandle(ref, () => ({
         handleMyPokemonFaint:()=>{
@@ -65,8 +78,10 @@ export const VBattleCanvas = React.forwardRef<BattleCanvasHandle, VBattleProps>(
           triggerAnim(setPlayerAnim, 'anim-enter-player');
           await sleep(1000);
         },
-        handleStart: ()=>{
-          setFlash(false)
+        handleStart: (_fixBiomeType: BiomeType)=>{
+          setFixBiomeType(_fixBiomeType);
+          setFlash(false);
+          setTimeout(() => setSceneOpacity(1), 50);
         }
       })
     )
@@ -89,10 +104,26 @@ export const VBattleCanvas = React.forwardRef<BattleCanvasHandle, VBattleProps>(
             : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
     };
 
+    const getBiomeClass = (type: BiomeType) => {
+        switch (type) {
+            case BiomeType.Grassland: return styles['grassland'];
+            case BiomeType.WaterBeach: return styles['water-beach'];
+            case BiomeType.UrbanPowerPlant: return styles['urban-power-plant'];
+            case BiomeType.MountainCave: return styles['mountain-cave'];
+            case BiomeType.GhostMystic: return styles['ghost-mystic'];
+            case BiomeType.ToxicWaste: return styles['toxic-waste'];
+            default: return styles['none'];
+        }
+    };
+
     return <>
       <div className={`${styles['flash-effect']} ${flash ? styles['flash-active'] : ''}`}></div>
 
       <div className={styles['battle-scene']}>
+          <div 
+            className={`${styles['battle-background']} ${getBiomeClass(fixBiomeType)}`}
+            style={{ opacity: sceneOpacity, transition: 'opacity 0.5s ease-in-out' }}
+          />
           <>
             {/* 敵方 HUD */}
             <div className={styles['opponent-hud']}>
@@ -101,7 +132,17 @@ export const VBattleCanvas = React.forwardRef<BattleCanvasHandle, VBattleProps>(
 
             {/* 敵方區域容器 (包含草地與寶可夢) */}
             <div className={`${styles['opponent-container']} ${opponentAnim ? styles[opponentAnim] : ''}`}>
-                <div className={styles['pokemon-wrapper']}>
+                <div className={`${styles['pokemon-wrapper']} ${shinyAnim ? styles[shinyAnim] : ''}`}>
+                    {/* Shiny Sparkles */}
+                    {opponentPokemon?.isShiny && shinyAnim === 'anim-shiny' && (
+                        <>
+                            <div className={styles['shiny-sparkle']}></div>
+                            <div className={styles['shiny-sparkle']}></div>
+                            <div className={styles['shiny-sparkle']}></div>
+                            <div className={styles['shiny-sparkle']}></div>
+                            <div className={styles['shiny-sparkle']}></div>
+                        </>
+                    )}
                     <div className={styles['grass-base']}></div>
                     <img 
                       src={spriteUrl(opponentPokemon ? opponentPokemon.id.toString() : '', opponentPokemon?.isShiny)} 
