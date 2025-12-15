@@ -7,6 +7,7 @@ import { BIOME_GROUPS } from '../utils/KantoPokemonCatchRate';
 import { EncounterHandler, EncounterHandlerMethods, EncounterResult } from '../core/EncounterHandler';
 
 export class BiomeDataManager {
+    private static instance: BiomeDataManager;
     // 記憶體快取 (只供讀取與 UI 顯示)
     private biomeData: BiomeData = { biomeType: BiomeType.Grassland, pokemonTypes: BIOME_GROUPS[ BiomeType.Grassland ] };
     private currentFilePath: string = "";
@@ -15,8 +16,20 @@ export class BiomeDataManager {
 
     private saveQueue = new SequentialExecutor();
 
-    constructor(context: vscode.ExtensionContext) {
+    private constructor(context: vscode.ExtensionContext) {
         this.context = context;
+    }
+
+    public static getInstance(): BiomeDataManager {
+        if (!BiomeDataManager.instance) {
+            throw new Error("BiomeDataManager not initialized. Call initialize() first.");
+        }
+        return BiomeDataManager.instance;
+    }
+
+    public static initialize(context: vscode.ExtensionContext): BiomeDataManager {
+        BiomeDataManager.instance = new BiomeDataManager(context);
+        return BiomeDataManager.instance;
     }
 
 

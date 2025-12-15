@@ -74,9 +74,15 @@ export class CommandHandler {
     }
 
     // ==================== Get Box ====================
-    public handleGetBox(): void {
-        const pokemons = this.pokemonBoxManager.getAll();
-        this.handlerContext.postMessage({ type: 'boxData', data: pokemons });
+    public handleGetBox(boxIndex: number = 0): void {
+        const pokemons = this.pokemonBoxManager.getBox(boxIndex);
+        const totalBoxes = this.pokemonBoxManager.getTotalBoxes();
+        this.handlerContext.postMessage({ 
+            type: 'boxData', 
+            data: pokemons,
+            currentBox: boxIndex,
+            totalBoxes: totalBoxes
+        });
     }
 
     // ==================== Delete Pokemon ====================

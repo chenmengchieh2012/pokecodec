@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { vscode } from '../utilities/vscode';
+import { vscode, resolveAssetUrl } from '../utilities/vscode';
 import styles from './VPokemonBox.module.css';
 import { PokemonInfoModal } from '../model/PokemonInfoModal';
 import { useMessageStore, useMessageSubscription } from '../store/messageStore';
@@ -26,6 +26,7 @@ export const VPokemonBox = () => {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
     const [activeBox, setActiveBox] = useState(0);
+    const [totalBoxes, setTotalBoxes] = useState(1);
 
     useMessageSubscription(MessageType.BoxData, (message) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -45,7 +46,17 @@ export const VPokemonBox = () => {
             return p as PokemonDao;
         });
         setPokemons(validPokemons);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        if (typeof (message as any).totalBoxes === 'number') {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            setTotalBoxes((message as any).totalBoxes);
+        }
     });
+
+    // Fetch data when activeBox changes
+    React.useEffect(() => {
+        vscode.postMessage({ command: MessageType.GetBox, boxIndex: activeBox });
+    }, [activeBox]);
 
     // Handlers
     const handleSlotClick = (p: PokemonDao) => {
@@ -125,19 +136,16 @@ export const VPokemonBox = () => {
         <div className={styles.emeraldContainer}>
             {/* Tabs Navigation */}
             <div className={styles.boxNav}>
-                <div className={styles.tabsLeft}>
-                    <div 
-                        className={`${styles.boxTab} ${activeBox === 0 ? styles.active : ''}`} 
-                        onClick={() => setActiveBox(0)}
-                    >
-                        BOX 1
-                    </div>
-                    <div 
-                        className={`${styles.boxTab} ${activeBox === 1 ? styles.active : ''}`} 
-                        onClick={() => setActiveBox(1)}
-                    >
-                        BOX 2
-                    </div>
+                <div className={styles.tabsLeft} style={{ overflowX: 'auto', maxWidth: '70%' }}>
+                    {Array.from({ length: totalBoxes }).map((_, index) => (
+                        <div 
+                            key={index}
+                            className={`${styles.boxTab} ${activeBox === index ? styles.active : ''}`} 
+                            onClick={() => setActiveBox(index)}
+                        >
+                            BOX {index + 1}
+                        </div>
+                    ))}
                 </div>
                 
                 <div className={styles.tabsRight}>
@@ -179,7 +187,7 @@ export const VPokemonBox = () => {
                         >
                             {selectedIds.has(p.uid) && <div className={styles.checkMark}>✔</div>}
                             <img 
-                                src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/${p.id}.png`} 
+                                src={resolveAssetUrl(`./sprites/pokemon/${p.isShiny ? 'shiny' : 'normal'}/${p.id}.png`)} 
                                 alt={p.name} 
                                 className={styles.sprite}
                             />

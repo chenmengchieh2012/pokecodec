@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styles from './VPartyBox.module.css';
-import { vscode } from '../utilities/vscode';
+import { vscode, resolveAssetUrl } from '../utilities/vscode';
 import { PokemonInfoModal } from '../model/PokemonInfoModal';
 import { getBallUrl } from '../utilities/util';
 import { useMessageStore, useMessageSubscription } from '../store/messageStore';
@@ -57,7 +57,7 @@ export const VPartyBox = () => {
                         {/* --- 常駐大預覽卡 + 小球 --- */}
                         <div className={styles.previewCard}>
                             <img 
-                                src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/${pokemon.id}.png`}
+                                src={resolveAssetUrl(`./sprites/pokemon/${pokemon.isShiny ? 'shiny' : 'normal'}/${pokemon.id}.png`)}
                                 alt={pokemon.name}
                                 className={styles.previewIcon}
                             />

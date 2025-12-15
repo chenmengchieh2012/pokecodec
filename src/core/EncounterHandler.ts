@@ -126,7 +126,7 @@ export const EncounterHandler = (pathResolver?: (path: string) => string): Encou
         }
 
 
-        const newPokemon = await PokemonFactory.createWildPokemonInstance(encounterResult as PokeEncounterData);
+        const newPokemon = await PokemonFactory.createWildPokemonInstance(encounterResult as PokeEncounterData, filePath);
 
         console.log(`[Encounter] Depth: ${depth} | Biome: ${biomeType} | Candidates: ${candidatePool.length}`);
 

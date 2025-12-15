@@ -166,6 +166,7 @@
 }
 
 .sprite {
+  object-fit: contain;
   width: 48px;
   height: 48px;
   transform: scale(1.1);

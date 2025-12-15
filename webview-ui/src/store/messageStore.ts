@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useRef, useEffect, ReactNode } from 'react';
 import { vscode } from '../utilities/vscode';
-import { UserDao } from '../dataAccessObj/userData';
 import { BiomeData } from '../../../src/dataAccessObj/BiomeData';
 import { GameState } from '../../../src/dataAccessObj/GameState';
 import { ItemDao } from '../../../src/dataAccessObj/item';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
 import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
+import { UserDao } from '../../../src/dataAccessObj/userData';
 
 // ============================================================
 // Type Definitions

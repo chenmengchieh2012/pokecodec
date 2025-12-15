@@ -78,7 +78,9 @@
     "test": "node ./out/test/runTest.js",
     "install:all": "npm install && cd webview-ui && npm install",
     "build:webview": "cd webview-ui && npm run build",
-    "package": "npm run build:webview && npm run compile"
+    "package": "npm run build:webview && npm run compile",
+    "download-data": "node scripts/downloadPokemonData.js",
+    "download-sprites": "node scripts/downloadSprites.js"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",

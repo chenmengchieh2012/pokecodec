@@ -12,6 +12,7 @@ import { PokeBallDao } from "../../../src/dataAccessObj/pokeBall";
 import { PokemonDao, PokemonState } from "../../../src/dataAccessObj/pokemon";
 import { PokemonMove } from "../../../src/dataAccessObj/pokeMove";
 import { BattleEvent, BattleEventType, GameState } from "../../../src/dataAccessObj/GameState";
+import { ExperienceCalculator } from "../utilities/ExperienceCalculator";
 
 export interface BattleManagerMethod {
     handleOnAttack: (myPokemonMove: PokemonMove) => Promise<void>,
@@ -147,11 +148,17 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
 
 
     const handleOpponentPokemonFaint = useCallback(() => {
+        battleCanvasRef.current?.handleOpponentPokemonFaint()
+
+        const expGain = ExperienceCalculator.calculateExpGain(opponentPokemonRef.current!);
+       
+        myPokemonHandler.increaseExp(expGain);
+
         onBattleEvent({
             type: BattleEventType.WildPokemonFaint,
             state: 'finish',
         });
-    }, [onBattleEvent]);
+    }, [battleCanvasRef, myPokemonHandler, onBattleEvent]);
 
 
     // 內部 Helper 不需包裝 Queue，因為它們是被外部包裝過的方法呼叫的
@@ -166,15 +173,32 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
         // 2. 先執行攻擊動畫 (不等待)
         battleCanvasRef.current?.handleAttackFromOpponent()
         
+        await dialogBoxRef.current?.setText(`${opponentPokemonRef.current.name} used ${move.name}!`);
         // 3. 執行傷害計算與文字顯示 (這會等待打字機效果)
-        const remainingHp = await myPokemonHandler.hited(opponentPokemonRef.current, move);
+        const {newHp: remainingHp, damageResult} = await myPokemonHandler.hited(opponentPokemonRef.current, move);
         
+        // 4. 屬性相剋文字提示
+        if (damageResult.effectiveness >= 2.0) {
+            await dialogBoxRef.current?.setText("It's super effective!");
+        } else if (damageResult.effectiveness > 0 && damageResult.effectiveness < 1.0) {
+            await dialogBoxRef.current?.setText("It's not very effective...");
+        } else if (damageResult.effectiveness === 0) {
+            await dialogBoxRef.current?.setText("It had no effect...");
+        }
+
+        // 5. 爆擊文字提示
+        if (damageResult.isCritical) {
+            await dialogBoxRef.current?.setText("A critical hit!");
+        }
+
+        // 6. 檢查是否昏厥
         if (remainingHp === 0) {
+            await dialogBoxRef.current?.setText(`${myPokemonRef.current?.name} fainted!`);
             handleMyPokemonFaint();
         }
 
         return remainingHp;
-    }, [battleCanvasRef, handleMyPokemonFaint, myPokemonHandler, opponentPokemonHandler]);
+    }, [battleCanvasRef, dialogBoxRef, handleMyPokemonFaint, myPokemonHandler, opponentPokemonHandler]);
 
     const handleAttackToOpponent = useCallback(async (move: PokemonMove) => {
         if (myPokemonRef.current == undefined) {
@@ -186,15 +210,33 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
         // 2. 先執行攻擊動畫 (不等待)
         battleCanvasRef.current?.handleAttackToOpponent()
         
-        // 3. 執行傷害計算與文字顯示 (這會等待打字機效果)
-        const remainingHp = await opponentPokemonHandler.hited(myPokemonRef.current, move);
+        await dialogBoxRef.current?.setText(`${myPokemonRef.current?.name} used ${move.name}!`);
         
+        // 3. 執行傷害計算與文字顯示 (這會等待打字機效果)
+        const {newHp: remainingHp, damageResult} = await opponentPokemonHandler.hited(myPokemonRef.current, move);
+        
+        // 4. 屬性相剋文字提示
+        if (damageResult.effectiveness >= 2.0) {
+            await dialogBoxRef.current?.setText("It's super effective!");
+        } else if (damageResult.effectiveness > 0 && damageResult.effectiveness < 1.0) {
+            await dialogBoxRef.current?.setText("It's not very effective...");
+        } else if (damageResult.effectiveness === 0) {
+            await dialogBoxRef.current?.setText("It had no effect...");
+        }
+
+        // 5. 爆擊文字提示
+        if (damageResult.isCritical) {
+            await dialogBoxRef.current?.setText("A critical hit!");
+        }
+
+        // 6. 檢查是否昏厥
         if (remainingHp === 0) {
+            await dialogBoxRef.current?.setText(`${opponentPokemonRef.current?.name} fainted!`);
             handleOpponentPokemonFaint();
         }
 
         return remainingHp;
-    }, [opponentPokemonHandler, battleCanvasRef, handleOpponentPokemonFaint, myPokemonHandler]);
+    }, [myPokemonHandler, battleCanvasRef, opponentPokemonHandler, dialogBoxRef, handleOpponentPokemonFaint]);
 
     const handleOnAttack = useCallback(async (myPokemonMove: PokemonMove) => {
         // 使用 queue.execute 包裝整個回合邏輯
@@ -207,7 +249,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
             if (myPokemonRef.current == undefined) {
                 return;
             }
-            
+            console.log(`[BattleManager] Speeding to attack. My Speed: ${myPokemonRef.current.stats.speed}, Opponent Speed: ${opponentPokemonRef.current.stats.speed}`);
             // 速度判斷與攻擊順序邏輯
             if (myPokemonRef.current.stats.speed >= opponentPokemonRef.current.stats.speed) {
                 // 我方先攻
@@ -325,6 +367,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
         });
     }, [battleCanvasRef, myPokemonHandler, opponentPokemonHandler, handleAttackFromOpponent, queue]);
 
+    // 這個function 不用 onBattleEvent 包起來，因為它本身就是被包起來的方法呼叫的
     const handleStart = useCallback(async (gameState: GameState, encounterResult: EncounterResult) => {
         await queue.execute(async () => {
             if (gameState === GameState.WildAppear) {
@@ -357,12 +400,24 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
         const newParty = message.data ?? [];
         setParty(newParty);
         if (gameState === GameState.Searching) {
-            if( !myPokemonRef.current ) {
-                 for (const pkmn of newParty) {
-                    if (pkmn.currentHp && pkmn.currentHp > 0) {
+            console.log("[BattleManager] gogoing to update myPokemon due to PartyData received.");
+            
+            if(newParty.length === 0){
+                await myPokemonHandler.resetPokemon();
+                return;
+            }
+
+            // 自動換第一隻還活著的寶可夢出場
+            for (const pkmn of newParty) {
+                if (pkmn.currentHp && pkmn.currentHp > 0) {
+
+                    // 不是同一隻才換，不然會無限迴圈
+                    if (myPokemon?.uid !== pkmn.uid) { 
+                        console.log("[BattleManager] Switching to first healthy Pokemon in party:", pkmn.name);
                         await myPokemonHandler.switchPokemon(pkmn);
-                        break;
                     }
+                    
+                    break;
                 }
             }
             return;

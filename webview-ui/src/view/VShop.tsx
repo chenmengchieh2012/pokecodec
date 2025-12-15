@@ -3,7 +3,7 @@ import styles from './VShop.module.css';
 import { vscode } from '../utilities/vscode';
 import { SHOP_ITEM_FULL_MEDICINE_NAMES, SHOP_ITEMS_BALL_NAMES, SHOP_ITEMS_HP_MEDICINE_NAMES, SHOP_ITEMS_PP_MEDICINE_NAMES } from '../utilities/ItemName';
 import { useMessageSubscription, messageStore } from '../store/messageStore';
-import { UserDao } from '../dataAccessObj/userData';
+import { UserDao } from '../../../src/dataAccessObj/userData';
 import { MenuSideBar } from '../frame/SideBar';
 import { ItemDao, PokeApiItem, adaptPokeApiItem } from '../../../src/dataAccessObj/item';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
@@ -83,7 +83,7 @@ export const VShop = () => {
                     setQuantity(newQty);
                 }
             } else {
-                if (selectedItem && newQty <= selectedItem.count) {
+                if (selectedItem && newQty <= selectedItem.totalSize) {
                     setQuantity(newQty);
                 }
             }
@@ -170,7 +170,7 @@ export const VShop = () => {
                             onClick={() => handleItemClick(item)}
                             title={item.name}
                         >
-                            {mode === 'sell' && <div className={styles.itemCount}>{item.count}</div>}
+                            {mode === 'sell' && <div className={styles.itemCount}>{item.totalSize}</div>}
                             <img src={item.spriteUrl} alt={item.name} className={styles.itemIcon} />
                             <div className={styles.itemName}>{item.name}</div>
                             <div className={styles.itemPrice}>
@@ -222,7 +222,7 @@ export const VShop = () => {
                                 <button 
                                     className={styles.qtyBtn} 
                                     onClick={() => handleQuantityChange(1)}
-                                    disabled={mode === 'buy' ? (quantity * selectedItem.price > money) : (quantity >= selectedItem.count)}
+                                    disabled={mode === 'buy' ? (quantity * selectedItem.price > money) : (quantity >= selectedItem.totalSize)}
                                 >+</button>
                             </div>
                         </div>

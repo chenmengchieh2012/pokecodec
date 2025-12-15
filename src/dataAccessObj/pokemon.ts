@@ -24,6 +24,7 @@ export interface PokemonDao {
     
     // Stats
     stats: PokemonStats; // Actual stats (calculated)
+    baseStats: PokemonStats; // Base stats (Species specific)
     iv: PokemonStats;    // Individual Values (0-31)
     ev: PokemonStats;    // Effort Values (0-252)
     
@@ -46,6 +47,18 @@ export interface PokemonDao {
     heldItem?: string;
 
     pokemonMoves: PokemonMove[];
+    
+    // Coding Stats
+    codingStats?: CodingStats;
+}
+
+export interface CodingStats {
+    caughtRepo: string;
+    favoriteLanguage: string;
+    linesOfCode: number;
+    bugsFixed: number;
+    commits: number;
+    coffeeConsumed: number;
 }
 
 export interface PokemonState {
@@ -70,6 +83,7 @@ export const initPokemonDao: () => PokemonDao = () => ({
     currentHp: 0,
     maxHp: 0,
     stats: { hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 },
+    baseStats: { hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 },
     iv: { hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 },
     ev: { hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 },
     types: [],
@@ -86,7 +100,8 @@ export const initPokemonDao: () => PokemonDao = () => ({
     caughtDate: 0,
     caughtBall: '',
     pokemonMoves: [],
-})
+
+});
 
 export const initialPokemonState: () => PokemonState = () => ({
     action: PokemonStateAction.None,

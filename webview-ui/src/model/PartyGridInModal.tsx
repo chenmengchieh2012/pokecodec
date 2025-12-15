@@ -1,6 +1,7 @@
 import React from 'react';
-import { PokemonDao } from '../dataAccessObj/pokemon';
+import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
 import styles from './PartyGridInModal.module.css';
+import { resolveAssetUrl } from '../utilities/vscode';
 
 interface PartyGridInModalProps {
     party: PokemonDao[];
@@ -32,7 +33,7 @@ export const PartyGridInModal: React.FC<PartyGridInModalProps> = ({ party, onPok
                             {/* 左側：寶可夢圖示 */}
                             <div className={styles['party-sprite-wrapper']}>
                                 <img 
-                                    src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-viii/icons/${p.id}.png`}
+                                    src={resolveAssetUrl(`./sprites/pokemon/icon/${p.id}.png`)}
                                     alt={p.name}
                                     className={styles['party-sprite']}
                                 />

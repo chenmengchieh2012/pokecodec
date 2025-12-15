@@ -3,6 +3,7 @@ import { VHPBlock } from "./HPBlock";
 import styles from "./VBattleCanvas.module.css";
 import { BiomeType } from "../../../src/dataAccessObj/BiomeData";
 import { PokemonDao, PokemonState, PokemonStateAction } from "../../../src/dataAccessObj/pokemon";
+import { resolveAssetUrl } from "../utilities/vscode";
 
 export interface VBattleProps {
     myPokemon?: PokemonDao;
@@ -13,10 +14,11 @@ export interface VBattleProps {
 
 export interface BattleCanvasHandle {
     handleMyPokemonFaint: ()=>void,
+    handleOpponentPokemonFaint: ()=>void,
     handleAttackFromOpponent: ()=>Promise<void>,
     handleAttackToOpponent: ()=>Promise<void>,
     handleRunAway: ()=>Promise<void>,
-    handleSwitchPokemon: ()=>Promise<void>
+    handleSwitchPokemon: ()=>Promise<void>,
     handleStart: (biomeType: BiomeType)=>void
 }
 // 
@@ -49,6 +51,10 @@ export const VBattleCanvas = React.forwardRef<BattleCanvasHandle, VBattleProps>(
         handleMyPokemonFaint:()=>{
           // 我方昏厥動畫 (Flash)
           setPlayerAnim('anim-faint');
+        },
+        handleOpponentPokemonFaint:()=>{
+          // 敵方昏厥動畫 (Flash)
+          setOpponentAnim('anim-faint');
         },
         handleAttackFromOpponent: async ()=>{
           // 敵方攻擊動畫 (Shake)
@@ -89,19 +95,20 @@ export const VBattleCanvas = React.forwardRef<BattleCanvasHandle, VBattleProps>(
     
 
     const spriteUrl = useCallback((id: string, isShiny?: boolean) =>
-    id ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${isShiny ? 'shiny/' : ''}${id}.gif`
+    id ? resolveAssetUrl(`./sprites/pokemon/${isShiny ? 'shiny' : 'normal'}/${id}.gif`)
     : '', []);
 
     const spriteBackUrl = useCallback((id: string, isShiny?: boolean) =>
-    id ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/back/${isShiny ? 'shiny/' : ''}${id}.gif`
+    id ? resolveAssetUrl(`./sprites/pokemon/${isShiny ? 'back-shiny' : 'back'}/${id}.gif`)
     : '', []);
 
-    const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>, id: number, isBack: boolean = false) => {
+    const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>, id: number) => {
         const target = e.target as HTMLImageElement;
         target.onerror = null; // Prevent infinite loop
-        target.src = isBack 
-            ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/${id}.png`
-            : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
+        // Fallback to icon if animated sprite fails, or maybe just hide it?
+        // For now let's try to load the icon as a last resort or keep the old fallback if you prefer online fallback
+        // But since we want offline, let's fallback to icon which we have
+        target.src = resolveAssetUrl(`./sprites/pokemon/icon/${id}.png`);
     };
 
     const getBiomeClass = (type: BiomeType) => {
@@ -165,7 +172,7 @@ export const VBattleCanvas = React.forwardRef<BattleCanvasHandle, VBattleProps>(
                       src={spriteBackUrl(myPokemon? myPokemon.id.toString() : '')} 
                       alt="my pokemon" 
                       className={styles['my-pokemon-sprite']}
-                      onError={(e) => handleImageError(e, myPokemon ? myPokemon.id : 0, true)}
+                      onError={(e) => handleImageError(e, myPokemon ? myPokemon.id : 0)}
                     />
                 </div>
             </div>

@@ -1,0 +1,1652 @@
+{
+  "karate-chop": {
+    "id": 2,
+    "name": "karate-chop",
+    "type": "FIGHTING",
+    "power": 50,
+    "accuracy": 100,
+    "pp": 25,
+    "maxPP": 40,
+    "effect": "Has an increased chance for a critical hit."
+  },
+  "double-slap": {
+    "id": 3,
+    "name": "double-slap",
+    "type": "NORMAL",
+    "power": 15,
+    "accuracy": 85,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "Hits 2-5 times in one turn."
+  },
+  "fire-punch": {
+    "id": 7,
+    "name": "fire-punch",
+    "type": "FIRE",
+    "power": 75,
+    "accuracy": 100,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "Has a 10% chance to burn the target."
+  },
+  "swords-dance": {
+    "id": 14,
+    "name": "swords-dance",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": null,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Raises the user’s Attack by two stages."
+  },
+  "pound": {
+    "id": 1,
+    "name": "pound",
+    "type": "NORMAL",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 35,
+    "maxPP": 56,
+    "effect": "Inflicts regular damage with no additional effect."
+  },
+  "ice-punch": {
+    "id": 8,
+    "name": "ice-punch",
+    "type": "ICE",
+    "power": 75,
+    "accuracy": 100,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "Has a 10% chance to freeze the target."
+  },
+  "scratch": {
+    "id": 10,
+    "name": "scratch",
+    "type": "NORMAL",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 35,
+    "maxPP": 56,
+    "effect": "Inflicts regular damage with no additional effect."
+  },
+  "gust": {
+    "id": 16,
+    "name": "gust",
+    "type": "FLYING",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 35,
+    "maxPP": 56,
+    "effect": "Inflicts regular damage and can hit Pokémon in the air."
+  },
+  "cut": {
+    "id": 15,
+    "name": "cut",
+    "type": "NORMAL",
+    "power": 50,
+    "accuracy": 95,
+    "pp": 30,
+    "maxPP": 48,
+    "effect": "Inflicts regular damage with no additional effect."
+  },
+  "thunder-punch": {
+    "id": 9,
+    "name": "thunder-punch",
+    "type": "ELECTRIC",
+    "power": 75,
+    "accuracy": 100,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "Has a 10% chance to paralyze the target."
+  },
+  "mega-punch": {
+    "id": 5,
+    "name": "mega-punch",
+    "type": "NORMAL",
+    "power": 80,
+    "accuracy": 85,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Inflicts regular damage with no additional effect."
+  },
+  "wing-attack": {
+    "id": 17,
+    "name": "wing-attack",
+    "type": "FLYING",
+    "power": 60,
+    "accuracy": 100,
+    "pp": 35,
+    "maxPP": 56,
+    "effect": "Inflicts regular damage with no additional effect."
+  },
+  "pay-day": {
+    "id": 6,
+    "name": "pay-day",
+    "type": "NORMAL",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Scatters money on the ground worth five times the user’s level."
+  },
+  "vice-grip": {
+    "id": 11,
+    "name": "vice-grip",
+    "type": "NORMAL",
+    "power": 55,
+    "accuracy": 100,
+    "pp": 30,
+    "maxPP": 48,
+    "effect": "Inflicts regular damage with no additional effect."
+  },
+  "whirlwind": {
+    "id": 18,
+    "name": "whirlwind",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": null,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Immediately ends wild battles.  Forces trainers to switch Pokémon."
+  },
+  "bind": {
+    "id": 20,
+    "name": "bind",
+    "type": "NORMAL",
+    "power": 15,
+    "accuracy": 85,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Prevents the target from fleeing and inflicts damage for 2-5 turns."
+  },
+  "comet-punch": {
+    "id": 4,
+    "name": "comet-punch",
+    "type": "NORMAL",
+    "power": 18,
+    "accuracy": 85,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "Hits 2-5 times in one turn."
+  },
+  "razor-wind": {
+    "id": 13,
+    "name": "razor-wind",
+    "type": "NORMAL",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "Requires a turn to charge before attacking."
+  },
+  "guillotine": {
+    "id": 12,
+    "name": "guillotine",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": 30,
+    "pp": 5,
+    "maxPP": 8,
+    "effect": "Causes a one-hit KO."
+  },
+  "fly": {
+    "id": 19,
+    "name": "fly",
+    "type": "FLYING",
+    "power": 90,
+    "accuracy": 95,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "User flies high into the air, dodging all attacks, and hits next turn."
+  },
+  "double-kick": {
+    "id": 24,
+    "name": "double-kick",
+    "type": "FIGHTING",
+    "power": 30,
+    "accuracy": 100,
+    "pp": 30,
+    "maxPP": 48,
+    "effect": "Hits twice in one turn."
+  },
+  "stomp": {
+    "id": 23,
+    "name": "stomp",
+    "type": "NORMAL",
+    "power": 65,
+    "accuracy": 100,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Has a 30% chance to make the target flinch."
+  },
+  "vine-whip": {
+    "id": 22,
+    "name": "vine-whip",
+    "type": "GRASS",
+    "power": 45,
+    "accuracy": 100,
+    "pp": 25,
+    "maxPP": 40,
+    "effect": "Inflicts regular damage with no additional effect."
+  },
+  "rolling-kick": {
+    "id": 27,
+    "name": "rolling-kick",
+    "type": "FIGHTING",
+    "power": 60,
+    "accuracy": 85,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "Has a 30% chance to make the target flinch."
+  },
+  "double-edge": {
+    "id": 38,
+    "name": "double-edge",
+    "type": "NORMAL",
+    "power": 120,
+    "accuracy": 100,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "User receives 1/3 the damage inflicted in recoil."
+  },
+  "poison-sting": {
+    "id": 40,
+    "name": "poison-sting",
+    "type": "POISON",
+    "power": 15,
+    "accuracy": 100,
+    "pp": 35,
+    "maxPP": 56,
+    "effect": "Has a 30% chance to poison the target."
+  },
+  "jump-kick": {
+    "id": 26,
+    "name": "jump-kick",
+    "type": "FIGHTING",
+    "power": 100,
+    "accuracy": 95,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "If the user misses, it takes half the damage it would have inflicted in recoil."
+  },
+  "headbutt": {
+    "id": 29,
+    "name": "headbutt",
+    "type": "NORMAL",
+    "power": 70,
+    "accuracy": 100,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "Has a 30% chance to make the target flinch."
+  },
+  "body-slam": {
+    "id": 34,
+    "name": "body-slam",
+    "type": "NORMAL",
+    "power": 85,
+    "accuracy": 100,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "Has a 30% chance to paralyze the target."
+  },
+  "thrash": {
+    "id": 37,
+    "name": "thrash",
+    "type": "NORMAL",
+    "power": 120,
+    "accuracy": 100,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "Hits every turn for 2-3 turns, then confuses the user."
+  },
+  "mega-kick": {
+    "id": 25,
+    "name": "mega-kick",
+    "type": "NORMAL",
+    "power": 120,
+    "accuracy": 75,
+    "pp": 5,
+    "maxPP": 8,
+    "effect": "Inflicts regular damage with no additional effect."
+  },
+  "fury-attack": {
+    "id": 31,
+    "name": "fury-attack",
+    "type": "NORMAL",
+    "power": 15,
+    "accuracy": 85,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Hits 2-5 times in one turn."
+  },
+  "sand-attack": {
+    "id": 28,
+    "name": "sand-attack",
+    "type": "GROUND",
+    "power": null,
+    "accuracy": 100,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "Lowers the target’s accuracy by one stage."
+  },
+  "take-down": {
+    "id": 36,
+    "name": "take-down",
+    "type": "NORMAL",
+    "power": 90,
+    "accuracy": 85,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "User receives 1/4 the damage it inflicts in recoil."
+  },
+  "horn-attack": {
+    "id": 30,
+    "name": "horn-attack",
+    "type": "NORMAL",
+    "power": 65,
+    "accuracy": 100,
+    "pp": 25,
+    "maxPP": 40,
+    "effect": "Inflicts regular damage with no additional effect."
+  },
+  "tail-whip": {
+    "id": 39,
+    "name": "tail-whip",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": 100,
+    "pp": 30,
+    "maxPP": 48,
+    "effect": "Lowers the target’s Defense by one stage."
+  },
+  "wrap": {
+    "id": 35,
+    "name": "wrap",
+    "type": "NORMAL",
+    "power": 15,
+    "accuracy": 90,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Prevents the target from fleeing and inflicts damage for 2-5 turns."
+  },
+  "horn-drill": {
+    "id": 32,
+    "name": "horn-drill",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": 30,
+    "pp": 5,
+    "maxPP": 8,
+    "effect": "Causes a one-hit KO."
+  },
+  "tackle": {
+    "id": 33,
+    "name": "tackle",
+    "type": "NORMAL",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 35,
+    "maxPP": 56,
+    "effect": "Inflicts regular damage with no additional effect."
+  },
+  "slam": {
+    "id": 21,
+    "name": "slam",
+    "type": "NORMAL",
+    "power": 80,
+    "accuracy": 75,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Inflicts regular damage with no additional effect."
+  },
+  "water-gun": {
+    "id": 55,
+    "name": "water-gun",
+    "type": "WATER",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 25,
+    "maxPP": 40,
+    "effect": "Inflicts regular damage with no additional effect."
+  },
+  "pin-missile": {
+    "id": 42,
+    "name": "pin-missile",
+    "type": "BUG",
+    "power": 25,
+    "accuracy": 95,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Hits 2-5 times in one turn."
+  },
+  "mist": {
+    "id": 54,
+    "name": "mist",
+    "type": "ICE",
+    "power": null,
+    "accuracy": null,
+    "pp": 30,
+    "maxPP": 48,
+    "effect": "Protects the user’s stats from being changed by enemy moves."
+  },
+  "bite": {
+    "id": 44,
+    "name": "bite",
+    "type": "DARK",
+    "power": 60,
+    "accuracy": 100,
+    "pp": 25,
+    "maxPP": 40,
+    "effect": "Has a 30% chance to make the target flinch."
+  },
+  "ice-beam": {
+    "id": 58,
+    "name": "ice-beam",
+    "type": "ICE",
+    "power": 90,
+    "accuracy": 100,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "Has a 10% chance to freeze the target."
+  },
+  "roar": {
+    "id": 46,
+    "name": "roar",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": null,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Immediately ends wild battles.  Forces trainers to switch Pokémon."
+  },
+  "sonic-boom": {
+    "id": 49,
+    "name": "sonic-boom",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": 90,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Inflicts 20 points of damage."
+  },
+  "leer": {
+    "id": 43,
+    "name": "leer",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": 100,
+    "pp": 30,
+    "maxPP": 48,
+    "effect": "Lowers the target’s Defense by one stage."
+  },
+  "hydro-pump": {
+    "id": 56,
+    "name": "hydro-pump",
+    "type": "WATER",
+    "power": 110,
+    "accuracy": 80,
+    "pp": 5,
+    "maxPP": 8,
+    "effect": "Inflicts regular damage with no additional effect."
+  },
+  "growl": {
+    "id": 45,
+    "name": "growl",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": 100,
+    "pp": 40,
+    "maxPP": 64,
+    "effect": "Lowers the target’s Attack by one stage."
+  },
+  "twineedle": {
+    "id": 41,
+    "name": "twineedle",
+    "type": "BUG",
+    "power": 25,
+    "accuracy": 100,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Hits twice in the same turn.  Has a 20% chance to poison the target."
+  },
+  "ember": {
+    "id": 52,
+    "name": "ember",
+    "type": "FIRE",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 25,
+    "maxPP": 40,
+    "effect": "Has a 10% chance to burn the target."
+  },
+  "flamethrower": {
+    "id": 53,
+    "name": "flamethrower",
+    "type": "FIRE",
+    "power": 90,
+    "accuracy": 100,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "Has a 10% chance to burn the target."
+  },
+  "surf": {
+    "id": 57,
+    "name": "surf",
+    "type": "WATER",
+    "power": 90,
+    "accuracy": 100,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "Inflicts regular damage and can hit Dive users."
+  },
+  "disable": {
+    "id": 50,
+    "name": "disable",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": 100,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Disables the target’s last used move for 1-8 turns."
+  },
+  "supersonic": {
+    "id": 48,
+    "name": "supersonic",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": 55,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Confuses the target."
+  },
+  "acid": {
+    "id": 51,
+    "name": "acid",
+    "type": "POISON",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 30,
+    "maxPP": 48,
+    "effect": "Has a 10% chance to lower the target’s Special Defense by one stage."
+  },
+  "psybeam": {
+    "id": 60,
+    "name": "psybeam",
+    "type": "PSYCHIC",
+    "power": 65,
+    "accuracy": 100,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Has a 10% chance to confuse the target."
+  },
+  "sing": {
+    "id": 47,
+    "name": "sing",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": 55,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "Puts the target to sleep."
+  },
+  "blizzard": {
+    "id": 59,
+    "name": "blizzard",
+    "type": "ICE",
+    "power": 110,
+    "accuracy": 70,
+    "pp": 5,
+    "maxPP": 8,
+    "effect": "Has a 10% chance to freeze the target."
+  },
+  "peck": {
+    "id": 64,
+    "name": "peck",
+    "type": "FLYING",
+    "power": 35,
+    "accuracy": 100,
+    "pp": 35,
+    "maxPP": 56,
+    "effect": "Inflicts regular damage with no additional effect."
+  },
+  "growth": {
+    "id": 74,
+    "name": "growth",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": null,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Raises the user’s Attack and Special Attack by one stage."
+  },
+  "seismic-toss": {
+    "id": 69,
+    "name": "seismic-toss",
+    "type": "FIGHTING",
+    "power": null,
+    "accuracy": 100,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Inflicts damage equal to the user’s level."
+  },
+  "razor-leaf": {
+    "id": 75,
+    "name": "razor-leaf",
+    "type": "GRASS",
+    "power": 55,
+    "accuracy": 95,
+    "pp": 25,
+    "maxPP": 40,
+    "effect": "Has an increased chance for a critical hit."
+  },
+  "submission": {
+    "id": 66,
+    "name": "submission",
+    "type": "FIGHTING",
+    "power": 80,
+    "accuracy": 80,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "User receives 1/4 the damage it inflicts in recoil."
+  },
+  "petal-dance": {
+    "id": 80,
+    "name": "petal-dance",
+    "type": "GRASS",
+    "power": 120,
+    "accuracy": 100,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "Hits every turn for 2-3 turns, then confuses the user."
+  },
+  "counter": {
+    "id": 68,
+    "name": "counter",
+    "type": "FIGHTING",
+    "power": null,
+    "accuracy": 100,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Inflicts twice the damage the user received from the last physical hit it took."
+  },
+  "absorb": {
+    "id": 71,
+    "name": "absorb",
+    "type": "GRASS",
+    "power": 20,
+    "accuracy": 100,
+    "pp": 25,
+    "maxPP": 40,
+    "effect": "Drains half the damage inflicted to heal the user."
+  },
+  "strength": {
+    "id": 70,
+    "name": "strength",
+    "type": "NORMAL",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "Inflicts regular damage with no additional effect."
+  },
+  "bubble-beam": {
+    "id": 61,
+    "name": "bubble-beam",
+    "type": "WATER",
+    "power": 65,
+    "accuracy": 100,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Has a 10% chance to lower the target’s Speed by one stage."
+  },
+  "solar-beam": {
+    "id": 76,
+    "name": "solar-beam",
+    "type": "GRASS",
+    "power": 120,
+    "accuracy": 100,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "Requires a turn to charge before attacking."
+  },
+  "drill-peck": {
+    "id": 65,
+    "name": "drill-peck",
+    "type": "FLYING",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Inflicts regular damage with no additional effect."
+  },
+  "leech-seed": {
+    "id": 73,
+    "name": "leech-seed",
+    "type": "GRASS",
+    "power": null,
+    "accuracy": 90,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "Seeds the target, stealing HP from it every turn."
+  },
+  "aurora-beam": {
+    "id": 62,
+    "name": "aurora-beam",
+    "type": "ICE",
+    "power": 65,
+    "accuracy": 100,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Has a 10% chance to lower the target’s Attack by one stage."
+  },
+  "low-kick": {
+    "id": 67,
+    "name": "low-kick",
+    "type": "FIGHTING",
+    "power": null,
+    "accuracy": 100,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Inflicts more damage to heavier targets, with a maximum of 120 power."
+  },
+  "sleep-powder": {
+    "id": 79,
+    "name": "sleep-powder",
+    "type": "GRASS",
+    "power": null,
+    "accuracy": 75,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "Puts the target to sleep."
+  },
+  "stun-spore": {
+    "id": 78,
+    "name": "stun-spore",
+    "type": "GRASS",
+    "power": null,
+    "accuracy": 75,
+    "pp": 30,
+    "maxPP": 48,
+    "effect": "Paralyzes the target."
+  },
+  "poison-powder": {
+    "id": 77,
+    "name": "poison-powder",
+    "type": "POISON",
+    "power": null,
+    "accuracy": 75,
+    "pp": 35,
+    "maxPP": 56,
+    "effect": "Poisons the target."
+  },
+  "mega-drain": {
+    "id": 72,
+    "name": "mega-drain",
+    "type": "GRASS",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "Drains half the damage inflicted to heal the user."
+  },
+  "hyper-beam": {
+    "id": 63,
+    "name": "hyper-beam",
+    "type": "NORMAL",
+    "power": 150,
+    "accuracy": 90,
+    "pp": 5,
+    "maxPP": 8,
+    "effect": "User foregoes its next turn to recharge."
+  },
+  "dragon-rage": {
+    "id": 82,
+    "name": "dragon-rage",
+    "type": "DRAGON",
+    "power": null,
+    "accuracy": 100,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "Inflicts 40 points of damage."
+  },
+  "quick-attack": {
+    "id": 98,
+    "name": "quick-attack",
+    "type": "NORMAL",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 30,
+    "maxPP": 48,
+    "effect": "Inflicts regular damage with no additional effect."
+  },
+  "rock-throw": {
+    "id": 88,
+    "name": "rock-throw",
+    "type": "ROCK",
+    "power": 50,
+    "accuracy": 90,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "Inflicts regular damage with no additional effect."
+  },
+  "dig": {
+    "id": 91,
+    "name": "dig",
+    "type": "GROUND",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "User digs underground, dodging all attacks, and hits next turn."
+  },
+  "fire-spin": {
+    "id": 83,
+    "name": "fire-spin",
+    "type": "FIRE",
+    "power": 35,
+    "accuracy": 85,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "Prevents the target from fleeing and inflicts damage for 2-5 turns."
+  },
+  "fissure": {
+    "id": 90,
+    "name": "fissure",
+    "type": "GROUND",
+    "power": null,
+    "accuracy": 30,
+    "pp": 5,
+    "maxPP": 8,
+    "effect": "Causes a one-hit KO."
+  },
+  "psychic": {
+    "id": 94,
+    "name": "psychic",
+    "type": "PSYCHIC",
+    "power": 90,
+    "accuracy": 100,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "Has a 10% chance to lower the target’s Special Defense by one stage."
+  },
+  "meditate": {
+    "id": 96,
+    "name": "meditate",
+    "type": "PSYCHIC",
+    "power": null,
+    "accuracy": null,
+    "pp": 40,
+    "maxPP": 64,
+    "effect": "Raises the user’s Attack by one stage."
+  },
+  "earthquake": {
+    "id": 89,
+    "name": "earthquake",
+    "type": "GROUND",
+    "power": 100,
+    "accuracy": 100,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "Inflicts regular damage and can hit Dig users."
+  },
+  "thunder-shock": {
+    "id": 84,
+    "name": "thunder-shock",
+    "type": "ELECTRIC",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 30,
+    "maxPP": 48,
+    "effect": "Has a 10% chance to paralyze the target."
+  },
+  "string-shot": {
+    "id": 81,
+    "name": "string-shot",
+    "type": "BUG",
+    "power": null,
+    "accuracy": 95,
+    "pp": 40,
+    "maxPP": 64,
+    "effect": "Lowers the target’s Speed by two stages."
+  },
+  "confusion": {
+    "id": 93,
+    "name": "confusion",
+    "type": "PSYCHIC",
+    "power": 50,
+    "accuracy": 100,
+    "pp": 25,
+    "maxPP": 40,
+    "effect": "Has a 10% chance to confuse the target."
+  },
+  "rage": {
+    "id": 99,
+    "name": "rage",
+    "type": "NORMAL",
+    "power": 20,
+    "accuracy": 100,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "If the user is hit after using this move, its Attack rises by one stage."
+  },
+  "thunderbolt": {
+    "id": 85,
+    "name": "thunderbolt",
+    "type": "ELECTRIC",
+    "power": 90,
+    "accuracy": 100,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "Has a 10% chance to paralyze the target."
+  },
+  "hypnosis": {
+    "id": 95,
+    "name": "hypnosis",
+    "type": "PSYCHIC",
+    "power": null,
+    "accuracy": 60,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Puts the target to sleep."
+  },
+  "teleport": {
+    "id": 100,
+    "name": "teleport",
+    "type": "PSYCHIC",
+    "power": null,
+    "accuracy": null,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Immediately ends wild battles.  No effect otherwise."
+  },
+  "thunder-wave": {
+    "id": 86,
+    "name": "thunder-wave",
+    "type": "ELECTRIC",
+    "power": null,
+    "accuracy": 90,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Paralyzes the target."
+  },
+  "thunder": {
+    "id": 87,
+    "name": "thunder",
+    "type": "ELECTRIC",
+    "power": 110,
+    "accuracy": 70,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "Has a 30% chance to paralyze the target."
+  },
+  "toxic": {
+    "id": 92,
+    "name": "toxic",
+    "type": "POISON",
+    "power": null,
+    "accuracy": 90,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "Badly poisons the target, inflicting more damage every turn."
+  },
+  "agility": {
+    "id": 97,
+    "name": "agility",
+    "type": "PSYCHIC",
+    "power": null,
+    "accuracy": null,
+    "pp": 30,
+    "maxPP": 48,
+    "effect": "Raises the user’s Speed by two stages."
+  },
+  "night-shade": {
+    "id": 101,
+    "name": "night-shade",
+    "type": "GHOST",
+    "power": null,
+    "accuracy": 100,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "Inflicts damage equal to the user’s level."
+  },
+  "confuse-ray": {
+    "id": 109,
+    "name": "confuse-ray",
+    "type": "GHOST",
+    "power": null,
+    "accuracy": 100,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "Confuses the target."
+  },
+  "haze": {
+    "id": 114,
+    "name": "haze",
+    "type": "ICE",
+    "power": null,
+    "accuracy": null,
+    "pp": 30,
+    "maxPP": 48,
+    "effect": "Resets all Pokémon’s stats, accuracy, and evasion."
+  },
+  "bide": {
+    "id": 117,
+    "name": "bide",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": null,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "User waits for two turns, then hits back for twice the damage it took."
+  },
+  "focus-energy": {
+    "id": 116,
+    "name": "focus-energy",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": null,
+    "pp": 30,
+    "maxPP": 48,
+    "effect": "Increases the user’s chance to score a critical hit."
+  },
+  "screech": {
+    "id": 103,
+    "name": "screech",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": 85,
+    "pp": 40,
+    "maxPP": 64,
+    "effect": "Lowers the target’s Defense by two stages."
+  },
+  "mirror-move": {
+    "id": 119,
+    "name": "mirror-move",
+    "type": "FLYING",
+    "power": null,
+    "accuracy": null,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Uses the target’s last used move."
+  },
+  "barrier": {
+    "id": 112,
+    "name": "barrier",
+    "type": "PSYCHIC",
+    "power": null,
+    "accuracy": null,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Raises the user’s Defense by two stages."
+  },
+  "reflect": {
+    "id": 115,
+    "name": "reflect",
+    "type": "PSYCHIC",
+    "power": null,
+    "accuracy": null,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Reduces damage from physical attacks by half."
+  },
+  "mimic": {
+    "id": 102,
+    "name": "mimic",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": null,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "Copies the target’s last used move."
+  },
+  "withdraw": {
+    "id": 110,
+    "name": "withdraw",
+    "type": "WATER",
+    "power": null,
+    "accuracy": null,
+    "pp": 40,
+    "maxPP": 64,
+    "effect": "Raises the user’s Defense by one stage."
+  },
+  "light-screen": {
+    "id": 113,
+    "name": "light-screen",
+    "type": "PSYCHIC",
+    "power": null,
+    "accuracy": null,
+    "pp": 30,
+    "maxPP": 48,
+    "effect": "Reduces damage from special attacks by 50% for five turns."
+  },
+  "defense-curl": {
+    "id": 111,
+    "name": "defense-curl",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": null,
+    "pp": 40,
+    "maxPP": 64,
+    "effect": "Raises user’s Defense by one stage."
+  },
+  "recover": {
+    "id": 105,
+    "name": "recover",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": null,
+    "pp": 5,
+    "maxPP": 8,
+    "effect": "Heals the user by half its max HP."
+  },
+  "double-team": {
+    "id": 104,
+    "name": "double-team",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": null,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "Raises the user’s evasion by one stage."
+  },
+  "self-destruct": {
+    "id": 120,
+    "name": "self-destruct",
+    "type": "NORMAL",
+    "power": 200,
+    "accuracy": 100,
+    "pp": 5,
+    "maxPP": 8,
+    "effect": "User faints."
+  },
+  "metronome": {
+    "id": 118,
+    "name": "metronome",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": null,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "Randomly selects and uses any move in the game."
+  },
+  "smokescreen": {
+    "id": 108,
+    "name": "smokescreen",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": 100,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Lowers the target’s accuracy by one stage."
+  },
+  "minimize": {
+    "id": 107,
+    "name": "minimize",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": null,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "Raises the user’s evasion by two stages."
+  },
+  "harden": {
+    "id": 106,
+    "name": "harden",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": null,
+    "pp": 30,
+    "maxPP": 48,
+    "effect": "Raises the user’s Defense by one stage."
+  },
+  "skull-bash": {
+    "id": 130,
+    "name": "skull-bash",
+    "type": "NORMAL",
+    "power": 130,
+    "accuracy": 100,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "Raises the user’s Defense by one stage.  User charges for one turn before attacking."
+  },
+  "smog": {
+    "id": 123,
+    "name": "smog",
+    "type": "POISON",
+    "power": 30,
+    "accuracy": 70,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Has a 40% chance to poison the target."
+  },
+  "soft-boiled": {
+    "id": 135,
+    "name": "soft-boiled",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": null,
+    "pp": 5,
+    "maxPP": 8,
+    "effect": "Heals the user by half its max HP."
+  },
+  "sludge": {
+    "id": 124,
+    "name": "sludge",
+    "type": "POISON",
+    "power": 65,
+    "accuracy": 100,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Has a 30% chance to poison the target."
+  },
+  "kinesis": {
+    "id": 134,
+    "name": "kinesis",
+    "type": "PSYCHIC",
+    "power": null,
+    "accuracy": 80,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "Lowers the target’s accuracy by one stage."
+  },
+  "barrage": {
+    "id": 140,
+    "name": "barrage",
+    "type": "NORMAL",
+    "power": 15,
+    "accuracy": 85,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Hits 2-5 times in one turn."
+  },
+  "glare": {
+    "id": 137,
+    "name": "glare",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": 100,
+    "pp": 30,
+    "maxPP": 48,
+    "effect": "Paralyzes the target."
+  },
+  "spike-cannon": {
+    "id": 131,
+    "name": "spike-cannon",
+    "type": "NORMAL",
+    "power": 20,
+    "accuracy": 100,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "Hits 2-5 times in one turn."
+  },
+  "waterfall": {
+    "id": 127,
+    "name": "waterfall",
+    "type": "WATER",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "Has a 20% chance to make the target flinch."
+  },
+  "clamp": {
+    "id": 128,
+    "name": "clamp",
+    "type": "WATER",
+    "power": 35,
+    "accuracy": 85,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "Prevents the target from fleeing and inflicts damage for 2-5 turns."
+  },
+  "dream-eater": {
+    "id": 138,
+    "name": "dream-eater",
+    "type": "PSYCHIC",
+    "power": 100,
+    "accuracy": 100,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "Only works on sleeping Pokémon.  Drains half the damage inflicted to heal the user."
+  },
+  "bone-club": {
+    "id": 125,
+    "name": "bone-club",
+    "type": "GROUND",
+    "power": 65,
+    "accuracy": 85,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Has a 10% chance to make the target flinch."
+  },
+  "poison-gas": {
+    "id": 139,
+    "name": "poison-gas",
+    "type": "POISON",
+    "power": null,
+    "accuracy": 90,
+    "pp": 40,
+    "maxPP": 64,
+    "effect": "Poisons the target."
+  },
+  "lick": {
+    "id": 122,
+    "name": "lick",
+    "type": "GHOST",
+    "power": 30,
+    "accuracy": 100,
+    "pp": 30,
+    "maxPP": 48,
+    "effect": "Has a 30% chance to paralyze the target."
+  },
+  "constrict": {
+    "id": 132,
+    "name": "constrict",
+    "type": "NORMAL",
+    "power": 10,
+    "accuracy": 100,
+    "pp": 35,
+    "maxPP": 56,
+    "effect": "Has a 10% chance to lower the target’s Speed by one stage."
+  },
+  "amnesia": {
+    "id": 133,
+    "name": "amnesia",
+    "type": "PSYCHIC",
+    "power": null,
+    "accuracy": null,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Raises the user’s Special Defense by two stages."
+  },
+  "fire-blast": {
+    "id": 126,
+    "name": "fire-blast",
+    "type": "FIRE",
+    "power": 110,
+    "accuracy": 85,
+    "pp": 5,
+    "maxPP": 8,
+    "effect": "Has a 10% chance to burn the target."
+  },
+  "high-jump-kick": {
+    "id": 136,
+    "name": "high-jump-kick",
+    "type": "FIGHTING",
+    "power": 130,
+    "accuracy": 90,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "If the user misses, it takes half the damage it would have inflicted in recoil."
+  },
+  "egg-bomb": {
+    "id": 121,
+    "name": "egg-bomb",
+    "type": "NORMAL",
+    "power": 100,
+    "accuracy": 75,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "Inflicts regular damage with no additional effect."
+  },
+  "swift": {
+    "id": 129,
+    "name": "swift",
+    "type": "NORMAL",
+    "power": 60,
+    "accuracy": null,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Never misses."
+  },
+  "bonemerang": {
+    "id": 155,
+    "name": "bonemerang",
+    "type": "GROUND",
+    "power": 50,
+    "accuracy": 90,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "Hits twice in one turn."
+  },
+  "fury-swipes": {
+    "id": 154,
+    "name": "fury-swipes",
+    "type": "NORMAL",
+    "power": 18,
+    "accuracy": 80,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "Hits 2-5 times in one turn."
+  },
+  "psywave": {
+    "id": 149,
+    "name": "psywave",
+    "type": "PSYCHIC",
+    "power": null,
+    "accuracy": 100,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "Inflicts damage between 50% and 150% of the user’s level."
+  },
+  "acid-armor": {
+    "id": 151,
+    "name": "acid-armor",
+    "type": "POISON",
+    "power": null,
+    "accuracy": null,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Raises the user’s Defense by two stages."
+  },
+  "transform": {
+    "id": 144,
+    "name": "transform",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": null,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "User becomes a copy of the target until it leaves battle."
+  },
+  "leech-life": {
+    "id": 141,
+    "name": "leech-life",
+    "type": "BUG",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "Drains half the damage inflicted to heal the user."
+  },
+  "bubble": {
+    "id": 145,
+    "name": "bubble",
+    "type": "WATER",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 30,
+    "maxPP": 48,
+    "effect": "Has a 10% chance to lower the target’s Speed by one stage."
+  },
+  "conversion": {
+    "id": 160,
+    "name": "conversion",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": null,
+    "pp": 30,
+    "maxPP": 48,
+    "effect": "User’s type changes to the type of one of its moves at random."
+  },
+  "spore": {
+    "id": 147,
+    "name": "spore",
+    "type": "GRASS",
+    "power": null,
+    "accuracy": 100,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "Puts the target to sleep."
+  },
+  "lovely-kiss": {
+    "id": 142,
+    "name": "lovely-kiss",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": 75,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "Puts the target to sleep."
+  },
+  "rest": {
+    "id": 156,
+    "name": "rest",
+    "type": "PSYCHIC",
+    "power": null,
+    "accuracy": null,
+    "pp": 5,
+    "maxPP": 8,
+    "effect": "User sleeps for two turns, completely healing itself."
+  },
+  "splash": {
+    "id": 150,
+    "name": "splash",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": null,
+    "pp": 40,
+    "maxPP": 64,
+    "effect": "Does nothing."
+  },
+  "crabhammer": {
+    "id": 152,
+    "name": "crabhammer",
+    "type": "WATER",
+    "power": 100,
+    "accuracy": 90,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "Has an increased chance for a critical hit."
+  },
+  "hyper-fang": {
+    "id": 158,
+    "name": "hyper-fang",
+    "type": "NORMAL",
+    "power": 80,
+    "accuracy": 90,
+    "pp": 15,
+    "maxPP": 24,
+    "effect": "Has a 10% chance to make the target flinch."
+  },
+  "sky-attack": {
+    "id": 143,
+    "name": "sky-attack",
+    "type": "FLYING",
+    "power": 140,
+    "accuracy": 90,
+    "pp": 5,
+    "maxPP": 8,
+    "effect": "User charges for one turn before attacking.  Has a 30% chance to make the target flinch."
+  },
+  "flash": {
+    "id": 148,
+    "name": "flash",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": 100,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Lowers the target’s accuracy by one stage."
+  },
+  "rock-slide": {
+    "id": 157,
+    "name": "rock-slide",
+    "type": "ROCK",
+    "power": 75,
+    "accuracy": 90,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "Has a 30% chance to make the target flinch."
+  },
+  "sharpen": {
+    "id": 159,
+    "name": "sharpen",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": null,
+    "pp": 30,
+    "maxPP": 48,
+    "effect": "Raises the user’s Attack by one stage."
+  },
+  "dizzy-punch": {
+    "id": 146,
+    "name": "dizzy-punch",
+    "type": "NORMAL",
+    "power": 70,
+    "accuracy": 100,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "Has a 20% chance to confuse the target."
+  },
+  "explosion": {
+    "id": 153,
+    "name": "explosion",
+    "type": "NORMAL",
+    "power": 250,
+    "accuracy": 100,
+    "pp": 5,
+    "maxPP": 8,
+    "effect": "User faints."
+  },
+  "struggle": {
+    "id": 165,
+    "name": "struggle",
+    "type": "NORMAL",
+    "power": 50,
+    "accuracy": null,
+    "pp": 1,
+    "maxPP": 1,
+    "effect": "User takes 1/4 its max HP in recoil."
+  },
+  "tri-attack": {
+    "id": 161,
+    "name": "tri-attack",
+    "type": "NORMAL",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "Has a 20% chance to burn, freeze, or paralyze the target."
+  },
+  "substitute": {
+    "id": 164,
+    "name": "substitute",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": null,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "Transfers 1/4 of the user’s max HP into a doll, protecting the user from further damage or status changes until it breaks."
+  },
+  "super-fang": {
+    "id": 162,
+    "name": "super-fang",
+    "type": "NORMAL",
+    "power": null,
+    "accuracy": 90,
+    "pp": 10,
+    "maxPP": 16,
+    "effect": "Inflicts damage equal to half the target’s HP."
+  },
+  "slash": {
+    "id": 163,
+    "name": "slash",
+    "type": "NORMAL",
+    "power": 70,
+    "accuracy": 100,
+    "pp": 20,
+    "maxPP": 32,
+    "effect": "Has an increased chance for a critical hit."
+  }
+}

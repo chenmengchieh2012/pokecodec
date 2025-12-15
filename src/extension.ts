@@ -27,6 +27,8 @@ import GlobalStateKey from './utils/GlobalStateKey';
 import { GameState } from './dataAccessObj/GameState';
 import { BiomeDataManager } from './manager/BiomeManager';
 import { BiomeData } from './dataAccessObj/BiomeData';
+import { GitActivityHandler } from './core/GitActivityHandler';
+import { ExperienceCalculator } from './utils/ExperienceCalculator';
 
 
 
@@ -41,7 +43,13 @@ export function activate(context: vscode.ExtensionContext) {
     // 🔥 修改點 1: 改成註冊 "WebviewViewProvider" (這是給側邊欄用的)
     // 'pokemonReact' 必須跟 package.json 裡的 view id 一樣
 
-    const biomeManager = new BiomeDataManager(context);
+    // 明確初始化所有 Manager (Singletons)
+    const pokemonBoxManager = PokemonBoxManager.initialize(context);
+    const partyManager = JoinPokemonManager.initialize(context);
+    const bagManager = BagManager.initialize(context);
+    const userDaoManager = UserDaoManager.initialize(context);
+    const gameStateManager = GameStateManager.initialize(context);
+    const biomeManager = BiomeDataManager.initialize(context);
 
     const gameProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'game', context, biomeManager });
     const backpackProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'backpack', context, biomeManager });
@@ -119,11 +127,11 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         private readonly options: PokemonViewProviderOptions,
     ) { 
         const { extensionUri, viewType, context: _context, biomeManager } = options;
-        this.pokemonBoxManager = new PokemonBoxManager(_context);
-        this.partyManager = new JoinPokemonManager(_context);
-        this.bagManager = new BagManager(_context);
-        this.userDaoManager = new UserDaoManager(_context);
-        this.gameStateManager = new GameStateManager(_context);
+        this.pokemonBoxManager = PokemonBoxManager.getInstance();
+        this.partyManager = JoinPokemonManager.getInstance();
+        this.bagManager = BagManager.getInstance();
+        this.userDaoManager = UserDaoManager.getInstance();
+        this.gameStateManager = GameStateManager.getInstance();
         this.biomeManager = biomeManager;
         this._extensionUri = extensionUri;
         this._viewType = viewType;
@@ -162,11 +170,13 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
 
     public updateViews() {
         if (this._view) {
-            this.pokemonBoxManager.reload();
-            this.partyManager.reload();
-            this.bagManager.reload();
-            this.userDaoManager.reload();
-            this.gameStateManager.reload();
+            // 不需要 reload()，因為 Singleton 實例中的資料已經是最新的
+            // this.pokemonBoxManager.reload();
+            // this.partyManager.reload();
+            // this.bagManager.reload();
+            // this.userDaoManager.reload();
+            // this.gameStateManager.reload();
+            
             this._view.webview.postMessage({ type: MessageType.PartyData, data: this.partyManager.getAll() });
             this._view.webview.postMessage({ type: MessageType.BoxData, data: this.pokemonBoxManager.getAll() });
             this._view.webview.postMessage({ type: MessageType.BagData, data: this.bagManager.getAll() });
@@ -180,13 +190,24 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         await this._context.globalState.update(GlobalStateKey.BAG_DATA, []);
         await this._context.globalState.update(GlobalStateKey.USER_DATA, { money: 50000 });
         await this._context.globalState.update(GlobalStateKey.PARTY_DATA, [ ]);
-        await this._context.globalState.update(GlobalStateKey.BOX_DATA, []);
+        await this.pokemonBoxManager.clear();
         await this._context.globalState.update(GlobalStateKey.GAME_STATE, GameState.Searching);
         
         // Add default pokemon
         const starter = { ...defaultPokemon };
         starter.uid = 'starter-' + Date.now();
         starter.caughtDate = Date.now();
+        starter.currentExp = 0;
+        starter.toNextLevelExp = ExperienceCalculator.calculateRequiredExp(starter.level);
+        starter.stats.hp = ExperienceCalculator.calculateHp(starter.baseStats.hp, starter.iv.hp, starter.ev.hp, starter.level);
+        starter.stats.attack = ExperienceCalculator.calculateStat(starter.baseStats.attack, starter.iv.attack, starter.ev.attack, starter.level);
+        starter.stats.defense = ExperienceCalculator.calculateStat(starter.baseStats.defense, starter.iv.defense, starter.ev.defense, starter.level);
+        starter.stats.specialAttack = ExperienceCalculator.calculateStat(starter.baseStats.specialAttack, starter.iv.specialAttack, starter.ev.specialAttack, starter.level);
+        starter.stats.specialDefense = ExperienceCalculator.calculateStat(starter.baseStats.specialDefense, starter.iv.specialDefense, starter.ev.specialDefense, starter.level);
+        starter.stats.speed = ExperienceCalculator.calculateStat(starter.baseStats.speed, starter.iv.speed, starter.ev.speed, starter.level);
+        starter.currentHp = starter.stats.hp;
+        starter.maxHp = starter.stats.hp;
+
         await this.partyManager.add(starter);
 
         vscode.window.showInformationMessage('Global storage 已重置！');
@@ -253,7 +274,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                 await this.commandHandler.handleCatch(message as CatchPayload);
             }
             if (message.command === MessageType.GetBox) {
-                this.commandHandler.handleGetBox();
+                this.commandHandler.handleGetBox((message as any).boxIndex);
             }
             if (message.command === MessageType.DeletePokemon) {
                 await this.commandHandler.handleDeletePokemon(message as DeletePokemonPayload);
@@ -333,7 +354,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                 
                 <base href="http://localhost:5174/">
 
-                <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src https: data:; style-src 'unsafe-inline' http://localhost:5174; script-src 'unsafe-inline' 'unsafe-eval' http://localhost:5174; connect-src http://localhost:5174 ws://localhost:5174 https://pokeapi.co;">
+                <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src https: data: http://localhost:5174; style-src 'unsafe-inline' http://localhost:5174; script-src 'unsafe-inline' 'unsafe-eval' http://localhost:5174; connect-src http://localhost:5174 ws://localhost:5174 https://pokeapi.co;">
 
                 <script type="module" src="/@vite/client"></script>
 
@@ -355,6 +376,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             // [生產模式]
             const styleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "webview-ui", "build", "assets", "index.css"));
             const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "webview-ui", "build", "assets", "index.js"));
+            const baseUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "webview-ui", "build"));
 
             return `<!DOCTYPE html>
             <html lang="en">
@@ -362,12 +384,13 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 
-                <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} https: data:; style-src ${webview.cspSource}; script-src 'nonce-${getNonce()}' ${webview.cspSource}; connect-src https://pokeapi.co;">
+                <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} https: data:; style-src ${webview.cspSource} 'unsafe-inline'; script-src 'nonce-${getNonce()}' ${webview.cspSource}; connect-src https://pokeapi.co;">
                 
                 <link rel="stylesheet" href="${styleUri}">
                 <title>Pokemon React Prod</title>
                 <script nonce="${getNonce()}">
                     window.viewType = "${this._viewType}";
+                    window.baseUri = "${baseUri}";
                 </script>
             </head>
             <body style="min-width: 280px; margin: 0; padding: 0;">
@@ -395,8 +418,8 @@ export const defaultPokemon: PokemonDao = {
     level: 40,
     currentHp: 200,
     maxHp: 200,
-    stats: { hp: 20, attack: 12, defense: 10, specialAttack: 11, specialDefense: 11, speed: 15 },
-    iv: { hp: 31, attack: 31, defense: 31, specialAttack: 31, specialDefense: 31, speed: 31 },
+    stats: { hp: 20, attack: 12, defense: 10, specialAttack: 11, specialDefense: 11, speed: 0 },
+    iv: { hp: 31, attack: 31, defense: 31, specialAttack: 31, specialDefense: 31, speed: 0 },
     ev: { hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 },
     types: ['electric'],
     gender: 'Male',
@@ -411,46 +434,55 @@ export const defaultPokemon: PokemonDao = {
     originalTrainer: 'Player',
     caughtDate: Date.now(),
     caughtBall: 'poke-ball',
-        pokemonMoves: [
-            {
-                id: 1,
-                name: 'THUNDER SHOCK',
-                power: 40,
-                type: 'Electric',
-                accuracy: 100,
-                pp: 30,
-                maxPP: 30,
-                effect: ''
-            },
-            {
-                id: 2,
-                name: 'QUICK ATTACK',
-                power: 40,
-                type: 'Normal',
-                accuracy: 100,
-                pp: 30,
-                maxPP: 30,
-                effect: ''
-            },
-            {
-                id: 3,
-                name: 'ELECTRO BALL',
-                power: 60,
-                type: 'Electric',
-                accuracy: 100,
-                pp: 10,
-                maxPP: 10,
-                effect: ''
-            },
-            {
-                id: 4,
-                name: 'DOUBLE TEAM',
-                power: 0,
-                type: 'Normal',
-                accuracy: 0,
-                pp: 15,
-                maxPP: 15,
-                effect: 'Raises evasion.'
-            }
-        ]
+    pokemonMoves: [
+        {
+            id: 1,
+            name: 'THUNDER SHOCK',
+            power: 40,
+            type: 'Electric',
+            accuracy: 100,
+            pp: 30,
+            maxPP: 30,
+            effect: ''
+        },
+        {
+            id: 2,
+            name: 'QUICK ATTACK',
+            power: 40,
+            type: 'Normal',
+            accuracy: 100,
+            pp: 30,
+            maxPP: 30,
+            effect: ''
+        },
+        {
+            id: 3,
+            name: 'ELECTRO BALL',
+            power: 60,
+            type: 'Electric',
+            accuracy: 100,
+            pp: 10,
+            maxPP: 10,
+            effect: ''
+        },
+        {
+            id: 4,
+            name: 'DOUBLE TEAM',
+            power: 0,
+            type: 'Normal',
+            accuracy: 0,
+            pp: 15,
+            maxPP: 15,
+            effect: 'Raises evasion.'
+        }
+    ],
+    baseStats: { hp: 35, attack: 55, defense: 40, specialAttack: 50, specialDefense: 50, speed: 90 },
+    codingStats: {
+        caughtRepo: 'example-repo',
+        favoriteLanguage: 'TypeScript',
+        linesOfCode: 1500,
+        bugsFixed: 25,
+        commits: 100,
+        coffeeConsumed: 50
+    }
 };

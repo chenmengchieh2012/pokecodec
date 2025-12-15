@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styles from './VSearchScene.module.css';
 import { BIOME_BACKGROUNDS } from '../utilities/biomeAssets';
 import { useMessageStore, useMessageSubscription } from '../store/messageStore';
-import { vscode } from '../utilities/vscode';
+import { vscode, resolveAssetUrl } from '../utilities/vscode';
 import { BiomeType, BiomeData } from '../../../src/dataAccessObj/BiomeData';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
 import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
@@ -69,6 +69,7 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
             setBgImage(BIOME_BACKGROUNDS[newBiomeData.biomeType]);
         }
     });
+
 
     const onTransitionOverlayAnimationEnd = () => {
         const currentBiome = currentBiomeRef.current;
@@ -146,9 +147,9 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
     }, [handleMove]);
 
     // 使用 PokeAPI 圖片
-    const spriteUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-viii/icons/${myPokemon?.id}.png`;
-    const berryUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/oran-berry.png";
-    const ballUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png";
+    const spriteUrl = resolveAssetUrl(`./sprites/pokemon/icon/${myPokemon?.id}.png`);
+    const berryUrl = resolveAssetUrl("./sprites/items/oran-berry.png");
+    const ballUrl = resolveAssetUrl("./sprites/items/poke-ball.png");
 
     const getTileClass = (type: number) => {
         switch(type) {

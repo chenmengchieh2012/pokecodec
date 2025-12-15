@@ -4,6 +4,7 @@ import { SequentialExecutor } from '../utils/SequentialExecutor';
 import GlobalStateKey from '../utils/GlobalStateKey';
 
 export class JoinPokemonManager {
+    private static instance: JoinPokemonManager;
     // 記憶體快取
     private party: PokemonDao[] = [];
     private context: vscode.ExtensionContext;
@@ -12,9 +13,21 @@ export class JoinPokemonManager {
 
     private saveQueue = new SequentialExecutor();
 
-    constructor(context: vscode.ExtensionContext) {
+    private constructor(context: vscode.ExtensionContext) {
         this.context = context;
         this.reload();
+    }
+
+    public static getInstance(): JoinPokemonManager {
+        if (!JoinPokemonManager.instance) {
+            throw new Error("JoinPokemonManager not initialized. Call initialize() first.");
+        }
+        return JoinPokemonManager.instance;
+    }
+
+    public static initialize(context: vscode.ExtensionContext): JoinPokemonManager {
+        JoinPokemonManager.instance = new JoinPokemonManager(context);
+        return JoinPokemonManager.instance;
     }
 
     public reload() {
@@ -57,7 +70,7 @@ export class JoinPokemonManager {
                 party.push(pokemon);
                 success = true;
             }
-            return Object.assign([], [...party]);
+            return JSON.parse(JSON.stringify(party));
         });
         return success;
     }
@@ -70,7 +83,7 @@ export class JoinPokemonManager {
                 party.splice(index, 1);
                 success = true;
             }
-            return Object.assign([], [...party]);
+            return JSON.parse(JSON.stringify(party));
         });
         return success;
     }
@@ -85,7 +98,7 @@ export class JoinPokemonManager {
                 party[index2] = temp;
                 success = true;
             }
-            return Object.assign([], [...party]);
+            return JSON.parse(JSON.stringify(party));
         });
         return success;
     }
@@ -98,7 +111,7 @@ export class JoinPokemonManager {
                 party[index] = pokemon;
                 success = true;
             }
-            return Object.assign([], [...party]);
+            return JSON.parse(JSON.stringify(party));
         });
         return success;
     }

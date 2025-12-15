@@ -83,7 +83,7 @@ export interface ItemDao {
     spriteUrl: string;          // 圖片連結
 
     // --- 庫存 (如果是實例化物件) ---
-    count: number;              // 擁有數量
+    totalSize: number;              // 擁有數量
 }
 
 // --- PokeAPI Response Interfaces (Partial) ---
@@ -116,7 +116,7 @@ export interface PokeApiItem {
 }
 
 // --- Adapter Function ---
-export const adaptPokeApiItem = (data: PokeApiItem, count: number = 1): ItemDao => {
+export const adaptPokeApiItem = (data: PokeApiItem, totalSize: number = 1): ItemDao => {
     // 1. Basic Fields
     const item: ItemDao = {
         id: data.id,
@@ -125,7 +125,7 @@ export const adaptPokeApiItem = (data: PokeApiItem, count: number = 1): ItemDao 
         price: data.cost,
         sellPrice: Math.floor(data.cost / 2),
         spriteUrl: data.sprites.default,
-        count: count,
+        totalSize: totalSize,
         
         // 2. Description (Find first English entry, clean up newlines)
         description: data.flavor_text_entries.find(f => f.language.name === 'en')?.text.replace(/[\n\f]/g, ' ') || '',

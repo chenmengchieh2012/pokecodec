@@ -4,6 +4,7 @@ import { UserDao } from '../dataAccessObj/userData';
 import GlobalStateKey from '../utils/GlobalStateKey';
 
 export class UserDaoManager {
+    private static instance: UserDaoManager;
     // 記憶體快取 (只供讀取與 UI 顯示)
     private userDao: UserDao = { money: 0 };
     private context: vscode.ExtensionContext;
@@ -11,9 +12,21 @@ export class UserDaoManager {
     
     private saveQueue = new SequentialExecutor();
 
-    constructor(context: vscode.ExtensionContext) {
+    private constructor(context: vscode.ExtensionContext) {
         this.context = context;
         this.reload();
+    }
+
+    public static getInstance(): UserDaoManager {
+        if (!UserDaoManager.instance) {
+            throw new Error("UserDaoManager not initialized. Call initialize() first.");
+        }
+        return UserDaoManager.instance;
+    }
+
+    public static initialize(context: vscode.ExtensionContext): UserDaoManager {
+        UserDaoManager.instance = new UserDaoManager(context);
+        return UserDaoManager.instance;
     }
 
     public reload() {

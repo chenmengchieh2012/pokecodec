@@ -4,136 +4,226 @@ import { SequentialExecutor } from '../utils/SequentialExecutor';
 import GlobalStateKey from '../utils/GlobalStateKey';
 
 export class PokemonBoxManager {
-    // 記憶體快取
-    private pokemons: PokemonDao[] = [];
+    private static instance: PokemonBoxManager;
+    // 記憶體快取：Box Index -> Pokemon List
+    private boxes: PokemonDao[][] = [];
     private context: vscode.ExtensionContext;
     private readonly STORAGE_KEY = GlobalStateKey.BOX_DATA;
+    private readonly BOX_CAPACITY = 30;
 
     private saveQueue = new SequentialExecutor();
 
-    constructor(context: vscode.ExtensionContext) {
+    private constructor(context: vscode.ExtensionContext) {
         this.context = context;
         this.reload();
     }
 
-    public reload() {
-        const data = this.context.globalState.get<PokemonDao[]>(this.STORAGE_KEY);
-        if (data) {
-            this.pokemons = data;
-        } else {
-            this.pokemons = [];
+    public static getInstance(): PokemonBoxManager {
+        if (!PokemonBoxManager.instance) {
+            throw new Error("PokemonBoxManager not initialized. Call initialize() first.");
+        }
+        return PokemonBoxManager.instance;
+    }
+
+    public static initialize(context: vscode.ExtensionContext): PokemonBoxManager {
+        PokemonBoxManager.instance = new PokemonBoxManager(context);
+        return PokemonBoxManager.instance;
+    }
+
+    public async reload() {
+        this.boxes = [];
+        let i = 0;
+        while (true) {
+            const boxData = this.context.globalState.get<PokemonDao[]>(`${this.STORAGE_KEY}_${i}`);
+            if (!boxData) {
+                break;
+            }
+            this.boxes.push(boxData);
+            i++;
+        }
+        
+        // 確保至少有一個箱子
+        if (this.boxes.length === 0) {
+            this.boxes.push([]);
+            await this.context.globalState.update(`${this.STORAGE_KEY}_0`, []);
         }
     }
 
     public getAll(): PokemonDao[] {
-        return [...this.pokemons];
+        return this.boxes.flat();
+    }
+
+    public getBox(index: number): PokemonDao[] {
+        return this.boxes[index] || [];
+    }
+
+    public getTotalBoxes(): number {
+        return this.boxes.length;
     }
 
     public get(uid: string): PokemonDao | undefined {
-        return this.pokemons.find(p => p.uid === uid);
+        for (const box of this.boxes) {
+            const found = box.find(p => p.uid === uid);
+            if (found) return found;
+        }
+        return undefined;
     }
 
     /**
-     * 通用交易處理器
+     * 針對特定箱子的交易處理
      */
-    private async performTransaction(modifier: (list: PokemonDao[]) => PokemonDao[]): Promise<void> {
+    private async performBoxTransaction(boxIndex: number, modifier: (list: PokemonDao[]) => PokemonDao[]): Promise<void> {
         await this.saveQueue.execute(async () => {
-            // 1. Read
-            const currentList = this.context.globalState.get<PokemonDao[]>(this.STORAGE_KEY) || [];
+            // 1. Read (from memory or disk, but memory is sync)
+            // 為了確保一致性，我們信任記憶體中的 boxes 是最新的 (因為所有寫入都經過這裡)
+            // 但為了保險，也可以從 disk 讀。這裡我們直接用 memory，因為 reload 已經做過了。
+            let currentList = this.boxes[boxIndex] || [];
             
             // 2. Modify
             const newList = modifier(currentList);
 
-            // 3. Write
-            await this.context.globalState.update(this.STORAGE_KEY, newList);
+            // 3. Write to Disk
+            await this.context.globalState.update(`${this.STORAGE_KEY}_${boxIndex}`, newList);
 
-            // 4. Update Cache
-            this.pokemons = newList;
+            // 4. Update Memory
+            if (!this.boxes[boxIndex]) {
+                this.boxes[boxIndex] = [];
+            }
+            this.boxes[boxIndex] = newList;
         });
     }
 
     public async add(pokemon: PokemonDao): Promise<void> {
-        await this.performTransaction((list) => {
+        // 尋找第一個有空位的箱子
+        let targetBoxIndex = -1;
+        for (let i = 0; i < this.boxes.length; i++) {
+            if (this.boxes[i].length < this.BOX_CAPACITY) {
+                targetBoxIndex = i;
+                break;
+            }
+        }
+
+        // 如果都滿了，建立新箱子
+        if (targetBoxIndex === -1) {
+            targetBoxIndex = this.boxes.length;
+            this.boxes.push([]); // 先佔位
+        }
+
+        await this.performBoxTransaction(targetBoxIndex, (list) => {
             return [...list, pokemon];
         });
     }
 
     public async remove(uid: string): Promise<boolean> {
-        let success = false;
-        await this.performTransaction((list) => {
-            const index = list.findIndex(p => p.uid === uid);
-            if (index !== -1) {
-                success = true;
-                return [...list.slice(0, index), ...list.slice(index + 1)];
-            }else{
-                return list;
+        // 尋找寶可夢在哪個箱子
+        let targetBoxIndex = -1;
+        for (let i = 0; i < this.boxes.length; i++) {
+            if (this.boxes[i].some(p => p.uid === uid)) {
+                targetBoxIndex = i;
+                break;
             }
-        });
-        return success;
+        }
+
+        if (targetBoxIndex !== -1) {
+            await this.performBoxTransaction(targetBoxIndex, (list) => {
+                return list.filter(p => p.uid !== uid);
+            });
+            return true;
+        }
+        return false;
     }
 
-    public async move(fromIndex: number, toIndex: number): Promise<boolean> {
-        let success = false;
-        await this.performTransaction((list) => {
-            if (fromIndex >= 0 && fromIndex < list.length && 
-                toIndex >= 0 && toIndex < list.length) {
-                const [movedPokemon] = list.splice(fromIndex, 1);
-                list.splice(toIndex, 0, movedPokemon);
-                success = true;
-                return [...list];
-            }else{
-                return list;
+    // 支援跨箱移動 (尚未實作 UI，但後端先準備好)
+    // 目前前端只支援單箱排序，所以這裡先保留舊的 reorder 邏輯 (針對單一箱子)
+    // 但因為前端傳來的是 UIDs，我們需要知道是哪個箱子。
+    // 假設前端傳來的 UIDs 都是同一個箱子的。
+    public async reorder(uids: string[]): Promise<void> {
+        if (uids.length === 0) return;
+
+        // 找出這些 UIDs 屬於哪個箱子 (假設都在同一個)
+        const firstUid = uids[0];
+        let targetBoxIndex = -1;
+        for (let i = 0; i < this.boxes.length; i++) {
+            if (this.boxes[i].some(p => p.uid === firstUid)) {
+                targetBoxIndex = i;
+                break;
             }
-        });
-        return success;
+        }
+
+        if (targetBoxIndex !== -1) {
+            await this.performBoxTransaction(targetBoxIndex, (list) => {
+                const newOrder: PokemonDao[] = [];
+                const map = new Map(list.map(p => [p.uid, p]));
+                
+                for (const uid of uids) {
+                    const p = map.get(uid);
+                    if (p) {
+                        newOrder.push(p);
+                        map.delete(uid);
+                    }
+                }
+                // 剩下的放後面 (防呆)
+                for (const p of map.values()) {
+                    newOrder.push(p);
+                }
+                return newOrder;
+            });
+        }
     }
 
     public async batchRemove(uids: string[]): Promise<void> {
-        await this.performTransaction((list) => {
-            const uidSet = new Set(uids);
-            // 直接修改傳入的 list 參照 (Array.filter 會回傳新陣列，所以要用 splice 或是重新賦值)
-            // 由於 performTransaction 預期我們修改 list，這裡我們用 filter 算出結果後，清空 list 再塞回去
-            const filtered = list.filter(p => !uidSet.has(p.uid));
-            return filtered;
-        });
-    }
-
-    public async reorder(uids: string[]): Promise<void> {
-        await this.performTransaction((list) => {
-            const newOrder: PokemonDao[] = [];
-            const map = new Map(list.map(p => [p.uid, p]));
-            
-            for (const uid of uids) {
-                const p = map.get(uid);
-                if (p) {
-                    newOrder.push(p);
-                    map.delete(uid);
+        // 這比較麻煩，可能跨箱。
+        // 簡單作法：對每個 UID 呼叫 remove
+        // 優化作法：先分組，再批次處理
+        const uidsByBox = new Map<number, Set<string>>();
+        
+        for (const uid of uids) {
+            for (let i = 0; i < this.boxes.length; i++) {
+                if (this.boxes[i].some(p => p.uid === uid)) {
+                    if (!uidsByBox.has(i)) uidsByBox.set(i, new Set());
+                    uidsByBox.get(i)!.add(uid);
+                    break;
                 }
             }
-            // 剩下的放後面
-            for (const p of map.values()) {
-                newOrder.push(p);
-            }
-            return newOrder;
-        });
+        }
+
+        for (const [boxIndex, uidSet] of uidsByBox) {
+            await this.performBoxTransaction(boxIndex, (list) => {
+                return list.filter(p => !uidSet.has(p.uid));
+            });
+        }
     }
 
     public exportData(): string {
-        return JSON.stringify(this.pokemons);
+        return JSON.stringify(this.getAll());
     }
 
     public async importData(jsonString: string): Promise<boolean> {
         try {
             const data = JSON.parse(jsonString);
             if (Array.isArray(data)) {
-                await this.performTransaction((list) => {
-                    return data;
-                });
+                await this.clear();
+
+                // 重新加入
+                for (const p of data) {
+                    await this.add(p);
+                }
                 return true;
             }
         } catch (e) {
             console.error('Import failed', e);
         }
         return false;
+    }
+
+    public async clear(): Promise<void> {
+        // 清空所有箱子
+        for (let i = 0; i < this.boxes.length; i++) {
+            await this.context.globalState.update(`${this.STORAGE_KEY}_${i}`, undefined);
+        }
+        this.boxes = [];
+        // 確保至少有一個空箱子
+        this.boxes.push([]);
+        await this.context.globalState.update(`${this.STORAGE_KEY}_0`, []);
     }
 }

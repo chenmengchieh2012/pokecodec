@@ -3,7 +3,7 @@ import { PartyGridInModal } from '../model/PartyGridInModal';
 import { PokemonMoveModal } from '../model/PokemonMoveModal';
 import { useMessageStore, useMessageSubscription } from '../store/messageStore';
 import { SHOP_ITEM_FULL_MEDICINE_NAMES, SHOP_ITEMS_HP_MEDICINE_NAMES, SHOP_ITEMS_PP_MEDICINE_NAMES } from '../utilities/ItemName';
-import { vscode } from '../utilities/vscode';
+import { vscode, resolveAssetUrl } from '../utilities/vscode';
 import styles from './VBagBox.module.css';
 import { ItemDao } from '../../../src/dataAccessObj/item';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
@@ -24,7 +24,7 @@ export const VBagBox: React.FC = () => {
     const filteredItems = items.filter(item => item.pocket === activePocket);
 
     const getBagIconUrl = (apiName: string) => {
-        return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/${apiName}.png`;
+        return resolveAssetUrl(`./sprites/items/${apiName}.png`);
     };
 
     const handleSlotClick = (item: ItemDao) => {
@@ -68,9 +68,9 @@ export const VBagBox: React.FC = () => {
                             src={getBagIconUrl(item.apiName)} 
                             alt={item.name}
                             className={styles.bagItemIcon}
-                            onError={(e) => { (e.target as HTMLImageElement).src = 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/potion.png'; }}
+                            onError={(e) => { (e.target as HTMLImageElement).src = resolveAssetUrl('./sprites/items/potion.png'); }}
                         />
-                        <div className={styles.bagItemCount}>x{item.count}</div>
+                        <div className={styles.bagItemCount}>x{item.totalSize}</div>
                     </div>
                 ))}
             </div>

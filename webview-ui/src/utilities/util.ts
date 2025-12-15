@@ -1,5 +1,7 @@
 
 
+import { resolveAssetUrl } from "./vscode";
+
 export const getBallUrl = (ballName: string = 'poke-ball') => {
     const nameMap: { [key: string]: string } = {
         'poke-ball': 'poke-ball',
@@ -18,8 +20,8 @@ export const getBallUrl = (ballName: string = 'poke-ball') => {
 
     const mappedName = nameMap[ballName];
     if (mappedName) {
-        return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/${mappedName}.png`;
+        return resolveAssetUrl(`./sprites/items/${mappedName}.png`);
     } else {
-        return `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png`;
+        return resolveAssetUrl(`./sprites/items/poke-ball.png`);
     }
 };

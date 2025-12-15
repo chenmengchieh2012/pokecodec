@@ -5,15 +5,19 @@ import { PokemonMove } from "../../../src/dataAccessObj/pokeMove";
 import { initialPokemonState, PokemonDao, PokemonState, PokemonStateAction } from "../../../src/dataAccessObj/pokemon";
 import { BattleControlHandle } from "../frame/BattleControl";
 
+import { ExperienceCalculator } from "../utilities/ExperienceCalculator";
+import { HitHpCalculator } from "../../../src/utils/hitHpCalculator";
+
 export interface PokemonStateHandler {
     newEncounter: (encounterResult: EncounterResult) => void;
     throwBall: (ballDao: PokeBallDao) => Promise<boolean>;
-    hited: (pokemon: PokemonDao, move: PokemonMove) => Promise<number>;
+    hited: (pokemon: PokemonDao, move: PokemonMove) => Promise<{newHp: number; damageResult: import("../../../src/utils/hitHpCalculator").DamageResult;}>;
     randomMove: () => PokemonMove;
     resetPokemon: () => void;
     switchPokemon: (pokemon: PokemonDao) => Promise<void>;
     heal: (amount: number) => Promise<void>;
     decrementPP: (move: PokemonMove) => void;
+    increaseExp: (expGain: number) => void;
 }
 
 export interface UsePokemonStateProps{
@@ -66,49 +70,19 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
         return isSuccess;
     }, [dialogRef]);
 
-    const handleHited = useCallback(async (pokemon: PokemonDao, move: PokemonMove) => {
-        const currentPokemon = pokemonRef.current;
-        if (!currentPokemon) {
+    const handleHited = useCallback(async (attacker: PokemonDao, move: PokemonMove) => {
+        const myPokemon = pokemonRef.current;
+        if (!myPokemon) {
             throw new Error("No pokemon available for random move selection.");
         }
         // 傷害計算公式 (引入攻防數值)
-        let damage = 0;
-        if (move.power) {
-            const defender = currentPokemon;
-            const attack = pokemon.stats.attack;
-            const defense = defender.stats.defense;
-            
-            // ((2 * Level / 5 + 2) * Power * A / D) / 50 + 2
-            const levelFactor = (2 * pokemon.level / 5) + 2;
-            const statRatio = attack / defense;
-            const baseDamage = ((levelFactor * move.power * statRatio) / 50) + 2;
-            
-            // Random factor (0.85 - 1.00)
-            const random = (Math.floor(Math.random() * 16) + 85) / 100;
-            
-            damage = Math.floor(baseDamage * random);
-
-            // 至少造成 1 點傷害
-            if (damage < 1) damage = 1;
-        }
- 
+        const damageResult = HitHpCalculator.calculateDamage(attacker, myPokemon, move);
+        const damage = damageResult.damage;
         // 判斷是否瀕死並設定對話
-        const currentHp = currentPokemon.currentHp;
+        const currentHp = myPokemon.currentHp;
         let newHp = currentHp;
-        
-        if (currentHp - damage <= 0) {
-            await dialogRef.current?.setText(`${pokemon.name} fainted!`);
-        } else {
-            const damageText = damage > 0 ? ` (damage: ${damage})` : '';
-            await dialogRef.current?.setText(`${pokemon.name} used ${move.name}${damageText}!`);
-        }
-
         if (damage > 0) {
             newHp = Math.max(0, currentHp - damage);
-            if(newHp == 0){
-                await dialogRef.current?.setText(`${currentPokemon.name} fainted!`);
-                
-            }
             setPokemon(prev=>{
                 if(!prev){
                     return prev;
@@ -122,8 +96,8 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
                 setPokemonState(prev => ({ ...prev, action: PokemonStateAction.Fainted }));
             }
         }
-        return newHp;
-    }, [dialogRef]);
+        return {newHp, damageResult};
+    }, []);
 
     const handleNewEncounter = useCallback(async (encounterResult: EncounterResult) => {
         if (!encounterResult.pokemon) {
@@ -180,6 +154,21 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
         setPokemon(prev => prev ? { ...prev, pokemonMoves: updatedMoves } : undefined);
     }, []);
 
+    const handleIncreaseExperience = useCallback((expGain: number) => {
+        const currentPokemon = pokemonRef.current;
+        if (!currentPokemon) return;
+
+        // 使用 ExperienceCalculator 處理經驗值增加與升級
+        const newPokemon = ExperienceCalculator.addExperience(currentPokemon, expGain);
+
+        if (newPokemon.level > currentPokemon.level) {
+            // 可以在這裡處理升級動畫或訊息
+            console.log(`Leveled up to ${newPokemon.level}!`);
+        }
+
+        setPokemon(newPokemon);
+    }, []);
+
     const handler: PokemonStateHandler = useMemo(() => ({
         newEncounter: handleNewEncounter,
         throwBall: handleThrowBall,
@@ -188,8 +177,9 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
         switchPokemon: handleSwitchPokemon,
         resetPokemon: handleResetPokemon,
         heal: handleHeal,
-        decrementPP: handleDecrementPP
-    }), [handleNewEncounter, handleThrowBall, handleHited, handleRandomMove, handleSwitchPokemon, handleResetPokemon, handleHeal, handleDecrementPP]);
+        decrementPP: handleDecrementPP,
+        increaseExp: handleIncreaseExperience
+    }), [handleNewEncounter, handleThrowBall, handleHited, handleRandomMove, handleSwitchPokemon, handleResetPokemon, handleHeal, handleDecrementPP, handleIncreaseExperience]);
 
     return {
         pokemon,

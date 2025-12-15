@@ -1,5 +1,8 @@
 out
 dist
+webview-ui/build/*
+webview-ui/public/sprites/*
+
 node_modules
 .vscode-test/
 *.vsix

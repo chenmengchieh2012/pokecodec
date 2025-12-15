@@ -4,6 +4,7 @@ import { GameState } from '../dataAccessObj/GameState';
 import GlobalStateKey from '../utils/GlobalStateKey';
 
 export class GameStateManager{
+    private static instance: GameStateManager;
     // 記憶體快取 (只供讀取與 UI 顯示)
     private gameState: GameState| undefined =  undefined;
     private context: vscode.ExtensionContext;
@@ -11,9 +12,21 @@ export class GameStateManager{
     
     private saveQueue = new SequentialExecutor();
 
-    constructor(context: vscode.ExtensionContext) {
+    private constructor(context: vscode.ExtensionContext) {
         this.context = context;
         this.reload();
+    }
+
+    public static getInstance(): GameStateManager {
+        if (!GameStateManager.instance) {
+            throw new Error("GameStateManager not initialized. Call initialize() first.");
+        }
+        return GameStateManager.instance;
+    }
+
+    public static initialize(context: vscode.ExtensionContext): GameStateManager {
+        GameStateManager.instance = new GameStateManager(context);
+        return GameStateManager.instance;
     }
 
     public reload() {

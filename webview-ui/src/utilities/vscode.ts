@@ -7,6 +7,13 @@ interface WebviewApi<StateType = unknown> {
   setState(newState: StateType): void;
 }
 
+// Extend the Window interface to include baseUri
+declare global {
+  interface Window {
+    baseUri?: string;
+  }
+}
+
 // 宣告全域函式 acquireVsCodeApi (避免 TypeScript 報錯說找不到這個函式)
 declare function acquireVsCodeApi(): WebviewApi;
 
@@ -35,3 +42,14 @@ class VSCodeAPIWrapper {
 
 // 匯出單例模式 (Singleton)
 export const vscode = new VSCodeAPIWrapper();
+
+// Helper to resolve asset URLs
+export const resolveAssetUrl = (path: string) => {
+  const baseUri = window.baseUri;
+  if (baseUri) {
+    // Remove leading ./ or /
+    const cleanPath = path.replace(/^\.?\//, '');
+    return `${baseUri}/${cleanPath}`;
+  }
+  return path;
+};

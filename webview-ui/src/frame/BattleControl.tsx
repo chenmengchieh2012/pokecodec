@@ -141,7 +141,7 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
                                                 title={item.name}
                                             >
                                                 {item.spriteUrl && <img src={item.spriteUrl} alt={item.name} className={styles['bag-item-icon']} />}
-                                                <div className={styles['bag-item-badge']}>{item.count}</div>
+                                                <div className={styles['bag-item-badge']}>{item.totalSize}</div>
                                             </button>
                                         ))}
                                     </div>
@@ -159,7 +159,7 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
                                                 title={item.name}
                                             >
                                                 {item.spriteUrl && <img src={item.spriteUrl} alt={item.name} className={styles['bag-item-icon']} />}
-                                                <div className={styles['bag-item-badge']}>{item.count}</div>
+                                                <div className={styles['bag-item-badge']}>{item.totalSize}</div>
                                             </button>
                                         ))}
                                     </div>

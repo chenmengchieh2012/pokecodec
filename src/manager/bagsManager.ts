@@ -6,6 +6,7 @@ import GlobalStateKey from '../utils/GlobalStateKey';
 
 
 export class BagManager {
+    private static instance: BagManager;
     // this.items 變成只是一個「快取」，用於快速回傳給 UI，但不參與寫入邏輯
     private items: ItemDao[] = [];
     private context: vscode.ExtensionContext;
@@ -13,9 +14,21 @@ export class BagManager {
     
     private saveQueue = new SequentialExecutor();
 
-    constructor(context: vscode.ExtensionContext) {
+    private constructor(context: vscode.ExtensionContext) {
         this.context = context;
         this.reload(); // 初始化快取
+    }
+
+    public static getInstance(): BagManager {
+        if (!BagManager.instance) {
+            throw new Error("BagManager not initialized. Call initialize() first.");
+        }
+        return BagManager.instance;
+    }
+
+    public static initialize(context: vscode.ExtensionContext): BagManager {
+        BagManager.instance = new BagManager(context);
+        return BagManager.instance;
     }
 
     /**
@@ -26,7 +39,7 @@ export class BagManager {
         if (data) {
             this.items = data.map(item => ({
                 ...item,
-                count: item.count || 0 
+                totalSize: item.totalSize || 0 
             }));
         } else {
             this.items = [];
@@ -65,7 +78,7 @@ export class BagManager {
             let currentData = this.context.globalState.get<ItemDao[]>(this.STORAGE_KEY) || [];
             
             // 資料正規化 (防呆)
-            currentData = currentData.map(item => ({...item, count: item.count || 0}));
+            currentData = currentData.map(item => ({...item, totalSize: item.totalSize || 0}));
 
             // B. 【修改】執行傳進來的修改邏輯
             const newData = modifier(currentData);
@@ -89,13 +102,13 @@ export class BagManager {
                 (i.id === item.id)
             );
             
-            const quantityToAdd = addSize !== undefined ? addSize : (item.count || 1);
+            const quantityToAdd = addSize !== undefined ? addSize : (item.totalSize || 1);
             
             if (existingItem) {
-                existingItem.count += quantityToAdd;
+                existingItem.totalSize += quantityToAdd;
                 return currentItems;
             } else {
-                return [...currentItems, {...item, count: quantityToAdd}];
+                return [...currentItems, {...item, totalSize: quantityToAdd}];
             }
         });
     }
@@ -110,11 +123,11 @@ export class BagManager {
             const index = currentItems.findIndex(i => i.id === itemId || i.apiName === itemId);
             
             if (index !== -1) {
-                const currentQty = currentItems[index].count || 0;
+                const currentQty = currentItems[index].totalSize || 0;
                 if (currentQty >= count) {
-                    currentItems[index].count = currentQty - count;
+                    currentItems[index].totalSize = currentQty - count;
                     
-                    if (currentItems[index].count === 0) {
+                    if (currentItems[index].totalSize === 0) {
                         currentItems.splice(index, 1);
                     }
                     success = true; // 標記成功
