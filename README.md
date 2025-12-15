@@ -1,71 +1,68 @@
-# pokecodec README
+# PokeCodec 🎮
 
-This is the README for your extension "pokecodec". After writing up a brief description, we recommend including the following sections.
+Gamify your VS Code experience! Encounter, battle, and catch Pokemon while you code.
 
-## Features
+![Pokemon](https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png)
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+## ✨ Features
 
-For example if there is an image subfolder under your extension project workspace:
+**PokeCodec** turns your development environment into a Pokemon adventure. Your codebase becomes the world map!
 
-\!\[feature X\]\(images/feature-x.png\)
+- **🗺️ Explore Biomes**: Your project structure determines the environment. Different folders and file depths represent different biomes (Grassland, Cave, Forest, etc.).
+- **🌿 Wild Encounters**: Encounter wild Pokemon as you navigate through your code and switch active files.
+- **⚔️ Turn-Based Battles**: Battle wild Pokemon using your party. Features a combat system with type effectiveness (Gen 6+ standard).
+- **🔴 Catch 'Em All**: Weakening wild Pokemon and use various Pokeballs to catch them.
+- **🎒 Inventory Management**:
+  - **Party**: Manage your active team of up to 6 Pokemon.
+  - **PC Box**: Store and organize your caught Pokemon collection.
+  - **Bag**: Carry items like Potions, Revives, and Pokeballs.
+- **🏪 Shop**: Earn money and buy supplies to aid your adventure.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+## 🚀 Getting Started
 
-## Requirements
+1. **Install** the PokeCodec extension.
+2. Open the **Pokemon Game** view in the bottom panel (or run command `Open Pokemon React Panel`) to see the main game screen.
+3. Click the **Pokemon Tools** icon (Heart icon) in the Activity Bar to access your:
+   - 🎒 Backpack
+   - 📦 Pokemon Box
+   - 🏪 Shop
+4. **Start Coding!** Navigate through your files. The deeper you go into your folder structure, the more dangerous (and rare) the Pokemon become!
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+## ⌨️ Commands
 
-## Extension Settings
+Access these commands via the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P`):
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+- `Pokemon: Open Pokemon React Panel`: Opens the main game interface.
+- `Pokemon: Trigger Encounter`: Manually triggers a wild Pokemon encounter (useful for testing).
+- `Pokemon: Reset Storage`: **WARNING** - Resets all your game progress, including caught Pokemon and items.
 
-For example:
+## 🛠️ Development
 
-This extension contributes the following settings:
+This project is built using **VS Code Extension API**, **React**, and **Vite**.
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+### Prerequisites
+- Node.js
+- NPM
 
-## Known Issues
+### Setup
+1. Clone the repository.
+2. Install dependencies for both the extension and the webview:
+   ```bash
+   npm run install:all
+   ```
+3. Download necessary game data and sprites:
+   ```bash
+   npm run download-data
+   npm run download-sprites
+   ```
+4. Compile the webview:
+   ```bash
+   npm run build:webview
+   ```
+5. Press `F5` in VS Code to start debugging.
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+## 📝 License
 
-## Release Notes
+This project is for educational and personal use.
 
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+*Disclaimer: This is a fan-made project and is not affiliated with, endorsed, sponsored, or specifically approved by Nintendo, Game Freak, or The Pokémon Company. Pokémon and Pokémon character names are trademarks of Nintendo.*
