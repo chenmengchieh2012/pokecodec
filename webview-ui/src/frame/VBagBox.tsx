@@ -110,12 +110,16 @@ const ItemUseModalFlow = {
 
 
 const ItemUseModal = React.forwardRef<ItemUserModalHandler, ItemUseModalProps>((_props, ref) => {
+    
+    const messageStore = useMessageStore(); // 確保訂閱生效
+    const defaultParty = messageStore.getRefs().party || [];
+    
     const [ medicineType, setMedicineType] = useState<MedicineType>(MedicineExtendType.None);
     const [ modelShow, setModelShow ] = useState<ExtendModelType>(ExtendModelType.SelectPokemon);
     
     const [ selectedItem, setSelectedItem ] = useState<ItemDao | null>(null);
     const [ selectedPokemon, setSelectedPokemon] = useState<PokemonDao | null>(null);
-    const [ party, setParty ] = useState<PokemonDao[]>([]);
+    const [ party, setParty ] = useState<PokemonDao[]>(defaultParty);
 
 
     useImperativeHandle(ref, () => ({
