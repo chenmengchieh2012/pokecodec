@@ -2,20 +2,28 @@ import * as vscode from 'vscode';
 import { PokemonDao } from '../dataAccessObj/pokemon';
 import { SequentialExecutor } from '../utils/SequentialExecutor';
 import GlobalStateKey from '../utils/GlobalStateKey';
-
 export class PokemonBoxManager {
     private static instance: PokemonBoxManager;
+
+    
     // 記憶體快取：Box Index -> Pokemon List
     private boxes: PokemonDao[][] = [];
+    private currentBoxIndex: number = 0;
     private context: vscode.ExtensionContext;
     private readonly STORAGE_KEY = GlobalStateKey.BOX_DATA;
-    private readonly BOX_CAPACITY = 30;
+    private readonly CURRENT_BOX_INDEX_KEY = GlobalStateKey.CURRENT_BOX_INDEX;
+    private static readonly BOX_CAPACITY = 30;
+    private static readonly MAX_BOXES = 30; // 假設最大箱子數量為 100
 
     private saveQueue = new SequentialExecutor();
 
     private constructor(context: vscode.ExtensionContext) {
         this.context = context;
         this.reload();
+    }
+
+    public static getMaxBoxCapacity(): number {
+        return this.BOX_CAPACITY;
     }
 
     public static getInstance(): PokemonBoxManager {
@@ -47,19 +55,33 @@ export class PokemonBoxManager {
             this.boxes.push([]);
             await this.context.globalState.update(`${this.STORAGE_KEY}_0`, []);
         }
+        
     }
 
     public getAll(): PokemonDao[] {
         return this.boxes.flat();
     }
 
-    public getBox(index: number): PokemonDao[] {
+    public getBoxOfPokemons(index: number): PokemonDao[] {
         return this.boxes[index] || [];
+    }
+
+    public getCurrentBoxIndex(): number {
+        return this.currentBoxIndex;
+    }
+
+
+    public getCurrentBoxOfPokemons(): PokemonDao[] {
+        if (this.currentBoxIndex !== undefined) {
+            return this.getBoxOfPokemons(this.currentBoxIndex);
+        }
+        return this.getBoxOfPokemons(0); // 預設為第一個箱子
     }
 
     public getTotalBoxes(): number {
         return this.boxes.length;
     }
+
 
     public get(uid: string): PokemonDao | undefined {
         for (const box of this.boxes) {
@@ -68,6 +90,38 @@ export class PokemonBoxManager {
         }
         return undefined;
     }
+
+
+    /** 
+     * 針對箱新增使用此方法確保操作的原子性
+    */
+    private async performBoxIncreaseTransaction(): Promise<void> {
+        await this.saveQueue.execute(async () => {
+            // 1. Read (from memory or disk, but memory is sync)
+            // 為了確保一致性，我們信任記憶體中的 boxes 是最新的 (因為所有寫入都經過這裡)
+            // 但為了保險，也可以從 disk 讀。這裡我們直接用 memory，因為 reload 已經做過了。
+            let currentList = this.boxes[this.boxes.length -1] || [];
+            
+            // 2. 確認最後一個箱子是不是空的
+            if (currentList.length !== 0 && this.boxes.length < PokemonBoxManager.MAX_BOXES) {
+                // 需要新增一個箱子
+                this.boxes.push([]);
+                currentList = [];
+            }
+
+            // 3. Write to Disk
+            const newBoxIndex = this.boxes.length -1;
+            await this.context.globalState.update(`${this.STORAGE_KEY}_${newBoxIndex}`, currentList);
+
+            // 4. Update Memory
+            if (!this.boxes[newBoxIndex]) {
+                this.boxes[newBoxIndex] = [];
+            }
+            this.boxes[newBoxIndex] = currentList;
+
+        });
+    }
+
 
     /**
      * 針對特定箱子的交易處理
@@ -84,34 +138,34 @@ export class PokemonBoxManager {
 
             // 3. Write to Disk
             await this.context.globalState.update(`${this.STORAGE_KEY}_${boxIndex}`, newList);
+            await this.context.globalState.update(this.CURRENT_BOX_INDEX_KEY, boxIndex);
 
             // 4. Update Memory
             if (!this.boxes[boxIndex]) {
                 this.boxes[boxIndex] = [];
             }
             this.boxes[boxIndex] = newList;
+            this.currentBoxIndex = boxIndex;
         });
     }
 
     public async add(pokemon: PokemonDao): Promise<void> {
+        
         // 尋找第一個有空位的箱子
         let targetBoxIndex = -1;
         for (let i = 0; i < this.boxes.length; i++) {
-            if (this.boxes[i].length < this.BOX_CAPACITY) {
+            if (this.boxes[i].length < PokemonBoxManager.BOX_CAPACITY) {
                 targetBoxIndex = i;
                 break;
             }
         }
 
-        // 如果都滿了，建立新箱子
-        if (targetBoxIndex === -1) {
-            targetBoxIndex = this.boxes.length;
-            this.boxes.push([]); // 先佔位
-        }
-
         await this.performBoxTransaction(targetBoxIndex, (list) => {
             return [...list, pokemon];
         });
+
+        // 確保最後一個箱子是空的
+        await this.performBoxIncreaseTransaction();
     }
 
     public async remove(uid: string): Promise<boolean> {
@@ -194,6 +248,49 @@ export class PokemonBoxManager {
         }
     }
 
+    public async batchMove(uids: string[], targetBoxIndex: number): Promise<boolean> {
+        // Check target box existence
+        if (targetBoxIndex < 0 || targetBoxIndex >= this.boxes.length) return false;
+        
+        // Check capacity
+        if (this.boxes[targetBoxIndex].length + uids.length > PokemonBoxManager.BOX_CAPACITY) {
+            console.log('[PokemonBoxManager] Not enough space in target box for batch move');
+            return false; // Not enough space
+        }
+
+        await this.saveQueue.execute(async () => {
+            // 1. Find and Remove from source boxes
+            const movedPokemons: PokemonDao[] = [];
+            const modifiedBoxIndices = new Set<number>();
+            modifiedBoxIndices.add(targetBoxIndex);
+
+            for (const uid of uids) {
+                for (let i = 0; i < this.boxes.length; i++) {
+                    const index = this.boxes[i].findIndex(p => p.uid === uid);
+                    if (index !== -1) {
+                        const [p] = this.boxes[i].splice(index, 1);
+                        movedPokemons.push(p);
+                        modifiedBoxIndices.add(i);
+                        break;
+                    }
+                }
+            }
+
+            // 2. Add to target box
+            this.boxes[targetBoxIndex].push(...movedPokemons);
+
+            // 3. Persist all modified boxes
+            for (const i of modifiedBoxIndices) {
+                await this.context.globalState.update(`${this.STORAGE_KEY}_${i}`, this.boxes[i]);
+            }
+        });
+
+        // 確保最後一個箱子是空的
+        await this.performBoxIncreaseTransaction();
+
+        return true;
+    }
+
     public exportData(): string {
         return JSON.stringify(this.getAll());
     }
@@ -217,10 +314,12 @@ export class PokemonBoxManager {
     }
 
     public async clear(): Promise<void> {
-        // 清空所有箱子
+
+        // 直接刪除所有資料
         for (let i = 0; i < this.boxes.length; i++) {
             await this.context.globalState.update(`${this.STORAGE_KEY}_${i}`, undefined);
         }
+
         this.boxes = [];
         // 確保至少有一個空箱子
         this.boxes.push([]);

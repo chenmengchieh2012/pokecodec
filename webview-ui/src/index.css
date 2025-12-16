@@ -11,6 +11,36 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* --- Global Variables --- */
+
+  /* Emerald Theme */
+  --emerald-bg: #408880;
+  --emerald-stripe: #387870;
+  --emerald-dark: #2a5a55;
+  --tab-inactive: #2a5a55;
+  --tab-active: #f8f8f0;
+  --text-dark: #202020;
+  --text-light: #ffffff;
+  --text-grey: #ccc;
+
+  /* GBA UI Theme */
+  --gba-ui-blue: #283044;
+  --gba-ui-border: #ffffff;
+  --ui-border: #303840;
+
+  /* HP Colors */
+  --hp-green: #50c878;
+  --hp-yellow: #f5ac0e;
+  --hp-red: #ff4d4d;
+
+  /* UI Highlights */
+  --highlight: #F8B050;
+
+  /* Common Sizes */
+  --grid-cell-size: 48px;
+  --grid-gap: 2px;
+  --nav-height: 28px;
 }
 
 a {

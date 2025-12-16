@@ -5,6 +5,7 @@ import { PokemonInfoModal } from '../model/PokemonInfoModal';
 import { useMessageStore, useMessageSubscription } from '../store/messageStore';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
 import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
+import { EmeraldTabPanel } from './EmeraldTabPanel';
 
 
 const IconTrash = () => (
@@ -24,6 +25,7 @@ export const VPokemonBox = () => {
     const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
     const [draggedPokemonUid, setDraggedPokemonUid] = useState<string | null>(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [showMoveBoxSelector, setShowMoveBoxSelector] = useState(false);
 
     const [activeBox, setActiveBox] = useState(0);
     const [totalBoxes, setTotalBoxes] = useState(1);
@@ -124,6 +126,17 @@ export const VPokemonBox = () => {
         setShowDeleteConfirm(false);
     };
 
+    const handleBatchMove = (targetBoxIndex: number) => {
+        vscode.postMessage({ 
+            command: MessageType.BatchMoveToBox, 
+            pokemonUids: Array.from(selectedIds),
+            targetBoxIndex: targetBoxIndex
+        });
+        setSelectedIds(new Set());
+        setIsSelectionMode(false);
+        setShowMoveBoxSelector(false);
+    };
+
     const handleAddToParty = (pokemon: PokemonDao) => {
         vscode.postMessage({ 
             command: MessageType.AddToParty, 
@@ -133,75 +146,94 @@ export const VPokemonBox = () => {
     };
 
     return (
-        <div className={styles.emeraldContainer}>
-            {/* Tabs Navigation */}
-            <div className={styles.boxNav}>
-                <div className={styles.tabsLeft} style={{ overflowX: 'auto', maxWidth: '70%' }}>
-                    {Array.from({ length: totalBoxes }).map((_, index) => (
-                        <div 
-                            key={index}
-                            className={`${styles.boxTab} ${activeBox === index ? styles.active : ''}`} 
-                            onClick={() => setActiveBox(index)}
-                        >
-                            BOX {index + 1}
-                        </div>
-                    ))}
-                </div>
+        <EmeraldTabPanel
+            tabs={
+                Array.from({ length: totalBoxes }).map((_, index) => ({
+                    label: `BOX ${index + 1}`,
+                    onClick: () => setActiveBox(index),
+                    isActive: activeBox === index,
+                    disabled: isSelectionMode
+                }))
+            }
+            actions={
+                isSelectionMode ? [
+                    {
+                        label: 'MOVE',
+                        onClick: () => setShowMoveBoxSelector(true)
+                    },
+                    {
+                        label: <><IconTrash /> {selectedIds.size}</>,
+                        onClick: handleDeleteSelected,
+                        isDanger: true
+                    },
+                    {
+                        label: '✖',
+                        onClick: () => {
+                            setIsSelectionMode(false);
+                            setSelectedIds(new Set());
+                        }
+                    }
+                ] : [
+                    {
+                        label: 'ORGANIZE',
+                        onClick: () => setIsSelectionMode(true)
+                    }
+                ]
+            }
+        >
+            <div className={styles.grid}>
+                {pokemons.map((p) => (
+                    <div 
+                        key={p.uid} 
+                        className={`
+                            ${styles.pokemonSlot} 
+                            ${selectedIds.has(p.uid) ? styles.selectedSlot : ''}
+                            ${draggedPokemonUid === p.uid ? styles.draggedSlot : ''}
+                        `}
+                        onClick={() => handleSlotClick(p)}
+                        draggable={!isSelectionMode}
+                        onDragStart={(e) => handleDragStart(e, p)}
+                        onDragOver={handleDragOver}
+                        onDrop={(e) => handleDrop(e, p)}
+                        title={p.name}
+                    >
+                        {selectedIds.has(p.uid) && <div className={styles.checkMark}>✔</div>}
+                        <img 
+                            src={resolveAssetUrl(`./sprites/pokemon/${p.isShiny ? 'shiny' : 'normal'}/${p.id}.png`)} 
+                            alt={p.name} 
+                            className={styles.sprite}
+                        />
+                    </div>
+                ))}
                 
-                <div className={styles.tabsRight}>
-                    {isSelectionMode ? (
-                        <>
-                            <button className={`${styles.navBtn} ${styles.dangerBtn}`} onClick={handleDeleteSelected}>
-                                <IconTrash /> {selectedIds.size}
-                            </button>
-                            <button className={styles.navBtn} onClick={() => {
-                                setIsSelectionMode(false);
-                                setSelectedIds(new Set());
-                            }}>✖</button>
-                        </>
-                    ) : (
-                        <button className={styles.navBtn} onClick={() => setIsSelectionMode(true)}>
-                            ORGANIZE
-                        </button>
-                    )}
-                </div>
+                {pokemons.length === 0 && (
+                    <div className={styles.emptyMessage}>
+                        BOX IS EMPTY
+                    </div>
+                )}
             </div>
 
-            {/* Main Content Area */}
-            <div className={styles.boxWallpaper}>
-                <div className={styles.grid}>
-                    {pokemons.map((p) => (
-                        <div 
-                            key={p.uid} 
-                            className={`
-                                ${styles.pokemonSlot} 
-                                ${selectedIds.has(p.uid) ? styles.selectedSlot : ''}
-                                ${draggedPokemonUid === p.uid ? styles.draggedSlot : ''}
-                            `}
-                            onClick={() => handleSlotClick(p)}
-                            draggable={!isSelectionMode}
-                            onDragStart={(e) => handleDragStart(e, p)}
-                            onDragOver={handleDragOver}
-                            onDrop={(e) => handleDrop(e, p)}
-                            title={p.name}
-                        >
-                            {selectedIds.has(p.uid) && <div className={styles.checkMark}>✔</div>}
-                            <img 
-                                src={resolveAssetUrl(`./sprites/pokemon/${p.isShiny ? 'shiny' : 'normal'}/${p.id}.png`)} 
-                                alt={p.name} 
-                                className={styles.sprite}
-                            />
+            {/* Move Box Selector Modal */}
+            {showMoveBoxSelector && (
+                <div className={styles.modalOverlay}>
+                    <div className={styles.modalContent}>
+                        <h3>Move to Box...</h3>
+                        <div className={styles.boxGrid}>
+                            {Array.from({ length: totalBoxes }).map((_, index) => (
+                                <button 
+                                    key={index} 
+                                    className={styles.boxSelectBtn}
+                                    onClick={() => handleBatchMove(index)}
+                                    disabled={index === activeBox}
+                                >
+                                    BOX {index + 1}
+                                </button>
+                            ))}
                         </div>
-                    ))}
-                    
-                    {pokemons.length === 0 && (
-                        <div className={styles.emptyMessage}>
-                            BOX IS EMPTY
-                        </div>
-                    )}
+                        <button className={styles.navBtn} onClick={() => setShowMoveBoxSelector(false)}>Cancel</button>
+                    </div>
                 </div>
-            </div>
-
+            )}
             {/* Release Confirmation Modal */}
             {showDeleteConfirm && (
                 <div className={styles.modalOverlay}>
@@ -228,6 +260,6 @@ export const VPokemonBox = () => {
                     actionLabel="WITHDRAW"
                 />
             )}
-        </div>
+        </EmeraldTabPanel>
     );
 };

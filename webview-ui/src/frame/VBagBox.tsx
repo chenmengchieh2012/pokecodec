@@ -8,6 +8,7 @@ import styles from './VBagBox.module.css';
 import { ItemDao } from '../../../src/dataAccessObj/item';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
 import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
+import { EmeraldTabPanel } from './EmeraldTabPanel';
 
 export const VBagBox: React.FC = () => {
     const messageStore = useMessageStore(); // 確保訂閱生效
@@ -39,23 +40,20 @@ export const VBagBox: React.FC = () => {
     
 
     return (
-        <div className={styles.bagContainer}>
-            {/* 1. 分類標籤 */}
-            <div className={styles.pocketNav}>
-                <div 
-                    className={`${styles.pocketTab} ${activePocket === 'medicine' ? styles.active : ''}`} 
-                    onClick={() => { setActivePocket('medicine');}}
-                >
-                    MEDICINE
-                </div>
-                <div 
-                    className={`${styles.pocketTab} ${activePocket === 'balls' ? styles.active : ''}`} 
-                    onClick={() => { setActivePocket('balls');}}
-                >
-                    BALLS
-                </div>
-            </div>
-
+        <EmeraldTabPanel
+            tabs={[
+                {
+                    label: 'MEDICINE',
+                    onClick: () => setActivePocket('medicine'),
+                    isActive: activePocket === 'medicine'
+                },
+                {
+                    label: 'BALLS',
+                    onClick: () => setActivePocket('balls'),
+                    isActive: activePocket === 'balls'
+                }
+            ]}
+        >
             {/* 2. 道具網格 */}
             <div className={styles.bagGrid}>
                 {filteredItems.map(item => (
@@ -77,7 +75,7 @@ export const VBagBox: React.FC = () => {
 
             {/* 4. 道具使用彈窗 (Modal) */}
             <ItemUseModal ref={ItemUseModalRef}/>
-        </div>
+        </EmeraldTabPanel>
     );
 };
 

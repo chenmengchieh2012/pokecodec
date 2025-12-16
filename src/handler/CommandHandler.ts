@@ -7,6 +7,7 @@ import {
     CatchPayload,
     DeletePokemonPayload,
     ReorderBoxPayload,
+    BatchMoveToBoxPayload,
     AddToPartyPayload,
     RemoveFromPartyPayload,
     UpdatePartyPokemonPayload,
@@ -16,11 +17,14 @@ import {
     RemoveItemPayload,
     UpdateMoneyPayload,
     SetGameStatePayload,
+    GetPokeDexPayload,
+    UpdatePokeDexPayload,
     HandlerContext,
 } from './types';
 import { GameStateManager } from '../manager/gameStateManager';
 import { MessageType } from '../dataAccessObj/messageType';
 import { BiomeDataManager } from '../manager/BiomeManager';
+import { PokeDexManager } from '../manager/pokeDexManager';
 
 export class CommandHandler {
     private readonly pokemonBoxManager: PokemonBoxManager;
@@ -29,6 +33,7 @@ export class CommandHandler {
     private readonly userDaoManager: UserDaoManager;
     private readonly gameStateManager: GameStateManager;
     private readonly biomeManager: BiomeDataManager;
+    private readonly pokeDexManager: PokeDexManager;
     private _handlerContext: HandlerContext | null = null;
 
     constructor(
@@ -38,6 +43,7 @@ export class CommandHandler {
         userDaoManager: UserDaoManager,
         gameStateManager: GameStateManager,
         biomeManager: BiomeDataManager,
+        pokeDexManager: PokeDexManager,
         context: vscode.ExtensionContext,
     ) {
         this.pokemonBoxManager = pokemonBoxManager;
@@ -46,6 +52,7 @@ export class CommandHandler {
         this.userDaoManager = userDaoManager;
         this.gameStateManager = gameStateManager;
         this.biomeManager = biomeManager;
+        this.pokeDexManager = pokeDexManager;
     }
 
     public setHandlerContext(handlerContext: HandlerContext): void {
@@ -75,12 +82,25 @@ export class CommandHandler {
 
     // ==================== Get Box ====================
     public handleGetBox(boxIndex: number = 0): void {
-        const pokemons = this.pokemonBoxManager.getBox(boxIndex);
+        const pokemons = this.pokemonBoxManager.getBoxOfPokemons(boxIndex);
         const totalBoxes = this.pokemonBoxManager.getTotalBoxes();
         this.handlerContext.postMessage({ 
             type: 'boxData', 
             data: pokemons,
             currentBox: boxIndex,
+            totalBoxes: totalBoxes
+        });
+    }
+
+
+    // ==================== Get Current Box ====================
+    public handleGetCurrentBox(): void {
+        const pokemons = this.pokemonBoxManager.getCurrentBoxOfPokemons();
+        const totalBoxes = this.pokemonBoxManager.getTotalBoxes();
+        this.handlerContext.postMessage({ 
+            type: 'boxData', 
+            data: pokemons,
+            currentBox: this.pokemonBoxManager.getCurrentBoxIndex(),
             totalBoxes: totalBoxes
         });
     }
@@ -97,6 +117,17 @@ export class CommandHandler {
     public async handleReorderBox(payload: ReorderBoxPayload): Promise<void> {
         if (payload.pokemonUids && Array.isArray(payload.pokemonUids)) {
             await this.pokemonBoxManager.reorder(payload.pokemonUids);
+            this.handlerContext.updateAllViews();
+        }
+    }
+
+    // ==================== Batch Move To Box ====================
+    public async handleBatchMoveToBox(payload: BatchMoveToBoxPayload): Promise<void> {
+        if (payload.pokemonUids && Array.isArray(payload.pokemonUids) && typeof payload.targetBoxIndex === 'number') {
+            const success = await this.pokemonBoxManager.batchMove(payload.pokemonUids, payload.targetBoxIndex);
+            if (!success) {
+                vscode.window.showErrorMessage('Move failed: Target box full or invalid.');
+            }
             this.handlerContext.updateAllViews();
         }
     }
@@ -360,5 +391,24 @@ export class CommandHandler {
     public handleGetGameState(): void {
         const gameState = this.gameStateManager.getGameState();
         this.handlerContext.postMessage({ type: MessageType.GameState, data: gameState });
+    }
+
+    // ==================== Get PokeDex ====================
+    public handleGetPokeDex(payload: GetPokeDexPayload): void {
+        const dexData = this.pokeDexManager.getDexData(payload.gen);
+        this.handlerContext.postMessage({ 
+            type: MessageType.GetPokeDex, 
+            data: {
+                gen: payload.gen,
+                dexData: dexData
+            }
+        });
+    }
+
+    // ==================== Update PokeDex ====================
+    public async handleUpdatePokeDex(payload: UpdatePokeDexPayload): Promise<void> {
+        await this.pokeDexManager.updatePokemonStatus(payload.gen, payload.pokemonId, payload.status);
+        // After update, send back the updated data
+        this.handleGetPokeDex({ gen: payload.gen });
     }
 }

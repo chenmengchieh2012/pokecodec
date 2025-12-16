@@ -1,75 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-:root {
-  --emerald-bg: #408880;
-  --text-dark: #202020;
-  --panel-bg: #202020;
-  --highlight: #F8B050;
-  --tab-inactive: #2a5a55;
-  --tab-active: #f8f8f0;
-}
-
-/* --- 主容器 --- */
-.bagContainer {
-  display: flex;
-  flex-direction: column;
-  height: 100vh; /* 確保填滿視窗 */
-  background-color: var(--emerald-bg);
-  background-image: repeating-linear-gradient(
-    45deg,
-    var(--emerald-bg),
-    var(--emerald-bg) 10px,
-    #387870 10px,
-    #387870 12px
-  );
-  font-family: 'Press Start 2P', monospace;
-  overflow: hidden;
-  user-select: none;
-  color: var(--text-dark);
-}
-
-/* --- 1. 分類標籤 (Nav) --- */
-.pocketNav {
-  display: flex;
-  height: 24px;
-  background: transparent; /* 移除深色背景 */
-  flex-shrink: 0;
-  padding: 4px 4px 0 4px; /* 增加上方 padding */
-  gap: 2px;
-}
-
-.pocketTab {
-  flex: 1;
-  text-align: center;
-  font-size: 8px;
-  line-height: 20px;
-  color: #ccc;
-  background: var(--tab-inactive);
-  cursor: pointer;
-  border-radius: 6px 6px 0 0; /* 更圓潤的標籤 */
-  transition: all 0.1s;
-  border: 2px solid rgba(0,0,0,0.2);
-  border-bottom: none;
-  position: relative;
-  top: 2px;
-}
-
-.pocketTab:hover {
-  background: #387870;
-  color: #fff;
-  top: 0px;
-}
-
-.pocketTab.active {
-  background: var(--tab-active); 
-  color: var(--text-dark);
-  font-weight: bold;
-  box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
-  top: 0px;
-  z-index: 2;
-  border-color: #fff;
-}
-
 /* --- 2. 道具網格 (Grid) --- */
 .bagGrid {
   flex: 1;
@@ -85,9 +15,6 @@
   background-color: #f0f8f8;
   background-image: none; /* 強制移除背景圖 */
   align-content: start;
-  
-  border-top: 4px solid var(--tab-active); /* 連接 Tab */
-  box-shadow: inset 0 4px 8px rgba(0,0,0,0.05);
 }
 
 .bagSlot {

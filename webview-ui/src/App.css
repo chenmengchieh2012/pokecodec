@@ -1,14 +1,6 @@
 /* App.css */
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-:root {
-  --gba-ui-blue: #283044;
-  --gba-ui-border: #ffffff;
-  --hp-green: #50c878;
-  --hp-yellow: #f5ac0e;
-  --hp-red: #ff4d4d;
-}
-
 /* --- 1. 基礎架構 (最重要，防止畫面變黑) --- */
 html, body {
   margin: 0;

@@ -9,52 +9,38 @@
     --ui-border: #303840;
 }
 
-.shopContainer {
+/* --- Actions --- */
+.actionsContainer {
     display: flex;
-    flex-direction: row;
-    height: 100%;
-    background-color: var(--emerald-bg);
-    background-image: repeating-linear-gradient(
-        45deg,
-        var(--emerald-bg),
-        var(--emerald-bg) 10px,
-        #387870 10px,
-        #387870 12px
-    );
-    font-family: 'Press Start 2P', monospace;
-    image-rendering: pixelated;
-    user-select: none;
-    color: var(--text-dark);
-    font-size: 10px;
-}
-
-/* --- Content Wrapper --- */
-.contentWrapper {
-    flex: 1;
-    display: flex;
-    margin-left: 12px;
-    padding: 12px;
-    flex-direction: column;
-    padding: 0; /* Remove padding to maximize space */
-    position: relative;
-    overflow: hidden;
-}
-
-.header {
-    display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 8px 12px;
-    background-color: var(--emerald-bg);
-    border-bottom: 4px solid var(--ui-border);
-    flex-shrink: 0;
+    gap: 8px;
 }
 
-.shopTitle {
-    font-size: 12px;
+.modeBtn {
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(0,0,0,0.2);
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 10px;
     color: white;
-    text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.3);
+    box-shadow: 1px 1px 0 rgba(0,0,0,0.2);
 }
+
+.buyMode {
+    background-color: var(--emerald-primary);
+}
+
+.sellMode {
+    background-color: #e74c3c;
+}
+
+.modeBtn:active {
+    transform: translateY(1px);
+    box-shadow: none;
+}
+
 
 .moneyDisplay {
     background-color: #f8f8f8;
@@ -69,8 +55,37 @@
     box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
 }
 
+.emeraldContainer {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  background-color: var(--emerald-bg);
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--emerald-bg),
+    var(--emerald-bg) 10px,
+    #387870 10px,
+    #387870 12px
+  );
+  font-family: 'Press Start 2P', monospace;
+  color: var(--text-dark);
+  font-size: 12px;
+  overflow: hidden;
+  image-rendering: pixelated;
+  user-select: none;
+}
+
+.scrollArea {
+  flex: 1;
+  height: 100%;
+  margin-left: 12px;
+  padding: 4px 12px;
+  overflow: hidden;
+}
+
 /* --- Content Area --- */
-.contentArea {
+.itemGrid {
     flex: 1;
     background-color: var(--card-bg);
     overflow-y: auto;

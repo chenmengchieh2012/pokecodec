@@ -1,12 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-:root {
-  --emerald-bg: #408880;
-  --tab-inactive: #2a5a55;
-  --tab-active: #f8f8f0;
-  --text-dark: #202020;
-}
-
 .emeraldContainer {
   display: flex;
   flex-direction: column;
@@ -16,8 +9,8 @@
     45deg,
     var(--emerald-bg),
     var(--emerald-bg) 10px,
-    #387870 10px,
-    #387870 12px
+    var(--emerald-stripe) 10px,
+    var(--emerald-stripe) 12px
   );
   font-family: 'Press Start 2P', monospace;
   color: var(--text-dark);
@@ -31,14 +24,14 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  height: 28px;
+  height: var(--nav-height);
   padding: 4px 4px 0 4px;
   flex-shrink: 0;
 }
 
 .tabsLeft {
   display: flex;
-  gap: 2px;
+  gap: var(--grid-gap);
   flex: 1;
 }
 
@@ -53,7 +46,7 @@
   height: 24px;
   line-height: 24px;
   font-size: 10px;
-  color: #ccc;
+  color: var(--text-grey);
   background: var(--tab-inactive);
   cursor: pointer;
   border-radius: 6px 6px 0 0;
@@ -65,8 +58,8 @@
 }
 
 .boxTab:hover {
-  background: #387870;
-  color: #fff;
+  background: var(--emerald-stripe);
+  color: var(--text-light);
   top: 0;
 }
 
@@ -81,13 +74,13 @@
 }
 
 .navBtn {
-  background: #f8f8f0;
+  background: var(--tab-active);
   border: 2px solid #303030;
   padding: 0 8px;
   font-family: inherit;
   font-size: 10px;
   cursor: pointer;
-  color: #202020;
+  color: var(--text-dark);
   box-shadow: 1px 1px 0 #303030;
   border-radius: 4px;
   display: flex;
@@ -114,7 +107,7 @@
 /* --- Content Area --- */
 .boxWallpaper {
   flex: 1;
-  background-color: #f8f8f0; /* Match active tab */
+  background-color: var(--tab-active); /* Match active tab */
   border-top: 4px solid var(--tab-active);
   padding: 4px;
   overflow: hidden;
@@ -128,9 +121,9 @@
   overflow-y: auto;
   display: grid;
   /* Optimized for 360px width: ~6 items per row */
-  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
-  grid-auto-rows: 48px;
-  gap: 4px;
+  grid-template-columns: repeat(auto-fill, minmax(var(--grid-cell-size), 1fr));
+  grid-auto-rows: var(--grid-cell-size);
+  gap: var(--grid-gap);
   padding: 2px;
   align-content: start;
 }
@@ -241,3 +234,57 @@
 
 
 
+
+/* --- Modal --- */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+}
+
+.modalContent {
+  background: #f8f8f0;
+  border: 4px solid #303030;
+  border-radius: 8px;
+  padding: 16px;
+  width: 300px;
+  max-width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
+}
+
+.boxGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.boxSelectBtn {
+  background: #fff;
+  border: 2px solid #303030;
+  padding: 8px;
+  font-family: inherit;
+  font-size: 10px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.boxSelectBtn:hover:not(:disabled) {
+  background: #e0e0e0;
+}
+
+.boxSelectBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

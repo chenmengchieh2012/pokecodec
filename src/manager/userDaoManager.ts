@@ -86,4 +86,9 @@ export class UserDaoManager {
             return data;
         });
     }
+
+    public async clear(): Promise<void> {
+        this.context.globalState.update(this.STORAGE_KEY, { money: 50000 });
+        this.userDao = { money: 50000 };
+    }
 }

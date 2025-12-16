@@ -167,9 +167,19 @@ export const VBattleCanvas = React.forwardRef<BattleCanvasHandle, VBattleProps>(
             {/* 我方區域容器 (包含草地與寶可夢) */}
             <div className={`${styles['player-container']} ${playerAnim ? styles[playerAnim] : ''}`}>
                 <div className={styles['my-pokemon-wrapper']}>
+                    {/* Shiny Sparkles */}
+                    {myPokemon?.isShiny && shinyAnim === 'anim-shiny' && (
+                        <>
+                            <div className={styles['shiny-sparkle']}></div>
+                            <div className={styles['shiny-sparkle']}></div>
+                            <div className={styles['shiny-sparkle']}></div>
+                            <div className={styles['shiny-sparkle']}></div>
+                            <div className={styles['shiny-sparkle']}></div>
+                        </>
+                    )}
                     <div className={styles['my-grass-base']}></div>
                     <img 
-                      src={spriteBackUrl(myPokemon? myPokemon.id.toString() : '')} 
+                      src={spriteBackUrl(myPokemon? myPokemon.id.toString() : '', myPokemon?.isShiny)} 
                       alt="my pokemon" 
                       className={styles['my-pokemon-sprite']}
                       onError={(e) => handleImageError(e, myPokemon ? myPokemon.id : 0)}

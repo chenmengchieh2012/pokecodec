@@ -76,4 +76,10 @@ export class GameStateManager{
 
         return success;
     }
+
+    public async clear(): Promise<void> {
+        await this.performTransaction(() => {
+            return GameState.Searching;
+        });
+    }
 }

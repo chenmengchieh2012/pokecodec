@@ -140,4 +140,9 @@ export class BagManager {
 
         return success;
     }
+
+    public async clear(): Promise<void> {
+        await this.context.globalState.update(this.STORAGE_KEY, []);
+        this.items = [];
+    }
 }

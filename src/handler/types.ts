@@ -1,8 +1,19 @@
 import { GameState } from '../dataAccessObj/GameState';
 import { ItemDao } from '../dataAccessObj/item';
 import { PokemonDao } from '../dataAccessObj/pokemon';
+import { PokemonStatus } from '../dataAccessObj/PokeDex';
 
 // ==================== Payload Types ====================
+
+export interface GetPokeDexPayload {
+    gen: string;
+}
+
+export interface UpdatePokeDexPayload {
+    gen: string;
+    pokemonId: number;
+    status: PokemonStatus;
+}
 
 export interface CatchPayload {
     text: string;
@@ -15,6 +26,11 @@ export interface DeletePokemonPayload {
 
 export interface ReorderBoxPayload {
     pokemonUids: string[];
+}
+
+export interface BatchMoveToBoxPayload {
+    pokemonUids: string[];
+    targetBoxIndex: number;
 }
 
 export interface AddToPartyPayload {

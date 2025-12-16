@@ -28,7 +28,7 @@
   );
   font-family: 'Press Start 2P', monospace;
   color: var(--text-dark);
-  font-size: 4px 12px;
+  font-size: 12px;
   overflow: hidden;
   image-rendering: pixelated;
   user-select: none;
@@ -38,7 +38,7 @@
   flex: 1;
   height: 100%;
   margin-left: 12px;
-  padding: 12px;
+  padding: 4px 12px;
   overflow: hidden;
 }
 

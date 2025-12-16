@@ -7,15 +7,15 @@ import { UserDao } from '../../../src/dataAccessObj/userData';
 import { MenuSideBar } from '../frame/SideBar';
 import { ItemDao, PokeApiItem, adaptPokeApiItem } from '../../../src/dataAccessObj/item';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
+import { EmeraldTabPanel } from '../frame/EmeraldTabPanel';
 
-// 狀態物品 'revive', 'antidote', 'paralyze-heal', 'burn-heal', 'ice-heal', 'sleep-heal', 'awakening', 'full-heal'
-// 預設商店販售的商品列表 (可以擴充)
+// Status items 'revive', 'antidote', 'paralyze-heal', 'burn-heal', 'ice-heal', 'sleep-heal', 'awakening', 'full-heal'
+// Default shop item list (can be extended)
 
-const SHOP_ITEMS_API_NAMES = [
+const SHOP_ITEMS_MEDICINE_NAMES = [
     ...SHOP_ITEMS_HP_MEDICINE_NAMES,
     ...SHOP_ITEMS_PP_MEDICINE_NAMES,
     ...SHOP_ITEM_FULL_MEDICINE_NAMES,
-    ...SHOP_ITEMS_BALL_NAMES
 ];
 
 const IconBuy = () => (
@@ -31,7 +31,7 @@ const IconSell = () => (
 );
 
 export const VShop = () => {
-    // 使用 lazy initialization 來初始化 state
+    // Use lazy initialization to initialize state
     const [money, setMoney] = useState<number>(() => messageStore.getRefs().userInfo?.money ?? 0);
     const [bagItems, setBagItems] = useState<ItemDao[]>(() => messageStore.getRefs().bag ?? []);
     const [shopItems, setShopItems] = useState<ItemDao[]>([]);
@@ -40,12 +40,14 @@ export const VShop = () => {
     const [quantity, setQuantity] = useState<number>(1);
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 
+    const [actionTab, setActionTab] = useState<'medicine' | 'ball'>('medicine');
+
     // 初始化：載入商店商品
     useEffect(() => {
         // 載入商店商品 (這裡模擬從 API 抓取並轉換)
         const loadShopItems = async () => {
             const items: ItemDao[] = [];
-            for (const name of SHOP_ITEMS_API_NAMES) {
+            for (const name of [...SHOP_ITEMS_MEDICINE_NAMES, ...SHOP_ITEMS_BALL_NAMES]) {
                 try {
                     const response = await fetch(`https://pokeapi.co/api/v2/item/${name}`);
                     const data: PokeApiItem = await response.json();
@@ -138,7 +140,7 @@ export const VShop = () => {
     const displayItems = mode === 'buy' ? shopItems : bagItems;
 
     return (
-        <div className={styles.shopContainer}>
+        <div className={styles.emeraldContainer}>
             {/* Sidebar */}
             <MenuSideBar barItems={[
                 {
@@ -153,37 +155,57 @@ export const VShop = () => {
                 }
             ]}/>
             {/* Main Content */}
-            <div className={styles.contentWrapper}>
-                <div className={styles.header}>
-                    <div className={styles.shopTitle}>{mode === 'buy' ? 'POKé MART' : 'YOUR BAG'}</div>
-                    <div className={styles.moneyDisplay}>
-                        <span>$</span>
-                        <span>{money}</span>
-                    </div>
-                </div>
-
-                <div className={styles.contentArea}>
-                    {displayItems.map(item => (
-                        <div 
-                            key={item.id} 
-                            className={styles.itemCard}
-                            onClick={() => handleItemClick(item)}
-                            title={item.name}
-                        >
-                            {mode === 'sell' && <div className={styles.itemCount}>{item.totalSize}</div>}
-                            <img src={item.spriteUrl} alt={item.name} className={styles.itemIcon} />
-                            <div className={styles.itemName}>{item.name}</div>
-                            <div className={styles.itemPrice}>
-                                ${mode === 'buy' ? item.price : item.sellPrice}
+            <div className={styles.scrollArea}>
+                <EmeraldTabPanel 
+                    tabs={[
+                        {
+                            label: 'Medicine',
+                            onClick: () => setActionTab('medicine'),
+                            isActive: actionTab === 'medicine'
+                        },
+                        {
+                            label: 'Balls',
+                            onClick: () => setActionTab('ball'),
+                            isActive: actionTab === 'ball'
+                        }
+                    ]}
+                    actions={[
+                        {
+                            label: `$${money}`,
+                            onClick: () => {}
+                        }
+                    ]}            
+                    >
+                    <div className={styles.itemGrid}>
+                        {displayItems
+                            .filter(item => 
+                                actionTab === 'medicine' ? item.pocket === 'medicine' : item.pocket === 'balls'
+                            )
+                            .map(item => (
+                                <div 
+                                    key={item.id} 
+                                    className={styles.itemCard}
+                                    onClick={() => handleItemClick(item)}
+                                    title={item.name}
+                                >
+                                    {mode === 'sell' && <div className={styles.itemCount}>{item.totalSize}</div>}
+                                    <img src={item.spriteUrl} alt={item.name} className={styles.itemIcon} />
+                                    <div className={styles.itemName}>{item.name}</div>
+                                    <div className={styles.itemPrice}>
+                                        ${mode === 'buy' ? item.price : item.sellPrice}
+                                    </div>
+                                </div>
+                            ))
+                        }
+                        {displayItems.filter(item => 
+                                actionTab === 'medicine' ? item.pocket === 'medicine' : item.pocket === 'balls'
+                            ).length === 0 && (
+                            <div style={{ padding: 20, textAlign: 'center', color: '#7f8c8d', width: '100%', gridColumn: '1 / -1' }}>
+                                {mode === 'buy' ? 'Loading Shop...' : 'Your Bag is Empty'}
                             </div>
-                        </div>
-                    ))}
-                    {displayItems.length === 0 && (
-                        <div style={{ padding: 20, textAlign: 'center', color: '#7f8c8d', width: '100%', gridColumn: '1 / -1' }}>
-                            {mode === 'buy' ? 'Loading Shop...' : 'Your Bag is Empty'}
-                        </div>
-                    )}
-                </div>
+                        )}
+                    </div>
+                </EmeraldTabPanel>
             </div>
 
             {/* Transaction Dialog */}

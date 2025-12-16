@@ -115,4 +115,10 @@ export class JoinPokemonManager {
         });
         return success;
     }
+
+    public async clear(): Promise<void> {
+        await this.performTransaction(() => {
+            return [];
+        });
+    }
 }

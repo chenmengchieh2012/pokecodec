@@ -57,8 +57,8 @@
           "type": "webview"
         },
         {
-          "id": "pokemonBox",
-          "name": "Pokemon Box",
+          "id": "pokemonComputer",
+          "name": "Pokemon Computer",
           "type": "webview"
         },
         {

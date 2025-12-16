@@ -1,0 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+.emeraldContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: var(--emerald-bg);
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--emerald-bg),
+    var(--emerald-bg) 10px,
+    var(--emerald-stripe) 10px,
+    var(--emerald-stripe) 12px
+  );
+  font-family: 'Press Start 2P', monospace;
+  color: var(--text-dark);
+  font-size: 10px;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* --- Navigation / Tabs --- */
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: var(--nav-height);
+  padding: 4px 4px 0 4px;
+  flex-shrink: 0;
+}
+
+.tabsLeft {
+  display: flex;
+  gap: var(--grid-gap);
+  flex: 1;
+  overflow-x: auto;
+  max-width: 70%;
+  scrollbar-width: none; /* Firefox */
+}
+
+.tabsLeft::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+.tabsRight {
+  display: flex;
+  gap: 4px;
+  padding-bottom: 2px;
+}
+
+.tab {
+  padding: 0 8px;
+  height: 24px;
+  line-height: 24px;
+  font-size: 10px;
+  color: var(--text-grey);
+  background: var(--tab-inactive);
+  cursor: pointer;
+  border-radius: 6px 6px 0 0;
+  border: 2px solid rgba(0,0,0,0.2);
+  border-bottom: none;
+  position: relative;
+  top: 2px;
+  transition: top 0.1s;
+  white-space: nowrap;
+}
+
+.tab:hover {
+  background: var(--emerald-stripe);
+  color: var(--text-light);
+  top: 0;
+}
+
+.tab.active {
+  background: var(--tab-active);
+  color: var(--text-dark);
+  font-weight: bold;
+  top: 0;
+  z-index: 2;
+  box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+  height: 26px; /* Connect to body */
+}
+
+.tab.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.navBtn {
+  background: var(--tab-active);
+  border: 2px solid #303030;
+  padding: 0 8px;
+  font-family: inherit;
+  font-size: 10px;
+  cursor: pointer;
+  color: var(--text-dark);
+  box-shadow: 1px 1px 0 #303030;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+}
+
+.navBtn:hover {
+  transform: translateY(-1px);
+}
+
+.navBtn:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
+}
+
+.dangerBtn {
+  background: #ffcccc;
+  color: #cc0000;
+  border-color: #cc0000;
+}
+
+/* --- Content Area --- */
+.wallpaper {
+  flex: 1;
+  background-color: var(--tab-active);
+  border-top: 4px solid var(--tab-active);
+  padding: 4px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: inset 0 4px 8px rgba(0,0,0,0.05);
+}

@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { PokemonBoxManager } from './manager/pokeBoxManager';
+import { PokeDexManager } from './manager/pokeDexManager';
 import { JoinPokemonManager } from './manager/joinPokemonManager';
 import { BagManager } from './manager/bagsManager';
 import { UserDaoManager } from './manager/userDaoManager';
@@ -13,6 +14,7 @@ import {
     CatchPayload,
     DeletePokemonPayload,
     ReorderBoxPayload,
+    BatchMoveToBoxPayload,
     AddToPartyPayload,
     RemoveFromPartyPayload,
     UpdatePartyPokemonPayload,
@@ -21,7 +23,9 @@ import {
     RemoveItemPayload,
     UpdateMoneyPayload,
     SetGameStatePayload,
-    UseMedicineInBagPayload
+    UseMedicineInBagPayload,
+    GetPokeDexPayload,
+    UpdatePokeDexPayload
 } from './handler';
 import GlobalStateKey from './utils/GlobalStateKey';
 import { GameState } from './dataAccessObj/GameState';
@@ -29,6 +33,8 @@ import { BiomeDataManager } from './manager/BiomeManager';
 import { BiomeData } from './dataAccessObj/BiomeData';
 import { GitActivityHandler } from './core/GitActivityHandler';
 import { ExperienceCalculator } from './utils/ExperienceCalculator';
+import { randomUUID } from 'crypto';
+import { PokemonFactory } from './core/CreatePokemonHandler';
 
 
 
@@ -45,6 +51,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     // 明確初始化所有 Manager (Singletons)
     const pokemonBoxManager = PokemonBoxManager.initialize(context);
+    const pokeDexManager = PokeDexManager.initialize(context);
     const partyManager = JoinPokemonManager.initialize(context);
     const bagManager = BagManager.initialize(context);
     const userDaoManager = UserDaoManager.initialize(context);
@@ -53,7 +60,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     const gameProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'game', context, biomeManager });
     const backpackProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'backpack', context, biomeManager });
-    const boxProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'box', context, biomeManager });
+    const computerProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'computer', context, biomeManager });
     const shopProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'shop', context, biomeManager });
     
     
@@ -62,7 +69,7 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.window.registerWebviewViewProvider('pokemonReact', gameProvider),
         vscode.window.registerWebviewViewProvider('pokemonBackpack', backpackProvider),
-        vscode.window.registerWebviewViewProvider('pokemonBox', boxProvider),
+        vscode.window.registerWebviewViewProvider('pokemonComputer', computerProvider),
         vscode.window.registerWebviewViewProvider('pokemonShop', shopProvider),
         
     );
@@ -116,6 +123,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
     private partyManager: JoinPokemonManager;
     private bagManager: BagManager;
     private userDaoManager: UserDaoManager;
+    private pokeDexManager: PokeDexManager;
     private commandHandler: CommandHandler;
     private gameStateManager: GameStateManager;
     private biomeManager: BiomeDataManager;
@@ -132,6 +140,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         this.bagManager = BagManager.getInstance();
         this.userDaoManager = UserDaoManager.getInstance();
         this.gameStateManager = GameStateManager.getInstance();
+        this.pokeDexManager = PokeDexManager.getInstance();
         this.biomeManager = biomeManager;
         this._extensionUri = extensionUri;
         this._viewType = viewType;
@@ -143,6 +152,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             this.userDaoManager,
             this.gameStateManager,
             this.biomeManager,
+            this.pokeDexManager,
             _context
         );
         PokemonViewProvider.providers.push(this);
@@ -170,28 +180,21 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
 
     public updateViews() {
         if (this._view) {
-            // 不需要 reload()，因為 Singleton 實例中的資料已經是最新的
-            // this.pokemonBoxManager.reload();
-            // this.partyManager.reload();
-            // this.bagManager.reload();
-            // this.userDaoManager.reload();
-            // this.gameStateManager.reload();
-            
-            this._view.webview.postMessage({ type: MessageType.PartyData, data: this.partyManager.getAll() });
-            this._view.webview.postMessage({ type: MessageType.BoxData, data: this.pokemonBoxManager.getAll() });
-            this._view.webview.postMessage({ type: MessageType.BagData, data: this.bagManager.getAll() });
-            this._view.webview.postMessage({ type: MessageType.UserData, data: this.userDaoManager.getUserInfo() });
-            this._view.webview.postMessage({ type: MessageType.GameState, data: this.gameStateManager.getGameState() });   
+            this.commandHandler.handleGetParty();
+            this.commandHandler.handleGetCurrentBox();
+            this.commandHandler.handleGetBag();
+            this.commandHandler.handleGetUserInfo();
+            this.commandHandler.handleGetGameState();
         }
         this.updateBiomeState();
     }
 
     public async resetStorage() {
-        await this._context.globalState.update(GlobalStateKey.BAG_DATA, []);
-        await this._context.globalState.update(GlobalStateKey.USER_DATA, { money: 50000 });
-        await this._context.globalState.update(GlobalStateKey.PARTY_DATA, [ ]);
+        await this.bagManager.clear();
+        await this.userDaoManager.clear();
+        await this.partyManager.clear();
         await this.pokemonBoxManager.clear();
-        await this._context.globalState.update(GlobalStateKey.GAME_STATE, GameState.Searching);
+        await this.gameStateManager.clear();
         
         // Add default pokemon
         const starter = { ...defaultPokemon };
@@ -207,8 +210,21 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         starter.stats.speed = ExperienceCalculator.calculateStat(starter.baseStats.speed, starter.iv.speed, starter.ev.speed, starter.level);
         starter.currentHp = starter.stats.hp;
         starter.maxHp = starter.stats.hp;
-
+        
         await this.partyManager.add(starter);
+
+        // full two box starter to party
+        for (let i = 0; i < PokemonBoxManager.getMaxBoxCapacity() * 2; i++) {
+            let debugPokemon = await PokemonFactory.createWildPokemonInstance({
+                id: Math.floor(Math.random() * 150) + 1,
+                nameZh: '',
+                nameEn: '',
+                type: [],
+                catchRate: 0,
+                minDepth: 0
+            },'test/file/path')
+            await this.pokemonBoxManager.add(debugPokemon);
+        }
 
         vscode.window.showInformationMessage('Global storage 已重置！');
         PokemonViewProvider.providers.forEach(p => p.updateViews());
@@ -282,6 +298,9 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             if (message.command === MessageType.ReorderBox) {
                 await this.commandHandler.handleReorderBox(message as ReorderBoxPayload);
             }
+            if (message.command === MessageType.BatchMoveToBox) {
+                await this.commandHandler.handleBatchMoveToBox(message as BatchMoveToBoxPayload);
+            }
             if (message.command === MessageType.GetParty) {
                 this.commandHandler.handleGetParty();
             }
@@ -321,6 +340,13 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             if (message.command === MessageType.GetGameState) {
                 this.commandHandler.handleGetGameState();
             }
+            if (message.command === MessageType.GetPokeDex) {
+                this.commandHandler.handleGetPokeDex(message as GetPokeDexPayload);
+            }
+            if (message.command === MessageType.UpdatePokeDex) {
+                await this.commandHandler.handleUpdatePokeDex(message as UpdatePokeDexPayload);
+            }
+
             if (message.command === MessageType.TriggerEncounter) {
                 this.triggerEncounter();
             }

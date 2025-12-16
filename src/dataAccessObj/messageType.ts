@@ -17,10 +17,12 @@ export const MessageType = {
     GetBox: 'getBox',
     GetGameState: 'getGameState',
     GetBiome: 'getBiome',
+    GetPokeDex: 'getPokeDex',
     
     // Action types
     SetGameState: 'setGameState',
     UpdateMoney: 'updateMoney',
+    UpdatePokeDex: 'updatePokeDex',
     AddItem: 'addItem',
     RemoveItem: 'removeItem',
     UseItem: 'useItem',
@@ -30,6 +32,7 @@ export const MessageType = {
     RemoveFromParty: 'removeFromParty',
     ReorderBox: 'reorderBox',
     DeletePokemon: 'deletePokemon',
+    BatchMoveToBox: 'batchMoveToBox',
     Catch: 'catch',
     TriggerEncounter: 'triggerEncounter',
     ResetStorage: 'resetStorage',
