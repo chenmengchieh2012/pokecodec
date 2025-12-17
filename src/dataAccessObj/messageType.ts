@@ -32,6 +32,7 @@ export const MessageType = {
     AddToParty: 'addToParty',
     RemoveFromParty: 'removeFromParty',
     ReorderBox: 'reorderBox',
+    ReorderParty: 'reorderParty',
     DeletePokemon: 'deletePokemon',
     BatchMoveToBox: 'batchMoveToBox',
     Catch: 'catch',

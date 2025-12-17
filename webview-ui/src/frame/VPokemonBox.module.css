@@ -261,40 +261,109 @@
 
 .modalContent {
   background: #f8f8f0;
-  border: 4px solid #303030;
+  border: 3px solid #303030;
   border-radius: 8px;
-  padding: 16px;
-  width: 300px;
+  border-bottom-right-radius: 8px;
+  padding: 8px;
+  width: 220px;
   max-width: 90%;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
+  gap: 8px;
+  box-shadow: 6px 6px 0 rgba(0,0,0,0.3);
+  animation: popupAnim 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 4px;
+  border-bottom: 2px solid #e0e0e0;
+  margin-bottom: 2px;
+}
+
+.modalContent h3 {
+  margin: 0;
+  font-size: 12px;
+  color: #303030;
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.closeBtn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
+  color: #888;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+  font-family: inherit;
+}
+
+.closeBtn:hover {
+  color: #303030;
 }
 
 .boxGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-  gap: 8px;
-  max-height: 300px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  max-height: 200px;
   overflow-y: auto;
+  padding: 2px;
 }
 
 .boxSelectBtn {
   background: #fff;
   border: 2px solid #303030;
-  padding: 8px;
+  border-radius: 4px;
+  padding: 6px 2px;
   font-family: inherit;
   font-size: 10px;
   cursor: pointer;
   text-align: center;
+  box-shadow: 0 2px 0 #ccc;
+  transition: all 0.1s;
+  color: #303030;
+  font-weight: bold;
 }
 
 .boxSelectBtn:hover:not(:disabled) {
-  background: #e0e0e0;
+  background: #f0f8ff;
+  border-color: #3080ff;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 0 #3080ff;
+}
+
+.boxSelectBtn:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: none;
 }
 
 .boxSelectBtn:disabled {
-  opacity: 0.5;
+  background: #e0e0e0;
+  color: #888;
+  border-color: #ccc;
+  box-shadow: none;
   cursor: not-allowed;
+}
+
+.navBtn {
+  background: #ff6b6b;
+  color: white;
+  border: 2px solid #c0392b;
+  padding: 8px;
+  border-radius: 6px;
+  font-family: inherit;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 0 #c0392b;
+}
+
+.navBtn:active {
+  transform: translateY(2px);
+  box-shadow: none;
 }

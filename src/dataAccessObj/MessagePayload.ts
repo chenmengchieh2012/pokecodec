@@ -39,6 +39,10 @@ export interface ReorderBoxPayload {
     pokemonUids: string[];
 }
 
+export interface ReorderPartyPayload {
+    pokemonUids: string[];
+}
+
 export interface BatchMoveToBoxPayload {
     pokemonUids: string[];
     targetBoxIndex: number;

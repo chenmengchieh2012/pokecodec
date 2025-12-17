@@ -7,6 +7,7 @@ import {
     CatchPayload,
     DeletePokemonPayload,
     ReorderBoxPayload,
+    ReorderPartyPayload,
     BatchMoveToBoxPayload,
     AddToPartyPayload,
     RemoveFromPartyPayload,
@@ -165,6 +166,13 @@ export class CommandHandler {
     public async handleReorderBox(payload: ReorderBoxPayload): Promise<void> {
         if (payload.pokemonUids && Array.isArray(payload.pokemonUids)) {
             await this.pokemonBoxManager.reorder(payload.pokemonUids);
+            this.handlerContext.updateAllViews();
+        }
+    }
+
+    public async handleReorderParty(payload: ReorderPartyPayload): Promise<void> {
+        if (payload.pokemonUids && Array.isArray(payload.pokemonUids)) {
+            await this.partyManager.reorder(payload.pokemonUids);
             this.handlerContext.updateAllViews();
         }
     }

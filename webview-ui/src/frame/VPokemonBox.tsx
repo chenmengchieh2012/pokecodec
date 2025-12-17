@@ -218,7 +218,10 @@ export const VPokemonBox = () => {
             {showMoveBoxSelector && (
                 <div className={styles.modalOverlay}>
                     <div className={styles.modalContent}>
-                        <h3>Move to Box...</h3>
+                        <div className={styles.modalHeader}>
+                            <h3>Move to...</h3>
+                            <button className={styles.closeBtn} onClick={() => setShowMoveBoxSelector(false)}>×</button>
+                        </div>
                         <div className={styles.boxGrid}>
                             {Array.from({ length: totalBoxes }).map((_, index) => (
                                 <button 
@@ -231,7 +234,6 @@ export const VPokemonBox = () => {
                                 </button>
                             ))}
                         </div>
-                        <button className={styles.navBtn} onClick={() => setShowMoveBoxSelector(false)}>Cancel</button>
                     </div>
                 </div>
             )}

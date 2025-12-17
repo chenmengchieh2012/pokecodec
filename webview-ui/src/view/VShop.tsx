@@ -26,7 +26,7 @@ const IconBuy = () => (
 
 const IconSell = () => (
     <svg viewBox="0 0 24 24" className={styles.tabSvg}>
-        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.15-1.46-3.27-3.4h1.96c.1 1.05 1.18 1.91 2.53 1.91 1.33 0 2.3-.6 2.3-1.64 0-.96-.55-1.78-4.51-2.65-3.09-.71-4.12-2.13-4.12-3.82 0-1.85 1.28-3.35 3.11-3.75V3h2.67v1.9c1.81.42 2.97 1.64 3.11 3.23h-1.96c-.11-1.01-1.14-1.55-2.37-1.55-1.39 0-2.18.77-2.18 1.69 0 .95.57 1.58 4.43 2.52 3.13.76 4.36 2.06 4.36 3.98 0 1.84-1.11 3.44-3.39 3.92z"/>
+        <path d="M20 4H4v2h16V4zm1 10v-2l-1-5H4l-1 5v2h1v6h10v-6h4v6h2v-6h1zm-9 4H6v-4h6v4z"/>
     </svg>
 );
 
@@ -215,16 +215,21 @@ export const VShop = () => {
                 <div className={styles.dialogOverlay} onClick={() => setIsDialogOpen(false)}>
                     <div className={styles.dialogBox} onClick={e => e.stopPropagation()}>
                         <div className={styles.dialogHeader}>
-                            <img src={selectedItem.spriteUrl} alt={selectedItem.name} className={styles.dialogIcon} />
-                            <div className={styles.headerInfo}>
-                                <div className={styles.headerTopRow}>
-                                    <div className={styles.itemNameLarge}>{selectedItem.name}</div>
-                                    <span className={styles.unitPrice}>
-                                        ${quantity * (mode === 'buy' ? selectedItem.price : selectedItem.sellPrice)}
-                                    </span>
-                                </div>
-                                <div className={styles.headerBottomRow}>
-                                    <span className={styles.dialogType}>{mode === 'buy' ? 'BUY' : 'SELL'}</span>
+                            <div className={styles.headerTopRow}>
+                                <div className={styles.itemNameLarge}>{selectedItem.name}</div>
+                                <button className={styles.closeBtn} onClick={() => setIsDialogOpen(false)}>×</button>
+                            </div>
+                            <div className={styles.headerContent}>
+                                <img src={selectedItem.spriteUrl} alt={selectedItem.name} className={styles.dialogIcon} />
+                                <div className={styles.headerInfo}>
+                                    <div className={styles.priceRow}>
+                                        <span className={`${styles.dialogType} ${mode === 'buy' ? styles.typeBuy : styles.typeSell}`}>
+                                            {mode === 'buy' ? 'BUY' : 'SELL'}
+                                        </span>
+                                        <span className={styles.unitPrice}>
+                                            ${quantity * (mode === 'buy' ? selectedItem.price : selectedItem.sellPrice)}
+                                        </span>
+                                    </div>
                                     <div className={styles.quantityControl}>
                                         <button 
                                             className={styles.qtyBtn} 
@@ -245,7 +250,6 @@ export const VShop = () => {
                         </div>
 
                         <div className={styles.actionButtons}>
-                            <button className={styles.cancelBtn} onClick={() => setIsDialogOpen(false)}>CANCEL</button>
                             <button 
                                 className={styles.confirmBtn} 
                                 onClick={handleConfirm}

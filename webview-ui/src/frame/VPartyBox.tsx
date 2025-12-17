@@ -13,6 +13,7 @@ export const VPartyBox = () => {
     const defaultParty = messageStore.getRefs().party || [];
     const [party, setParty] = useState<PokemonDao[]>(defaultParty);
     const [selectedPokemon, setSelectedPokemon] = useState<PokemonDao | null>(null);
+    const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
     
     useMessageSubscription<PokemonDao[]>(MessageType.PartyData, (message) => {
         const partyDataPayload: PokemonDao[]| undefined = message.data;
@@ -23,7 +24,32 @@ export const VPartyBox = () => {
         }
     });
 
+    const handleDragStart = (e: React.DragEvent, index: number) => {
+        setDraggedIndex(index);
+        e.dataTransfer.effectAllowed = "move";
+    };
 
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+    };
+
+    const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+        e.preventDefault();
+        if (draggedIndex === null || draggedIndex === dropIndex) return;
+
+        const newParty = [...party];
+        const [draggedItem] = newParty.splice(draggedIndex, 1);
+        newParty.splice(dropIndex, 0, draggedItem);
+
+        setParty(newParty);
+        setDraggedIndex(null);
+
+        vscode.postMessage({ 
+            command: MessageType.ReorderParty, 
+            pokemonUids: newParty.map(p => p.uid) 
+        });
+    };
 
     const getHpBg = (current: number, max: number) => {
         const r = current / max;
@@ -50,14 +76,18 @@ export const VPartyBox = () => {
 
     return (
         <div className={styles.partyGrid}>
-            {party.map((pokemon) => {
+            {party.map((pokemon, index) => {
                 const ballType = pokemon.caughtBall ? pokemon.caughtBall : 'poke-ball'; 
                 console.log("pokemon.caughtBall",pokemon.caughtBall, ballType)
                 return (
                     <div 
                         key={pokemon.uid}
-                        className={styles.ballSlot}
+                        className={`${styles.ballSlot} ${draggedIndex === index ? styles.dragging : ''}`}
                         onClick={() => onPokemonClick(pokemon)}
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, index)}
+                        onDragOver={(e) => handleDragOver(e)}
+                        onDrop={(e) => handleDrop(e, index)}
                     >
                         {/* --- 常駐大預覽卡 + 小球 --- */}
                         <div className={styles.previewCard}>

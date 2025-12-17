@@ -103,6 +103,39 @@ export class JoinPokemonManager {
         return success;
     }
 
+    public async reorder(uids: string[]): Promise<boolean> {
+        let success = false;
+        await this.performTransaction((party) => {
+            // Create a map for quick lookup
+            const partyMap = new Map(party.map(p => [p.uid, p]));
+            const newParty: PokemonDao[] = [];
+            
+            // Reconstruct party based on uids order
+            for (const uid of uids) {
+                const pokemon = partyMap.get(uid);
+                if (pokemon) {
+                    newParty.push(pokemon);
+                    partyMap.delete(uid);
+                }
+            }
+            
+            // Append any remaining pokemon (shouldn't happen if uids are correct, but for safety)
+            for (const pokemon of partyMap.values()) {
+                newParty.push(pokemon);
+            }
+
+            if (newParty.length === party.length) {
+                // Replace content of party array
+                party.length = 0;
+                party.push(...newParty);
+                success = true;
+            }
+            
+            return JSON.parse(JSON.stringify(party));
+        });
+        return success;
+    }
+
     public async update(pokemon: PokemonDao): Promise<boolean> {
         let success = false;
         await this.performTransaction((party) => {

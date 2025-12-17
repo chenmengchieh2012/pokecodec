@@ -14,6 +14,7 @@ import {
     CatchPayload,
     DeletePokemonPayload,
     ReorderBoxPayload,
+    ReorderPartyPayload,
     BatchMoveToBoxPayload,
     AddToPartyPayload,
     RemoveFromPartyPayload,
@@ -300,6 +301,9 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             }
             if (message.command === MessageType.ReorderBox) {
                 await this.commandHandler.handleReorderBox(message as ReorderBoxPayload);
+            }
+            if (message.command === MessageType.ReorderParty) {
+                await this.commandHandler.handleReorderParty(message as ReorderPartyPayload);
             }
             if (message.command === MessageType.BatchMoveToBox) {
                 await this.commandHandler.handleBatchMoveToBox(message as BatchMoveToBoxPayload);

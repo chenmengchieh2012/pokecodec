@@ -45,6 +45,11 @@
   z-index: 100;
 }
 
+.dragging {
+  opacity: 0.5;
+  transform: scale(0.95);
+}
+
 /* --- 常駐預覽卡 (原本的 Tooltip) --- */
 /* 重點：要大，一直顯示 */
 .previewCard {
