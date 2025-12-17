@@ -157,6 +157,23 @@ export class PokemonBoxManager {
         });
     }
 
+    public async update(pokemon: PokemonDao): Promise<void> {
+        // Find which box the pokemon is in
+        let targetBoxIndex = -1;
+        for (let i = 0; i < this.boxes.length; i++) {
+            if (this.boxes[i].some(p => p.uid === pokemon.uid)) {
+                targetBoxIndex = i;
+                break;
+            }
+        }
+
+        if (targetBoxIndex !== -1) {
+            await this.performBoxTransaction(targetBoxIndex, (list) => {
+                return list.map(p => p.uid === pokemon.uid ? pokemon : p);
+            });
+        }
+    }
+
     public async add(pokemon: PokemonDao): Promise<void> {
         
         // 尋找第一個有空位的箱子

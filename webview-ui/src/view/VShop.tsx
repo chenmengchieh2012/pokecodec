@@ -190,9 +190,11 @@ export const VShop = () => {
                                 >
                                     {mode === 'sell' && <div className={styles.itemCount}>{item.totalSize}</div>}
                                     <img src={item.spriteUrl} alt={item.name} className={styles.itemIcon} />
-                                    <div className={styles.itemName}>{item.name}</div>
-                                    <div className={styles.itemPrice}>
-                                        ${mode === 'buy' ? item.price : item.sellPrice}
+                                    <div className={styles.itemInfo}>
+                                        <div className={styles.itemName}>{item.name}</div>
+                                        <div className={styles.itemPrice}>
+                                            ${mode === 'buy' ? item.price : item.sellPrice}
+                                        </div>
                                     </div>
                                 </div>
                             ))
@@ -214,56 +216,42 @@ export const VShop = () => {
                     <div className={styles.dialogBox} onClick={e => e.stopPropagation()}>
                         <div className={styles.dialogHeader}>
                             <img src={selectedItem.spriteUrl} alt={selectedItem.name} className={styles.dialogIcon} />
-                            <div className={styles.dialogHeaderText}>
-                                <div className={styles.dialogTitle}>
-                                    {mode === 'buy' ? 'BUY' : 'SELL'}
+                            <div className={styles.headerInfo}>
+                                <div className={styles.headerTopRow}>
+                                    <div className={styles.itemNameLarge}>{selectedItem.name}</div>
+                                    <span className={styles.unitPrice}>
+                                        ${quantity * (mode === 'buy' ? selectedItem.price : selectedItem.sellPrice)}
+                                    </span>
                                 </div>
-                                <div className={styles.itemNameSmall}>{selectedItem.name}</div>
-                            </div>
-                            <div className={styles.priceLabel}>
-                                ${mode === 'buy' ? selectedItem.price : selectedItem.sellPrice}
-                            </div>
-                        </div>
-
-                        <div className={styles.divider}></div>
-
-                        <div className={styles.quantitySection}>
-                            <div className={styles.qtyLabel}>數量</div>
-                            <div className={styles.quantityControl}>
-                                <button 
-                                    className={styles.qtyBtn} 
-                                    onClick={() => handleQuantityChange(-1)}
-                                    disabled={quantity <= 1}
-                                >−</button>
-                                <input 
-                                    type="text"
-                                    className={styles.qtyInput} 
-                                    value={quantity}
-                                    readOnly
-                                />
-                                <button 
-                                    className={styles.qtyBtn} 
-                                    onClick={() => handleQuantityChange(1)}
-                                    disabled={mode === 'buy' ? (quantity * selectedItem.price > money) : (quantity >= selectedItem.totalSize)}
-                                >+</button>
-                            </div>
-                        </div>
-
-                        <div className={styles.totalSection}>
-                            <div className={styles.totalLabel}>合計</div>
-                            <div className={styles.totalPrice}>
-                                ${quantity * (mode === 'buy' ? selectedItem.price : selectedItem.sellPrice)}
+                                <div className={styles.headerBottomRow}>
+                                    <span className={styles.dialogType}>{mode === 'buy' ? 'BUY' : 'SELL'}</span>
+                                    <div className={styles.quantityControl}>
+                                        <button 
+                                            className={styles.qtyBtn} 
+                                            onClick={() => handleQuantityChange(-1)}
+                                            disabled={quantity <= 1}
+                                        >−</button>
+                                        <div className={styles.qtyDisplay}>
+                                            <span className={styles.qtyValue}>{quantity}</span>
+                                        </div>
+                                        <button 
+                                            className={styles.qtyBtn} 
+                                            onClick={() => handleQuantityChange(1)}
+                                            disabled={mode === 'buy' ? (quantity * selectedItem.price > money) : (quantity >= selectedItem.totalSize)}
+                                        >+</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
                         <div className={styles.actionButtons}>
-                            <button className={styles.cancelBtn} onClick={() => setIsDialogOpen(false)}>取消</button>
+                            <button className={styles.cancelBtn} onClick={() => setIsDialogOpen(false)}>CANCEL</button>
                             <button 
                                 className={styles.confirmBtn} 
                                 onClick={handleConfirm}
                                 disabled={mode === 'buy' && money < (selectedItem.price * quantity)}
                             >
-                                確認
+                                CONFIRM
                             </button>
                         </div>
                     </div>

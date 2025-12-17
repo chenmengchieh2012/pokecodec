@@ -15,8 +15,14 @@
       "speed": 45
     },
     "abilities": [
-      "overgrow",
-      "chlorophyll"
+      {
+        "name": "overgrow",
+        "isHidden": false
+      },
+      {
+        "name": "chlorophyll",
+        "isHidden": true
+      }
     ],
     "height": 7,
     "weight": 69,
@@ -138,6 +144,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 2,
+        "name": "ivysaur",
+        "min_level": 16,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -163,8 +179,14 @@
       "speed": 60
     },
     "abilities": [
-      "overgrow",
-      "chlorophyll"
+      {
+        "name": "overgrow",
+        "isHidden": false
+      },
+      {
+        "name": "chlorophyll",
+        "isHidden": true
+      }
     ],
     "height": 10,
     "weight": 130,
@@ -286,6 +308,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 3,
+        "name": "venusaur",
+        "min_level": 32,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -311,8 +343,14 @@
       "speed": 80
     },
     "abilities": [
-      "overgrow",
-      "chlorophyll"
+      {
+        "name": "overgrow",
+        "isHidden": false
+      },
+      {
+        "name": "chlorophyll",
+        "isHidden": true
+      }
     ],
     "height": 20,
     "weight": 1000,
@@ -439,6 +477,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -463,8 +502,14 @@
       "speed": 65
     },
     "abilities": [
-      "blaze",
-      "solar-power"
+      {
+        "name": "blaze",
+        "isHidden": false
+      },
+      {
+        "name": "solar-power",
+        "isHidden": true
+      }
     ],
     "height": 6,
     "weight": 85,
@@ -626,6 +671,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 5,
+        "name": "charmeleon",
+        "min_level": 16,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -650,8 +705,14 @@
       "speed": 80
     },
     "abilities": [
-      "blaze",
-      "solar-power"
+      {
+        "name": "blaze",
+        "isHidden": false
+      },
+      {
+        "name": "solar-power",
+        "isHidden": true
+      }
     ],
     "height": 11,
     "weight": 190,
@@ -813,6 +874,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 6,
+        "name": "charizard",
+        "min_level": 36,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -838,8 +909,14 @@
       "speed": 100
     },
     "abilities": [
-      "blaze",
-      "solar-power"
+      {
+        "name": "blaze",
+        "isHidden": false
+      },
+      {
+        "name": "solar-power",
+        "isHidden": true
+      }
     ],
     "height": 17,
     "weight": 905,
@@ -1021,6 +1098,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -1045,8 +1123,14 @@
       "speed": 43
     },
     "abilities": [
-      "torrent",
-      "rain-dish"
+      {
+        "name": "torrent",
+        "isHidden": false
+      },
+      {
+        "name": "rain-dish",
+        "isHidden": true
+      }
     ],
     "height": 5,
     "weight": 90,
@@ -1203,6 +1287,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 8,
+        "name": "wartortle",
+        "min_level": 16,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -1227,8 +1321,14 @@
       "speed": 58
     },
     "abilities": [
-      "torrent",
-      "rain-dish"
+      {
+        "name": "torrent",
+        "isHidden": false
+      },
+      {
+        "name": "rain-dish",
+        "isHidden": true
+      }
     ],
     "height": 10,
     "weight": 225,
@@ -1385,6 +1485,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 9,
+        "name": "blastoise",
+        "min_level": 36,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -1409,8 +1519,14 @@
       "speed": 78
     },
     "abilities": [
-      "torrent",
-      "rain-dish"
+      {
+        "name": "torrent",
+        "isHidden": false
+      },
+      {
+        "name": "rain-dish",
+        "isHidden": true
+      }
     ],
     "height": 16,
     "weight": 855,
@@ -1582,6 +1698,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -1606,8 +1723,14 @@
       "speed": 45
     },
     "abilities": [
-      "shield-dust",
-      "run-away"
+      {
+        "name": "shield-dust",
+        "isHidden": false
+      },
+      {
+        "name": "run-away",
+        "isHidden": true
+      }
     ],
     "height": 3,
     "weight": 29,
@@ -1622,6 +1745,16 @@
         "name": "string-shot",
         "learn_method": "level-up",
         "level_learned_at": 1
+      }
+    ],
+    "evolutions": [
+      {
+        "id": 11,
+        "name": "metapod",
+        "min_level": 7,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
       }
     ],
     "species": {
@@ -1648,7 +1781,10 @@
       "speed": 30
     },
     "abilities": [
-      "shed-skin"
+      {
+        "name": "shed-skin",
+        "isHidden": false
+      }
     ],
     "height": 7,
     "weight": 99,
@@ -1658,6 +1794,16 @@
         "name": "harden",
         "learn_method": "level-up",
         "level_learned_at": 1
+      }
+    ],
+    "evolutions": [
+      {
+        "id": 12,
+        "name": "butterfree",
+        "min_level": 10,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
       }
     ],
     "species": {
@@ -1685,8 +1831,14 @@
       "speed": 70
     },
     "abilities": [
-      "compound-eyes",
-      "tinted-lens"
+      {
+        "name": "compound-eyes",
+        "isHidden": false
+      },
+      {
+        "name": "tinted-lens",
+        "isHidden": true
+      }
     ],
     "height": 11,
     "weight": 320,
@@ -1828,6 +1980,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -1853,8 +2006,14 @@
       "speed": 50
     },
     "abilities": [
-      "shield-dust",
-      "run-away"
+      {
+        "name": "shield-dust",
+        "isHidden": false
+      },
+      {
+        "name": "run-away",
+        "isHidden": true
+      }
     ],
     "height": 3,
     "weight": 32,
@@ -1869,6 +2028,16 @@
         "name": "string-shot",
         "learn_method": "level-up",
         "level_learned_at": 1
+      }
+    ],
+    "evolutions": [
+      {
+        "id": 14,
+        "name": "kakuna",
+        "min_level": 7,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
       }
     ],
     "species": {
@@ -1896,7 +2065,10 @@
       "speed": 35
     },
     "abilities": [
-      "shed-skin"
+      {
+        "name": "shed-skin",
+        "isHidden": false
+      }
     ],
     "height": 6,
     "weight": 100,
@@ -1906,6 +2078,16 @@
         "name": "harden",
         "learn_method": "level-up",
         "level_learned_at": 1
+      }
+    ],
+    "evolutions": [
+      {
+        "id": 15,
+        "name": "beedrill",
+        "min_level": 10,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
       }
     ],
     "species": {
@@ -1933,8 +2115,14 @@
       "speed": 75
     },
     "abilities": [
-      "swarm",
-      "sniper"
+      {
+        "name": "swarm",
+        "isHidden": false
+      },
+      {
+        "name": "sniper",
+        "isHidden": true
+      }
     ],
     "height": 10,
     "weight": 295,
@@ -2046,6 +2234,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -2071,9 +2260,18 @@
       "speed": 56
     },
     "abilities": [
-      "keen-eye",
-      "tangled-feet",
-      "big-pecks"
+      {
+        "name": "keen-eye",
+        "isHidden": false
+      },
+      {
+        "name": "tangled-feet",
+        "isHidden": false
+      },
+      {
+        "name": "big-pecks",
+        "isHidden": true
+      }
     ],
     "height": 3,
     "weight": 18,
@@ -2185,6 +2383,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 17,
+        "name": "pidgeotto",
+        "min_level": 18,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 255,
       "base_happiness": 70,
@@ -2210,9 +2418,18 @@
       "speed": 71
     },
     "abilities": [
-      "keen-eye",
-      "tangled-feet",
-      "big-pecks"
+      {
+        "name": "keen-eye",
+        "isHidden": false
+      },
+      {
+        "name": "tangled-feet",
+        "isHidden": false
+      },
+      {
+        "name": "big-pecks",
+        "isHidden": true
+      }
     ],
     "height": 11,
     "weight": 300,
@@ -2324,6 +2541,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 18,
+        "name": "pidgeot",
+        "min_level": 36,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 120,
       "base_happiness": 70,
@@ -2349,9 +2576,18 @@
       "speed": 101
     },
     "abilities": [
-      "keen-eye",
-      "tangled-feet",
-      "big-pecks"
+      {
+        "name": "keen-eye",
+        "isHidden": false
+      },
+      {
+        "name": "tangled-feet",
+        "isHidden": false
+      },
+      {
+        "name": "big-pecks",
+        "isHidden": true
+      }
     ],
     "height": 15,
     "weight": 395,
@@ -2468,6 +2704,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -2492,9 +2729,18 @@
       "speed": 72
     },
     "abilities": [
-      "run-away",
-      "guts",
-      "hustle"
+      {
+        "name": "run-away",
+        "isHidden": false
+      },
+      {
+        "name": "guts",
+        "isHidden": false
+      },
+      {
+        "name": "hustle",
+        "isHidden": true
+      }
     ],
     "height": 3,
     "weight": 35,
@@ -2621,6 +2867,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 20,
+        "name": "raticate",
+        "min_level": 20,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 255,
       "base_happiness": 70,
@@ -2645,9 +2901,18 @@
       "speed": 97
     },
     "abilities": [
-      "run-away",
-      "guts",
-      "hustle"
+      {
+        "name": "run-away",
+        "isHidden": false
+      },
+      {
+        "name": "guts",
+        "isHidden": false
+      },
+      {
+        "name": "hustle",
+        "isHidden": true
+      }
     ],
     "height": 7,
     "weight": 185,
@@ -2784,6 +3049,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 127,
       "base_happiness": 70,
@@ -2809,8 +3075,14 @@
       "speed": 70
     },
     "abilities": [
-      "keen-eye",
-      "sniper"
+      {
+        "name": "keen-eye",
+        "isHidden": false
+      },
+      {
+        "name": "sniper",
+        "isHidden": true
+      }
     ],
     "height": 3,
     "weight": 20,
@@ -2922,6 +3194,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 22,
+        "name": "fearow",
+        "min_level": 20,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 255,
       "base_happiness": 70,
@@ -2947,8 +3229,14 @@
       "speed": 100
     },
     "abilities": [
-      "keen-eye",
-      "sniper"
+      {
+        "name": "keen-eye",
+        "isHidden": false
+      },
+      {
+        "name": "sniper",
+        "isHidden": true
+      }
     ],
     "height": 12,
     "weight": 380,
@@ -3065,6 +3353,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 90,
       "base_happiness": 70,
@@ -3089,9 +3378,18 @@
       "speed": 55
     },
     "abilities": [
-      "intimidate",
-      "shed-skin",
-      "unnerve"
+      {
+        "name": "intimidate",
+        "isHidden": false
+      },
+      {
+        "name": "shed-skin",
+        "isHidden": false
+      },
+      {
+        "name": "unnerve",
+        "isHidden": true
+      }
     ],
     "height": 20,
     "weight": 69,
@@ -3218,6 +3516,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 24,
+        "name": "arbok",
+        "min_level": 22,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 255,
       "base_happiness": 70,
@@ -3242,9 +3550,18 @@
       "speed": 80
     },
     "abilities": [
-      "intimidate",
-      "shed-skin",
-      "unnerve"
+      {
+        "name": "intimidate",
+        "isHidden": false
+      },
+      {
+        "name": "shed-skin",
+        "isHidden": false
+      },
+      {
+        "name": "unnerve",
+        "isHidden": true
+      }
     ],
     "height": 35,
     "weight": 650,
@@ -3376,6 +3693,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 90,
       "base_happiness": 70,
@@ -3400,8 +3718,14 @@
       "speed": 90
     },
     "abilities": [
-      "static",
-      "lightning-rod"
+      {
+        "name": "static",
+        "isHidden": false
+      },
+      {
+        "name": "lightning-rod",
+        "isHidden": true
+      }
     ],
     "height": 4,
     "weight": 60,
@@ -3558,6 +3882,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 26,
+        "name": "raichu",
+        "min_level": null,
+        "trigger": "use-item",
+        "item": "thunder-stone",
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 190,
       "base_happiness": 70,
@@ -3582,8 +3916,14 @@
       "speed": 110
     },
     "abilities": [
-      "static",
-      "lightning-rod"
+      {
+        "name": "static",
+        "isHidden": false
+      },
+      {
+        "name": "lightning-rod",
+        "isHidden": true
+      }
     ],
     "height": 8,
     "weight": 300,
@@ -3715,6 +4055,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 75,
       "base_happiness": 70,
@@ -3739,8 +4080,14 @@
       "speed": 40
     },
     "abilities": [
-      "sand-veil",
-      "sand-rush"
+      {
+        "name": "sand-veil",
+        "isHidden": false
+      },
+      {
+        "name": "sand-rush",
+        "isHidden": true
+      }
     ],
     "height": 6,
     "weight": 120,
@@ -3877,6 +4224,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 28,
+        "name": "sandslash",
+        "min_level": 22,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 255,
       "base_happiness": 70,
@@ -3901,8 +4258,14 @@
       "speed": 65
     },
     "abilities": [
-      "sand-veil",
-      "sand-rush"
+      {
+        "name": "sand-veil",
+        "isHidden": false
+      },
+      {
+        "name": "sand-rush",
+        "isHidden": true
+      }
     ],
     "height": 10,
     "weight": 295,
@@ -4044,6 +4407,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 90,
       "base_happiness": 70,
@@ -4068,9 +4432,18 @@
       "speed": 41
     },
     "abilities": [
-      "poison-point",
-      "rivalry",
-      "hustle"
+      {
+        "name": "poison-point",
+        "isHidden": false
+      },
+      {
+        "name": "rivalry",
+        "isHidden": false
+      },
+      {
+        "name": "hustle",
+        "isHidden": true
+      }
     ],
     "height": 4,
     "weight": 70,
@@ -4192,6 +4565,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 30,
+        "name": "nidorina",
+        "min_level": 16,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 235,
       "base_happiness": 70,
@@ -4216,9 +4599,18 @@
       "speed": 56
     },
     "abilities": [
-      "poison-point",
-      "rivalry",
-      "hustle"
+      {
+        "name": "poison-point",
+        "isHidden": false
+      },
+      {
+        "name": "rivalry",
+        "isHidden": false
+      },
+      {
+        "name": "hustle",
+        "isHidden": true
+      }
     ],
     "height": 8,
     "weight": 200,
@@ -4360,6 +4752,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 31,
+        "name": "nidoqueen",
+        "min_level": null,
+        "trigger": "use-item",
+        "item": "moon-stone",
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 120,
       "base_happiness": 70,
@@ -4385,9 +4787,18 @@
       "speed": 76
     },
     "abilities": [
-      "poison-point",
-      "rivalry",
-      "sheer-force"
+      {
+        "name": "poison-point",
+        "isHidden": false
+      },
+      {
+        "name": "rivalry",
+        "isHidden": false
+      },
+      {
+        "name": "sheer-force",
+        "isHidden": true
+      }
     ],
     "height": 13,
     "weight": 600,
@@ -4579,6 +4990,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -4603,9 +5015,18 @@
       "speed": 50
     },
     "abilities": [
-      "poison-point",
-      "rivalry",
-      "hustle"
+      {
+        "name": "poison-point",
+        "isHidden": false
+      },
+      {
+        "name": "rivalry",
+        "isHidden": false
+      },
+      {
+        "name": "hustle",
+        "isHidden": true
+      }
     ],
     "height": 5,
     "weight": 90,
@@ -4727,6 +5148,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 33,
+        "name": "nidorino",
+        "min_level": 16,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 235,
       "base_happiness": 70,
@@ -4751,9 +5182,18 @@
       "speed": 65
     },
     "abilities": [
-      "poison-point",
-      "rivalry",
-      "hustle"
+      {
+        "name": "poison-point",
+        "isHidden": false
+      },
+      {
+        "name": "rivalry",
+        "isHidden": false
+      },
+      {
+        "name": "hustle",
+        "isHidden": true
+      }
     ],
     "height": 9,
     "weight": 195,
@@ -4890,6 +5330,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 34,
+        "name": "nidoking",
+        "min_level": null,
+        "trigger": "use-item",
+        "item": "moon-stone",
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 120,
       "base_happiness": 70,
@@ -4915,9 +5365,18 @@
       "speed": 85
     },
     "abilities": [
-      "poison-point",
-      "rivalry",
-      "sheer-force"
+      {
+        "name": "poison-point",
+        "isHidden": false
+      },
+      {
+        "name": "rivalry",
+        "isHidden": false
+      },
+      {
+        "name": "sheer-force",
+        "isHidden": true
+      }
     ],
     "height": 14,
     "weight": 620,
@@ -5109,6 +5568,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -5133,9 +5593,18 @@
       "speed": 35
     },
     "abilities": [
-      "cute-charm",
-      "magic-guard",
-      "friend-guard"
+      {
+        "name": "cute-charm",
+        "isHidden": false
+      },
+      {
+        "name": "magic-guard",
+        "isHidden": false
+      },
+      {
+        "name": "friend-guard",
+        "isHidden": true
+      }
     ],
     "height": 6,
     "weight": 75,
@@ -5342,6 +5811,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 36,
+        "name": "clefable",
+        "min_level": null,
+        "trigger": "use-item",
+        "item": "moon-stone",
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 150,
       "base_happiness": 140,
@@ -5366,9 +5845,18 @@
       "speed": 60
     },
     "abilities": [
-      "cute-charm",
-      "magic-guard",
-      "unaware"
+      {
+        "name": "cute-charm",
+        "isHidden": false
+      },
+      {
+        "name": "magic-guard",
+        "isHidden": false
+      },
+      {
+        "name": "unaware",
+        "isHidden": true
+      }
     ],
     "height": 13,
     "weight": 400,
@@ -5560,6 +6048,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 25,
       "base_happiness": 140,
@@ -5584,8 +6073,14 @@
       "speed": 65
     },
     "abilities": [
-      "flash-fire",
-      "drought"
+      {
+        "name": "flash-fire",
+        "isHidden": false
+      },
+      {
+        "name": "drought",
+        "isHidden": true
+      }
     ],
     "height": 6,
     "weight": 99,
@@ -5702,6 +6197,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 38,
+        "name": "ninetales",
+        "min_level": null,
+        "trigger": "use-item",
+        "item": "fire-stone",
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 190,
       "base_happiness": 70,
@@ -5726,8 +6231,14 @@
       "speed": 100
     },
     "abilities": [
-      "flash-fire",
-      "drought"
+      {
+        "name": "flash-fire",
+        "isHidden": false
+      },
+      {
+        "name": "drought",
+        "isHidden": true
+      }
     ],
     "height": 11,
     "weight": 199,
@@ -5834,6 +6345,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 75,
       "base_happiness": 70,
@@ -5859,9 +6371,18 @@
       "speed": 20
     },
     "abilities": [
-      "cute-charm",
-      "competitive",
-      "friend-guard"
+      {
+        "name": "cute-charm",
+        "isHidden": false
+      },
+      {
+        "name": "competitive",
+        "isHidden": false
+      },
+      {
+        "name": "friend-guard",
+        "isHidden": true
+      }
     ],
     "height": 5,
     "weight": 55,
@@ -6053,6 +6574,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 40,
+        "name": "wigglytuff",
+        "min_level": null,
+        "trigger": "use-item",
+        "item": "moon-stone",
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 170,
       "base_happiness": 70,
@@ -6078,9 +6609,18 @@
       "speed": 45
     },
     "abilities": [
-      "cute-charm",
-      "competitive",
-      "frisk"
+      {
+        "name": "cute-charm",
+        "isHidden": false
+      },
+      {
+        "name": "competitive",
+        "isHidden": false
+      },
+      {
+        "name": "frisk",
+        "isHidden": true
+      }
     ],
     "height": 10,
     "weight": 120,
@@ -6272,6 +6812,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 50,
       "base_happiness": 70,
@@ -6297,8 +6838,14 @@
       "speed": 55
     },
     "abilities": [
-      "inner-focus",
-      "infiltrator"
+      {
+        "name": "inner-focus",
+        "isHidden": false
+      },
+      {
+        "name": "infiltrator",
+        "isHidden": true
+      }
     ],
     "height": 8,
     "weight": 75,
@@ -6400,6 +6947,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 42,
+        "name": "golbat",
+        "min_level": 22,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 255,
       "base_happiness": 70,
@@ -6425,8 +6982,14 @@
       "speed": 90
     },
     "abilities": [
-      "inner-focus",
-      "infiltrator"
+      {
+        "name": "inner-focus",
+        "isHidden": false
+      },
+      {
+        "name": "infiltrator",
+        "isHidden": true
+      }
     ],
     "height": 16,
     "weight": 550,
@@ -6538,6 +7101,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 169,
+        "name": "crobat",
+        "min_level": null,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 90,
       "base_happiness": 70,
@@ -6563,8 +7136,14 @@
       "speed": 30
     },
     "abilities": [
-      "chlorophyll",
-      "run-away"
+      {
+        "name": "chlorophyll",
+        "isHidden": false
+      },
+      {
+        "name": "run-away",
+        "isHidden": true
+      }
     ],
     "height": 5,
     "weight": 54,
@@ -6671,6 +7250,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 44,
+        "name": "gloom",
+        "min_level": 21,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 255,
       "base_happiness": 70,
@@ -6696,8 +7285,14 @@
       "speed": 40
     },
     "abilities": [
-      "chlorophyll",
-      "stench"
+      {
+        "name": "chlorophyll",
+        "isHidden": false
+      },
+      {
+        "name": "stench",
+        "isHidden": true
+      }
     ],
     "height": 8,
     "weight": 86,
@@ -6804,6 +7399,24 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 45,
+        "name": "vileplume",
+        "min_level": null,
+        "trigger": "use-item",
+        "item": "leaf-stone",
+        "known_move": null
+      },
+      {
+        "id": 182,
+        "name": "bellossom",
+        "min_level": null,
+        "trigger": "use-item",
+        "item": "sun-stone",
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 120,
       "base_happiness": 70,
@@ -6829,8 +7442,14 @@
       "speed": 50
     },
     "abilities": [
-      "chlorophyll",
-      "effect-spore"
+      {
+        "name": "chlorophyll",
+        "isHidden": false
+      },
+      {
+        "name": "effect-spore",
+        "isHidden": true
+      }
     ],
     "height": 12,
     "weight": 186,
@@ -6942,6 +7561,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -6967,9 +7587,18 @@
       "speed": 25
     },
     "abilities": [
-      "effect-spore",
-      "dry-skin",
-      "damp"
+      {
+        "name": "effect-spore",
+        "isHidden": false
+      },
+      {
+        "name": "dry-skin",
+        "isHidden": false
+      },
+      {
+        "name": "damp",
+        "isHidden": true
+      }
     ],
     "height": 3,
     "weight": 54,
@@ -7091,6 +7720,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 47,
+        "name": "parasect",
+        "min_level": 24,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 190,
       "base_happiness": 70,
@@ -7116,9 +7755,18 @@
       "speed": 30
     },
     "abilities": [
-      "effect-spore",
-      "dry-skin",
-      "damp"
+      {
+        "name": "effect-spore",
+        "isHidden": false
+      },
+      {
+        "name": "dry-skin",
+        "isHidden": false
+      },
+      {
+        "name": "damp",
+        "isHidden": true
+      }
     ],
     "height": 10,
     "weight": 295,
@@ -7245,6 +7893,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 75,
       "base_happiness": 70,
@@ -7270,9 +7919,18 @@
       "speed": 45
     },
     "abilities": [
-      "compound-eyes",
-      "tinted-lens",
-      "run-away"
+      {
+        "name": "compound-eyes",
+        "isHidden": false
+      },
+      {
+        "name": "tinted-lens",
+        "isHidden": false
+      },
+      {
+        "name": "run-away",
+        "isHidden": true
+      }
     ],
     "height": 10,
     "weight": 300,
@@ -7399,6 +8057,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 49,
+        "name": "venomoth",
+        "min_level": 31,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 190,
       "base_happiness": 70,
@@ -7424,9 +8092,18 @@
       "speed": 90
     },
     "abilities": [
-      "shield-dust",
-      "tinted-lens",
-      "wonder-skin"
+      {
+        "name": "shield-dust",
+        "isHidden": false
+      },
+      {
+        "name": "tinted-lens",
+        "isHidden": false
+      },
+      {
+        "name": "wonder-skin",
+        "isHidden": true
+      }
     ],
     "height": 15,
     "weight": 125,
@@ -7578,6 +8255,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 75,
       "base_happiness": 70,
@@ -7602,9 +8280,18 @@
       "speed": 95
     },
     "abilities": [
-      "sand-veil",
-      "arena-trap",
-      "sand-force"
+      {
+        "name": "sand-veil",
+        "isHidden": false
+      },
+      {
+        "name": "arena-trap",
+        "isHidden": false
+      },
+      {
+        "name": "sand-force",
+        "isHidden": true
+      }
     ],
     "height": 2,
     "weight": 8,
@@ -7706,6 +8393,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 51,
+        "name": "dugtrio",
+        "min_level": 26,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 255,
       "base_happiness": 70,
@@ -7730,9 +8427,18 @@
       "speed": 120
     },
     "abilities": [
-      "sand-veil",
-      "arena-trap",
-      "sand-force"
+      {
+        "name": "sand-veil",
+        "isHidden": false
+      },
+      {
+        "name": "arena-trap",
+        "isHidden": false
+      },
+      {
+        "name": "sand-force",
+        "isHidden": true
+      }
     ],
     "height": 7,
     "weight": 333,
@@ -7839,6 +8545,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 50,
       "base_happiness": 70,
@@ -7863,9 +8570,18 @@
       "speed": 90
     },
     "abilities": [
-      "pickup",
-      "technician",
-      "unnerve"
+      {
+        "name": "pickup",
+        "isHidden": false
+      },
+      {
+        "name": "technician",
+        "isHidden": false
+      },
+      {
+        "name": "unnerve",
+        "isHidden": true
+      }
     ],
     "height": 4,
     "weight": 42,
@@ -7987,6 +8703,24 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 53,
+        "name": "persian",
+        "min_level": 28,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      },
+      {
+        "id": 863,
+        "name": "perrserker",
+        "min_level": 28,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 255,
       "base_happiness": 70,
@@ -8011,9 +8745,18 @@
       "speed": 115
     },
     "abilities": [
-      "limber",
-      "technician",
-      "unnerve"
+      {
+        "name": "limber",
+        "isHidden": false
+      },
+      {
+        "name": "technician",
+        "isHidden": false
+      },
+      {
+        "name": "unnerve",
+        "isHidden": true
+      }
     ],
     "height": 10,
     "weight": 320,
@@ -8140,6 +8883,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 90,
       "base_happiness": 70,
@@ -8164,9 +8908,18 @@
       "speed": 55
     },
     "abilities": [
-      "damp",
-      "cloud-nine",
-      "swift-swim"
+      {
+        "name": "damp",
+        "isHidden": false
+      },
+      {
+        "name": "cloud-nine",
+        "isHidden": false
+      },
+      {
+        "name": "swift-swim",
+        "isHidden": true
+      }
     ],
     "height": 8,
     "weight": 196,
@@ -8328,6 +9081,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 55,
+        "name": "golduck",
+        "min_level": 33,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 190,
       "base_happiness": 70,
@@ -8352,9 +9115,18 @@
       "speed": 85
     },
     "abilities": [
-      "damp",
-      "cloud-nine",
-      "swift-swim"
+      {
+        "name": "damp",
+        "isHidden": false
+      },
+      {
+        "name": "cloud-nine",
+        "isHidden": false
+      },
+      {
+        "name": "swift-swim",
+        "isHidden": true
+      }
     ],
     "height": 17,
     "weight": 766,
@@ -8521,6 +9293,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 75,
       "base_happiness": 70,
@@ -8545,9 +9318,18 @@
       "speed": 70
     },
     "abilities": [
-      "vital-spirit",
-      "anger-point",
-      "defiant"
+      {
+        "name": "vital-spirit",
+        "isHidden": false
+      },
+      {
+        "name": "anger-point",
+        "isHidden": false
+      },
+      {
+        "name": "defiant",
+        "isHidden": true
+      }
     ],
     "height": 5,
     "weight": 280,
@@ -8714,6 +9496,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 57,
+        "name": "primeape",
+        "min_level": 28,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 190,
       "base_happiness": 70,
@@ -8738,9 +9530,18 @@
       "speed": 95
     },
     "abilities": [
-      "vital-spirit",
-      "anger-point",
-      "defiant"
+      {
+        "name": "vital-spirit",
+        "isHidden": false
+      },
+      {
+        "name": "anger-point",
+        "isHidden": false
+      },
+      {
+        "name": "defiant",
+        "isHidden": true
+      }
     ],
     "height": 10,
     "weight": 320,
@@ -8912,6 +9713,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 979,
+        "name": "annihilape",
+        "min_level": null,
+        "trigger": "other",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 75,
       "base_happiness": 70,
@@ -8936,9 +9747,18 @@
       "speed": 60
     },
     "abilities": [
-      "intimidate",
-      "flash-fire",
-      "justified"
+      {
+        "name": "intimidate",
+        "isHidden": false
+      },
+      {
+        "name": "flash-fire",
+        "isHidden": false
+      },
+      {
+        "name": "justified",
+        "isHidden": true
+      }
     ],
     "height": 7,
     "weight": 190,
@@ -9055,6 +9875,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 59,
+        "name": "arcanine",
+        "min_level": null,
+        "trigger": "use-item",
+        "item": "fire-stone",
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 190,
       "base_happiness": 70,
@@ -9079,9 +9909,18 @@
       "speed": 95
     },
     "abilities": [
-      "intimidate",
-      "flash-fire",
-      "justified"
+      {
+        "name": "intimidate",
+        "isHidden": false
+      },
+      {
+        "name": "flash-fire",
+        "isHidden": false
+      },
+      {
+        "name": "justified",
+        "isHidden": true
+      }
     ],
     "height": 19,
     "weight": 1550,
@@ -9193,6 +10032,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 75,
       "base_happiness": 70,
@@ -9217,9 +10057,18 @@
       "speed": 90
     },
     "abilities": [
-      "water-absorb",
-      "damp",
-      "swift-swim"
+      {
+        "name": "water-absorb",
+        "isHidden": false
+      },
+      {
+        "name": "damp",
+        "isHidden": false
+      },
+      {
+        "name": "swift-swim",
+        "isHidden": true
+      }
     ],
     "height": 6,
     "weight": 124,
@@ -9341,6 +10190,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 61,
+        "name": "poliwhirl",
+        "min_level": 25,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 255,
       "base_happiness": 70,
@@ -9365,9 +10224,18 @@
       "speed": 90
     },
     "abilities": [
-      "water-absorb",
-      "damp",
-      "swift-swim"
+      {
+        "name": "water-absorb",
+        "isHidden": false
+      },
+      {
+        "name": "damp",
+        "isHidden": false
+      },
+      {
+        "name": "swift-swim",
+        "isHidden": true
+      }
     ],
     "height": 10,
     "weight": 200,
@@ -9534,6 +10402,24 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 62,
+        "name": "poliwrath",
+        "min_level": null,
+        "trigger": "use-item",
+        "item": "water-stone",
+        "known_move": null
+      },
+      {
+        "id": 186,
+        "name": "politoed",
+        "min_level": null,
+        "trigger": "trade",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 120,
       "base_happiness": 70,
@@ -9559,9 +10445,18 @@
       "speed": 70
     },
     "abilities": [
-      "water-absorb",
-      "damp",
-      "swift-swim"
+      {
+        "name": "water-absorb",
+        "isHidden": false
+      },
+      {
+        "name": "damp",
+        "isHidden": false
+      },
+      {
+        "name": "swift-swim",
+        "isHidden": true
+      }
     ],
     "height": 13,
     "weight": 540,
@@ -9718,6 +10613,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -9742,9 +10638,18 @@
       "speed": 90
     },
     "abilities": [
-      "synchronize",
-      "inner-focus",
-      "magic-guard"
+      {
+        "name": "synchronize",
+        "isHidden": false
+      },
+      {
+        "name": "inner-focus",
+        "isHidden": false
+      },
+      {
+        "name": "magic-guard",
+        "isHidden": true
+      }
     ],
     "height": 9,
     "weight": 195,
@@ -9871,6 +10776,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 64,
+        "name": "kadabra",
+        "min_level": 16,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 200,
       "base_happiness": 70,
@@ -9895,9 +10810,18 @@
       "speed": 105
     },
     "abilities": [
-      "synchronize",
-      "inner-focus",
-      "magic-guard"
+      {
+        "name": "synchronize",
+        "isHidden": false
+      },
+      {
+        "name": "inner-focus",
+        "isHidden": false
+      },
+      {
+        "name": "magic-guard",
+        "isHidden": true
+      }
     ],
     "height": 13,
     "weight": 565,
@@ -10054,6 +10978,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 65,
+        "name": "alakazam",
+        "min_level": null,
+        "trigger": "trade",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 100,
       "base_happiness": 70,
@@ -10078,9 +11012,18 @@
       "speed": 120
     },
     "abilities": [
-      "synchronize",
-      "inner-focus",
-      "magic-guard"
+      {
+        "name": "synchronize",
+        "isHidden": false
+      },
+      {
+        "name": "inner-focus",
+        "isHidden": false
+      },
+      {
+        "name": "magic-guard",
+        "isHidden": true
+      }
     ],
     "height": 15,
     "weight": 480,
@@ -10242,6 +11185,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 50,
       "base_happiness": 70,
@@ -10266,9 +11210,18 @@
       "speed": 35
     },
     "abilities": [
-      "guts",
-      "no-guard",
-      "steadfast"
+      {
+        "name": "guts",
+        "isHidden": false
+      },
+      {
+        "name": "no-guard",
+        "isHidden": false
+      },
+      {
+        "name": "steadfast",
+        "isHidden": true
+      }
     ],
     "height": 8,
     "weight": 195,
@@ -10410,6 +11363,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 67,
+        "name": "machoke",
+        "min_level": 28,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 180,
       "base_happiness": 70,
@@ -10434,9 +11397,18 @@
       "speed": 45
     },
     "abilities": [
-      "guts",
-      "no-guard",
-      "steadfast"
+      {
+        "name": "guts",
+        "isHidden": false
+      },
+      {
+        "name": "no-guard",
+        "isHidden": false
+      },
+      {
+        "name": "steadfast",
+        "isHidden": true
+      }
     ],
     "height": 15,
     "weight": 705,
@@ -10578,6 +11550,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 68,
+        "name": "machamp",
+        "min_level": null,
+        "trigger": "trade",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 90,
       "base_happiness": 70,
@@ -10602,9 +11584,18 @@
       "speed": 55
     },
     "abilities": [
-      "guts",
-      "no-guard",
-      "steadfast"
+      {
+        "name": "guts",
+        "isHidden": false
+      },
+      {
+        "name": "no-guard",
+        "isHidden": false
+      },
+      {
+        "name": "steadfast",
+        "isHidden": true
+      }
     ],
     "height": 16,
     "weight": 1300,
@@ -10751,6 +11742,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -10776,8 +11768,14 @@
       "speed": 40
     },
     "abilities": [
-      "chlorophyll",
-      "gluttony"
+      {
+        "name": "chlorophyll",
+        "isHidden": false
+      },
+      {
+        "name": "gluttony",
+        "isHidden": true
+      }
     ],
     "height": 7,
     "weight": 40,
@@ -10899,6 +11897,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 70,
+        "name": "weepinbell",
+        "min_level": 21,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 255,
       "base_happiness": 70,
@@ -10924,8 +11932,14 @@
       "speed": 55
     },
     "abilities": [
-      "chlorophyll",
-      "gluttony"
+      {
+        "name": "chlorophyll",
+        "isHidden": false
+      },
+      {
+        "name": "gluttony",
+        "isHidden": true
+      }
     ],
     "height": 10,
     "weight": 64,
@@ -11047,6 +12061,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 71,
+        "name": "victreebel",
+        "min_level": null,
+        "trigger": "use-item",
+        "item": "leaf-stone",
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 120,
       "base_happiness": 70,
@@ -11072,8 +12096,14 @@
       "speed": 70
     },
     "abilities": [
-      "chlorophyll",
-      "gluttony"
+      {
+        "name": "chlorophyll",
+        "isHidden": false
+      },
+      {
+        "name": "gluttony",
+        "isHidden": true
+      }
     ],
     "height": 17,
     "weight": 155,
@@ -11190,6 +12220,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -11215,9 +12246,18 @@
       "speed": 70
     },
     "abilities": [
-      "clear-body",
-      "liquid-ooze",
-      "rain-dish"
+      {
+        "name": "clear-body",
+        "isHidden": false
+      },
+      {
+        "name": "liquid-ooze",
+        "isHidden": false
+      },
+      {
+        "name": "rain-dish",
+        "isHidden": true
+      }
     ],
     "height": 9,
     "weight": 455,
@@ -11359,6 +12399,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 73,
+        "name": "tentacruel",
+        "min_level": 30,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 190,
       "base_happiness": 70,
@@ -11384,9 +12434,18 @@
       "speed": 100
     },
     "abilities": [
-      "clear-body",
-      "liquid-ooze",
-      "rain-dish"
+      {
+        "name": "clear-body",
+        "isHidden": false
+      },
+      {
+        "name": "liquid-ooze",
+        "isHidden": false
+      },
+      {
+        "name": "rain-dish",
+        "isHidden": true
+      }
     ],
     "height": 16,
     "weight": 550,
@@ -11533,6 +12592,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 60,
       "base_happiness": 70,
@@ -11558,9 +12618,18 @@
       "speed": 20
     },
     "abilities": [
-      "rock-head",
-      "sturdy",
-      "sand-veil"
+      {
+        "name": "rock-head",
+        "isHidden": false
+      },
+      {
+        "name": "sturdy",
+        "isHidden": false
+      },
+      {
+        "name": "sand-veil",
+        "isHidden": true
+      }
     ],
     "height": 4,
     "weight": 200,
@@ -11702,6 +12771,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 75,
+        "name": "graveler",
+        "min_level": 25,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 255,
       "base_happiness": 70,
@@ -11727,9 +12806,18 @@
       "speed": 35
     },
     "abilities": [
-      "rock-head",
-      "sturdy",
-      "sand-veil"
+      {
+        "name": "rock-head",
+        "isHidden": false
+      },
+      {
+        "name": "sturdy",
+        "isHidden": false
+      },
+      {
+        "name": "sand-veil",
+        "isHidden": true
+      }
     ],
     "height": 10,
     "weight": 1050,
@@ -11871,6 +12959,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 76,
+        "name": "golem",
+        "min_level": null,
+        "trigger": "trade",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 120,
       "base_happiness": 70,
@@ -11896,9 +12994,18 @@
       "speed": 45
     },
     "abilities": [
-      "rock-head",
-      "sturdy",
-      "sand-veil"
+      {
+        "name": "rock-head",
+        "isHidden": false
+      },
+      {
+        "name": "sturdy",
+        "isHidden": false
+      },
+      {
+        "name": "sand-veil",
+        "isHidden": true
+      }
     ],
     "height": 14,
     "weight": 3000,
@@ -12050,6 +13157,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -12074,9 +13182,18 @@
       "speed": 90
     },
     "abilities": [
-      "run-away",
-      "flash-fire",
-      "flame-body"
+      {
+        "name": "run-away",
+        "isHidden": false
+      },
+      {
+        "name": "flash-fire",
+        "isHidden": false
+      },
+      {
+        "name": "flame-body",
+        "isHidden": true
+      }
     ],
     "height": 10,
     "weight": 300,
@@ -12188,6 +13305,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 78,
+        "name": "rapidash",
+        "min_level": 40,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 190,
       "base_happiness": 70,
@@ -12212,9 +13339,18 @@
       "speed": 105
     },
     "abilities": [
-      "run-away",
-      "flash-fire",
-      "flame-body"
+      {
+        "name": "run-away",
+        "isHidden": false
+      },
+      {
+        "name": "flash-fire",
+        "isHidden": false
+      },
+      {
+        "name": "flame-body",
+        "isHidden": true
+      }
     ],
     "height": 17,
     "weight": 950,
@@ -12331,6 +13467,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 60,
       "base_happiness": 70,
@@ -12356,9 +13493,18 @@
       "speed": 15
     },
     "abilities": [
-      "oblivious",
-      "own-tempo",
-      "regenerator"
+      {
+        "name": "oblivious",
+        "isHidden": false
+      },
+      {
+        "name": "own-tempo",
+        "isHidden": false
+      },
+      {
+        "name": "regenerator",
+        "isHidden": true
+      }
     ],
     "height": 12,
     "weight": 360,
@@ -12540,6 +13686,24 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 80,
+        "name": "slowbro",
+        "min_level": 37,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      },
+      {
+        "id": 199,
+        "name": "slowking",
+        "min_level": null,
+        "trigger": "trade",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 190,
       "base_happiness": 70,
@@ -12565,9 +13729,18 @@
       "speed": 30
     },
     "abilities": [
-      "oblivious",
-      "own-tempo",
-      "regenerator"
+      {
+        "name": "oblivious",
+        "isHidden": false
+      },
+      {
+        "name": "own-tempo",
+        "isHidden": false
+      },
+      {
+        "name": "regenerator",
+        "isHidden": true
+      }
     ],
     "height": 16,
     "weight": 785,
@@ -12784,6 +13957,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 75,
       "base_happiness": 70,
@@ -12809,9 +13983,18 @@
       "speed": 45
     },
     "abilities": [
-      "magnet-pull",
-      "sturdy",
-      "analytic"
+      {
+        "name": "magnet-pull",
+        "isHidden": false
+      },
+      {
+        "name": "sturdy",
+        "isHidden": false
+      },
+      {
+        "name": "analytic",
+        "isHidden": true
+      }
     ],
     "height": 3,
     "weight": 60,
@@ -12923,6 +14106,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 82,
+        "name": "magneton",
+        "min_level": 30,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 190,
       "base_happiness": 70,
@@ -12948,9 +14141,18 @@
       "speed": 70
     },
     "abilities": [
-      "magnet-pull",
-      "sturdy",
-      "analytic"
+      {
+        "name": "magnet-pull",
+        "isHidden": false
+      },
+      {
+        "name": "sturdy",
+        "isHidden": false
+      },
+      {
+        "name": "analytic",
+        "isHidden": true
+      }
     ],
     "height": 10,
     "weight": 600,
@@ -13067,6 +14269,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 462,
+        "name": "magnezone",
+        "min_level": null,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 60,
       "base_happiness": 70,
@@ -13092,9 +14304,18 @@
       "speed": 60
     },
     "abilities": [
-      "keen-eye",
-      "inner-focus",
-      "defiant"
+      {
+        "name": "keen-eye",
+        "isHidden": false
+      },
+      {
+        "name": "inner-focus",
+        "isHidden": false
+      },
+      {
+        "name": "defiant",
+        "isHidden": true
+      }
     ],
     "height": 8,
     "weight": 150,
@@ -13221,6 +14442,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 865,
+        "name": "sirfetchd",
+        "min_level": null,
+        "trigger": "three-critical-hits",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -13246,9 +14477,18 @@
       "speed": 75
     },
     "abilities": [
-      "run-away",
-      "early-bird",
-      "tangled-feet"
+      {
+        "name": "run-away",
+        "isHidden": false
+      },
+      {
+        "name": "early-bird",
+        "isHidden": false
+      },
+      {
+        "name": "tangled-feet",
+        "isHidden": true
+      }
     ],
     "height": 14,
     "weight": 392,
@@ -13360,6 +14600,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 85,
+        "name": "dodrio",
+        "min_level": 31,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 190,
       "base_happiness": 70,
@@ -13385,9 +14635,18 @@
       "speed": 110
     },
     "abilities": [
-      "run-away",
-      "early-bird",
-      "tangled-feet"
+      {
+        "name": "run-away",
+        "isHidden": false
+      },
+      {
+        "name": "early-bird",
+        "isHidden": false
+      },
+      {
+        "name": "tangled-feet",
+        "isHidden": true
+      }
     ],
     "height": 18,
     "weight": 852,
@@ -13504,6 +14763,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -13528,9 +14788,18 @@
       "speed": 45
     },
     "abilities": [
-      "thick-fat",
-      "hydration",
-      "ice-body"
+      {
+        "name": "thick-fat",
+        "isHidden": false
+      },
+      {
+        "name": "hydration",
+        "isHidden": false
+      },
+      {
+        "name": "ice-body",
+        "isHidden": true
+      }
     ],
     "height": 11,
     "weight": 900,
@@ -13647,6 +14916,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 87,
+        "name": "dewgong",
+        "min_level": 34,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 190,
       "base_happiness": 70,
@@ -13672,9 +14951,18 @@
       "speed": 70
     },
     "abilities": [
-      "thick-fat",
-      "hydration",
-      "ice-body"
+      {
+        "name": "thick-fat",
+        "isHidden": false
+      },
+      {
+        "name": "hydration",
+        "isHidden": false
+      },
+      {
+        "name": "ice-body",
+        "isHidden": true
+      }
     ],
     "height": 17,
     "weight": 1200,
@@ -13796,6 +15084,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 75,
       "base_happiness": 70,
@@ -13820,9 +15109,18 @@
       "speed": 25
     },
     "abilities": [
-      "stench",
-      "sticky-hold",
-      "poison-touch"
+      {
+        "name": "stench",
+        "isHidden": false
+      },
+      {
+        "name": "sticky-hold",
+        "isHidden": false
+      },
+      {
+        "name": "poison-touch",
+        "isHidden": true
+      }
     ],
     "height": 9,
     "weight": 300,
@@ -13939,6 +15237,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 89,
+        "name": "muk",
+        "min_level": 38,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 190,
       "base_happiness": 70,
@@ -13963,9 +15271,18 @@
       "speed": 50
     },
     "abilities": [
-      "stench",
-      "sticky-hold",
-      "poison-touch"
+      {
+        "name": "stench",
+        "isHidden": false
+      },
+      {
+        "name": "sticky-hold",
+        "isHidden": false
+      },
+      {
+        "name": "poison-touch",
+        "isHidden": true
+      }
     ],
     "height": 12,
     "weight": 300,
@@ -14087,6 +15404,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 75,
       "base_happiness": 70,
@@ -14111,9 +15429,18 @@
       "speed": 40
     },
     "abilities": [
-      "shell-armor",
-      "skill-link",
-      "overcoat"
+      {
+        "name": "shell-armor",
+        "isHidden": false
+      },
+      {
+        "name": "skill-link",
+        "isHidden": false
+      },
+      {
+        "name": "overcoat",
+        "isHidden": true
+      }
     ],
     "height": 3,
     "weight": 40,
@@ -14250,6 +15577,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 91,
+        "name": "cloyster",
+        "min_level": null,
+        "trigger": "use-item",
+        "item": "water-stone",
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 190,
       "base_happiness": 70,
@@ -14275,9 +15612,18 @@
       "speed": 70
     },
     "abilities": [
-      "shell-armor",
-      "skill-link",
-      "overcoat"
+      {
+        "name": "shell-armor",
+        "isHidden": false
+      },
+      {
+        "name": "skill-link",
+        "isHidden": false
+      },
+      {
+        "name": "overcoat",
+        "isHidden": true
+      }
     ],
     "height": 15,
     "weight": 1325,
@@ -14414,6 +15760,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 60,
       "base_happiness": 70,
@@ -14439,7 +15786,10 @@
       "speed": 80
     },
     "abilities": [
-      "levitate"
+      {
+        "name": "levitate",
+        "isHidden": false
+      }
     ],
     "height": 13,
     "weight": 1,
@@ -14541,6 +15891,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 93,
+        "name": "haunter",
+        "min_level": 25,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 190,
       "base_happiness": 70,
@@ -14566,7 +15926,10 @@
       "speed": 95
     },
     "abilities": [
-      "levitate"
+      {
+        "name": "levitate",
+        "isHidden": false
+      }
     ],
     "height": 16,
     "weight": 1,
@@ -14668,6 +16031,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 94,
+        "name": "gengar",
+        "min_level": null,
+        "trigger": "trade",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 90,
       "base_happiness": 70,
@@ -14693,7 +16066,10 @@
       "speed": 110
     },
     "abilities": [
-      "cursed-body"
+      {
+        "name": "cursed-body",
+        "isHidden": false
+      }
     ],
     "height": 15,
     "weight": 405,
@@ -14855,6 +16231,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -14880,9 +16257,18 @@
       "speed": 70
     },
     "abilities": [
-      "rock-head",
-      "sturdy",
-      "weak-armor"
+      {
+        "name": "rock-head",
+        "isHidden": false
+      },
+      {
+        "name": "sturdy",
+        "isHidden": false
+      },
+      {
+        "name": "weak-armor",
+        "isHidden": true
+      }
     ],
     "height": 88,
     "weight": 2100,
@@ -15009,6 +16395,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 208,
+        "name": "steelix",
+        "min_level": null,
+        "trigger": "trade",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -15033,9 +16429,18 @@
       "speed": 42
     },
     "abilities": [
-      "insomnia",
-      "forewarn",
-      "inner-focus"
+      {
+        "name": "insomnia",
+        "isHidden": false
+      },
+      {
+        "name": "forewarn",
+        "isHidden": false
+      },
+      {
+        "name": "inner-focus",
+        "isHidden": true
+      }
     ],
     "height": 10,
     "weight": 324,
@@ -15202,6 +16607,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 97,
+        "name": "hypno",
+        "min_level": 26,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 190,
       "base_happiness": 70,
@@ -15226,9 +16641,18 @@
       "speed": 67
     },
     "abilities": [
-      "insomnia",
-      "forewarn",
-      "inner-focus"
+      {
+        "name": "insomnia",
+        "isHidden": false
+      },
+      {
+        "name": "forewarn",
+        "isHidden": false
+      },
+      {
+        "name": "inner-focus",
+        "isHidden": true
+      }
     ],
     "height": 16,
     "weight": 756,
@@ -15400,6 +16824,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 75,
       "base_happiness": 70,
@@ -15424,9 +16849,18 @@
       "speed": 50
     },
     "abilities": [
-      "hyper-cutter",
-      "shell-armor",
-      "sheer-force"
+      {
+        "name": "hyper-cutter",
+        "isHidden": false
+      },
+      {
+        "name": "shell-armor",
+        "isHidden": false
+      },
+      {
+        "name": "sheer-force",
+        "isHidden": true
+      }
     ],
     "height": 4,
     "weight": 65,
@@ -15558,6 +16992,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 99,
+        "name": "kingler",
+        "min_level": 28,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 225,
       "base_happiness": 70,
@@ -15582,9 +17026,18 @@
       "speed": 75
     },
     "abilities": [
-      "hyper-cutter",
-      "shell-armor",
-      "sheer-force"
+      {
+        "name": "hyper-cutter",
+        "isHidden": false
+      },
+      {
+        "name": "shell-armor",
+        "isHidden": false
+      },
+      {
+        "name": "sheer-force",
+        "isHidden": true
+      }
     ],
     "height": 13,
     "weight": 600,
@@ -15721,6 +17174,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 60,
       "base_happiness": 70,
@@ -15745,9 +17199,18 @@
       "speed": 100
     },
     "abilities": [
-      "soundproof",
-      "static",
-      "aftermath"
+      {
+        "name": "soundproof",
+        "isHidden": false
+      },
+      {
+        "name": "static",
+        "isHidden": false
+      },
+      {
+        "name": "aftermath",
+        "isHidden": true
+      }
     ],
     "height": 5,
     "weight": 104,
@@ -15859,6 +17322,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 101,
+        "name": "electrode",
+        "min_level": 30,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 190,
       "base_happiness": 70,
@@ -15883,9 +17356,18 @@
       "speed": 150
     },
     "abilities": [
-      "soundproof",
-      "static",
-      "aftermath"
+      {
+        "name": "soundproof",
+        "isHidden": false
+      },
+      {
+        "name": "static",
+        "isHidden": false
+      },
+      {
+        "name": "aftermath",
+        "isHidden": true
+      }
     ],
     "height": 12,
     "weight": 666,
@@ -16007,6 +17489,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 60,
       "base_happiness": 70,
@@ -16032,8 +17515,14 @@
       "speed": 40
     },
     "abilities": [
-      "chlorophyll",
-      "harvest"
+      {
+        "name": "chlorophyll",
+        "isHidden": false
+      },
+      {
+        "name": "harvest",
+        "isHidden": true
+      }
     ],
     "height": 4,
     "weight": 25,
@@ -16155,6 +17644,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 103,
+        "name": "exeggutor",
+        "min_level": null,
+        "trigger": "use-item",
+        "item": "leaf-stone",
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 90,
       "base_happiness": 70,
@@ -16180,8 +17679,14 @@
       "speed": 55
     },
     "abilities": [
-      "chlorophyll",
-      "harvest"
+      {
+        "name": "chlorophyll",
+        "isHidden": false
+      },
+      {
+        "name": "harvest",
+        "isHidden": true
+      }
     ],
     "height": 20,
     "weight": 1200,
@@ -16303,6 +17808,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -16327,9 +17833,18 @@
       "speed": 35
     },
     "abilities": [
-      "rock-head",
-      "lightning-rod",
-      "battle-armor"
+      {
+        "name": "rock-head",
+        "isHidden": false
+      },
+      {
+        "name": "lightning-rod",
+        "isHidden": false
+      },
+      {
+        "name": "battle-armor",
+        "isHidden": true
+      }
     ],
     "height": 4,
     "weight": 65,
@@ -16501,6 +18016,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 105,
+        "name": "marowak",
+        "min_level": 28,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 190,
       "base_happiness": 70,
@@ -16525,9 +18050,18 @@
       "speed": 45
     },
     "abilities": [
-      "rock-head",
-      "lightning-rod",
-      "battle-armor"
+      {
+        "name": "rock-head",
+        "isHidden": false
+      },
+      {
+        "name": "lightning-rod",
+        "isHidden": false
+      },
+      {
+        "name": "battle-armor",
+        "isHidden": true
+      }
     ],
     "height": 10,
     "weight": 450,
@@ -16704,6 +18238,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 75,
       "base_happiness": 70,
@@ -16728,9 +18263,18 @@
       "speed": 87
     },
     "abilities": [
-      "limber",
-      "reckless",
-      "unburden"
+      {
+        "name": "limber",
+        "isHidden": false
+      },
+      {
+        "name": "reckless",
+        "isHidden": false
+      },
+      {
+        "name": "unburden",
+        "isHidden": true
+      }
     ],
     "height": 15,
     "weight": 498,
@@ -16862,6 +18406,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -16886,9 +18431,18 @@
       "speed": 76
     },
     "abilities": [
-      "keen-eye",
-      "iron-fist",
-      "inner-focus"
+      {
+        "name": "keen-eye",
+        "isHidden": false
+      },
+      {
+        "name": "iron-fist",
+        "isHidden": false
+      },
+      {
+        "name": "inner-focus",
+        "isHidden": true
+      }
     ],
     "height": 14,
     "weight": 502,
@@ -17015,6 +18569,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -17039,9 +18594,18 @@
       "speed": 30
     },
     "abilities": [
-      "own-tempo",
-      "oblivious",
-      "cloud-nine"
+      {
+        "name": "own-tempo",
+        "isHidden": false
+      },
+      {
+        "name": "oblivious",
+        "isHidden": false
+      },
+      {
+        "name": "cloud-nine",
+        "isHidden": true
+      }
     ],
     "height": 12,
     "weight": 655,
@@ -17233,6 +18797,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 463,
+        "name": "lickilicky",
+        "min_level": null,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": "rollout"
+      }
+    ],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -17257,9 +18831,18 @@
       "speed": 35
     },
     "abilities": [
-      "levitate",
-      "neutralizing-gas",
-      "stench"
+      {
+        "name": "levitate",
+        "isHidden": false
+      },
+      {
+        "name": "neutralizing-gas",
+        "isHidden": false
+      },
+      {
+        "name": "stench",
+        "isHidden": true
+      }
     ],
     "height": 6,
     "weight": 10,
@@ -17351,6 +18934,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 110,
+        "name": "weezing",
+        "min_level": 35,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 190,
       "base_happiness": 70,
@@ -17375,9 +18968,18 @@
       "speed": 60
     },
     "abilities": [
-      "levitate",
-      "neutralizing-gas",
-      "stench"
+      {
+        "name": "levitate",
+        "isHidden": false
+      },
+      {
+        "name": "neutralizing-gas",
+        "isHidden": false
+      },
+      {
+        "name": "stench",
+        "isHidden": true
+      }
     ],
     "height": 12,
     "weight": 95,
@@ -17474,6 +19076,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 60,
       "base_happiness": 70,
@@ -17499,9 +19102,18 @@
       "speed": 25
     },
     "abilities": [
-      "lightning-rod",
-      "rock-head",
-      "reckless"
+      {
+        "name": "lightning-rod",
+        "isHidden": false
+      },
+      {
+        "name": "rock-head",
+        "isHidden": false
+      },
+      {
+        "name": "reckless",
+        "isHidden": true
+      }
     ],
     "height": 10,
     "weight": 1150,
@@ -17633,6 +19245,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 112,
+        "name": "rhydon",
+        "min_level": 42,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 120,
       "base_happiness": 70,
@@ -17658,9 +19280,18 @@
       "speed": 40
     },
     "abilities": [
-      "lightning-rod",
-      "rock-head",
-      "reckless"
+      {
+        "name": "lightning-rod",
+        "isHidden": false
+      },
+      {
+        "name": "rock-head",
+        "isHidden": false
+      },
+      {
+        "name": "reckless",
+        "isHidden": true
+      }
     ],
     "height": 19,
     "weight": 1200,
@@ -17852,6 +19483,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 464,
+        "name": "rhyperior",
+        "min_level": null,
+        "trigger": "trade",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 60,
       "base_happiness": 70,
@@ -17876,9 +19517,18 @@
       "speed": 50
     },
     "abilities": [
-      "natural-cure",
-      "serene-grace",
-      "healer"
+      {
+        "name": "natural-cure",
+        "isHidden": false
+      },
+      {
+        "name": "serene-grace",
+        "isHidden": false
+      },
+      {
+        "name": "healer",
+        "isHidden": true
+      }
     ],
     "height": 11,
     "weight": 346,
@@ -18105,6 +19755,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 242,
+        "name": "blissey",
+        "min_level": null,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 30,
       "base_happiness": 140,
@@ -18129,9 +19789,18 @@
       "speed": 60
     },
     "abilities": [
-      "chlorophyll",
-      "leaf-guard",
-      "regenerator"
+      {
+        "name": "chlorophyll",
+        "isHidden": false
+      },
+      {
+        "name": "leaf-guard",
+        "isHidden": false
+      },
+      {
+        "name": "regenerator",
+        "isHidden": true
+      }
     ],
     "height": 10,
     "weight": 350,
@@ -18263,6 +19932,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 465,
+        "name": "tangrowth",
+        "min_level": null,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": "ancient-power"
+      }
+    ],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -18287,9 +19966,18 @@
       "speed": 90
     },
     "abilities": [
-      "early-bird",
-      "scrappy",
-      "inner-focus"
+      {
+        "name": "early-bird",
+        "isHidden": false
+      },
+      {
+        "name": "scrappy",
+        "isHidden": false
+      },
+      {
+        "name": "inner-focus",
+        "isHidden": true
+      }
     ],
     "height": 22,
     "weight": 800,
@@ -18466,6 +20154,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -18490,9 +20179,18 @@
       "speed": 60
     },
     "abilities": [
-      "swift-swim",
-      "sniper",
-      "damp"
+      {
+        "name": "swift-swim",
+        "isHidden": false
+      },
+      {
+        "name": "sniper",
+        "isHidden": false
+      },
+      {
+        "name": "damp",
+        "isHidden": true
+      }
     ],
     "height": 4,
     "weight": 80,
@@ -18604,6 +20302,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 117,
+        "name": "seadra",
+        "min_level": 32,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 225,
       "base_happiness": 70,
@@ -18628,9 +20336,18 @@
       "speed": 85
     },
     "abilities": [
-      "poison-point",
-      "sniper",
-      "damp"
+      {
+        "name": "poison-point",
+        "isHidden": false
+      },
+      {
+        "name": "sniper",
+        "isHidden": false
+      },
+      {
+        "name": "damp",
+        "isHidden": true
+      }
     ],
     "height": 12,
     "weight": 250,
@@ -18747,6 +20464,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 230,
+        "name": "kingdra",
+        "min_level": null,
+        "trigger": "trade",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 75,
       "base_happiness": 70,
@@ -18771,9 +20498,18 @@
       "speed": 63
     },
     "abilities": [
-      "swift-swim",
-      "water-veil",
-      "lightning-rod"
+      {
+        "name": "swift-swim",
+        "isHidden": false
+      },
+      {
+        "name": "water-veil",
+        "isHidden": false
+      },
+      {
+        "name": "lightning-rod",
+        "isHidden": true
+      }
     ],
     "height": 6,
     "weight": 150,
@@ -18900,6 +20636,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 119,
+        "name": "seaking",
+        "min_level": 33,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 225,
       "base_happiness": 70,
@@ -18924,9 +20670,18 @@
       "speed": 68
     },
     "abilities": [
-      "swift-swim",
-      "water-veil",
-      "lightning-rod"
+      {
+        "name": "swift-swim",
+        "isHidden": false
+      },
+      {
+        "name": "water-veil",
+        "isHidden": false
+      },
+      {
+        "name": "lightning-rod",
+        "isHidden": true
+      }
     ],
     "height": 13,
     "weight": 390,
@@ -19058,6 +20813,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 60,
       "base_happiness": 70,
@@ -19082,9 +20838,18 @@
       "speed": 85
     },
     "abilities": [
-      "illuminate",
-      "natural-cure",
-      "analytic"
+      {
+        "name": "illuminate",
+        "isHidden": false
+      },
+      {
+        "name": "natural-cure",
+        "isHidden": false
+      },
+      {
+        "name": "analytic",
+        "isHidden": true
+      }
     ],
     "height": 8,
     "weight": 345,
@@ -19246,6 +21011,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 121,
+        "name": "starmie",
+        "min_level": null,
+        "trigger": "use-item",
+        "item": "water-stone",
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 225,
       "base_happiness": 70,
@@ -19271,9 +21046,18 @@
       "speed": 115
     },
     "abilities": [
-      "illuminate",
-      "natural-cure",
-      "analytic"
+      {
+        "name": "illuminate",
+        "isHidden": false
+      },
+      {
+        "name": "natural-cure",
+        "isHidden": false
+      },
+      {
+        "name": "analytic",
+        "isHidden": true
+      }
     ],
     "height": 11,
     "weight": 800,
@@ -19420,6 +21204,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 60,
       "base_happiness": 70,
@@ -19445,9 +21230,18 @@
       "speed": 90
     },
     "abilities": [
-      "soundproof",
-      "filter",
-      "technician"
+      {
+        "name": "soundproof",
+        "isHidden": false
+      },
+      {
+        "name": "filter",
+        "isHidden": false
+      },
+      {
+        "name": "technician",
+        "isHidden": true
+      }
     ],
     "height": 13,
     "weight": 545,
@@ -19614,6 +21408,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 866,
+        "name": "mr-rime",
+        "min_level": 42,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -19639,9 +21443,18 @@
       "speed": 105
     },
     "abilities": [
-      "swarm",
-      "technician",
-      "steadfast"
+      {
+        "name": "swarm",
+        "isHidden": false
+      },
+      {
+        "name": "technician",
+        "isHidden": false
+      },
+      {
+        "name": "steadfast",
+        "isHidden": true
+      }
     ],
     "height": 15,
     "weight": 560,
@@ -19748,6 +21561,24 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 212,
+        "name": "scizor",
+        "min_level": null,
+        "trigger": "trade",
+        "item": null,
+        "known_move": null
+      },
+      {
+        "id": 900,
+        "name": "kleavor",
+        "min_level": null,
+        "trigger": "use-item",
+        "item": "black-augurite",
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -19773,9 +21604,18 @@
       "speed": 95
     },
     "abilities": [
-      "oblivious",
-      "forewarn",
-      "dry-skin"
+      {
+        "name": "oblivious",
+        "isHidden": false
+      },
+      {
+        "name": "forewarn",
+        "isHidden": false
+      },
+      {
+        "name": "dry-skin",
+        "isHidden": true
+      }
     ],
     "height": 14,
     "weight": 406,
@@ -19942,6 +21782,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -19966,8 +21807,14 @@
       "speed": 105
     },
     "abilities": [
-      "static",
-      "vital-spirit"
+      {
+        "name": "static",
+        "isHidden": false
+      },
+      {
+        "name": "vital-spirit",
+        "isHidden": true
+      }
     ],
     "height": 11,
     "weight": 300,
@@ -20144,6 +21991,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 466,
+        "name": "electivire",
+        "min_level": null,
+        "trigger": "trade",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -20168,8 +22025,14 @@
       "speed": 93
     },
     "abilities": [
-      "flame-body",
-      "vital-spirit"
+      {
+        "name": "flame-body",
+        "isHidden": false
+      },
+      {
+        "name": "vital-spirit",
+        "isHidden": true
+      }
     ],
     "height": 13,
     "weight": 445,
@@ -20326,6 +22189,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 467,
+        "name": "magmortar",
+        "min_level": null,
+        "trigger": "trade",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -20350,9 +22223,18 @@
       "speed": 85
     },
     "abilities": [
-      "hyper-cutter",
-      "mold-breaker",
-      "moxie"
+      {
+        "name": "hyper-cutter",
+        "isHidden": false
+      },
+      {
+        "name": "mold-breaker",
+        "isHidden": false
+      },
+      {
+        "name": "moxie",
+        "isHidden": true
+      }
     ],
     "height": 15,
     "weight": 550,
@@ -20469,6 +22351,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -20493,9 +22376,18 @@
       "speed": 110
     },
     "abilities": [
-      "intimidate",
-      "anger-point",
-      "sheer-force"
+      {
+        "name": "intimidate",
+        "isHidden": false
+      },
+      {
+        "name": "anger-point",
+        "isHidden": false
+      },
+      {
+        "name": "sheer-force",
+        "isHidden": true
+      }
     ],
     "height": 14,
     "weight": 884,
@@ -20627,6 +22519,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -20651,8 +22544,14 @@
       "speed": 80
     },
     "abilities": [
-      "swift-swim",
-      "rattled"
+      {
+        "name": "swift-swim",
+        "isHidden": false
+      },
+      {
+        "name": "rattled",
+        "isHidden": true
+      }
     ],
     "height": 9,
     "weight": 100,
@@ -20667,6 +22566,16 @@
         "name": "tackle",
         "learn_method": "level-up",
         "level_learned_at": 15
+      }
+    ],
+    "evolutions": [
+      {
+        "id": 130,
+        "name": "gyarados",
+        "min_level": 20,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
       }
     ],
     "species": {
@@ -20694,8 +22603,14 @@
       "speed": 81
     },
     "abilities": [
-      "intimidate",
-      "moxie"
+      {
+        "name": "intimidate",
+        "isHidden": false
+      },
+      {
+        "name": "moxie",
+        "isHidden": true
+      }
     ],
     "height": 65,
     "weight": 2350,
@@ -20837,6 +22752,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -20862,9 +22778,18 @@
       "speed": 60
     },
     "abilities": [
-      "water-absorb",
-      "shell-armor",
-      "hydration"
+      {
+        "name": "water-absorb",
+        "isHidden": false
+      },
+      {
+        "name": "shell-armor",
+        "isHidden": false
+      },
+      {
+        "name": "hydration",
+        "isHidden": true
+      }
     ],
     "height": 25,
     "weight": 2200,
@@ -21026,6 +22951,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -21050,8 +22976,14 @@
       "speed": 48
     },
     "abilities": [
-      "limber",
-      "imposter"
+      {
+        "name": "limber",
+        "isHidden": false
+      },
+      {
+        "name": "imposter",
+        "isHidden": true
+      }
     ],
     "height": 3,
     "weight": 40,
@@ -21063,6 +22995,7 @@
         "level_learned_at": 1
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 35,
       "base_happiness": 70,
@@ -21087,9 +23020,18 @@
       "speed": 55
     },
     "abilities": [
-      "run-away",
-      "adaptability",
-      "anticipation"
+      {
+        "name": "run-away",
+        "isHidden": false
+      },
+      {
+        "name": "adaptability",
+        "isHidden": false
+      },
+      {
+        "name": "anticipation",
+        "isHidden": true
+      }
     ],
     "height": 3,
     "weight": 65,
@@ -21196,6 +23138,72 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 134,
+        "name": "vaporeon",
+        "min_level": null,
+        "trigger": "use-item",
+        "item": "water-stone",
+        "known_move": null
+      },
+      {
+        "id": 135,
+        "name": "jolteon",
+        "min_level": null,
+        "trigger": "use-item",
+        "item": "thunder-stone",
+        "known_move": null
+      },
+      {
+        "id": 136,
+        "name": "flareon",
+        "min_level": null,
+        "trigger": "use-item",
+        "item": "fire-stone",
+        "known_move": null
+      },
+      {
+        "id": 196,
+        "name": "espeon",
+        "min_level": null,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      },
+      {
+        "id": 197,
+        "name": "umbreon",
+        "min_level": null,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      },
+      {
+        "id": 470,
+        "name": "leafeon",
+        "min_level": null,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      },
+      {
+        "id": 471,
+        "name": "glaceon",
+        "min_level": null,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      },
+      {
+        "id": 700,
+        "name": "sylveon",
+        "min_level": null,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -21220,8 +23228,14 @@
       "speed": 65
     },
     "abilities": [
-      "water-absorb",
-      "hydration"
+      {
+        "name": "water-absorb",
+        "isHidden": false
+      },
+      {
+        "name": "hydration",
+        "isHidden": true
+      }
     ],
     "height": 10,
     "weight": 290,
@@ -21373,6 +23387,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -21397,8 +23412,14 @@
       "speed": 130
     },
     "abilities": [
-      "volt-absorb",
-      "quick-feet"
+      {
+        "name": "volt-absorb",
+        "isHidden": false
+      },
+      {
+        "name": "quick-feet",
+        "isHidden": true
+      }
     ],
     "height": 8,
     "weight": 245,
@@ -21535,6 +23556,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -21559,8 +23581,14 @@
       "speed": 65
     },
     "abilities": [
-      "flash-fire",
-      "guts"
+      {
+        "name": "flash-fire",
+        "isHidden": false
+      },
+      {
+        "name": "guts",
+        "isHidden": true
+      }
     ],
     "height": 9,
     "weight": 250,
@@ -21692,6 +23720,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -21716,9 +23745,18 @@
       "speed": 40
     },
     "abilities": [
-      "trace",
-      "download",
-      "analytic"
+      {
+        "name": "trace",
+        "isHidden": false
+      },
+      {
+        "name": "download",
+        "isHidden": false
+      },
+      {
+        "name": "analytic",
+        "isHidden": true
+      }
     ],
     "height": 8,
     "weight": 365,
@@ -21870,6 +23908,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 233,
+        "name": "porygon2",
+        "min_level": null,
+        "trigger": "trade",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -21895,9 +23943,18 @@
       "speed": 35
     },
     "abilities": [
-      "swift-swim",
-      "shell-armor",
-      "weak-armor"
+      {
+        "name": "swift-swim",
+        "isHidden": false
+      },
+      {
+        "name": "shell-armor",
+        "isHidden": false
+      },
+      {
+        "name": "weak-armor",
+        "isHidden": true
+      }
     ],
     "height": 4,
     "weight": 75,
@@ -22009,6 +24066,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 139,
+        "name": "omastar",
+        "min_level": 40,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -22034,9 +24101,18 @@
       "speed": 55
     },
     "abilities": [
-      "swift-swim",
-      "shell-armor",
-      "weak-armor"
+      {
+        "name": "swift-swim",
+        "isHidden": false
+      },
+      {
+        "name": "shell-armor",
+        "isHidden": false
+      },
+      {
+        "name": "weak-armor",
+        "isHidden": true
+      }
     ],
     "height": 10,
     "weight": 350,
@@ -22173,6 +24249,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -22198,9 +24275,18 @@
       "speed": 55
     },
     "abilities": [
-      "swift-swim",
-      "battle-armor",
-      "weak-armor"
+      {
+        "name": "swift-swim",
+        "isHidden": false
+      },
+      {
+        "name": "battle-armor",
+        "isHidden": false
+      },
+      {
+        "name": "weak-armor",
+        "isHidden": true
+      }
     ],
     "height": 5,
     "weight": 115,
@@ -22317,6 +24403,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 141,
+        "name": "kabutops",
+        "min_level": 40,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -22342,9 +24438,18 @@
       "speed": 80
     },
     "abilities": [
-      "swift-swim",
-      "battle-armor",
-      "weak-armor"
+      {
+        "name": "swift-swim",
+        "isHidden": false
+      },
+      {
+        "name": "battle-armor",
+        "isHidden": false
+      },
+      {
+        "name": "weak-armor",
+        "isHidden": true
+      }
     ],
     "height": 13,
     "weight": 405,
@@ -22501,6 +24606,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -22526,9 +24632,18 @@
       "speed": 130
     },
     "abilities": [
-      "rock-head",
-      "pressure",
-      "unnerve"
+      {
+        "name": "rock-head",
+        "isHidden": false
+      },
+      {
+        "name": "pressure",
+        "isHidden": false
+      },
+      {
+        "name": "unnerve",
+        "isHidden": true
+      }
     ],
     "height": 18,
     "weight": 590,
@@ -22645,6 +24760,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 70,
@@ -22669,9 +24785,18 @@
       "speed": 30
     },
     "abilities": [
-      "immunity",
-      "thick-fat",
-      "gluttony"
+      {
+        "name": "immunity",
+        "isHidden": false
+      },
+      {
+        "name": "thick-fat",
+        "isHidden": false
+      },
+      {
+        "name": "gluttony",
+        "isHidden": true
+      }
     ],
     "height": 21,
     "weight": 4600,
@@ -22873,6 +24998,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 25,
       "base_happiness": 70,
@@ -22898,8 +25024,14 @@
       "speed": 85
     },
     "abilities": [
-      "pressure",
-      "snow-cloak"
+      {
+        "name": "pressure",
+        "isHidden": false
+      },
+      {
+        "name": "snow-cloak",
+        "isHidden": true
+      }
     ],
     "height": 17,
     "weight": 554,
@@ -23021,6 +25153,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 3,
       "base_happiness": 35,
@@ -23046,8 +25179,14 @@
       "speed": 100
     },
     "abilities": [
-      "pressure",
-      "static"
+      {
+        "name": "pressure",
+        "isHidden": false
+      },
+      {
+        "name": "static",
+        "isHidden": true
+      }
     ],
     "height": 16,
     "weight": 526,
@@ -23174,6 +25313,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 3,
       "base_happiness": 35,
@@ -23199,8 +25339,14 @@
       "speed": 90
     },
     "abilities": [
-      "pressure",
-      "flame-body"
+      {
+        "name": "pressure",
+        "isHidden": false
+      },
+      {
+        "name": "flame-body",
+        "isHidden": true
+      }
     ],
     "height": 20,
     "weight": 600,
@@ -23312,6 +25458,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 3,
       "base_happiness": 35,
@@ -23336,8 +25483,14 @@
       "speed": 50
     },
     "abilities": [
-      "shed-skin",
-      "marvel-scale"
+      {
+        "name": "shed-skin",
+        "isHidden": false
+      },
+      {
+        "name": "marvel-scale",
+        "isHidden": true
+      }
     ],
     "height": 18,
     "weight": 33,
@@ -23484,6 +25637,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 148,
+        "name": "dragonair",
+        "min_level": 30,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 45,
       "base_happiness": 35,
@@ -23508,8 +25671,14 @@
       "speed": 70
     },
     "abilities": [
-      "shed-skin",
-      "marvel-scale"
+      {
+        "name": "shed-skin",
+        "isHidden": false
+      },
+      {
+        "name": "marvel-scale",
+        "isHidden": true
+      }
     ],
     "height": 40,
     "weight": 165,
@@ -23661,6 +25830,16 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [
+      {
+        "id": 149,
+        "name": "dragonite",
+        "min_level": 55,
+        "trigger": "level-up",
+        "item": null,
+        "known_move": null
+      }
+    ],
     "species": {
       "capture_rate": 45,
       "base_happiness": 35,
@@ -23686,8 +25865,14 @@
       "speed": 80
     },
     "abilities": [
-      "inner-focus",
-      "multiscale"
+      {
+        "name": "inner-focus",
+        "isHidden": false
+      },
+      {
+        "name": "multiscale",
+        "isHidden": true
+      }
     ],
     "height": 22,
     "weight": 2100,
@@ -23849,6 +26034,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 35,
@@ -23873,8 +26059,14 @@
       "speed": 130
     },
     "abilities": [
-      "pressure",
-      "unnerve"
+      {
+        "name": "pressure",
+        "isHidden": false
+      },
+      {
+        "name": "unnerve",
+        "isHidden": true
+      }
     ],
     "height": 20,
     "weight": 1220,
@@ -24096,6 +26288,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 3,
       "base_happiness": 0,
@@ -24120,7 +26313,10 @@
       "speed": 100
     },
     "abilities": [
-      "synchronize"
+      {
+        "name": "synchronize",
+        "isHidden": false
+      }
     ],
     "height": 4,
     "weight": 40,
@@ -24412,6 +26608,7 @@
         "level_learned_at": 0
       }
     ],
+    "evolutions": [],
     "species": {
       "capture_rate": 45,
       "base_happiness": 100,

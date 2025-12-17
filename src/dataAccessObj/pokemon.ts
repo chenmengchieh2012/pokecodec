@@ -34,6 +34,7 @@ export interface PokemonDao {
     gender: string;
     nature: string;      // e.g. "Adamant"
     ability: string;     // Ability name
+    isHiddenAbility?: boolean; // Is the ability hidden?
     height: number;
     weight: number;
     baseExp: number;
@@ -122,3 +123,36 @@ export const getGenById = (id: number): string|undefined => {
     // if (id <= 905) return 'GEN 8';
     // return 'GEN 9';
 };
+
+export interface RawPokemonData {
+    id: number;
+    name: string;
+    types: string[];
+    stats: { [key: string]: number };
+    abilities: { name: string, isHidden: boolean }[];
+    height: number;
+    weight: number;
+    base_experience: number;
+    gender_rate: number;
+    moves: {
+        name: string;
+        learn_method: string;
+        level_learned_at: number;
+    }[];
+    evolutions?: {
+        id: number;
+        name: string;
+        min_level: number | null;
+        trigger: string | null;
+        item: string | null;
+        known_move: string | null;
+    }[];
+    species: {
+        capture_rate: number;
+        base_happiness: number;
+        growth_rate: string;
+        flavor_text: string;
+        genus: string;
+        evolution_chain_url: string;
+    };
+}

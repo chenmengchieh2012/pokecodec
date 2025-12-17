@@ -198,6 +198,7 @@ export const VPokemonBox = () => {
                         title={p.name}
                     >
                         {selectedIds.has(p.uid) && <div className={styles.checkMark}>✔</div>}
+                        {p.isShiny && !selectedIds.has(p.uid) && <div className={styles.shinyMark}>✨</div>}
                         <img 
                             src={resolveAssetUrl(`./sprites/pokemon/${p.isShiny ? 'shiny' : 'normal'}/${p.id}.png`)} 
                             alt={p.name} 
@@ -254,6 +255,7 @@ export const VPokemonBox = () => {
             {/* Pokemon Info Modal (Summary Screen Style) */}
             {selectedPokemon && (
                 <PokemonInfoModal 
+                    isInParty={false}
                     pokemon={selectedPokemon}
                     onClose={() => setSelectedPokemon(null)}
                     onAction={handleAddToParty}

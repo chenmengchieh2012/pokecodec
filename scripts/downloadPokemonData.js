@@ -4,6 +4,8 @@ const path = require('path');
 const OUTPUT_DIR = path.join(__dirname, '../src/data');
 const OUTPUT_FILE = path.join(OUTPUT_DIR, 'pokemonGen1.json');
 
+const evolutionChainCache = {};
+
 async function fetchPokemon(id) {
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
     if (!response.ok) {
@@ -12,7 +14,54 @@ async function fetchPokemon(id) {
     return await response.json();
 }
 
-function simplifyPokemonData(data, species) {
+async function getEvolutionData(url, currentPokemonName) {
+    if (!evolutionChainCache[url]) {
+        const res = await fetch(url);
+        if (res.ok) {
+            evolutionChainCache[url] = await res.json();
+        } else {
+            return [];
+        }
+    }
+    const chainData = evolutionChainCache[url];
+    
+    // Traverse chain to find current pokemon
+    let currentNode = chainData.chain;
+    
+    // Helper to find node recursively
+    const findNode = (node, name) => {
+        if (node.species.name === name) return node;
+        for (const child of node.evolves_to) {
+            const found = findNode(child, name);
+            if (found) return found;
+        }
+        return null;
+    };
+
+    const myNode = findNode(currentNode, currentPokemonName);
+    if (!myNode || !myNode.evolves_to.length) return [];
+
+    return myNode.evolves_to.map(evo => {
+        // Find the evolution detail relevant to this evolution
+        // Sometimes there are multiple ways (e.g. multiple items), we just take the first one or filter
+        const details = evo.evolution_details[0]; 
+        
+        // Extract ID from URL: https://pokeapi.co/api/v2/pokemon-species/2/
+        const idMatch = evo.species.url.match(/\/(\d+)\/$/);
+        const id = idMatch ? parseInt(idMatch[1]) : 0;
+        
+        return {
+            id: id,
+            name: evo.species.name,
+            min_level: details ? details.min_level : null,
+            trigger: details ? details.trigger.name : null,
+            item: details && details.item ? details.item.name : null,
+            known_move: details && details.known_move ? details.known_move.name : null
+        };
+    });
+}
+
+function simplifyPokemonData(data, species, evolutions) {
     // Helper to extract Gen 1 info (Red-Blue or Yellow)
     const getGen1Detail = (details) => {
         const redBlue = details.find(d => d.version_group.name === 'red-blue');
@@ -62,12 +111,16 @@ function simplifyPokemonData(data, species) {
         name: data.name,
         types: data.types.map(t => t.type.name),
         stats: stats,
-        abilities: data.abilities.map(a => a.ability.name),
+        abilities: data.abilities.map(a => ({
+            name: a.ability.name,
+            isHidden: a.is_hidden
+        })),
         height: data.height,
         weight: data.weight,
         base_experience: data.base_experience,
         gender_rate: data.gender_rate,
         moves: moves,
+        evolutions: evolutions,
         species: {
             capture_rate: species.capture_rate,
             base_happiness: species.base_happiness,
@@ -97,7 +150,10 @@ async function main() {
             if (!speciesRes.ok) throw new Error(`Failed to fetch Species for ${i}`);
             const speciesData = await speciesRes.json();
 
-            allPokemon[i] = simplifyPokemonData(data, speciesData);
+            // Fetch evolution data
+            const evolutions = await getEvolutionData(speciesData.evolution_chain.url, data.name);
+
+            allPokemon[i] = simplifyPokemonData(data, speciesData, evolutions);
             
             // Small delay to be polite to the API
             await new Promise(resolve => setTimeout(resolve, 50));

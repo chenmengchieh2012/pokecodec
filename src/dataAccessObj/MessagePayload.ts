@@ -88,6 +88,11 @@ export interface SetGameStatePayload {
     gameState: GameState;
 }
 
+export interface EvolvePokemonPayload {
+    pokemonUid: string;
+    toSpeciesId: number;
+}
+
 // ==================== Handler Context ====================
 
 export interface HandlerContext {

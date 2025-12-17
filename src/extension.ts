@@ -25,7 +25,8 @@ import {
     SetGameStatePayload,
     UseMedicineInBagPayload,
     GetPokeDexPayload,
-    UpdatePokeDexPayload
+    UpdatePokeDexPayload,
+    EvolvePokemonPayload
 } from './handler';
 import GlobalStateKey from './utils/GlobalStateKey';
 import { GameState } from './dataAccessObj/GameState';
@@ -350,6 +351,10 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                 await this.commandHandler.handleUpdatePokeDex(message as UpdatePokeDexPayload);
             }
 
+            if (message.command === MessageType.EvolvePokemon) {
+                await this.commandHandler.handleEvolvePokemon(message as EvolvePokemonPayload);
+            }
+
             if (message.command === MessageType.TriggerEncounter) {
                 this.triggerEncounter();
             }
@@ -466,7 +471,7 @@ export const defaultPokemon: PokemonDao = {
     pokemonMoves: [
         {
             id: 1,
-            name: 'THUNDER SHOCK',
+            name: 'THUNDER-SHOCK',
             power: 40,
             type: 'Electric',
             accuracy: 100,
@@ -476,7 +481,7 @@ export const defaultPokemon: PokemonDao = {
         },
         {
             id: 2,
-            name: 'QUICK ATTACK',
+            name: 'QUICK-ATTACK',
             power: 40,
             type: 'Normal',
             accuracy: 100,
@@ -486,7 +491,7 @@ export const defaultPokemon: PokemonDao = {
         },
         {
             id: 3,
-            name: 'ELECTRO BALL',
+            name: 'ELECTRO-BALL',
             power: 60,
             type: 'Electric',
             accuracy: 100,
@@ -496,7 +501,7 @@ export const defaultPokemon: PokemonDao = {
         },
         {
             id: 4,
-            name: 'DOUBLE TEAM',
+            name: 'DOUBLE-TEAM',
             power: 0,
             type: 'Normal',
             accuracy: 0,

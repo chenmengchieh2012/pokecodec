@@ -36,6 +36,7 @@ export const MessageType = {
     BatchMoveToBox: 'batchMoveToBox',
     Catch: 'catch',
     TriggerEncounter: 'triggerEncounter',
+    EvolvePokemon: 'evolvePokemon',
     ResetStorage: 'resetStorage',
     Error: 'error',
 } as const;

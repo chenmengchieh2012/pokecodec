@@ -77,10 +77,20 @@
   border-bottom: 2px solid #202020;
 }
 
+.shinyMark{
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  color: #ffd700;
+  font-size: 10px;
+  z-index: 15;
+  filter: drop-shadow(1px 1px 0 rgba(0,0,0,0.5));
+}
+
 /* 預覽卡內的圖示 */
 .previewIcon {
-  width: 95%;
-  height: 95%;
+  width: 90%;
+  height: 90%;
   image-rendering: pixelated;
   object-fit: contain;
   transform: scale(1.25);

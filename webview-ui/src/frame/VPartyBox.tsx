@@ -15,7 +15,12 @@ export const VPartyBox = () => {
     const [selectedPokemon, setSelectedPokemon] = useState<PokemonDao | null>(null);
     
     useMessageSubscription<PokemonDao[]>(MessageType.PartyData, (message) => {
-        setParty(message.data ?? []);
+        const partyDataPayload: PokemonDao[]| undefined = message.data;
+        setParty(partyDataPayload ?? []);
+        if (selectedPokemon && partyDataPayload) {
+            const updatedPokemon = partyDataPayload.find(p => p.uid === selectedPokemon.uid) || null;
+            setSelectedPokemon(updatedPokemon);
+        }
     });
 
 
@@ -56,6 +61,7 @@ export const VPartyBox = () => {
                     >
                         {/* --- 常駐大預覽卡 + 小球 --- */}
                         <div className={styles.previewCard}>
+                            {pokemon.isShiny && <div className={styles.shinyMark}>✨</div>}
                             <img 
                                 src={resolveAssetUrl(`./sprites/pokemon/${pokemon.isShiny ? 'shiny' : 'normal'}/${pokemon.id}.png`)}
                                 alt={pokemon.name}
@@ -94,6 +100,7 @@ export const VPartyBox = () => {
             {/* Popup Modal for Pokemon Details */}
             {selectedPokemon && (
                 <PokemonInfoModal 
+                    isInParty={true}
                     pokemon={selectedPokemon}
                     onClose={() => setSelectedPokemon(null)}
                     onAction={handleRemoveFromParty}

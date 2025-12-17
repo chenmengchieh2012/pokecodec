@@ -125,6 +125,7 @@ async function main() {
         'potion', 'super-potion', 'hyper-potion', 'max-potion', 'full-restore',
         'antidote', 'paralyze-heal', 'awakening', 'burn-heal', 'ice-heal', 'full-heal',
         'revive', 'max-revive',
+        'ether', 'max-ether', 'elixir', 'max-elixir',
         'oran-berry', 'sitrus-berry', 'lum-berry'
     ];
 

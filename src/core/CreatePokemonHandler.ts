@@ -2,52 +2,19 @@ import { randomUUID } from "crypto";
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { PokeEncounterData } from "../dataAccessObj/pokeEncounterData";
-import { PokemonDao, PokemonStats, PokemonType } from "../dataAccessObj/pokemon";
-import { PokemonMove } from "../dataAccessObj/pokeMove";
+import { PokemonDao, PokemonStats, PokemonType, RawPokemonData } from "../dataAccessObj/pokemon";
+import { MoveDecorator, PokemonMove } from "../dataAccessObj/pokeMove";
 import { ExperienceCalculator } from "../utils/ExperienceCalculator";
 import * as pokemonGen1Data from "../data/pokemonGen1.json";
 import * as pokemonMovesData from "../data/pokemonMoves.json";
 
 // Define the type for our local data structure
-interface LocalPokemonData {
-    id: number;
-    name: string;
-    types: string[];
-    stats: { [key: string]: number };
-    abilities: string[];
-    height: number;
-    weight: number;
-    base_experience: number;
-    gender_rate: number;
-    moves: {
-        name: string;
-        learn_method: string;
-        level_learned_at: number;
-    }[];
-    species: {
-        capture_rate: number;
-        base_happiness: number;
-        growth_rate: string;
-        flavor_text: string;
-        genus: string;
-        evolution_chain_url: string;
-    };
-}
 
-const pokemonDataMap = pokemonGen1Data as unknown as Record<string, LocalPokemonData>;
 
-interface LocalMoveData {
-    id: number;
-    name: string;
-    type: string;
-    power: number | null;
-    accuracy: number | null;
-    pp: number;
-    maxPP: number;
-    effect: string;
-}
+const pokemonDataMap = pokemonGen1Data as unknown as Record<string, RawPokemonData>;
 
-const moveDataMap = pokemonMovesData as unknown as Record<string, LocalMoveData>;
+
+const moveDataMap = pokemonMovesData as unknown as Record<string, PokemonMove>;
 
 const EXTENSION_TO_LANG_MAP: {[key: string]: string} = {
     '.ts': 'TypeScript',
@@ -145,10 +112,12 @@ export const PokemonFactory = {
 
         // Ability
         const abilities = pokemonData.abilities;
-        const randomAbility = abilities.length > 0 
+        const randomAbilityObj = abilities.length > 0 
             ? abilities[Math.floor(Math.random() * abilities.length)]
-            : 'Unknown';
-        const ability = randomAbility.charAt(0).toUpperCase() + randomAbility.slice(1);
+            : { name: 'Unknown', isHidden: false };
+        
+        const abilityName = randomAbilityObj.name;
+        const ability = abilityName.charAt(0).toUpperCase() + abilityName.slice(1);
 
         
         const iv: PokemonStats = {
@@ -212,16 +181,7 @@ export const PokemonFactory = {
         const allMoves: PokemonMove[] = pokemonData.moves.map((moveInfo) => {
             const moveDetails = moveDataMap[moveInfo.name];
             if (moveDetails) {
-                return {
-                    id: moveDetails.id,
-                    name: moveDetails.name.toUpperCase(),
-                    type: moveDetails.type.toLowerCase(),
-                    power: moveDetails.power,
-                    accuracy: moveDetails.accuracy,
-                    pp: moveDetails.pp,
-                    maxPP: moveDetails.maxPP,
-                    effect: moveDetails.effect
-                };
+                return MoveDecorator(moveDetails);
             }
             return null;
         }).filter((move): move is PokemonMove => move !== null);
@@ -254,6 +214,7 @@ export const PokemonFactory = {
             gender: gender,
             nature: nature,
             ability: ability,
+            isHiddenAbility: randomAbilityObj.isHidden,
             height: height,
             weight: weight,
             baseExp: pokemonData.base_experience,
@@ -279,5 +240,88 @@ export const PokemonFactory = {
         };
 
         return pokemonInstance;
+    },
+
+    checkCanEvolve: (pokemon: PokemonDao): { canEvolve: boolean, newId?: number } => {
+        const pokemonData = pokemonDataMap[String(pokemon.id)];
+        if (!pokemonData || !pokemonData.evolutions) {
+            return { canEvolve: false };
+        }
+
+        // Find level-up evolution
+        const levelUpEvo = pokemonData.evolutions.find(evo => 
+            evo.trigger === 'level-up' && 
+            evo.min_level !== null && 
+            pokemon.level >= evo.min_level
+        );
+
+        if (levelUpEvo) {
+            return { canEvolve: true, newId: levelUpEvo.id };
+        }
+        
+        return { canEvolve: false };
+    },
+
+    evolvePokemon: (pokemon: PokemonDao, targetId: number): PokemonDao => {
+        const targetData = pokemonDataMap[String(targetId)];
+        if (!targetData) {
+            throw new Error(`Target Pokemon data not found for ID: ${targetId}`);
+        }
+
+        // Update Base Stats
+        const statMap = targetData.stats;
+        const baseStats: PokemonStats = {
+            hp: statMap['hp'] || 0,
+            attack: statMap['attack'] || 0,
+            defense: statMap['defense'] || 0,
+            specialAttack: statMap['special-attack'] || 0,
+            specialDefense: statMap['special-defense'] || 0,
+            speed: statMap['speed'] || 0
+        };
+
+        // Recalculate Stats
+        const newStats: PokemonStats = {
+            hp: ExperienceCalculator.calculateHp(baseStats.hp, pokemon.iv.hp, pokemon.ev.hp, pokemon.level),
+            attack: ExperienceCalculator.calculateStat(baseStats.attack, pokemon.iv.attack, pokemon.ev.attack, pokemon.level),
+            defense: ExperienceCalculator.calculateStat(baseStats.defense, pokemon.iv.defense, pokemon.ev.defense, pokemon.level),
+            specialAttack: ExperienceCalculator.calculateStat(baseStats.specialAttack, pokemon.iv.specialAttack, pokemon.ev.specialAttack, pokemon.level),
+            specialDefense: ExperienceCalculator.calculateStat(baseStats.specialDefense, pokemon.iv.specialDefense, pokemon.ev.specialDefense, pokemon.level),
+            speed: ExperienceCalculator.calculateStat(baseStats.speed, pokemon.iv.speed, pokemon.ev.speed, pokemon.level),
+        };
+
+        // Update HP (maintain damage)
+        const hpDiff = newStats.hp - pokemon.maxHp;
+        const newCurrentHp = Math.min(newStats.hp, Math.max(0, pokemon.currentHp + hpDiff));
+
+        // Update Ability (Preserve Hidden Ability status if possible)
+        const isHidden = pokemon.isHiddenAbility || false;
+        let newAbilityObj = targetData.abilities.find(a => a.isHidden === isHidden);
+        
+        // Fallback: If target doesn't have matching hidden/normal type, pick the first one
+        if (!newAbilityObj) {
+             newAbilityObj = targetData.abilities.length > 0 ? targetData.abilities[0] : { name: 'Unknown', isHidden: false };
+        }
+        
+        const newAbilityName = newAbilityObj.name;
+        const newAbility = newAbilityName.charAt(0).toUpperCase() + newAbilityName.slice(1);
+
+        // Update other fields
+        const newPokemon: PokemonDao = {
+            ...pokemon,
+            id: targetId,
+            name: targetData.name.toUpperCase(),
+            types: targetData.types as PokemonType[],
+            baseStats: baseStats,
+            stats: newStats,
+            maxHp: newStats.hp,
+            currentHp: newCurrentHp,
+            height: targetData.height,
+            weight: targetData.weight,
+            baseExp: targetData.base_experience,
+            ability: newAbility,
+            isHiddenAbility: newAbilityObj.isHidden,
+        };
+
+        return newPokemon;
     }
 };

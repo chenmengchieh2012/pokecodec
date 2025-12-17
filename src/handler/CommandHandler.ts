@@ -22,11 +22,13 @@ import {
     HandlerContext,
     BoxPayload,
     PokeDexPayload,
+    EvolvePokemonPayload,
 } from '../dataAccessObj/MessagePayload';
 import { GameStateManager } from '../manager/gameStateManager';
 import { MessageType } from '../dataAccessObj/messageType';
 import { BiomeDataManager } from '../manager/BiomeManager';
 import { PokeDexManager } from '../manager/pokeDexManager';
+import { PokemonFactory } from '../core/CreatePokemonHandler';
 
 export class CommandHandler {
     private readonly pokemonBoxManager: PokemonBoxManager;
@@ -66,6 +68,44 @@ export class CommandHandler {
             throw new Error('HandlerContext not set. Call setHandlerContext first.');
         }
         return this._handlerContext;
+    }
+
+    // ==================== Evolve Pokemon ====================
+    public async handleEvolvePokemon(payload: EvolvePokemonPayload): Promise<void> {
+        const { pokemonUid, toSpeciesId } = payload;
+        
+        // Check Party
+        const party = this.partyManager.getAll();
+        const partyIndex = party.findIndex(p => p.uid === pokemonUid);
+        
+        if (partyIndex !== -1) {
+            const pokemon = party[partyIndex];
+            try {
+                const evolvedPokemon = PokemonFactory.evolvePokemon(pokemon, toSpeciesId);
+                await this.partyManager.update(evolvedPokemon);
+                this.handlerContext.updateAllViews();
+                vscode.window.showInformationMessage(`Congratulations! Your ${pokemon.name} evolved into ${evolvedPokemon.name}!`);
+            } catch (error) {
+                vscode.window.showErrorMessage(`Evolution failed: ${error}`);
+            }
+            return;
+        }
+
+        // Check Box
+        const boxPokemon = this.pokemonBoxManager.get(pokemonUid);
+        if (boxPokemon) {
+             try {
+                const evolvedPokemon = PokemonFactory.evolvePokemon(boxPokemon, toSpeciesId);
+                await this.pokemonBoxManager.update(evolvedPokemon);
+                this.handlerContext.updateAllViews();
+                vscode.window.showInformationMessage(`Congratulations! Your ${boxPokemon.name} evolved into ${evolvedPokemon.name}!`);
+            } catch (error) {
+                vscode.window.showErrorMessage(`Evolution failed: ${error}`);
+            }
+            return;
+        }
+
+        vscode.window.showErrorMessage('Pokemon not found for evolution.');
     }
 
     // ==================== Reset Storage ====================
