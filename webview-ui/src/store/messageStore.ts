@@ -6,6 +6,7 @@ import { ItemDao } from '../../../src/dataAccessObj/item';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
 import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
 import { UserDao } from '../../../src/dataAccessObj/userData';
+import { BoxPayload, PokeDexPayload } from '../../../src/dataAccessObj/MessagePayload';
 
 // ============================================================
 // Type Definitions
@@ -26,10 +27,11 @@ export type MessageSubscriber<T = unknown> = (message: VSCodeMessage<T>) => void
 export interface StoreRefs {
     bag: ItemDao[] | undefined;
     party: PokemonDao[] | undefined;
-    box: PokemonDao[] | undefined;
+    box: BoxPayload | undefined;
     userInfo: UserDao | undefined;
     gameState: GameState | undefined;
     biome: BiomeData | undefined;
+    pokeDex: PokeDexPayload | undefined;
 }
 
 /** MessageStore Context 的值類型 */
@@ -76,6 +78,7 @@ class MessageStore {
         userInfo: undefined,
         gameState: undefined,
         biome: undefined,
+        pokeDex: undefined,
     };
     /** 是否已初始化 */
     private initialized: InitializedStateType = InitializedState.UnStart;
@@ -155,7 +158,10 @@ class MessageStore {
                 this.refs.party = (message.data as PokemonDao[]) ?? undefined;
                 break;
             case MessageType.BoxData:
-                this.refs.box = (message.data as PokemonDao[]) ?? undefined;
+                this.refs.box = (message.data as BoxPayload) ?? undefined;
+                break;
+            case MessageType.PokeDexData:
+                this.refs.pokeDex = (message.data as PokeDexPayload) ?? undefined;
                 break;
             case MessageType.UserData:
                 this.refs.userInfo = (message.data as UserDao) ?? undefined;
@@ -197,6 +203,7 @@ class MessageStore {
                     this.refs.userInfo !== undefined &&
                     this.refs.gameState !== undefined && 
                     this.refs.biome !== undefined &&
+                    this.refs.pokeDex !== undefined &&
                     this.initialized === InitializedState.Initializing ){
                         this.initialized = InitializedState.finished;
                         console.log('[MessageStore] Initialization finished');
@@ -237,6 +244,8 @@ class MessageStore {
         vscode.postMessage({ command: MessageType.GetGameState });
         // 6. 請求更新地形狀態
         vscode.postMessage({ command: MessageType.GetBiome });
+        // 7. 請求圖鑑資料
+        vscode.postMessage({ command: MessageType.GetPokeDex });
     }
 
     /**
@@ -257,6 +266,12 @@ class MessageStore {
         }
         if (this.refs.gameState !== undefined) {
             this.notify({ type: MessageType.GameState, data: this.refs.gameState });
+        }
+        if (this.refs.pokeDex !== undefined) {
+            this.notify({ type: MessageType.PokeDexData, data: this.refs.pokeDex });
+        }
+        if (this.refs.biome !== undefined) {
+            this.notify({ type: MessageType.BiomeData, data: this.refs.biome });
         }
     }
 

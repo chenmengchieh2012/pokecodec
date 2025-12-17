@@ -1,39 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import styles from './VPokeDex.module.css';
+import { useState } from 'react';
+import { MessageType } from '../../../src/dataAccessObj/messageType';
+import { useMessageStore, useMessageSubscription } from '../store/messageStore';
 import { resolveAssetUrl } from '../utilities/vscode';
+import styles from './VPokeDex.module.css';
+import { PokeDex__GEN1, PokeDexEntry, PokeDexEntryStatus } from '../../../src/dataAccessObj/PokeDex';
+import { PokeDexPayload } from '../../../src/dataAccessObj/MessagePayload';
 
 // Mock Data Interface
-interface PokedexEntry {
-    id: number;
-    name: string;
-    status: 'caught' | 'seen' | 'unknown';
-}
 
 export const VPokeDex = () => {
-    const [activeTab, setActiveTab] = useState('GEN 1');
-    const [pokedexData, setPokedexData] = useState<PokedexEntry[]>([]);
+    const messageStore = useMessageStore();
+    const _defaultPokeDex = messageStore.getRefs().pokeDex;
+    const [activeTab, setActiveTab] = useState(PokeDex__GEN1);
+    const [pokedexData, setPokedexData] = useState<PokeDexEntry[]>(_defaultPokeDex?.entries || []);
 
-    useEffect(() => {
-        // Generate Mock Data for Gen 1 (151 Pokemon)
-        const mockData: PokedexEntry[] = Array.from({ length: 151 }, (_, i) => {
-            const id = i + 1;
-            // Randomly assign status for demonstration
-            const rand = Math.random();
-            let status: 'caught' | 'seen' | 'unknown' = 'unknown';
-            if (rand > 0.7) status = 'caught';
-            else if (rand > 0.4) status = 'seen';
-            
-            // Hardcode starters as caught for better demo
-            if (id <= 9) status = 'caught';
-
-            return {
-                id,
-                name: `Pokemon ${id}`, // Placeholder name since we don't have names yet
-                status
-            };
-        });
-        setPokedexData(mockData);
-    }, []);
+    useMessageSubscription(MessageType.PokeDexData, (message) => {
+        const pokeDexPayload = message.data as PokeDexPayload;
+        setPokedexData(pokeDexPayload.entries);
+    });
 
     const getSpriteUrl = (id: number) => {
         return resolveAssetUrl(`./sprites/pokemon/normal/${id}.png`);
@@ -58,27 +42,26 @@ export const VPokeDex = () => {
             {/* Content */}
             <div className={styles.dexWallpaper}>
                 <div className={styles.grid}>
-                    {pokedexData.map((entry) => (
+                    {pokedexData && pokedexData.map((entry) => (
                         <div 
                             key={entry.id} 
                             className={`${styles.dexSlot} ${styles[entry.status]}`}
-                            title={entry.status === 'unknown' ? 'Unknown' : entry.name}
                         >
                             <div className={styles.dexNum}>{formatId(entry.id)}</div>
                             
                             <div className={styles.spriteContainer}>
-                                {entry.status === 'unknown' ? (
+                                {entry.status === PokeDexEntryStatus.Unknown ? (
                                     <span style={{ fontSize: '12px', color: '#ccc', fontWeight: 'bold' }}>?</span>
                                 ) : (
                                     <img 
                                         src={getSpriteUrl(entry.id)} 
-                                        alt={entry.name} 
-                                        className={`${styles.sprite} ${entry.status === 'seen' ? styles.silhouette : ''}`}
+                                        alt={entry.id.toString()} 
+                                        className={`${styles.sprite} ${entry.status === PokeDexEntryStatus.Seen ? styles.silhouette : ''}`}
                                     />
                                 )}
                             </div>
 
-                            {entry.status === 'caught' && (
+                            {entry.status === PokeDexEntryStatus.Caught && (
                                 <div className={styles.pokeballIcon}>
                                     <svg viewBox="0 0 24 24" fill="#D04040">
                                         <circle cx="12" cy="12" r="10" />

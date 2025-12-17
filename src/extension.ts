@@ -185,6 +185,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             this.commandHandler.handleGetBag();
             this.commandHandler.handleGetUserInfo();
             this.commandHandler.handleGetGameState();
+            this.commandHandler.handleGetCurrentPokeDex();
         }
         this.updateBiomeState();
     }
@@ -195,6 +196,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         await this.partyManager.clear();
         await this.pokemonBoxManager.clear();
         await this.gameStateManager.clear();
+        await this.pokeDexManager.clear();
         
         // Add default pokemon
         const starter = { ...defaultPokemon };
@@ -237,6 +239,13 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
     ) {
         this._view = webviewView;
 
+        // Initialize HandlerContext immediately
+        const handlerContext: HandlerContext = {
+            postMessage: (msg: unknown) => webviewView.webview.postMessage(msg),
+            updateAllViews: () => PokemonViewProvider.providers.forEach(p => p.updateViews()),
+        };
+        this.commandHandler.setHandlerContext(handlerContext);
+
         // 設定 Webview 選項
         webviewView.webview.options = {
             enableScripts: true,
@@ -275,13 +284,6 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         // 處理來自 React 的訊息
         webviewView.webview.onDidReceiveMessage(async message => {
             console.log("[Extension] Received message:", message);
-            // 建立 Handler Context
-            const handlerContext: HandlerContext = {
-                postMessage: (msg: unknown) => webviewView.webview.postMessage(msg),
-                updateAllViews: () => PokemonViewProvider.providers.forEach(p => p.updateViews()),
-            };
-            // 設定 Handler Context
-            this.commandHandler.setHandlerContext(handlerContext);
 
             if (message.command === MessageType.ResetStorage) {
                 await this.commandHandler.handleResetStorage(() => this.resetStorage());
@@ -343,6 +345,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             if (message.command === MessageType.GetPokeDex) {
                 this.commandHandler.handleGetPokeDex(message as GetPokeDexPayload);
             }
+
             if (message.command === MessageType.UpdatePokeDex) {
                 await this.commandHandler.handleUpdatePokeDex(message as UpdatePokeDexPayload);
             }

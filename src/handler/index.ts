@@ -1,2 +1,2 @@
-export * from './types';
+export * from '../dataAccessObj/MessagePayload';
 export * from './CommandHandler';

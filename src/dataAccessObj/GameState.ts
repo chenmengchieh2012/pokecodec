@@ -5,6 +5,7 @@ export const BattleEventType = {
     AllMyPokemonFainted: 'AllMyPokemonFainted',
     MyPokemonFaint: 'MyPokemonFaint',
     WildPokemonFaint: 'WildPokemonFaint',
+    WildPokemonCatched: 'WildPokemonCatched',
     Escaped: 'Escaped'
 } as const;
 

@@ -8,6 +8,7 @@ export const MessageType = {
     UserData: 'userData',
     PokemonData: 'pokemonData',
     BiomeData: 'biomeData',
+    PokeDexData: 'pokeDexData',
     GameState: 'gameState',
     
     // Request types (from webview to extension)

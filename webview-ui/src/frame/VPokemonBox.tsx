@@ -5,6 +5,7 @@ import { PokemonInfoModal } from '../model/PokemonInfoModal';
 import { useMessageStore, useMessageSubscription } from '../store/messageStore';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
 import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
+import { BoxPayload } from '../../../src/dataAccessObj/MessagePayload';
 import { EmeraldTabPanel } from './EmeraldTabPanel';
 
 
@@ -16,8 +17,8 @@ const IconTrash = () => (
 
 export const VPokemonBox = () => {
     const messageStore = useMessageStore(); // 確保訂閱生效
-    const defaultBox = messageStore.getRefs().box || [];
-    const [pokemons, setPokemons] = useState<PokemonDao[]>(defaultBox);
+    const { pokemons: defaultPokemons, currentBox, totalBoxLength} = messageStore.getRefs().box || {};
+    const [pokemons, setPokemons] = useState<PokemonDao[]>(defaultPokemons || []);
     const [selectedPokemon, setSelectedPokemon] = useState<PokemonDao | null>(null);
     
     // Organization State
@@ -27,12 +28,14 @@ export const VPokemonBox = () => {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [showMoveBoxSelector, setShowMoveBoxSelector] = useState(false);
 
-    const [activeBox, setActiveBox] = useState(0);
-    const [totalBoxes, setTotalBoxes] = useState(1);
+    const [activeBox, setActiveBox] = useState(currentBox || 0);
+    const [totalBoxes, setTotalBoxes] = useState(totalBoxLength || 1);
 
     useMessageSubscription(MessageType.BoxData, (message) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const validPokemons = ((message.data as any[]) ?? []).map(p => {
+        const boxPayload = message.data as BoxPayload;
+        const rawPokemons = boxPayload.pokemons || [];
+
+        const validPokemons = rawPokemons.map(p => {
             if (!p.stats) {
                 return {
                     ...p,
@@ -48,11 +51,8 @@ export const VPokemonBox = () => {
             return p as PokemonDao;
         });
         setPokemons(validPokemons);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        if (typeof (message as any).totalBoxes === 'number') {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            setTotalBoxes((message as any).totalBoxes);
-        }
+        setActiveBox(boxPayload.currentBox);
+        setTotalBoxes(boxPayload.totalBoxLength);
     });
 
     // Fetch data when activeBox changes

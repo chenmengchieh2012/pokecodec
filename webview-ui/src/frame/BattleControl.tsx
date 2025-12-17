@@ -39,9 +39,7 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
 
     // 訂閱背包資料訊息
     useMessageSubscription<ItemDao[]>(MessageType.BagData, (message) => {
-        if (menuState === 'bag') {
-            setBagItems(message.data ?? []);
-        }
+        setBagItems(message.data ?? []);
     });
 
     useImperativeHandle(ref, () => ({

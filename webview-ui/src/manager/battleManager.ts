@@ -9,10 +9,11 @@ import { EncounterResult } from "../../../src/core/EncounterHandler";
 import { ItemDao } from "../../../src/dataAccessObj/item";
 import { MessageType } from "../../../src/dataAccessObj/messageType";
 import { PokeBallDao } from "../../../src/dataAccessObj/pokeBall";
-import { PokemonDao, PokemonState } from "../../../src/dataAccessObj/pokemon";
+import { getGenById, PokemonDao, PokemonState } from "../../../src/dataAccessObj/pokemon";
 import { PokemonMove } from "../../../src/dataAccessObj/pokeMove";
 import { BattleEvent, BattleEventType, GameState } from "../../../src/dataAccessObj/GameState";
 import { ExperienceCalculator } from "../utilities/ExperienceCalculator";
+import { PokeDexEntryStatus } from "../../../src/dataAccessObj/PokeDex";
 
 export interface BattleManagerMethod {
     handleOnAttack: (myPokemonMove: PokemonMove) => Promise<void>,
@@ -86,23 +87,58 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
 
     const onBattleEvent = useCallback((event: BattleEvent) => {
         switch (event.type) {
-            case BattleEventType.Start:
-                setGameState(GameState.Battle);
+            case BattleEventType.Start:{
                 break;
+            }
             case BattleEventType.MyPokemonFaint:
                 // 戰鬥還在進行中，不改變狀態
                 break;
-            case BattleEventType.AllMyPokemonFainted:
-                setGameState(GameState.Searching);
-                break;
+            case BattleEventType.WildPokemonCatched:{ 
+                const catchedPokemon = opponentPokemonRef.current;
+                if(catchedPokemon == undefined) {
+                    break
+                }
+                const gen = getGenById(catchedPokemon.id)
+                if(gen != undefined) {
+                    vscode.postMessage({
+                        command: MessageType.UpdatePokeDex,
+                        pokemonId: catchedPokemon.id,
+                        status: PokeDexEntryStatus.Caught,
+                        gen: gen,
+                    })
+                }
+                break; 
+            }
             case BattleEventType.WildPokemonFaint:
-                setGameState(GameState.Searching);
-                break;
             case BattleEventType.Escaped:
-                setGameState(GameState.Searching);
-                break;
+            case BattleEventType.AllMyPokemonFainted:{
+                const catchedPokemon = opponentPokemonRef.current;
+                if(catchedPokemon == undefined) {
+                    console.warn("No opponent Pokemon found on battle end.");
+                    break
+                }
+                const gen = getGenById(catchedPokemon.id)
+                if(gen != undefined) {
+                    vscode.postMessage({
+                        command: MessageType.UpdatePokeDex,
+                        pokemonId: catchedPokemon.id,
+                        status: PokeDexEntryStatus.Seen,
+                        gen: gen,
+                    })
+                }
+                break; 
+            }
         }
-    }, [])
+
+        switch (event.state) {
+            case 'ongoing':
+                setGameState(GameState.Battle);
+                break;
+            case 'finish':
+                setGameState(GameState.Searching);
+                break; 
+        }
+    }, [opponentPokemonRef])
 
     const handleBattleStart = useCallback(async () => {
         console.log("Battle Start!");
@@ -300,7 +336,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                     pokemon: currentOpponentPokemon,
                 });
                 onBattleEvent({
-                    type: BattleEventType.WildPokemonFaint,
+                    type: BattleEventType.WildPokemonCatched,
                     state: 'finish',
                 });
             } else {

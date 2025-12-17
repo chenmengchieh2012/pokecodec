@@ -1,7 +1,18 @@
-import { GameState } from '../dataAccessObj/GameState';
-import { ItemDao } from '../dataAccessObj/item';
-import { PokemonDao } from '../dataAccessObj/pokemon';
-import { PokemonStatus } from '../dataAccessObj/PokeDex';
+import { GameState } from './GameState';
+import { ItemDao } from './item';
+import { PokemonDao } from './pokemon';
+import { PokeDexEntry, PokeDexEntryStatus } from './PokeDex';
+
+export interface BoxPayload {
+    pokemons: PokemonDao[];
+    currentBox: number;
+    totalBoxLength: number;
+}
+
+export interface PokeDexPayload{
+    gen: string;
+    entries: PokeDexEntry[];
+}
 
 // ==================== Payload Types ====================
 
@@ -12,7 +23,7 @@ export interface GetPokeDexPayload {
 export interface UpdatePokeDexPayload {
     gen: string;
     pokemonId: number;
-    status: PokemonStatus;
+    status: PokeDexEntryStatus;
 }
 
 export interface CatchPayload {

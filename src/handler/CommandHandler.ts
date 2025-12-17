@@ -20,7 +20,9 @@ import {
     GetPokeDexPayload,
     UpdatePokeDexPayload,
     HandlerContext,
-} from './types';
+    BoxPayload,
+    PokeDexPayload,
+} from '../dataAccessObj/MessagePayload';
 import { GameStateManager } from '../manager/gameStateManager';
 import { MessageType } from '../dataAccessObj/messageType';
 import { BiomeDataManager } from '../manager/BiomeManager';
@@ -81,27 +83,33 @@ export class CommandHandler {
     }
 
     // ==================== Get Box ====================
-    public handleGetBox(boxIndex: number = 0): void {
-        const pokemons = this.pokemonBoxManager.getBoxOfPokemons(boxIndex);
-        const totalBoxes = this.pokemonBoxManager.getTotalBoxes();
-        this.handlerContext.postMessage({ 
-            type: 'boxData', 
-            data: pokemons,
+    public async handleGetBox(boxIndex: number = 0): Promise<void> {
+        const pokemons = await this.pokemonBoxManager.getBoxOfPokemons(boxIndex);
+        const totalBoxLength = this.pokemonBoxManager.getTotalBoxLength();
+        const boxPayload: BoxPayload = {
+            pokemons: pokemons,
             currentBox: boxIndex,
-            totalBoxes: totalBoxes
+            totalBoxLength: totalBoxLength
+        };
+        this.handlerContext.postMessage({ 
+            type: MessageType.BoxData, 
+            data: boxPayload
         });
     }
 
 
     // ==================== Get Current Box ====================
-    public handleGetCurrentBox(): void {
-        const pokemons = this.pokemonBoxManager.getCurrentBoxOfPokemons();
-        const totalBoxes = this.pokemonBoxManager.getTotalBoxes();
-        this.handlerContext.postMessage({ 
-            type: 'boxData', 
-            data: pokemons,
+    public async handleGetCurrentBox(): Promise<void> {
+        const pokemons = await this.pokemonBoxManager.getCurrentBoxOfPokemons();
+        const totalBoxLength = this.pokemonBoxManager.getTotalBoxLength();
+        const boxPayload: BoxPayload = {
+            pokemons: pokemons,
             currentBox: this.pokemonBoxManager.getCurrentBoxIndex(),
-            totalBoxes: totalBoxes
+            totalBoxLength: totalBoxLength
+        };
+        this.handlerContext.postMessage({ 
+            type: MessageType.BoxData, 
+            data: boxPayload
         });
     }
 
@@ -394,20 +402,35 @@ export class CommandHandler {
     }
 
     // ==================== Get PokeDex ====================
-    public handleGetPokeDex(payload: GetPokeDexPayload): void {
-        const dexData = this.pokeDexManager.getDexData(payload.gen);
+    public async handleGetPokeDex(payload: GetPokeDexPayload): Promise<void> {
+        const dexData = await this.pokeDexManager.getPokeDexEntrys(payload.gen);
+        const ret: PokeDexPayload = {
+            gen: payload.gen,
+            entries: dexData
+        };
         this.handlerContext.postMessage({ 
-            type: MessageType.GetPokeDex, 
-            data: {
-                gen: payload.gen,
-                dexData: dexData
-            }
+            type: MessageType.PokeDexData, 
+            data: ret
         });
     }
 
+    // ==================== Get Current PokeDex ====================
+    public async handleGetCurrentPokeDex(): Promise<void> {
+        const dexData = await this.pokeDexManager.getCurrentPokeDexEntrys();
+        const ret: PokeDexPayload = {
+            gen: this.pokeDexManager.getCurrentGen(),
+            entries: dexData
+        };
+        this.handlerContext.postMessage({ 
+            type: MessageType.PokeDexData, 
+            data: ret
+        });
+    }
+
+
     // ==================== Update PokeDex ====================
     public async handleUpdatePokeDex(payload: UpdatePokeDexPayload): Promise<void> {
-        await this.pokeDexManager.updatePokemonStatus(payload.gen, payload.pokemonId, payload.status);
+        await this.pokeDexManager.updatePokemonStatus(payload.pokemonId, payload.status, payload.gen);
         // After update, send back the updated data
         this.handleGetPokeDex({ gen: payload.gen });
     }

@@ -1,3 +1,4 @@
+import { PokeDex__GEN1 } from "./PokeDex";
 import { PokemonMove } from "./pokeMove";
 
 export type PokemonType = 
@@ -107,3 +108,17 @@ export const initialPokemonState: () => PokemonState = () => ({
     action: PokemonStateAction.None,
 })
 
+export const getGenById = (id: number): string|undefined => {
+    if (id <= 151) {
+        return PokeDex__GEN1;
+    }
+    return undefined;
+    // if (id <= 251) return 'GEN 2';
+    // if (id <= 386) return 'GEN 3';
+    // if (id <= 493) return 'GEN 4';
+    // if (id <= 649) return 'GEN 5';
+    // if (id <= 721) return 'GEN 6';
+    // if (id <= 809) return 'GEN 7';
+    // if (id <= 905) return 'GEN 8';
+    // return 'GEN 9';
+};

@@ -62,7 +62,8 @@ export class PokemonBoxManager {
         return this.boxes.flat();
     }
 
-    public getBoxOfPokemons(index: number): PokemonDao[] {
+    public async getBoxOfPokemons(index: number): Promise<PokemonDao[]> {
+        await this.setCurrentBoxIndex(index); // 同步當前箱子索引
         return this.boxes[index] || [];
     }
 
@@ -71,15 +72,22 @@ export class PokemonBoxManager {
     }
 
 
-    public getCurrentBoxOfPokemons(): PokemonDao[] {
+    public async getCurrentBoxOfPokemons(): Promise<PokemonDao[]> {
         if (this.currentBoxIndex !== undefined) {
-            return this.getBoxOfPokemons(this.currentBoxIndex);
+            return await this.getBoxOfPokemons(this.currentBoxIndex);
         }
-        return this.getBoxOfPokemons(0); // 預設為第一個箱子
+        return await this.getBoxOfPokemons(0); // 預設為第一個箱子
     }
 
-    public getTotalBoxes(): number {
+    public getTotalBoxLength(): number {
         return this.boxes.length;
+    }
+
+    public async setCurrentBoxIndex(index: number): Promise<void> {
+        await this.saveQueue.execute(async () => {
+            this.currentBoxIndex = index;
+            await this.context.globalState.update(this.CURRENT_BOX_INDEX_KEY, index);
+        });
     }
 
 
