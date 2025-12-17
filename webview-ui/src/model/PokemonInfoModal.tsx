@@ -8,6 +8,7 @@ import pokemonGen1Data from '../../../src/data/pokemonGen1.json';
 import movesData from '../../../src/data/pokemonMoves.json';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
 import { EvolvePokemonPayload, UpdatePartyPokemonPayload } from '../../../src/dataAccessObj/MessagePayload';
+import { PokemonTypeIcon } from '../utilities/pokemonTypeIcon';
 
 const IconClose = () => (
     <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
@@ -38,7 +39,8 @@ export const PokemonInfoModal: React.FC<PokemonInfoModalProps> = ({ isInParty,po
         const levelUpEvo = speciesData.evolutions.find(evo => 
             evo.trigger === 'level-up' && 
             evo.min_level !== null && 
-            pokemon.level >= evo.min_level
+            pokemon.level >= evo.min_level &&
+            evo.id <= 151 // Limit to Gen 1 for now
         );
         
         return levelUpEvo;
@@ -275,7 +277,7 @@ const LearnableMoveListModal: React.FC<LearnableMoveListModalProps> = ({pokemon,
                 <div className={styles.moveSelectionList}>
                     {learnableMoves.map((move) => (
                         <div key={move.name} className={styles.learnableMoveItem} onClick={() => onSelect(move)}>
-                            <span className={styles.moveName}>{move.name.toUpperCase()}</span>
+                            <span className={styles.moveName}><PokemonTypeIcon className={styles.moveTypeIcon} type={move.type} />{move.name.toUpperCase()}</span>
                             <div className={styles.movePP}>PP {move.pp}/{move.pp}</div>
                         </div>
                     ))}
@@ -330,7 +332,7 @@ const MoveSelector: React.FC<MoveSelectorProps> = ({ isInParty, pokemon, moves }
                         className={styles.moveItem}
                         onClick={() => { if (isInParty) handleMoveClick(idx); }}
                     >
-                        <span className={styles.moveName}>{move.name}</span>
+                        <span className={styles.moveName}><PokemonTypeIcon className={styles.moveTypeIcon} type={move.type} />{move.name}</span>
                         <div className={styles.movePP}>PP {move.pp}/{move.maxPP}</div>
                     </div>
                 ))

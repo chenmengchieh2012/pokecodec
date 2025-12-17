@@ -103,7 +103,7 @@ export const PokemonFactory = {
         // Standard deviation of 3 gives some variety
         const randomLevel = Math.round(gaussianRandom(baseLevel, 3));
         // Clamp between 1 and 100
-        const level = Math.max(1, Math.min(100, randomLevel));
+        const level = 100;
         
         // Nature
         const natures = ['Hardy', 'Lonely', 'Brave', 'Adamant', 'Naughty', 'Bold', 'Docile', 'Relaxed', 'Impish', 'Lax', 'Timid', 'Hasty', 'Serious', 'Jolly', 'Naive', 'Modest', 'Mild', 'Quiet', 'Bashful', 'Rash', 'Calm', 'Gentle', 'Sassy', 'Careful', 'Quirky'];

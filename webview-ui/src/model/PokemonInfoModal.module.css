@@ -327,6 +327,14 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+}
+
+.moveTypeIcon {
+    width: 12px;
+    height: 12px;
+    margin-right: 4px;
 }
 
 .movePP {

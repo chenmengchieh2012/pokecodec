@@ -67,7 +67,7 @@
   width: 100%;
   height: auto;
   image-rendering: pixelated;
-  transform: scale(2.5) translateY(-25%); 
+  transform: scale(2) translateY(-15%) translateX(5%); 
 }
 
 /* 右側資訊區 */

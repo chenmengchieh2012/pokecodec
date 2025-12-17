@@ -132,6 +132,12 @@
   margin-bottom: 0;
   font-weight: bold; /* 讓招式名稱更突出 */
   text-align: left;
+  display: flex;
+  align-items: center;
+}
+
+.move-type-icon {
+  margin-right: 4px;
 }
 
 .move-info-row {

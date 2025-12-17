@@ -8,6 +8,7 @@ import { PokemonMove } from '../../../src/dataAccessObj/pokeMove';
 import { ItemDao } from '../../../src/dataAccessObj/item';
 import { PokeBallDao } from '../../../src/dataAccessObj/pokeBall';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
+import { PokemonTypeIcon } from '../utilities/pokemonTypeIcon';
 export interface BattleControlHandle extends DialogBoxHandle {
     openPartyMenu: () => void;
 }
@@ -103,7 +104,10 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
                                 onClick={() => onAttackClick(move)}
                                 disabled={move.pp <= 0}
                             >
-                                <div className={styles['move-name']}>{move.name}</div>
+                                <div className={styles['move-name']}>
+                                    <PokemonTypeIcon type={move.type} size={10} className={styles['move-type-icon']} />
+                                    {move.name}
+                                </div>
                                 <div className={styles['move-info-row']}>
                                     <span className={styles['move-pp']}>PP {move.pp}/{move.maxPP}</span>
                                 </div>

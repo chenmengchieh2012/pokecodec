@@ -1,0 +1,21 @@
+.pokemon-type-icon {
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    width: var(--icon-size, 24px);
+    height: var(--icon-size, 24px);
+}
+
+.pokemon-type-badge {
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: bold;
+    text-transform: uppercase;
+    display: inline-block;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+    font-family: monospace;
+    font-size: calc(var(--icon-size, 24px) * 0.5);
+}
