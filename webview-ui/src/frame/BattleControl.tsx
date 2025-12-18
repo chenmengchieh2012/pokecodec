@@ -9,6 +9,7 @@ import { ItemDao } from '../../../src/dataAccessObj/item';
 import { PokeBallDao } from '../../../src/dataAccessObj/pokeBall';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
 import { PokemonTypeIcon } from '../utilities/pokemonTypeIcon';
+import { CapitalizeFirstLetter } from '../utilities/util';
 export interface BattleControlHandle extends DialogBoxHandle {
     openPartyMenu: () => void;
 }
@@ -106,7 +107,7 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
                             >
                                 <div className={styles['move-name']}>
                                     <PokemonTypeIcon type={move.type} size={10} className={styles['move-type-icon']} />
-                                    {move.name}
+                                    {move.name.toUpperCase()}
                                 </div>
                                 <div className={styles['move-info-row']}>
                                     <span className={styles['move-pp']}>PP {move.pp}/{move.maxPP}</span>
@@ -140,7 +141,7 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
                                                 key={item.id} 
                                                 className={styles['bag-item-btn']}
                                                 onClick={() => onItemClick(item)}
-                                                title={item.name}
+                                                title={CapitalizeFirstLetter(item.name)}
                                             >
                                                 {item.spriteUrl && <img src={item.spriteUrl} alt={item.name} className={styles['bag-item-icon']} />}
                                                 <div className={styles['bag-item-badge']}>{item.totalSize}</div>
@@ -158,7 +159,7 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
                                                 key={item.id} 
                                                 className={styles['bag-item-btn']}
                                                 onClick={() => onItemClick(item)}
-                                                title={item.name}
+                                                title={CapitalizeFirstLetter(item.name)}
                                             >
                                                 {item.spriteUrl && <img src={item.spriteUrl} alt={item.name} className={styles['bag-item-icon']} />}
                                                 <div className={styles['bag-item-badge']}>{item.totalSize}</div>

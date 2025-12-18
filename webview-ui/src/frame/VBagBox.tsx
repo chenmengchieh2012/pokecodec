@@ -2,18 +2,24 @@ import React, { useCallback, useImperativeHandle, useState } from 'react';
 import { PartyGridInModal } from '../model/PartyGridInModal';
 import { PokemonMoveModal } from '../model/PokemonMoveModal';
 import { useMessageStore, useMessageSubscription } from '../store/messageStore';
-import { SHOP_ITEM_FULL_MEDICINE_NAMES, SHOP_ITEMS_HP_MEDICINE_NAMES, SHOP_ITEMS_PP_MEDICINE_NAMES } from '../utilities/ItemName';
+import { ItemUITag, ItemUiTagItemsMap, SHOP_ITEM_EVOLUTION_NAMES, SHOP_ITEM_FULL_MEDICINE_NAMES, SHOP_ITEMS_HP_MEDICINE_NAMES, SHOP_ITEMS_PP_MEDICINE_NAMES } from '../utilities/ItemName';
 import { vscode, resolveAssetUrl } from '../utilities/vscode';
 import styles from './VBagBox.module.css';
 import { ItemDao } from '../../../src/dataAccessObj/item';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
-import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
+import { EvolutionTrigger, PokemonDao } from '../../../src/dataAccessObj/pokemon';
 import { EmeraldTabPanel } from './EmeraldTabPanel';
+import itemDaoData from '../../../src/data/items.json';
+import { EvolutionModal } from '../model/EvolutionModal';
+
+
+const itemDaoDataMap = itemDaoData as unknown as Record<string, ItemDao>;
+
 
 export const VBagBox: React.FC = () => {
     const messageStore = useMessageStore(); // 確保訂閱生效
     const defaultBagItems = messageStore.getRefs().bag || [];
-    const [activePocket, setActivePocket] = useState<'medicine' | 'balls' >('balls');
+    const [activeTag, setActiveTag] = useState<ItemUITag>(ItemUITag.Medicine);
     const [items, setItems] = useState<ItemDao[]>(defaultBagItems);
 
     const ItemUseModalRef = React.useRef<ItemUserModalHandler>(null);
@@ -22,7 +28,7 @@ export const VBagBox: React.FC = () => {
         setItems(message.data ?? []);
     });
 
-    const filteredItems = items.filter(item => item.pocket === activePocket);
+    const filteredItems = items.filter(item => ItemUiTagItemsMap[activeTag].includes(item.apiName));
 
     const getBagIconUrl = (apiName: string) => {
         return resolveAssetUrl(`./sprites/items/${apiName}.png`);
@@ -31,6 +37,8 @@ export const VBagBox: React.FC = () => {
     const handleSlotClick = (item: ItemDao) => {
         if (ItemUseModalRef.current) {
             if (item.pocket === 'medicine') {
+                ItemUseModalRef.current.setSelectedItem(item);
+            } else if(item.pocket === 'items') {
                 ItemUseModalRef.current.setSelectedItem(item);
             } else {
                 ItemUseModalRef.current.setSelectedItem(null); // 取消使用模式
@@ -43,14 +51,19 @@ export const VBagBox: React.FC = () => {
         <EmeraldTabPanel
             tabs={[
                 {
-                    label: 'MEDICINE',
-                    onClick: () => setActivePocket('medicine'),
-                    isActive: activePocket === 'medicine'
+                    label: ItemUITag.Medicine,
+                    onClick: () => setActiveTag(ItemUITag.Medicine),
+                    isActive: activeTag === ItemUITag.Medicine
                 },
                 {
-                    label: 'BALLS',
-                    onClick: () => setActivePocket('balls'),
-                    isActive: activePocket === 'balls'
+                    label: ItemUITag.Balls,
+                    onClick: () => setActiveTag(ItemUITag.Balls),
+                    isActive: activeTag === ItemUITag.Balls
+                },
+                {
+                    label: ItemUITag.Evolution,
+                    onClick: () => setActiveTag(ItemUITag.Evolution),
+                    isActive: activeTag === ItemUITag.Evolution
                 }
             ]}
         >
@@ -91,21 +104,24 @@ interface ItemUseModalProps {
 const MedicineExtendType = { 
     None: "none",
     PP: "pp",
-    HP: "hp"
+    HP: "hp",
+    Evolution: "evolution"
 } as const;
 type MedicineType = typeof MedicineExtendType[keyof typeof MedicineExtendType];
 
-const ExtendModelType = {
+const ExtendModalType = {
     SelectPokemon: "select_pokemon",
     SelectMove: "select_move",
+    SelectEvolution: "select_evolution"
 } as const
 
-type ExtendModelType = typeof ExtendModelType[keyof typeof ExtendModelType];
+type ExtendModalType = typeof ExtendModalType[keyof typeof ExtendModalType];
 
 const ItemUseModalFlow = {
     [MedicineExtendType.None]: [],
     [MedicineExtendType.HP]: [],
-    [MedicineExtendType.PP]: [ExtendModelType.SelectMove],
+    [MedicineExtendType.PP]: [ExtendModalType.SelectMove],
+    [MedicineExtendType.Evolution]: [ExtendModalType.SelectEvolution],
 }
 
 
@@ -115,18 +131,23 @@ const ItemUseModal = React.forwardRef<ItemUserModalHandler, ItemUseModalProps>((
     const defaultParty = messageStore.getRefs().party || [];
     
     const [ medicineType, setMedicineType] = useState<MedicineType>(MedicineExtendType.None);
-    const [ modelShow, setModelShow ] = useState<ExtendModelType>(ExtendModelType.SelectPokemon);
+    const [ modalShow, setModalShow ] = useState<ExtendModalType>(ExtendModalType.SelectPokemon);
     
     const [ selectedItem, setSelectedItem ] = useState<ItemDao | null>(null);
     const [ selectedPokemon, setSelectedPokemon] = useState<PokemonDao | null>(null);
+    const [ disabledPartyUids, setDisabledPartyUids ] = useState<string[]>([]);
     const [ party, setParty ] = useState<PokemonDao[]>(defaultParty);
 
+
+    // Removed useEffect that synchronously sets state when selectedItem changes
 
     useImperativeHandle(ref, () => ({
         setSelectedItem(item: ItemDao | null) {
             if (item === null) {
                 setSelectedItem(null);
                 setMedicineType(MedicineExtendType.None);
+                setModalShow(ExtendModalType.SelectPokemon);
+                setDisabledPartyUids([]);
                 return;
             } else if(item.pocket === 'medicine') {
                 if(
@@ -139,10 +160,35 @@ const ItemUseModal = React.forwardRef<ItemUserModalHandler, ItemUseModalProps>((
                 if(SHOP_ITEMS_PP_MEDICINE_NAMES.includes(item.apiName)){
                     setMedicineType(MedicineExtendType.PP);
                 }
-                setModelShow(ExtendModelType.SelectPokemon);
+
+                setModalShow(ExtendModalType.SelectPokemon);
                 setSelectedItem(item);
+            } else if(item.pocket === 'items'){
+                if(SHOP_ITEM_EVOLUTION_NAMES.includes(item.apiName)){
+                    setMedicineType(MedicineExtendType.Evolution);
+                    setDisabledPartyUids(party.filter(p=>{
+                        const rawItemInfo = itemDaoDataMap[item.apiName];
+                        if( rawItemInfo.effect?.evolutionCriteria !== undefined ) {
+                            const criteria = rawItemInfo.effect.evolutionCriteria;
+                            // 檢查是否能進化
+                            console.log("[VBagBox] Checking evolution for:", p.name, "with criteria:", criteria);
+                            if( criteria.targetPokemon?.includes(p.name) ) {
+                                return false; // 可進化，啟用
+                            } else {
+                                return true; // 無法進化，禁用
+                            }
+                        } else {
+                            return true; // 無法進化，禁用
+                        }
+                    }).map(p=>p.uid));
+                    setModalShow(ExtendModalType.SelectPokemon);
+                    setSelectedItem(item);
+                }
             } else {
                 setSelectedItem(null); // 取消使用模式
+                setMedicineType(MedicineExtendType.None);
+                setModalShow(ExtendModalType.SelectPokemon);
+                setDisabledPartyUids([]);
             }
         }
     }));
@@ -171,10 +217,33 @@ const ItemUseModal = React.forwardRef<ItemUserModalHandler, ItemUseModalProps>((
             return;
         }
 
-        if (extendId === ExtendModelType.SelectMove) {
+        if (extendId === ExtendModalType.SelectMove) {
             setSelectedPokemon(pokemon);
-            setModelShow(ExtendModelType.SelectMove);
+            setModalShow(ExtendModalType.SelectMove);
             return;
+        }
+
+
+        if (extendId === ExtendModalType.SelectEvolution) {
+            const rawItemInfo = itemDaoDataMap[selectedItem.apiName];
+            if( rawItemInfo.effect?.evolutionCriteria !== undefined ) {
+                const criteria = rawItemInfo.effect.evolutionCriteria;
+                // 檢查是否能進化
+                console.log("[VBagBox] Proceeding to evolution for:", pokemon.name);
+                if( criteria.targetPokemon?.includes(pokemon.name) ) {
+                    setSelectedPokemon(pokemon);
+                    setModalShow(ExtendModalType.SelectEvolution);
+                    return;
+                } else {
+                    // 無法進化
+                    setSelectedItem(null);
+                    return;
+                }
+            } else {
+                // 無法進化
+                setSelectedItem(null);
+                return;
+            }
         }
 
 
@@ -206,15 +275,24 @@ const ItemUseModal = React.forwardRef<ItemUserModalHandler, ItemUseModalProps>((
                 <button className={styles.closeBtn} onClick={() => { setSelectedItem(null); }}>×</button>
             </div>
             <div className={styles.modalBody}>
-                {modelShow === ExtendModelType.SelectPokemon && 
+                {modalShow === ExtendModalType.SelectPokemon && 
                 <PartyGridInModal 
                     party={party} 
+                    disabledPartyUids={disabledPartyUids}
                     onPokemonClick={(pokemon) => handlePokemonSelect(pokemon.uid)} />
                 }
-                {modelShow === ExtendModelType.SelectMove && 
+                {modalShow === ExtendModalType.SelectMove && 
                 <PokemonMoveModal 
                     selectedPokemon={selectedPokemon} 
                     onMoveSelect={( pokemon,move) => handleMoveSelect(pokemon, move)} />
+                }
+                {modalShow === ExtendModalType.SelectEvolution && selectedPokemon &&
+                <EvolutionModal 
+                    trigger={EvolutionTrigger.UseItem}
+                    item={selectedItem}
+                    pokemon={selectedPokemon}
+                    onClose={()=>{ setSelectedItem(null)}}
+                />
                 }
             </div>
         </div>

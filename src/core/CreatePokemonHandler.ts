@@ -88,7 +88,7 @@ function gaussianRandom(mean: number, stdev: number): number {
 export const PokemonFactory = {
     createWildPokemonInstance: async (pokemonEncounterData: PokeEncounterData, filePath?: string): Promise<PokemonDao> => {
         // 從資料庫取得寶可夢基本資料
-        const finalPokemonId = pokemonEncounterData.id;
+        const finalPokemonId = pokemonEncounterData.pokemonId;
         const depth = pokemonEncounterData.minDepth;
 
         // Use local data instead of fetch
@@ -103,7 +103,7 @@ export const PokemonFactory = {
         // Standard deviation of 3 gives some variety
         const randomLevel = Math.round(gaussianRandom(baseLevel, 3));
         // Clamp between 1 and 100
-        const level = 100;
+        const level = Math.min(100, Math.max(1, randomLevel));
         
         // Nature
         const natures = ['Hardy', 'Lonely', 'Brave', 'Adamant', 'Naughty', 'Bold', 'Docile', 'Relaxed', 'Impish', 'Lax', 'Timid', 'Hasty', 'Serious', 'Jolly', 'Naive', 'Modest', 'Mild', 'Quiet', 'Bashful', 'Rash', 'Calm', 'Gentle', 'Sassy', 'Careful', 'Quirky'];
@@ -117,8 +117,6 @@ export const PokemonFactory = {
             : { name: 'Unknown', isHidden: false };
         
         const abilityName = randomAbilityObj.name;
-        const ability = abilityName.charAt(0).toUpperCase() + abilityName.slice(1);
-
         
         const iv: PokemonStats = {
             hp: Math.floor(Math.random() * 32),
@@ -180,8 +178,8 @@ export const PokemonFactory = {
 
         const allMoves: PokemonMove[] = pokemonData.moves.map((moveInfo) => {
             const moveDetails = moveDataMap[moveInfo.name];
-            if (moveDetails) {
-                return MoveDecorator(moveDetails);
+            if (moveDetails !== undefined) {
+                return moveDetails as PokemonMove;
             }
             return null;
         }).filter((move): move is PokemonMove => move !== null);
@@ -201,7 +199,7 @@ export const PokemonFactory = {
         const pokemonInstance: PokemonDao = {
             uid: randomUUID(),
             id: finalPokemonId,
-            name: pokemonData.name.toUpperCase(),
+            name: pokemonData.name,
             currentHp: baseState.hp, 
             maxHp: baseState.hp,
 
@@ -213,7 +211,7 @@ export const PokemonFactory = {
             types: pokemonData.types as PokemonType[],
             gender: gender,
             nature: nature,
-            ability: ability,
+            ability: abilityName,
             isHiddenAbility: randomAbilityObj.isHidden,
             height: height,
             weight: weight,
@@ -303,13 +301,12 @@ export const PokemonFactory = {
         }
         
         const newAbilityName = newAbilityObj.name;
-        const newAbility = newAbilityName.charAt(0).toUpperCase() + newAbilityName.slice(1);
 
         // Update other fields
         const newPokemon: PokemonDao = {
             ...pokemon,
             id: targetId,
-            name: targetData.name.toUpperCase(),
+            name: targetData.name,
             types: targetData.types as PokemonType[],
             baseStats: baseStats,
             stats: newStats,
@@ -318,7 +315,7 @@ export const PokemonFactory = {
             height: targetData.height,
             weight: targetData.weight,
             baseExp: targetData.base_experience,
-            ability: newAbility,
+            ability: newAbilityName,
             isHiddenAbility: newAbilityObj.isHidden,
         };
 

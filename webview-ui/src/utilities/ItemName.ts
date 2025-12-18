@@ -14,3 +14,32 @@ export const SHOP_ITEMS_HP_MEDICINE_NAMES = [
 export const SHOP_ITEM_FULL_MEDICINE_NAMES = [
     'full-restore'
 ];
+
+export const SHOP_ITEM_EVOLUTION_NAMES = [
+    'fire-stone', 'water-stone', 'thunder-stone', 'leaf-stone',
+    'moon-stone', 'sun-stone', 'shiny-stone', 'dusk-stone', 'dawn-stone'
+];
+
+
+export const ItemUITag = {
+    Medicine: "MEDICINE",
+    Balls: "BALLS",
+    Evolution: "EVOLUTION",
+} as const;
+export type ItemUITag = typeof ItemUITag[keyof typeof ItemUITag];
+
+
+export const ItemUiTagItemsMap: Record<ItemUITag, string[]> = {
+    [ItemUITag.Medicine]: [
+        ...SHOP_ITEMS_HP_MEDICINE_NAMES,
+        ...SHOP_ITEMS_PP_MEDICINE_NAMES,
+        ...SHOP_ITEM_FULL_MEDICINE_NAMES
+    ],
+    [ItemUITag.Balls]: [
+        ...SHOP_ITEMS_BALL_NAMES
+    ],
+    [ItemUITag.Evolution]: [
+        ...SHOP_ITEM_EVOLUTION_NAMES
+    ]
+};  
+

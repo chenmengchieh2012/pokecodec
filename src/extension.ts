@@ -220,7 +220,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         // full two box starter to party
         for (let i = 0; i < PokemonBoxManager.getMaxBoxCapacity() * 2; i++) {
             let debugPokemon = await PokemonFactory.createWildPokemonInstance({
-                id: Math.floor(Math.random() * 150) + 1,
+                pokemonId: Math.floor(Math.random() * 150) + 1,
                 nameZh: '',
                 nameEn: '',
                 type: [],
@@ -452,7 +452,7 @@ function getNonce() {
 export const defaultPokemon: PokemonDao = {
     uid: 'player-pikachu',
     id: 25,
-    name: 'PIKACHU',
+    name: 'pikachu',
     level: 40,
     currentHp: 200,
     maxHp: 200,
@@ -460,9 +460,9 @@ export const defaultPokemon: PokemonDao = {
     iv: { hp: 31, attack: 31, defense: 31, specialAttack: 31, specialDefense: 31, speed: 0 },
     ev: { hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 },
     types: ['electric'],
-    gender: 'Male',
-    nature: 'Hardy',
-    ability: 'Static',
+    gender: 'male',
+    nature: 'hardy',
+    ability: 'static',
     height: 4,
     weight: 60,
     baseExp: 112,
@@ -475,43 +475,47 @@ export const defaultPokemon: PokemonDao = {
     pokemonMoves: [
         {
             id: 1,
-            name: 'THUNDER-SHOCK',
+            name: 'thunder-shock',
             power: 40,
-            type: 'Electric',
+            type: 'electric',
             accuracy: 100,
             pp: 30,
             maxPP: 30,
-            effect: ''
+            effect: '',
+            priority: 0,
         },
         {
             id: 2,
-            name: 'QUICK-ATTACK',
+            name: 'quick-attack',
             power: 40,
-            type: 'Normal',
+            type: 'normal',
             accuracy: 100,
             pp: 30,
             maxPP: 30,
-            effect: ''
+            effect: '',
+            priority: 1,
         },
         {
             id: 3,
-            name: 'ELECTRO-BALL',
+            name: 'electro-ball',
             power: 60,
-            type: 'Electric',
+            type: 'electric',
             accuracy: 100,
             pp: 10,
             maxPP: 10,
-            effect: ''
+            effect: '',
+            priority: 0,
         },
         {
             id: 4,
-            name: 'DOUBLE-TEAM',
+            name: 'double-team',
             power: 0,
-            type: 'Normal',
+            type: 'normal',
             accuracy: 0,
             pp: 15,
             maxPP: 15,
-            effect: 'Raises evasion.'
+            effect: 'Raises evasion.',
+            priority: 0,
         }
     ],
     baseStats: { hp: 35, attack: 55, defense: 40, specialAttack: 50, specialDefense: 50, speed: 90 },

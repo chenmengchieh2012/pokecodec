@@ -131,3 +131,10 @@
   background-color: #e0e0e0;
   filter: grayscale(100%);
 }
+
+.party-card-btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #d1d5db;
+  pointer-events: none;
+}

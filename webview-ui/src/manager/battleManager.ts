@@ -14,6 +14,7 @@ import { PokemonMove } from "../../../src/dataAccessObj/pokeMove";
 import { BattleEvent, BattleEventType, GameState } from "../../../src/dataAccessObj/GameState";
 import { ExperienceCalculator } from "../utilities/ExperienceCalculator";
 import { PokeDexEntryStatus } from "../../../src/dataAccessObj/PokeDex";
+import { CapitalizeFirstLetter } from "../utilities/util";
 
 export interface BattleManagerMethod {
     handleOnAttack: (myPokemonMove: PokemonMove) => Promise<void>,
@@ -209,7 +210,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
         // 2. 先執行攻擊動畫 (不等待)
         battleCanvasRef.current?.handleAttackFromOpponent()
         
-        await dialogBoxRef.current?.setText(`${opponentPokemonRef.current.name} used ${move.name}!`);
+        await dialogBoxRef.current?.setText(`${opponentPokemonRef.current.name.toUpperCase()} used ${move.name.toUpperCase()}!`);
         // 3. 執行傷害計算與文字顯示 (這會等待打字機效果)
         const {newHp: remainingHp, damageResult} = await myPokemonHandler.hited(opponentPokemonRef.current, move);
         
@@ -229,7 +230,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
 
         // 6. 檢查是否昏厥
         if (remainingHp === 0) {
-            await dialogBoxRef.current?.setText(`${myPokemonRef.current?.name} fainted!`);
+            await dialogBoxRef.current?.setText(`${myPokemonRef.current?.name.toUpperCase()} fainted!`);
             handleMyPokemonFaint();
         }
 
@@ -246,7 +247,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
         // 2. 先執行攻擊動畫 (不等待)
         battleCanvasRef.current?.handleAttackToOpponent()
         
-        await dialogBoxRef.current?.setText(`${myPokemonRef.current?.name} used ${move.name}!`);
+        await dialogBoxRef.current?.setText(`${myPokemonRef.current?.name.toUpperCase()} used ${move.name}!`);
         
         // 3. 執行傷害計算與文字顯示 (這會等待打字機效果)
         const {newHp: remainingHp, damageResult} = await opponentPokemonHandler.hited(myPokemonRef.current, move);
@@ -267,7 +268,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
 
         // 6. 檢查是否昏厥
         if (remainingHp === 0) {
-            await dialogBoxRef.current?.setText(`${opponentPokemonRef.current?.name} fainted!`);
+            await dialogBoxRef.current?.setText(`${opponentPokemonRef.current?.name.toUpperCase()} fainted!`);
             handleOpponentPokemonFaint();
         }
 
@@ -332,7 +333,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                 currentOpponentPokemon.caughtBall = ballDao.apiName;
                 vscode.postMessage({
                     command: MessageType.Catch,
-                    text: `Caught ${currentOpponentPokemon.name} (Lv.${currentOpponentPokemon.level})!`,
+                    text: `Caught ${currentOpponentPokemon.name.toUpperCase()} (Lv.${currentOpponentPokemon.level})!`,
                     pokemon: currentOpponentPokemon,
                 });
                 onBattleEvent({
@@ -359,10 +360,10 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
             // 2. Apply effect
             if (item.effect && item.effect.healHp) {
                 await myPokemonHandler.heal(item.effect.healHp);
-                await dialogBoxRef.current?.setText(`Used ${item.name}!`);
+                await dialogBoxRef.current?.setText(`Used ${CapitalizeFirstLetter(item.name)}!`);
                 await dialogBoxRef.current?.setText(`Restored ${item.effect.healHp} HP!`);
             } else {
-                await dialogBoxRef.current?.setText(`Used ${item.name}!`);
+                await dialogBoxRef.current?.setText(`Used ${CapitalizeFirstLetter(item.name)}!`);
             }
 
             // 3. Opponent turn
@@ -449,7 +450,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
 
                     // 不是同一隻才換，不然會無限迴圈
                     if (myPokemon?.uid !== pkmn.uid) { 
-                        console.log("[BattleManager] Switching to first healthy Pokemon in party:", pkmn.name);
+                        console.log("[BattleManager] Switching to first healthy Pokemon in party:", pkmn.name.toUpperCase());
                         await myPokemonHandler.switchPokemon(pkmn);
                     }
                     

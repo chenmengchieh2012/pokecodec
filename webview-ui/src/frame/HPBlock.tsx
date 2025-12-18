@@ -53,7 +53,7 @@ export const VHPBlock = React.forwardRef<VHPBlockHandle, VHPBlockProps>( ({ poke
     return <>
         <div className={`${styles.hud} ${animClass === 'anim-catch' ? styles['anim-catch'] : ''}`}>
             <div className={styles['pokemon-info']}>
-                <span className={styles['pokemon-name']}>{pokemonData.name}</span>
+                <span className={styles['pokemon-name']}>{pokemonData.name.toUpperCase()}</span>
                 <span className={styles['pokemon-gender']} style={{ color: genderColor }}>{genderSymbol}</span>
                 <span className={styles['pokemon-lv']}>Lv{pokemonData.level}</span>
             </div>

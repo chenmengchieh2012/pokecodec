@@ -1,13 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import styles from './VShop.module.css';
 import { vscode } from '../utilities/vscode';
-import { SHOP_ITEM_FULL_MEDICINE_NAMES, SHOP_ITEMS_BALL_NAMES, SHOP_ITEMS_HP_MEDICINE_NAMES, SHOP_ITEMS_PP_MEDICINE_NAMES } from '../utilities/ItemName';
+import { ItemUITag, ItemUiTagItemsMap, SHOP_ITEM_EVOLUTION_NAMES, SHOP_ITEM_FULL_MEDICINE_NAMES, SHOP_ITEMS_BALL_NAMES, SHOP_ITEMS_HP_MEDICINE_NAMES, SHOP_ITEMS_PP_MEDICINE_NAMES } from '../utilities/ItemName';
 import { useMessageSubscription, messageStore } from '../store/messageStore';
 import { UserDao } from '../../../src/dataAccessObj/userData';
 import { MenuSideBar } from '../frame/SideBar';
-import { ItemDao, PokeApiItem, adaptPokeApiItem } from '../../../src/dataAccessObj/item';
+import { ItemDao } from '../../../src/dataAccessObj/item';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
 import { EmeraldTabPanel } from '../frame/EmeraldTabPanel';
+import ItemDaoData from '../../../src/data/items.json';
+import { CapitalizeFirstLetter } from '../utilities/util';
+
+
+const ItemDaoMap = ItemDaoData as unknown as Record<string, ItemDao>;
 
 // Status items 'revive', 'antidote', 'paralyze-heal', 'burn-heal', 'ice-heal', 'sleep-heal', 'awakening', 'full-heal'
 // Default shop item list (can be extended)
@@ -34,32 +39,25 @@ export const VShop = () => {
     // Use lazy initialization to initialize state
     const [money, setMoney] = useState<number>(() => messageStore.getRefs().userInfo?.money ?? 0);
     const [bagItems, setBagItems] = useState<ItemDao[]>(() => messageStore.getRefs().bag ?? []);
-    const [shopItems, setShopItems] = useState<ItemDao[]>([]);
+    const shopItems = useMemo<ItemDao[]>(() => {
+        const items: ItemDao[] = [];
+        for (const name of [...SHOP_ITEMS_MEDICINE_NAMES, ...SHOP_ITEMS_BALL_NAMES, ...SHOP_ITEM_EVOLUTION_NAMES]) {
+            console.log("[VShop] Looking for item:", name);
+            console.log("[VShop] ItemDaoMap has item:", ItemDaoMap[name]);
+            if( ItemDaoMap[name] ) {
+                items.push(ItemDaoMap[name]);
+            }
+        }
+        console.log("[VShop] Shop items loaded:", items.length);
+        return items;
+    },[]);
     const [mode, setMode] = useState<'buy' | 'sell'>('buy');
     const [selectedItem, setSelectedItem] = useState<ItemDao | null>(null);
     const [quantity, setQuantity] = useState<number>(1);
     const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
 
-    const [actionTab, setActionTab] = useState<'medicine' | 'ball'>('medicine');
+    const [actionTab, setActionTab] = useState<ItemUITag>(ItemUITag.Medicine);
 
-    // 初始化：載入商店商品
-    useEffect(() => {
-        // 載入商店商品 (這裡模擬從 API 抓取並轉換)
-        const loadShopItems = async () => {
-            const items: ItemDao[] = [];
-            for (const name of [...SHOP_ITEMS_MEDICINE_NAMES, ...SHOP_ITEMS_BALL_NAMES]) {
-                try {
-                    const response = await fetch(`https://pokeapi.co/api/v2/item/${name}`);
-                    const data: PokeApiItem = await response.json();
-                    items.push(adaptPokeApiItem(data));
-                } catch (error) {
-                    console.error(`Failed to load item ${name}`, error);
-                }
-            }
-            setShopItems(items);
-        };
-        loadShopItems();
-    }, []);
 
     // 訂閱訊息（只有在初始化完成後才會收到通知）
     useMessageSubscription<UserDao>(MessageType.UserData, (message) => {
@@ -159,14 +157,19 @@ export const VShop = () => {
                 <EmeraldTabPanel 
                     tabs={[
                         {
-                            label: 'Medicine',
-                            onClick: () => setActionTab('medicine'),
-                            isActive: actionTab === 'medicine'
+                            label: ItemUITag.Medicine,
+                            onClick: () => setActionTab(ItemUITag.Medicine),
+                            isActive: actionTab === ItemUITag.Medicine
                         },
                         {
-                            label: 'Balls',
-                            onClick: () => setActionTab('ball'),
-                            isActive: actionTab === 'ball'
+                            label: ItemUITag.Balls,
+                            onClick: () => setActionTab(ItemUITag.Balls),
+                            isActive: actionTab === ItemUITag.Balls
+                        },
+                        {
+                            label: ItemUITag.Evolution,
+                            onClick: () => setActionTab(ItemUITag.Evolution),
+                            isActive: actionTab === ItemUITag.Evolution
                         }
                     ]}
                     actions={[
@@ -179,7 +182,7 @@ export const VShop = () => {
                     <div className={styles.itemGrid}>
                         {displayItems
                             .filter(item => 
-                                actionTab === 'medicine' ? item.pocket === 'medicine' : item.pocket === 'balls'
+                                ItemUiTagItemsMap[actionTab].includes(item.apiName)
                             )
                             .map(item => (
                                 <div 
@@ -191,7 +194,7 @@ export const VShop = () => {
                                     {mode === 'sell' && <div className={styles.itemCount}>{item.totalSize}</div>}
                                     <img src={item.spriteUrl} alt={item.name} className={styles.itemIcon} />
                                     <div className={styles.itemInfo}>
-                                        <div className={styles.itemName}>{item.name}</div>
+                                        <div className={styles.itemName}>{CapitalizeFirstLetter(item.name)}</div>
                                         <div className={styles.itemPrice}>
                                             ${mode === 'buy' ? item.price : item.sellPrice}
                                         </div>
@@ -200,7 +203,7 @@ export const VShop = () => {
                             ))
                         }
                         {displayItems.filter(item => 
-                                actionTab === 'medicine' ? item.pocket === 'medicine' : item.pocket === 'balls'
+                                ItemUiTagItemsMap[actionTab].includes(item.apiName)
                             ).length === 0 && (
                             <div style={{ padding: 20, textAlign: 'center', color: '#7f8c8d', width: '100%', gridColumn: '1 / -1' }}>
                                 {mode === 'buy' ? 'Loading Shop...' : 'Your Bag is Empty'}
@@ -216,7 +219,7 @@ export const VShop = () => {
                     <div className={styles.dialogBox} onClick={e => e.stopPropagation()}>
                         <div className={styles.dialogHeader}>
                             <div className={styles.headerTopRow}>
-                                <div className={styles.itemNameLarge}>{selectedItem.name}</div>
+                                <div className={styles.itemNameLarge}>{CapitalizeFirstLetter(selectedItem.name)}</div>
                                 <button className={styles.closeBtn} onClick={() => setIsDialogOpen(false)}>×</button>
                             </div>
                             <div className={styles.headerContent}>

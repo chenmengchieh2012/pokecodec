@@ -1,7 +1,7 @@
 import { PokemonType } from "./pokemon";
 
 export interface PokeEncounterData {
-    id: number;
+    pokemonId: number;
     nameZh: string;
     nameEn: string;
     type: PokemonType[]; // 支援雙屬性

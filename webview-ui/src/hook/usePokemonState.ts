@@ -38,7 +38,7 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
     const handleSwitchPokemon = useCallback(async (pokemon: PokemonDao) => {
         setPokemon(pokemon);
         setPokemonState({action: PokemonStateAction.None});
-        await dialogRef.current?.setText(`Go! ${pokemon.name}!`);
+        await dialogRef.current?.setText(`Go! ${pokemon.name.toUpperCase()}!`);
     }, [dialogRef]);
 
     const handleThrowBall = useCallback(async (ballDao: PokeBallDao) => {
@@ -62,7 +62,7 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
         const isSuccess = Math.random() > 0.4; // 60% 捕獲率
         if (isSuccess) {
             setPokemonState(prev => ({ ...prev, action: PokemonStateAction.Caught }));
-            await dialogRef.current?.setText(`All right! ${currentPokemon.name} was caught!`);
+            await dialogRef.current?.setText(`All right! ${currentPokemon.name.toUpperCase()} was caught!`);
         } else {
             setPokemonState(prev => ({ ...prev, action: PokemonStateAction.Escaped }));
             await dialogRef.current?.setText(`Darn! The POKéMON broke free!`);

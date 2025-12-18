@@ -195,7 +195,7 @@ export const VPokemonBox = () => {
                         onDragStart={(e) => handleDragStart(e, p)}
                         onDragOver={handleDragOver}
                         onDrop={(e) => handleDrop(e, p)}
-                        title={p.name}
+                        title={p.name.toUpperCase()}
                     >
                         {selectedIds.has(p.uid) && <div className={styles.checkMark}>✔</div>}
                         {p.isShiny && !selectedIds.has(p.uid) && <div className={styles.shinyMark}>✨</div>}

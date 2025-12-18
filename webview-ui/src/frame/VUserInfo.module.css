@@ -1,0 +1,109 @@
+.cardContainer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.trainerCard {
+    /* Fit within 180x280 if needed, but usually landscape */
+    /* If width is constrained to 180, we might need to scale or use portrait */
+    /* Assuming user wants it to FIT in 180x280, let's try to make it responsive */
+    width: 100%;
+    max-width: 260px; /* Standard width */
+    aspect-ratio: 1.6; /* Landscape card ratio */
+    
+    background-color: #E0C068; /* Gold Color */
+    border: 4px solid #F8F8F8; /* White border */
+    outline: 4px solid #E0C068; /* Gold outline */
+    border-radius: 8px;
+    
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    font-family: 'Courier New', Courier, monospace;
+    color: #404040;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 8px;
+    border-bottom: 2px solid #A08840;
+    padding-bottom: 2px;
+}
+
+.title {
+    font-size: 14px;
+    font-weight: 900;
+    color: #404040;
+    text-shadow: 1px 1px 0 #F0E090;
+    letter-spacing: -0.5px;
+}
+
+.idNo {
+    font-size: 14px;
+    font-weight: bold;
+    color: #404040;
+}
+
+.content {
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+}
+
+.infoSection {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+}
+
+.label {
+    font-weight: bold;
+    color: #705828;
+}
+
+.value {
+    font-weight: bold;
+    color: #202020;
+    text-align: right;
+}
+
+.spriteSection {
+    width: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #F0E090;
+    border: 2px solid #A08840;
+    border-radius: 4px;
+    margin-left: 4px;
+}
+
+.trainerSprite {
+    width: 48px;
+    height: 48px;
+    image-rendering: pixelated;
+}
+
+.loading {
+    color: #fff;
+    text-align: center;
+    margin-top: 20px;
+}
+

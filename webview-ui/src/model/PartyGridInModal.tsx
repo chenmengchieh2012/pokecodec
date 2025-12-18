@@ -6,9 +6,10 @@ import { resolveAssetUrl } from '../utilities/vscode';
 interface PartyGridInModalProps {
     party: PokemonDao[];
     onPokemonClick: (pokemon: PokemonDao) => void;
+    disabledPartyUids?: string[];
 }
 
-export const PartyGridInModal: React.FC<PartyGridInModalProps> = ({ party, onPokemonClick }) => {
+export const PartyGridInModal: React.FC<PartyGridInModalProps> = ({ party, onPokemonClick, disabledPartyUids }) => {
     const getHpColor = (current: number, max: number) => {
         const ratio = current / max;
         if (ratio <= 0.2) return '#e74c3c'; // Red (hp-low)
@@ -23,11 +24,12 @@ export const PartyGridInModal: React.FC<PartyGridInModalProps> = ({ party, onPok
                     const max = p.maxHp ?? p.stats?.hp ?? 100;
                     const hpPercent = max > 0 ? (current / max) * 100 : 0;
                     const isFainted = current <= 0;
+                    const isDisabled = disabledPartyUids ? disabledPartyUids.includes(p.uid) : false;
 
                     return (
                         <button 
                             key={p.uid} 
-                            className={`${styles['party-card-btn']} ${isFainted ? styles.fainted : ''}`}
+                            className={`${styles['party-card-btn']} ${isFainted ? styles.fainted : ''} ${isDisabled ? styles.disabled : ''}`}
                             onClick={() => onPokemonClick(p)}
                         >
                             {/* 左側：寶可夢圖示 */}
@@ -42,7 +44,7 @@ export const PartyGridInModal: React.FC<PartyGridInModalProps> = ({ party, onPok
                             {/* 右側：資訊欄 (名字 + 血條 + 數值) */}
                             <div className={styles['party-info']}>
                                 <div className={styles['party-name']}>
-                                    <div>{p.name}</div>   
+                                    <div>{p.name.toUpperCase()}</div>   
                                     <div className={styles['hp-text']}>
                                         {current}/{max}
                                     </div>

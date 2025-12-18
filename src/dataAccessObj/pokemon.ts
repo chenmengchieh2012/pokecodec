@@ -19,6 +19,7 @@ export interface PokemonDao {
     uid: string;
     id: number;
     name: string;
+    nickname?: string;
     level: number;
     currentHp: number;
     maxHp: number;
@@ -143,7 +144,7 @@ export interface RawPokemonData {
         id: number;
         name: string;
         min_level: number | null;
-        trigger: string | null;
+        trigger: EvolutionTrigger;
         item: string | null;
         known_move: string | null;
     }[];
@@ -156,3 +157,12 @@ export interface RawPokemonData {
         evolution_chain_url: string;
     };
 }
+
+export const EvolutionTrigger = {
+    LevelUp: 'level-up',
+    UseItem: 'use-item',
+    Trade: 'trade',
+    Shed: 'shed',
+} as const;
+
+export type EvolutionTrigger = typeof EvolutionTrigger[keyof typeof EvolutionTrigger];

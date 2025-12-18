@@ -93,7 +93,7 @@ const TypePaths: Record<string, React.ReactNode> = {
 };
 
 export const PokemonTypeIcon: React.FC<PokemonTypeIconProps> = ({ type, size = 24, className, variant = 'circle' }) => {
-    const t = (type || 'normal').toLowerCase();
+    const t = (type || 'normal');
     const color = typeColors[t] || '#A8A77A';
     const icon = TypePaths[t] || TypePaths['normal'];
 

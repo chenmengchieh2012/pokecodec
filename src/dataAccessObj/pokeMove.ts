@@ -5,6 +5,7 @@ export interface PokemonMove {
     power: number | null;
     accuracy: number | null;
     pp: number;
+    priority: number;
     maxPP: number;
     effect: string;
 }
@@ -17,6 +18,7 @@ export function MoveDecorator(localMoveData: PokemonMove){
         power: localMoveData.power,
         accuracy: localMoveData.accuracy,
         pp: localMoveData.pp,
+        priority: localMoveData.priority,
         maxPP: localMoveData.pp,
         effect: localMoveData.effect
     };

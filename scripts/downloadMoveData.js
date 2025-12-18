@@ -20,6 +20,7 @@ function simplifyMoveData(data) {
         power: data.power,
         accuracy: data.accuracy,
         pp: data.pp,
+        priority: data.priority,
         maxPP: Math.floor(data.pp * 1.6), // Max PP is usually PP * 1.6 (PP Up x3)
         effect: data.effect_entries.find(e => e.language.name === 'en')?.short_effect || ''
     };

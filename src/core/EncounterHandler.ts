@@ -1,4 +1,4 @@
-import { BIOME_GROUPS, KantoPokemonEncounterData, TOXIC_POOL_IDS } from "../utils/KantoPokemonCatchRate";
+import { BIOME_GROUPS, KantoPokemonEncounterData, TOXIC_POOL_POKEMONIDS } from "../utils/KantoPokemonCatchRate";
 import { PokeEncounterData } from "../dataAccessObj/pokeEncounterData";
 import { PokemonDao, PokemonType } from "../dataAccessObj/pokemon";
 import { BiomeData, BiomeType } from "../dataAccessObj/BiomeData";
@@ -95,7 +95,7 @@ export const EncounterHandler = (pathResolver?: (path: string) => string): Encou
         // 2. 判斷深度區域 (黃金區間邏輯)
         if (depth >= 6) {
             // === TOXIC ZONE (深淵) ===
-            candidatePool = KantoPokemonEncounterData.filter(p => TOXIC_POOL_IDS.includes(p.id));
+            candidatePool = KantoPokemonEncounterData.filter(p => TOXIC_POOL_POKEMONIDS.includes(p.pokemonId));
             
         } else {
             // === NORMAL / GOLD ZONE ===

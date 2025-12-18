@@ -29,7 +29,7 @@ const TYPE_CHART: Record<PokemonType, Partial<Record<PokemonType, number>>> = {
 const PHYSICAL_TYPES = new Set<PokemonType>(['normal', 'fighting', 'flying', 'ground', 'rock', 'bug', 'ghost', 'poison', 'steel']);
 
 function getMoveCategory(type: string): 'physical' | 'special' {
-    return PHYSICAL_TYPES.has(type.toLowerCase() as PokemonType) ? 'physical' : 'special';
+    return PHYSICAL_TYPES.has(type as PokemonType) ? 'physical' : 'special';
 }
 
 export interface DamageResult {
@@ -42,12 +42,12 @@ export const HitHpCalculator = {
     // 1. 取得屬性相剋倍率
     getTypeEffectiveness: (moveType: string, targetTypes: string[]): number => {
         let multiplier = 1.0;
-        const typeData = TYPE_CHART[moveType.toLowerCase() as PokemonType];
+        const typeData = TYPE_CHART[moveType as PokemonType];
         
         if (!typeData) return 1.0;
 
         for (const type of targetTypes) {
-            const targetType = type.toLowerCase() as PokemonType;
+            const targetType = type as PokemonType;
             if (typeData[targetType] !== undefined) {
                 multiplier *= typeData[targetType]!;
             }
@@ -59,7 +59,7 @@ export const HitHpCalculator = {
     calculateDamage: (attacker: PokemonDao, defender: PokemonDao, move: PokemonMove): DamageResult => {
         if (!move.power) return { damage: 0, isCritical: false, effectiveness: 1 };
 
-        const moveType = move.type.toLowerCase();
+        const moveType = move.type;
         const category = getMoveCategory(moveType);
         
         // 決定攻擊與防禦數值
@@ -82,7 +82,7 @@ export const HitHpCalculator = {
         console.log(`[HitHpCalculator] Base damage before modifiers: ${damage}`);
 
         // 3. 攻擊屬性加成 (STAB - Same Type Attack Bonus)
-        if (attacker.types.some(t => t.toLowerCase() === moveType)) {
+        if (attacker.types.some(t => t === moveType)) {
             damage *= 1.5;
         }
 

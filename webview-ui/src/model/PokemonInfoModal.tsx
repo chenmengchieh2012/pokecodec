@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import styles from './PokemonInfoModal.module.css';
 import { getBallUrl } from '../utilities/util';
-import { PokemonDao, RawPokemonData } from '../../../src/dataAccessObj/pokemon';
+import { EvolutionTrigger, PokemonDao, RawPokemonData } from '../../../src/dataAccessObj/pokemon';
 import { MoveDecorator, PokemonMove } from '../../../src/dataAccessObj/pokeMove';
 import { resolveAssetUrl, vscode } from '../utilities/vscode';
 import pokemonGen1Data from '../../../src/data/pokemonGen1.json';
-import movesData from '../../../src/data/pokemonMoves.json';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
-import { EvolvePokemonPayload, UpdatePartyPokemonPayload } from '../../../src/dataAccessObj/MessagePayload';
+import { UpdatePartyPokemonPayload } from '../../../src/dataAccessObj/MessagePayload';
 import { PokemonTypeIcon } from '../utilities/pokemonTypeIcon';
+import { EvolutionModal } from './EvolutionModal';
+import { LearnableMoveListModal } from './LearnableMoveListModal';
 
 const IconClose = () => (
     <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
@@ -27,10 +28,28 @@ export const PokemonInfoModal: React.FC<PokemonInfoModalProps> = ({ isInParty,po
     const [activeTab, setActiveTab] = useState<'stats' | 'moves' | 'iv'>('stats');
     const [currentMoves, setCurrentMoves] = useState<PokemonMove[]>(pokemon.pokemonMoves);
     const [showEvolutionModal, setShowEvolutionModal] = useState(false);
+    const editNickNameRef = React.useRef<HTMLInputElement>(null);
+    const [isEditingNickName, setIsEditingNickName] = useState(false);
 
     React.useEffect(() => {
         setCurrentMoves(pokemon.pokemonMoves);
-    }, [pokemon.pokemonMoves]);
+    }, [pokemon.pokemonMoves, pokemon.name]);
+
+    const handleNameSave = () => {
+        const editNickNameRefCurrent = editNickNameRef.current;
+        if (!editNickNameRefCurrent) return;
+        const editedNickName = editNickNameRefCurrent.value;
+        if (editedNickName.trim() && editedNickName !== pokemon.name) {
+            const newPokemon = { ...pokemon, nickname: editedNickName.trim() };
+            if (isInParty) {
+                vscode.postMessage({
+                    command: MessageType.UpdatePartyPokemon,
+                    pokemon: newPokemon
+                });
+            }
+        }
+        setIsEditingNickName(false);
+    };
 
     const getEvolutionTarget = () => {
         const speciesData = (pokemonGen1Data as unknown as Record<string, RawPokemonData>)[pokemon.id.toString()];
@@ -48,19 +67,6 @@ export const PokemonInfoModal: React.FC<PokemonInfoModalProps> = ({ isInParty,po
 
     const evolutionTarget = getEvolutionTarget();
 
-    const handleEvolve = () => {
-        if (!evolutionTarget) return;
-        const evolvePayload: EvolvePokemonPayload = {
-            pokemonUid: pokemon.uid,
-            toSpeciesId: evolutionTarget.id,
-        };
-        vscode.postMessage({
-            command: MessageType.EvolvePokemon,
-            ...evolvePayload,
-        });
-        setShowEvolutionModal(false);
-        onClose(); 
-    };
 
     return (
         <div className={styles.modalOverlay} onClick={onClose}>
@@ -89,10 +95,9 @@ export const PokemonInfoModal: React.FC<PokemonInfoModalProps> = ({ isInParty,po
                 <div className={styles.summaryBody}>
                     {isInParty && showEvolutionModal && evolutionTarget ? (
                         <EvolutionModal 
-                            pokemon={pokemon} 
-                            evolutionTarget={evolutionTarget} 
-                            onConfirm={handleEvolve} 
-                            onCancel={() => setShowEvolutionModal(false)} 
+                            trigger={EvolutionTrigger.LevelUp}
+                            pokemon={pokemon}  
+                            onClose={() => setShowEvolutionModal(false)} 
                         />
                     ) : (
                         <>
@@ -115,12 +120,35 @@ export const PokemonInfoModal: React.FC<PokemonInfoModalProps> = ({ isInParty,po
                         </div>
                         <div className={styles.basicInfo}>
                             <div className={styles.dexNo}>No.{String(pokemon.id).padStart(3, '0')}</div>
-                            <div className={styles.pkmName}>{pokemon.name}</div>
+                            {isEditingNickName ? (
+                                <input 
+                                    className={styles.nameInput}
+                                    ref={editNickNameRef}
+                                    defaultValue={pokemon.nickname || pokemon.name}
+                                    onBlur={handleNameSave}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') handleNameSave();
+                                        if (e.key === 'Escape') {
+                                            setIsEditingNickName(false);
+                                        }
+                                    }}
+                                    autoFocus
+                                />
+                            ) : (
+                                <div 
+                                    className={styles.pkmName} 
+                                    onClick={() => isInParty && setIsEditingNickName(true)}
+                                    title={isInParty ? "Click to rename" : ""}
+                                    style={{ cursor: isInParty ? 'pointer' : 'default' }}
+                                >
+                                    {pokemon.nickname || pokemon.name}
+                                </div>
+                            )}
                             <div className={styles.lvlBadge}>Lv.{pokemon.level} ({Math.floor((pokemon.currentExp / pokemon.toNextLevelExp) * 100)}%)</div>
                         </div>
                         <div className={styles.typesRow}>
                                 {pokemon.types.map(t => (
-                                <span key={t} className={`${styles.typeTag} ${styles[t.toLowerCase()] || ''}`}>{t}</span>
+                                <span key={t} className={`${styles.typeTag} ${styles[t] || ''}`}>{t}</span>
                                 ))}
                         </div>
                     </div>
@@ -203,90 +231,6 @@ export const PokemonInfoModal: React.FC<PokemonInfoModalProps> = ({ isInParty,po
 };
 
 
-interface EvolutionModalProps {
-    pokemon: PokemonDao;
-    evolutionTarget: { id: number, name: string };
-    onConfirm: () => void;
-    onCancel: () => void;
-}
-
-const EvolutionModal: React.FC<EvolutionModalProps> = ({ pokemon, evolutionTarget, onConfirm, onCancel }) => {
-    return (
-        <div className={styles.modalSelectionOverlay}>
-            <div className={styles.modalSelectionContent}>
-                <div className={styles.moveSelectionHeader}>
-                    <span>Evolution Available!</span>
-                    <button className={styles.backBtn} onClick={onCancel}>Cancel</button>
-                </div>
-                <div className={styles.evolutionContent}>
-                    <div className={styles.evolutionRow}>
-                        <div className={styles.evolutionSprite}>
-                            <img src={resolveAssetUrl(`./sprites/pokemon/${pokemon.isShiny ? 'shiny' : 'normal'}/${pokemon.id}.gif`)} alt={pokemon.name} />
-                            <span>{pokemon.name}</span>
-                        </div>
-                        <div className={styles.evolutionArrow}>➔</div>
-                        <div className={styles.evolutionSprite}>
-                            <img src={resolveAssetUrl(`./sprites/pokemon/${pokemon.isShiny ? 'shiny' : 'normal'}/${evolutionTarget.id}.gif`)} alt={evolutionTarget.name} />
-                            <span>{evolutionTarget.name.toUpperCase()}</span>
-                        </div>
-                    </div>
-                    <button className={styles.evolveBtn} onClick={onConfirm}>EVOLVE</button>
-                </div>
-            </div>
-        </div>
-    );
-};
-
-interface LearnableMoveListModalProps {
-    pokemon: PokemonDao;
-    onSelect: (move: PokemonMove) => void;
-    onCancel: () => void;
-}
-
-const LearnableMoveListModal: React.FC<LearnableMoveListModalProps> = ({pokemon, onSelect, onCancel }) => {
-    
-    const getLearnableMoves = (focusPokemon: PokemonDao) => {
-        const speciesData = (pokemonGen1Data as unknown as Record<string, RawPokemonData>)[focusPokemon.id.toString()];
-        if (!speciesData) return [];
-
-        const currentMoveNames = new Set(focusPokemon.pokemonMoves.map(m => m.name));
-        
-        return speciesData.moves
-            .filter((m) => m.learn_method === 'level-up' && m.level_learned_at <= pokemon.level)
-            .filter((m) => !currentMoveNames.has(m.name.toUpperCase()))
-            .map((m) => {
-                const moveDetails = movesData[m.name as keyof typeof movesData];
-                if (!moveDetails) return null;
-                return {
-                    ...moveDetails,
-                    id: moveDetails.id,
-                    name: m.name,
-                } as PokemonMove;
-            })
-            .filter((m): m is PokemonMove => m !== null);
-    }
-    const learnableMoves = getLearnableMoves(pokemon);
-    
-    return (
-        <div className={styles.modalSelectionOverlay}>
-            <div className={styles.modalSelectionContent}>
-                <div className={styles.moveSelectionHeader}>
-                    <span>Select Move</span>
-                    <button className={styles.backBtn} onClick={onCancel}>Cancel</button>
-                </div>
-                <div className={styles.moveSelectionList}>
-                    {learnableMoves.map((move) => (
-                        <div key={move.name} className={styles.learnableMoveItem} onClick={() => onSelect(move)}>
-                            <span className={styles.moveName}><PokemonTypeIcon className={styles.moveTypeIcon} type={move.type} />{move.name.toUpperCase()}</span>
-                            <div className={styles.movePP}>PP {move.pp}/{move.pp}</div>
-                        </div>
-                    ))}
-                    {learnableMoves.length === 0 && <div className={styles.noMoves}>No moves to learn</div>}
-                </div>
-            </div>
-        </div>
-    );
-};
 
 interface MoveSelectorProps {
     isInParty: boolean;
@@ -332,7 +276,7 @@ const MoveSelector: React.FC<MoveSelectorProps> = ({ isInParty, pokemon, moves }
                         className={styles.moveItem}
                         onClick={() => { if (isInParty) handleMoveClick(idx); }}
                     >
-                        <span className={styles.moveName}><PokemonTypeIcon className={styles.moveTypeIcon} type={move.type} />{move.name}</span>
+                        <span className={styles.moveName}><PokemonTypeIcon className={styles.moveTypeIcon} type={move.type} />{move.name.toUpperCase()}</span>
                         <div className={styles.movePP}>PP {move.pp}/{move.maxPP}</div>
                     </div>
                 ))

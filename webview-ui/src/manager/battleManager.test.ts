@@ -120,8 +120,8 @@ describe('BattleManager', () => {
 
         const [state] = result.current;
         expect(state.gameState).toBe(GameState.Searching);
-        expect(state.myPokemon?.name).toBe('Pikachu');
-        expect(state.opponentPokemon?.name).toBe('Charmander');
+        expect(state.myPokemon?.name).toBe('pikachu');
+        expect(state.opponentPokemon?.name).toBe('charmander');
     });
 
     it('handles battle start', async () => {

@@ -300,6 +300,7 @@
     color: #3080ff;
 }
 
+
 .movesList {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -350,87 +351,7 @@
     margin-top: 20px;
 }
 
-.modalSelectionOverlay {
-    position: fixed;
-    top: 0;
-    left: 10px;
-    right: 10px;
-    bottom: 0;
-    z-index: 2000;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
 
-.modalSelectionContent {
-    margin: 0;
-    background-color: #f8f8f0;
-    border: 3px solid #303030;
-    border-radius: 12px;
-    border-bottom-right-radius: 12px;
-    box-shadow: 8px 8px 0 rgba(0,0,0,0.3);
-    display: flex;
-    flex-direction: column;
-    margin-top: 4px;
-    overflow: hidden;
-}
-
-/* --- Evolution Modal --- */
-.evolutionContent {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 10px;
-}
-
-.evolutionRow {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.evolutionSprite {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-}
-
-.evolutionSprite img {
-    width: 48px;
-    height: 48px;
-    image-rendering: pixelated;
-}
-
-.evolutionSprite span {
-    font-size: 10px;
-    font-weight: bold;
-}
-
-.evolutionArrow {
-    font-size: 20px;
-    color: #555;
-}
-
-.evolveBtn {
-    background: #4CAF50;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 12px;
-    box-shadow: 0 2px 0 #2E7D32;
-}
-
-.evolveBtn:active {
-    transform: translateY(2px);
-    box-shadow: none;
-}
 
 .evolveTriggerBtn {
     background: #FF9800;
@@ -450,62 +371,18 @@
     50% { transform: scale(1.1); }
     100% { transform: scale(1); }
 }
-
-
-/* --- Learnable Move List Modal --- */
-
-.moveSelectionHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
-    padding: 4px 8px;
-    background: #e0e0e0;
-    border-bottom: 1px solid #ccc;
+.nameInput {
+    font-family: 'Press Start 2P', monospace;
     font-size: 12px;
-    font-weight: bold;
-}
-
-.moveSelectionList {
-    flex: 1;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    padding: 2px;
-}
-
-
-
-.learnableMoveItem {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 4px;
-    background: #f8f8f8;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 10px;
-}
-
-.learnableMoveItem:hover {
-    background: #eef;
-    border-color: #aaf;
-}
-
-.backBtn {
-    background: var(--tab-active);
-    border: 2px solid #303030;
-    padding: 0 8px;
-    font-family: inherit;
-    font-size: 10px;
-    cursor: pointer;
-    color: var(--text-dark);
-    box-shadow: 1px 1px 0 #303030;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    height: 24px;
+    color: #202020;
+    text-transform: uppercase;
+    line-height: 1;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #202020;
+    width: 100%;
+    outline: none;
+    padding: 0;
+    margin: 0;
+    text-align: center;
 }

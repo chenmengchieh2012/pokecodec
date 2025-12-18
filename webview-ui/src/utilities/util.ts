@@ -25,3 +25,8 @@ export const getBallUrl = (ballName: string = 'poke-ball') => {
         return resolveAssetUrl(`./sprites/items/poke-ball.png`);
     }
 };
+
+export const CapitalizeFirstLetter = (str: string) => {
+    if (!str) return str;
+    return str.charAt(0).toUpperCase() + str.slice(1);
+};

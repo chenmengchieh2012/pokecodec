@@ -126,7 +126,9 @@ async function main() {
         'antidote', 'paralyze-heal', 'awakening', 'burn-heal', 'ice-heal', 'full-heal',
         'revive', 'max-revive',
         'ether', 'max-ether', 'elixir', 'max-elixir',
-        'oran-berry', 'sitrus-berry', 'lum-berry'
+        'oran-berry', 'sitrus-berry', 'lum-berry',
+        'fire-stone', 'water-stone', 'thunder-stone', 'leaf-stone', 'moon-stone', 'sun-stone',
+        'protein', 'iron', 'calcium', 'zinc', 'carbos'
     ];
 
     console.log('\nDownloading items...');

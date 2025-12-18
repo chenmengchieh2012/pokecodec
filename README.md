@@ -66,3 +66,10 @@ This project is built using **VS Code Extension API**, **React**, and **Vite**.
 This project is for educational and personal use.
 
 *Disclaimer: This is a fan-made project and is not affiliated with, endorsed, sponsored, or specifically approved by Nintendo, Game Freak, or The Pokémon Company. Pokémon and Pokémon character names are trademarks of Nintendo.*
+
+## TODO
+- [ ]: first pokemon choosing
+- [ ]: user playing time
+- [ ]: encounter event
+- [ ]: money earning logic
+- [ ]: miss move
