@@ -160,7 +160,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "A strange seed was planted on its back at birth. The plant sprouts and grows with this POKéMON.",
       "genus": "Seed Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/1/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/1/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "2": {
@@ -324,7 +326,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "When the bulb on its back grows large, it appears to lose the ability to stand on its hind legs.",
       "genus": "Seed Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/1/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/1/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "3": {
@@ -484,7 +488,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "The plant blooms when it is absorbing solar energy. It stays on the move to seek sunlight.",
       "genus": "Seed Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/1/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/1/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "4": {
@@ -687,7 +693,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "Obviously prefers hot places. When it rains, steam is said to spout from the tip of its tail.",
       "genus": "Lizard Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/2/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/2/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "5": {
@@ -890,7 +898,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "When it swings its burning tail, it elevates the temperature to unbearably high levels.",
       "genus": "Flame Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/2/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/2/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "6": {
@@ -1105,7 +1115,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "Spits fire that is hot enough to melt boulders. Known to cause forest fires unintentionally.",
       "genus": "Flame Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/2/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/2/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "7": {
@@ -1303,7 +1315,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "After birth, its back swells and hardens into a shell. Powerfully sprays foam from its mouth.",
       "genus": "Tiny Turtle Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/3/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/3/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "8": {
@@ -1501,7 +1515,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "Often hides in water to stalk unwary prey. For swimming fast, it moves its ears to maintain balance.",
       "genus": "Turtle Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/3/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/3/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "9": {
@@ -1705,7 +1721,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "A brutal POKéMON with pressurized water jets on its shell. They are used for high speed tackles.",
       "genus": "Shellfish Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/3/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/3/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "10": {
@@ -1763,7 +1781,9 @@
       "growth_rate": "medium",
       "flavor_text": "Its short feet are tipped with suction pads that enable it to tirelessly climb slopes and walls.",
       "genus": "Worm Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/4/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/4/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "11": {
@@ -1812,7 +1832,9 @@
       "growth_rate": "medium",
       "flavor_text": "This POKéMON is vulnerable to attack while its shell is soft, exposing its weak and tender body.",
       "genus": "Cocoon Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/4/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/4/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "12": {
@@ -1987,7 +2009,9 @@
       "growth_rate": "medium",
       "flavor_text": "In battle, it flaps its wings at high speed to release highly toxic dust into the air.",
       "genus": "Butterfly Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/4/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/4/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "13": {
@@ -2046,7 +2070,9 @@
       "growth_rate": "medium",
       "flavor_text": "Often found in forests, eating leaves. It has a sharp venomous stinger on its head.",
       "genus": "Hairy Bug Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/5/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/5/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "14": {
@@ -2096,7 +2122,9 @@
       "growth_rate": "medium",
       "flavor_text": "Almost incapable of moving, this POKéMON can only harden its shell to protect itself from predators.",
       "genus": "Cocoon Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/5/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/5/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "15": {
@@ -2241,7 +2269,9 @@
       "growth_rate": "medium",
       "flavor_text": "Flies at high speed and attacks using its large venomous stingers on its forelegs and tail.",
       "genus": "Poison Bee Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/5/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/5/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "16": {
@@ -2399,7 +2429,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "A common sight in forests and woods. It flaps its wings at ground level to kick up blinding sand.",
       "genus": "Tiny Bird Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/6/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/6/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "17": {
@@ -2557,7 +2589,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "Very protective of its sprawling territorial area, this POKéMON will fiercely peck at any intruder.",
       "genus": "Bird Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/6/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/6/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "18": {
@@ -2711,7 +2745,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "When hunting, it skims the surface of water at high speed to pick off unwary prey such as MAGIKARP.",
       "genus": "Bird Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/6/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/6/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "19": {
@@ -2883,7 +2919,9 @@
       "growth_rate": "medium",
       "flavor_text": "Bites anything when it attacks. Small and very quick, it is a common sight in many places.",
       "genus": "Mouse Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/7/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/7/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "20": {
@@ -3056,7 +3094,9 @@
       "growth_rate": "medium",
       "flavor_text": "It uses its whis­ kers to maintain its balance. It apparently slows down if they are cut off.",
       "genus": "Mouse Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/7/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/7/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "21": {
@@ -3210,7 +3250,9 @@
       "growth_rate": "medium",
       "flavor_text": "Eats bugs in grassy areas. It has to flap its short wings at high speed to stay airborne.",
       "genus": "Tiny Bird Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/8/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/8/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "22": {
@@ -3360,7 +3402,9 @@
       "growth_rate": "medium",
       "flavor_text": "With its huge and magnificent wings, it can keep aloft without ever having to land for rest.",
       "genus": "Beak Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/8/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/8/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "23": {
@@ -3532,7 +3576,9 @@
       "growth_rate": "medium",
       "flavor_text": "Moves silently and stealthily. Eats the eggs of birds, such as PIDGEY and SPEAROW, whole.",
       "genus": "Snake Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/9/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/9/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "24": {
@@ -3700,7 +3746,9 @@
       "growth_rate": "medium",
       "flavor_text": "It is rumored that the ferocious warning markings on its belly differ from area to area.",
       "genus": "Cobra Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/9/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/9/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "25": {
@@ -3898,7 +3946,9 @@
       "growth_rate": "medium",
       "flavor_text": "When several of these POKéMON gather, their electricity could build and cause lightning storms.",
       "genus": "Mouse Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/10/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/10/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "26": {
@@ -4062,7 +4112,9 @@
       "growth_rate": "medium",
       "flavor_text": "Its long tail serves as a ground to protect itself from its own high voltage power.",
       "genus": "Mouse Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/10/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/10/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "27": {
@@ -4240,7 +4292,9 @@
       "growth_rate": "medium",
       "flavor_text": "Burrows deep underground in arid locations far from water. It only emerges to hunt for food.",
       "genus": "Mouse Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/11/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/11/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "28": {
@@ -4414,7 +4468,9 @@
       "growth_rate": "medium",
       "flavor_text": "Curls up into a spiny ball when threatened. It can roll while curled up to attack or escape.",
       "genus": "Mouse Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/11/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/11/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "29": {
@@ -4581,7 +4637,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "Although small, its venomous barbs render this POKéMON dangerous. The female has smaller horns.",
       "genus": "Poison Pin Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/12/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/12/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "30": {
@@ -4768,7 +4826,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "The female's horn develops slowly. Prefers physical attacks such as clawing and biting.",
       "genus": "Poison Pin Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/12/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/12/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "31": {
@@ -4997,7 +5057,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "Its hard scales provide strong protection. It uses its hefty bulk to execute powerful moves.",
       "genus": "Drill Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/12/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/12/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "32": {
@@ -5164,7 +5226,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "Stiffens its ears to sense danger. The larger its horns, the more powerful its secreted venom.",
       "genus": "Poison Pin Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/13/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/13/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "33": {
@@ -5346,7 +5410,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "An aggressive POKéMON that is quick to attack. The horn on its head secretes a powerful venom.",
       "genus": "Poison Pin Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/13/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/13/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "34": {
@@ -5575,7 +5641,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "It uses its powerful tail in battle to smash, constrict, then break the prey's bones.",
       "genus": "Drill Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/13/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/13/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "35": {
@@ -5827,7 +5895,9 @@
       "growth_rate": "fast",
       "flavor_text": "Its magical and cute appeal has many admirers. It is rare and found only in certain areas.",
       "genus": "Fairy Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/14/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/14/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "36": {
@@ -6055,7 +6125,9 @@
       "growth_rate": "fast",
       "flavor_text": "A timid fairy POKéMON that is rarely seen. It will run and hide the moment it senses people.",
       "genus": "Fairy Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/14/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/14/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "37": {
@@ -6213,7 +6285,9 @@
       "growth_rate": "medium",
       "flavor_text": "At the time of birth, it has just one tail. The tail splits from its tip as it grows older.",
       "genus": "Fox Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/15/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/15/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "38": {
@@ -6352,7 +6426,9 @@
       "growth_rate": "medium",
       "flavor_text": "Very smart and very vengeful. Grabbing one of its many tails could result in a 1000-year curse.",
       "genus": "Fox Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/15/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/15/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "39": {
@@ -6590,7 +6666,9 @@
       "growth_rate": "fast",
       "flavor_text": "When its huge eyes light up, it sings a mysteriously soothing melody that lulls its enemies to sleep.",
       "genus": "Balloon Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/16/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/16/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "40": {
@@ -6819,7 +6897,9 @@
       "growth_rate": "fast",
       "flavor_text": "The body is soft and rubbery. When angered, it will suck in air and inflate itself to an enormous size.",
       "genus": "Balloon Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/16/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/16/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "41": {
@@ -6963,7 +7043,9 @@
       "growth_rate": "medium",
       "flavor_text": "Forms colonies in perpetually dark places. Uses ultrasonic waves to identify and approach targets.",
       "genus": "Bat Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/17/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/17/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "42": {
@@ -7117,7 +7199,9 @@
       "growth_rate": "medium",
       "flavor_text": "Once it strikes, it will not stop draining energy from the victim even if it gets too heavy to fly.",
       "genus": "Bat Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/17/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/17/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "43": {
@@ -7266,7 +7350,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "During the day, it keeps its face buried in the ground. At night, it wanders around sowing its seeds.",
       "genus": "Weed Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/18/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/18/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "44": {
@@ -7423,7 +7509,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "The fluid that oozes from its mouth isn't drool. It is a nectar that is used to attract prey.",
       "genus": "Weed Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/18/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/18/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "45": {
@@ -7568,7 +7656,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "The larger its petals, the more toxic pollen it contains. Its big head is heavy and hard to hold up.",
       "genus": "Flower Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/18/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/18/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "46": {
@@ -7736,7 +7826,9 @@
       "growth_rate": "medium",
       "flavor_text": "Burrows to suck tree roots. The mushrooms on its back grow by draw­ ing nutrients from the bug host.",
       "genus": "Mushroom Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/19/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/19/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "47": {
@@ -7900,7 +7992,9 @@
       "growth_rate": "medium",
       "flavor_text": "A host-parasite pair in which the parasite mushroom has taken over the host bug. Prefers damp places.",
       "genus": "Mushroom Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/19/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/19/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "48": {
@@ -8073,7 +8167,9 @@
       "growth_rate": "medium",
       "flavor_text": "Lives in the shadows of tall trees where it eats insects. It is attracted by light at night.",
       "genus": "Insect Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/20/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/20/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "49": {
@@ -8262,7 +8358,9 @@
       "growth_rate": "medium",
       "flavor_text": "The dust-like scales covering its wings are color coded to indicate the kinds of poison it has.",
       "genus": "Poison Moth Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/20/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/20/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "50": {
@@ -8409,7 +8507,9 @@
       "growth_rate": "medium",
       "flavor_text": "Lives about one yard underground where it feeds on plant roots. It sometimes appears above ground.",
       "genus": "Mole Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/21/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/21/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "51": {
@@ -8552,7 +8652,9 @@
       "growth_rate": "medium",
       "flavor_text": "A team of DIGLETT triplets. It triggers huge earthquakes by burrowing 60 miles underground.",
       "genus": "Mole Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/21/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/21/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "52": {
@@ -8727,7 +8829,9 @@
       "growth_rate": "medium",
       "flavor_text": "Adores circular objects. Wanders the streets on a nightly basis to look for dropped loose change.",
       "genus": "Scratch Cat Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/22/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/22/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "53": {
@@ -8890,7 +8994,9 @@
       "growth_rate": "medium",
       "flavor_text": "Although its fur has many admirers, it is tough to raise as a pet because of its fickle meanness.",
       "genus": "Classy Cat Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/22/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/22/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "54": {
@@ -9097,7 +9203,9 @@
       "growth_rate": "medium",
       "flavor_text": "While lulling its enemies with its vacant look, this wily POKéMON will use psychokinetic powers.",
       "genus": "Duck Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/23/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/23/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "55": {
@@ -9300,7 +9408,9 @@
       "growth_rate": "medium",
       "flavor_text": "Often seen swim­ ming elegantly by lake shores. It is often mistaken for the Japanese monster, Kappa.",
       "genus": "Duck Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/23/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/23/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "56": {
@@ -9512,7 +9622,9 @@
       "growth_rate": "medium",
       "flavor_text": "Extremely quick to anger. It could be docile one moment then thrashing away the next instant.",
       "genus": "Pig Monkey Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/24/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/24/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "57": {
@@ -9729,7 +9841,9 @@
       "growth_rate": "medium",
       "flavor_text": "Always furious and tenacious to boot. It will not abandon chasing its quarry until it is caught.",
       "genus": "Pig Monkey Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/24/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/24/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "58": {
@@ -9891,7 +10005,9 @@
       "growth_rate": "slow",
       "flavor_text": "Very protective of its territory. It will bark and bite to repel intruders from its space.",
       "genus": "Puppy Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/25/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/25/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "59": {
@@ -10039,7 +10155,9 @@
       "growth_rate": "slow",
       "flavor_text": "A POKéMON that has been admired since the past for its beauty. It runs agilely as if on wings.",
       "genus": "Legendary Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/25/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/25/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "60": {
@@ -10206,7 +10324,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "Its newly grown legs prevent it from running. It appears to prefer swimming than trying to stand.",
       "genus": "Tadpole Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/26/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/26/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "61": {
@@ -10426,7 +10546,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "Capable of living in or out of water. When out of water, it sweats to keep its body slimy.",
       "genus": "Tadpole Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/26/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/26/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "62": {
@@ -10620,7 +10742,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "An adept swimmer at both the front crawl and breast stroke. Easily overtakes the best human swimmers.",
       "genus": "Tadpole Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/26/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/26/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "63": {
@@ -10792,7 +10916,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "Using its ability to read minds, it will identify impending danger and TELEPORT to safety.",
       "genus": "Psi Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/27/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/27/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "64": {
@@ -10994,7 +11120,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "It emits special alpha waves from its body that induce headaches just by being close by.",
       "genus": "Psi Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/27/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/27/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "65": {
@@ -11192,7 +11320,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "Its brain can out­ perform a super­ computer. Its intelligence quotient is said to be 5,000.",
       "genus": "Psi Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/27/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/27/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "66": {
@@ -11379,7 +11509,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "Loves to build its muscles. It trains in all styles of martial arts to become even stronger.",
       "genus": "Superpower Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/28/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/28/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "67": {
@@ -11566,7 +11698,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "Its muscular body is so powerful, it must wear a power save belt to be able to regulate its motions.",
       "genus": "Superpower Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/28/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/28/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "68": {
@@ -11749,7 +11883,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "Using its heavy muscles, it throws powerful punches that can send the victim clear over the horizon.",
       "genus": "Superpower Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/28/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/28/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "69": {
@@ -11913,7 +12049,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "A carnivorous POKéMON that traps and eats bugs. It uses its root feet to soak up needed moisture.",
       "genus": "Flower Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/29/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/29/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "70": {
@@ -12077,7 +12215,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "It spits out POISONPOWDER to immobilize the enemy and then finishes it with a spray of ACID.",
       "genus": "Flycatcher Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/29/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/29/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "71": {
@@ -12227,7 +12367,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "Said to live in huge colonies deep in jungles, although no one has ever returned from there.",
       "genus": "Flycatcher Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/29/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/29/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "72": {
@@ -12415,7 +12557,9 @@
       "growth_rate": "slow",
       "flavor_text": "Drifts in shallow seas. Anglers who hook them by accident are often punished by its stinging acid.",
       "genus": "Jellyfish Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/30/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/30/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "73": {
@@ -12599,7 +12743,9 @@
       "growth_rate": "slow",
       "flavor_text": "The tentacles are normally kept short. On hunts, they are extended to ensnare and immobilize prey.",
       "genus": "Jellyfish Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/30/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/30/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "74": {
@@ -12787,7 +12933,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "Found in fields and mountains. Mistaking them for boulders, people often step or trip on them.",
       "genus": "Rock Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/31/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/31/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "75": {
@@ -12975,7 +13123,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "Rolls down slopes to move. It rolls over any obstacle without slowing or changing its direction.",
       "genus": "Rock Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/31/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/31/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "76": {
@@ -13164,7 +13314,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "Its boulder-like body is extremely hard. It can easily withstand dynamite blasts without damage.",
       "genus": "Megaton Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/31/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/31/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "77": {
@@ -13321,7 +13473,9 @@
       "growth_rate": "medium",
       "flavor_text": "Its hooves are 10 times harder than diamonds. It can trample anything completely flat in little time.",
       "genus": "Fire Horse Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/32/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/32/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "78": {
@@ -13474,7 +13628,9 @@
       "growth_rate": "medium",
       "flavor_text": "Very competitive, this POKéMON will chase anything that moves fast in the hopes of racing it.",
       "genus": "Fire Horse Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/32/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/32/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "79": {
@@ -13710,7 +13866,9 @@
       "growth_rate": "medium",
       "flavor_text": "Incredibly slow and dopey. It takes 5 seconds for it to feel pain when under attack.",
       "genus": "Dopey Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/33/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/33/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "80": {
@@ -13964,7 +14122,9 @@
       "growth_rate": "medium",
       "flavor_text": "The SHELLDER that is latched onto SLOWPOKE's tail is said to feed on the host's left over scraps.",
       "genus": "Hermit Crab Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/33/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/33/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "81": {
@@ -14122,7 +14282,9 @@
       "growth_rate": "medium",
       "flavor_text": "Uses anti-gravity to stay suspended. Appears without warning and uses THUNDER WAVE and similar moves.",
       "genus": "Magnet Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/34/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/34/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "82": {
@@ -14285,7 +14447,9 @@
       "growth_rate": "medium",
       "flavor_text": "Formed by several MAGNEMITEs linked together. They frequently appear when sunspots flare up.",
       "genus": "Magnet Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/34/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/34/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "83": {
@@ -14458,7 +14622,9 @@
       "growth_rate": "medium",
       "flavor_text": "The sprig of green onions it holds is its weapon. It is used much like a metal sword.",
       "genus": "Wild Duck Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/35/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/35/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "84": {
@@ -14616,7 +14782,9 @@
       "growth_rate": "medium",
       "flavor_text": "A bird that makes up for its poor flying with its fast foot speed. Leaves giant footprints.",
       "genus": "Twin Bird Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/36/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/36/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "85": {
@@ -14770,7 +14938,9 @@
       "growth_rate": "medium",
       "flavor_text": "Uses its three brains to execute complex plans. While two heads sleep, one head stays awake.",
       "genus": "Triple Bird Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/36/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/36/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "86": {
@@ -14932,7 +15102,9 @@
       "growth_rate": "medium",
       "flavor_text": "The protruding horn on its head is very hard. It is used for bashing through thick ice.",
       "genus": "Sea Lion Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/37/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/37/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "87": {
@@ -15091,7 +15263,9 @@
       "growth_rate": "medium",
       "flavor_text": "Stores thermal energy in its body. Swims at a steady 8 knots even in intensely cold waters.",
       "genus": "Sea Lion Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/37/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/37/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "88": {
@@ -15253,7 +15427,9 @@
       "growth_rate": "medium",
       "flavor_text": "Appears in filthy areas. Thrives by sucking up polluted sludge that is pumped out of factories.",
       "genus": "Sludge Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/38/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/38/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "89": {
@@ -15411,7 +15587,9 @@
       "growth_rate": "medium",
       "flavor_text": "Thickly covered with a filthy, vile sludge. It is so toxic, even its footprints contain poison.",
       "genus": "Sludge Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/38/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/38/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "90": {
@@ -15593,7 +15771,9 @@
       "growth_rate": "slow",
       "flavor_text": "Its hard shell repels any kind of attack. It is vulnerable only when its shell is open.",
       "genus": "Bivalve Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/39/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/39/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "91": {
@@ -15767,7 +15947,9 @@
       "growth_rate": "slow",
       "flavor_text": "When attacked, it launches its horns in quick volleys. Its innards have never been seen.",
       "genus": "Bivalve Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/39/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/39/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "92": {
@@ -15907,7 +16089,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "Almost invisible, this gaseous POKéMON cloaks the target and puts it to sleep without notice.",
       "genus": "Gas Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/40/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/40/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "93": {
@@ -16047,7 +16231,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "Because of its ability to slip through block walls, it is said to be from an­ other dimension.",
       "genus": "Gas Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/40/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/40/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "94": {
@@ -16238,7 +16424,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "Under a full moon, this POKéMON likes to mimic the shadows of people and laugh at their fright.",
       "genus": "Shadow Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/40/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/40/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "95": {
@@ -16411,7 +16599,9 @@
       "growth_rate": "medium",
       "flavor_text": "As it grows, the stone portions of its body harden to become similar to a diamond, but colored black.",
       "genus": "Rock Snake Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/41/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/41/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "96": {
@@ -16623,7 +16813,9 @@
       "growth_rate": "medium",
       "flavor_text": "Puts enemies to sleep then eats their dreams. Occasionally gets sick from eating bad dreams.",
       "genus": "Hypnosis Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/42/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/42/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "97": {
@@ -16831,7 +17023,9 @@
       "growth_rate": "medium",
       "flavor_text": "When it locks eyes with an enemy, it will use a mix of PSI moves such as HYPNOSIS and CONFUSION.",
       "genus": "Hypnosis Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/42/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/42/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "98": {
@@ -17008,7 +17202,9 @@
       "growth_rate": "medium",
       "flavor_text": "Its pincers are not only powerful weapons, they are used for balance when walking sideways.",
       "genus": "River Crab Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/43/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/43/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "99": {
@@ -17181,7 +17377,9 @@
       "growth_rate": "medium",
       "flavor_text": "The large pincer has 10000 hp of crushing power. However, its huge size makes it unwieldy to use.",
       "genus": "Pincer Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/43/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/43/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "100": {
@@ -17338,7 +17536,9 @@
       "growth_rate": "medium",
       "flavor_text": "Usually found in power plants. Easily mistaken for a POKé BALL, they have zapped many people.",
       "genus": "Ball Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/44/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/44/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "101": {
@@ -17496,7 +17696,9 @@
       "growth_rate": "medium",
       "flavor_text": "It stores electric energy under very high pressure. It often explodes with little or no provocation.",
       "genus": "Ball Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/44/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/44/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "102": {
@@ -17660,7 +17862,9 @@
       "growth_rate": "slow",
       "flavor_text": "Often mistaken for eggs. When disturbed, they quickly gather and attack in swarms.",
       "genus": "Egg Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/45/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/45/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "103": {
@@ -17815,7 +18019,9 @@
       "growth_rate": "slow",
       "flavor_text": "Legend has it that on rare occasions, one of its heads will drop off and continue on as an EXEGGCUTE.",
       "genus": "Coconut Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/45/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/45/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "104": {
@@ -18032,7 +18238,9 @@
       "growth_rate": "medium",
       "flavor_text": "Because it never removes its skull helmet, no one has ever seen this POKéMON's real face.",
       "genus": "Lonely Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/46/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/46/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "105": {
@@ -18245,7 +18453,9 @@
       "growth_rate": "medium",
       "flavor_text": "The bone it holds is its key weapon. It throws the bone skillfully like a boomerang to KO targets.",
       "genus": "Bone Keeper Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/46/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/46/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "106": {
@@ -18413,7 +18623,9 @@
       "growth_rate": "medium",
       "flavor_text": "When in a hurry, its legs lengthen progressively. It runs smoothly with extra long, loping strides.",
       "genus": "Kicking Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/47/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/47/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "107": {
@@ -18576,7 +18788,9 @@
       "growth_rate": "medium",
       "flavor_text": "While apparently doing nothing, it fires punches in lightning fast volleys that are impossible to see.",
       "genus": "Punching Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/47/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/47/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "108": {
@@ -18813,7 +19027,9 @@
       "growth_rate": "medium",
       "flavor_text": "Its tongue can be extended like a chameleon's. It leaves a tingling sensation when it licks enemies.",
       "genus": "Licking Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/48/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/48/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "109": {
@@ -18950,7 +19166,9 @@
       "growth_rate": "medium",
       "flavor_text": "Because it stores several kinds of toxic gases in its body, it is prone to exploding without warning.",
       "genus": "Poison Gas Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/49/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/49/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "110": {
@@ -19083,7 +19301,9 @@
       "growth_rate": "medium",
       "flavor_text": "Where two kinds of poison gases meet, 2 KOFFINGs can fuse into a WEEZING over many years.",
       "genus": "Poison Gas Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/49/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/49/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "111": {
@@ -19261,7 +19481,9 @@
       "growth_rate": "slow",
       "flavor_text": "Its massive bones are 1000 times harder than human bones. It can easily knock a trailer flying.",
       "genus": "Spikes Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/50/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/50/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "112": {
@@ -19499,7 +19721,9 @@
       "growth_rate": "slow",
       "flavor_text": "Protected by an armor-like hide, it is capable of living in molten lava of 3,600 degrees.",
       "genus": "Drill Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/50/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/50/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "113": {
@@ -19771,7 +19995,9 @@
       "growth_rate": "fast",
       "flavor_text": "A rare and elusive POKéMON that is said to bring happiness to those who manage to get it.",
       "genus": "Egg Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/51/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/51/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "114": {
@@ -19948,7 +20174,9 @@
       "growth_rate": "medium",
       "flavor_text": "The whole body is swathed with wide vines that are similar to sea­ weed. Its vines shake as it walks.",
       "genus": "Vine Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/52/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/52/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "115": {
@@ -20161,7 +20389,9 @@
       "growth_rate": "medium",
       "flavor_text": "The infant rarely ventures out of its mother's protective pouch until it is 3 years old.",
       "genus": "Parent Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/53/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/53/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "116": {
@@ -20318,7 +20548,9 @@
       "growth_rate": "medium",
       "flavor_text": "Known to shoot down flying bugs with precision blasts of ink from the surface of the water.",
       "genus": "Dragon Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/54/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/54/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "117": {
@@ -20480,7 +20712,9 @@
       "growth_rate": "medium",
       "flavor_text": "Capable of swim­ ming backwards by rapidly flapping its wing-like pectoral fins and stout tail.",
       "genus": "Dragon Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/54/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/54/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "118": {
@@ -20652,7 +20886,9 @@
       "growth_rate": "medium",
       "flavor_text": "Its tail fin billows like an elegant ballroom dress, giving it the nickname of the Water Queen.",
       "genus": "Goldfish Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/55/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/55/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "119": {
@@ -20820,7 +21056,9 @@
       "growth_rate": "medium",
       "flavor_text": "In the autumn spawning season, they can be seen swimming power­ fully up rivers and creeks.",
       "genus": "Goldfish Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/55/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/55/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "120": {
@@ -21027,7 +21265,9 @@
       "growth_rate": "slow",
       "flavor_text": "An enigmatic POKéMON that can effortlessly regenerate any appendage it loses in battle.",
       "genus": "Star Shape Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/56/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/56/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "121": {
@@ -21211,7 +21451,9 @@
       "growth_rate": "slow",
       "flavor_text": "Its central core glows with the seven colors of the rainbow. Some people value the core as a gem.",
       "genus": "Mysterious Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/56/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/56/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "122": {
@@ -21424,7 +21666,9 @@
       "growth_rate": "medium",
       "flavor_text": "If interrupted while it is miming, it will slap around the offender with its broad hands.",
       "genus": "Barrier Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/57/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/57/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "123": {
@@ -21585,7 +21829,9 @@
       "growth_rate": "medium",
       "flavor_text": "With ninja-like agility and speed, it can create the illusion that there is more than one.",
       "genus": "Mantis Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/58/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/58/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "124": {
@@ -21789,7 +22035,9 @@
       "growth_rate": "medium",
       "flavor_text": "It seductively wiggles its hips as it walks. It can cause people to dance in unison with it.",
       "genus": "Human Shape Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/59/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/59/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "125": {
@@ -22007,7 +22255,9 @@
       "growth_rate": "medium",
       "flavor_text": "Normally found near power plants, they can wander away and cause major blackouts in cities.",
       "genus": "Electric Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/60/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/60/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "126": {
@@ -22205,7 +22455,9 @@
       "growth_rate": "medium",
       "flavor_text": "Its body always burns with an orange glow that enables it to hide perfectly among flames.",
       "genus": "Spitfire Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/61/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/61/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "127": {
@@ -22358,7 +22610,9 @@
       "growth_rate": "slow",
       "flavor_text": "If it fails to crush the victim in its pincers, it will swing it around and toss it hard.",
       "genus": "Stag Beetle Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/62/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/62/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "128": {
@@ -22526,7 +22780,9 @@
       "growth_rate": "slow",
       "flavor_text": "When it targets an enemy, it charges furiously while whipping its body with its long tails.",
       "genus": "Wild Bull Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/63/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/63/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "129": {
@@ -22584,7 +22840,9 @@
       "growth_rate": "slow",
       "flavor_text": "In the distant past, it was somewhat stronger than the horribly weak descendants that exist today.",
       "genus": "Fish Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/64/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/64/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "130": {
@@ -22759,7 +23017,9 @@
       "growth_rate": "slow",
       "flavor_text": "Rarely seen in the wild. Huge and vicious, it is capable of destroying entire cities in a rage.",
       "genus": "Atrocious Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/64/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/64/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "131": {
@@ -22958,7 +23218,9 @@
       "growth_rate": "slow",
       "flavor_text": "A POKéMON that has been over­ hunted almost to extinction. It can ferry people across the water.",
       "genus": "Transport Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/65/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/65/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "132": {
@@ -23002,7 +23264,9 @@
       "growth_rate": "medium",
       "flavor_text": "Capable of copying an enemy's genetic code to instantly transform itself into a duplicate of the enemy.",
       "genus": "Transform Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/66/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/66/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "133": {
@@ -23210,7 +23474,9 @@
       "growth_rate": "medium",
       "flavor_text": "Its genetic code is irregular. It may mutate if it is exposed to radiation from element STONEs.",
       "genus": "Evolution Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/67/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/67/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "134": {
@@ -23394,7 +23660,9 @@
       "growth_rate": "medium",
       "flavor_text": "Lives close to water. Its long tail is ridged with a fin which is often mistaken for a mermaid's.",
       "genus": "Bubble Jet Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/67/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/67/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "135": {
@@ -23563,7 +23831,9 @@
       "growth_rate": "medium",
       "flavor_text": "It accumulates negative ions in the atmosphere to blast out 10000- volt lightning bolts.",
       "genus": "Lightning Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/67/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/67/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "136": {
@@ -23727,7 +23997,9 @@
       "growth_rate": "medium",
       "flavor_text": "When storing thermal energy in its body, its temperature could soar to over 1600 degrees.",
       "genus": "Flame Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/67/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/67/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "137": {
@@ -23924,7 +24196,9 @@
       "growth_rate": "medium",
       "flavor_text": "A POKéMON that consists entirely of programming code. Capable of moving freely in cyberspace.",
       "genus": "Virtual Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/68/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/68/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "138": {
@@ -24082,7 +24356,9 @@
       "growth_rate": "medium",
       "flavor_text": "Although long extinct, in rare cases, it can be genetically resurrected from fossils.",
       "genus": "Spiral Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/69/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/69/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "139": {
@@ -24256,7 +24532,9 @@
       "growth_rate": "medium",
       "flavor_text": "A prehistoric POKéMON that died out when its heavy shell made it impossible to catch prey.",
       "genus": "Spiral Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/69/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/69/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "140": {
@@ -24419,7 +24697,9 @@
       "growth_rate": "medium",
       "flavor_text": "A POKéMON that was resurrected from a fossil found in what was once the ocean floor eons ago.",
       "genus": "Shellfish Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/70/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/70/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "141": {
@@ -24613,7 +24893,9 @@
       "growth_rate": "medium",
       "flavor_text": "Its sleek shape is perfect for swim­ ming. It slashes prey with its claws and drains the body fluids.",
       "genus": "Shellfish Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/70/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/70/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "142": {
@@ -24767,7 +25049,9 @@
       "growth_rate": "slow",
       "flavor_text": "A ferocious, pre­ historic POKéMON that goes for the enemy's throat with its serrated saw-like fangs.",
       "genus": "Fossil Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/71/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/71/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "143": {
@@ -25005,7 +25289,9 @@
       "growth_rate": "slow",
       "flavor_text": "Very lazy. Just eats and sleeps. As its rotund bulk builds, it becomes steadily more slothful.",
       "genus": "Sleeping Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/72/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/72/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "144": {
@@ -25160,7 +25446,9 @@
       "growth_rate": "slow",
       "flavor_text": "A legendary bird POKéMON that is said to appear to doomed people who are lost in icy mountains.",
       "genus": "Freeze Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/73/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/73/",
+      "is_legendary": true,
+      "is_mythical": false
     }
   },
   "145": {
@@ -25320,7 +25608,9 @@
       "growth_rate": "slow",
       "flavor_text": "A legendary bird POKéMON that is said to appear from clouds while dropping enormous lightning bolts.",
       "genus": "Electric Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/74/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/74/",
+      "is_legendary": true,
+      "is_mythical": false
     }
   },
   "146": {
@@ -25465,7 +25755,9 @@
       "growth_rate": "slow",
       "flavor_text": "Known as the legendary bird of fire. Every flap of its wings creates a dazzling flash of flames.",
       "genus": "Flame Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/75/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/75/",
+      "is_legendary": true,
+      "is_mythical": false
     }
   },
   "147": {
@@ -25653,7 +25945,9 @@
       "growth_rate": "slow",
       "flavor_text": "Long considered a mythical POKéMON until recently when a small colony was found living underwater.",
       "genus": "Dragon Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/76/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/76/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "148": {
@@ -25846,7 +26140,9 @@
       "growth_rate": "slow",
       "flavor_text": "A mystical POKéMON that exudes a gentle aura. Has the ability to change climate conditions.",
       "genus": "Dragon Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/76/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/76/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "149": {
@@ -26041,7 +26337,9 @@
       "growth_rate": "slow",
       "flavor_text": "An extremely rarely seen marine POKéMON. Its intelligence is said to match that of humans.",
       "genus": "Dragon Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/76/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/76/",
+      "is_legendary": false,
+      "is_mythical": false
     }
   },
   "150": {
@@ -26295,7 +26593,9 @@
       "growth_rate": "slow",
       "flavor_text": "It was created by a scientist after years of horrific gene splicing and DNA engineering experiments.",
       "genus": "Genetic Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/77/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/77/",
+      "is_legendary": true,
+      "is_mythical": false
     }
   },
   "151": {
@@ -26615,7 +26915,9 @@
       "growth_rate": "medium-slow",
       "flavor_text": "So rare that it is still said to be a mirage by many experts. Only a few people have seen it worldwide.",
       "genus": "New Species Pokémon",
-      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/78/"
+      "evolution_chain_url": "https://pokeapi.co/api/v2/evolution-chain/78/",
+      "is_legendary": false,
+      "is_mythical": true
     }
   }
 }

@@ -127,7 +127,9 @@ function simplifyPokemonData(data, species, evolutions) {
             growth_rate: species.growth_rate.name,
             flavor_text: flavorText,
             genus: genus,
-            evolution_chain_url: species.evolution_chain.url
+            evolution_chain_url: species.evolution_chain.url,
+            is_legendary: species.is_legendary,
+            is_mythical: species.is_mythical
         }
     };
 }

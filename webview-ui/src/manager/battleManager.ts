@@ -15,11 +15,14 @@ import { BattleEvent, BattleEventType, GameState } from "../../../src/dataAccess
 import { ExperienceCalculator } from "../utilities/ExperienceCalculator";
 import { PokeDexEntryStatus } from "../../../src/dataAccessObj/PokeDex";
 import { CapitalizeFirstLetter } from "../utilities/util";
+import { BattleRecorder } from "./battleRecorder";
+import { BiomeType } from "../../../src/dataAccessObj/BiomeData";
+import { ItemRecorder } from "./itemRecorder";
 
 export interface BattleManagerMethod {
     handleOnAttack: (myPokemonMove: PokemonMove) => Promise<void>,
     handleThrowBall: (ballDao: PokeBallDao) => Promise<void>,
-    handleUseItem: (item: ItemDao) => Promise<void>,
+    handleUseItem: (item: ItemDao, targetMove?: PokemonMove) => Promise<void>,
     handleRunAway: () => Promise<void>,
     handleSwitchMyPokemon: (newPokemon: PokemonDao) => Promise<void>,
     handleStart: (gameState: GameState, encounterEvent: EncounterResult) => void,
@@ -49,6 +52,33 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
     const previousGameStateRef = useRef<GameState>(GameState.Searching);
     const [gameState, setGameState] = React.useState<GameState>(GameState.Searching);
 
+    // Refs for BattleRecorder and internal logic
+    const myPokemonRef = React.useRef<PokemonDao>(myPokemon);
+    const opponentPokemonRef = React.useRef<PokemonDao>(opponentPokemon);
+    const myPartyRef = React.useRef<PokemonDao[]>(myParty);
+    const battleBiomeRecorderRef = React.useRef<BiomeType>(BiomeType.None);
+    const runAttemptsRef = useRef<number>(0);
+
+    // Update refs when state changes
+    useEffect(() => {
+        myPokemonRef.current = myPokemon;
+    }, [myPokemon]);
+
+    useEffect(() => {
+        opponentPokemonRef.current = opponentPokemon;
+    }, [opponentPokemon]);
+
+    useEffect(() => {
+        myPartyRef.current = myParty;
+    }, [myParty]);
+
+    const battleRecorderRef = BattleRecorder({
+        myPokemonRef: myPokemonRef,
+        opponentPokemonRef: opponentPokemonRef,
+        myPartyRef: myPartyRef,
+        battleBiomeRef: battleBiomeRecorderRef,
+    });
+
     // Sync battle state with extension
     useEffect(() => {
         const inBattle = (gameState !== GameState.Searching);
@@ -76,16 +106,6 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
 
     // const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 
-    const myPokemonRef = React.useRef<PokemonDao>(myPokemon);
-    const opponentPokemonRef = React.useRef<PokemonDao>(opponentPokemon);
-
-    useEffect(() => {
-        myPokemonRef.current = myPokemon
-    }, [myPokemon])
-    useEffect(() => {
-        opponentPokemonRef.current = opponentPokemon
-    }, [opponentPokemon])
-
     const onBattleEvent = useCallback((event: BattleEvent) => {
         switch (event.type) {
             case BattleEventType.Start:{
@@ -108,6 +128,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                         gen: gen,
                     })
                 }
+                battleBiomeRecorderRef.current = BiomeType.None;
                 break; 
             }
             case BattleEventType.WildPokemonFaint:
@@ -127,6 +148,8 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                         gen: gen,
                     })
                 }
+                battleBiomeRecorderRef.current = BiomeType.None;
+                battleRecorderRef.onBattleFinished()
                 break; 
             }
         }
@@ -139,7 +162,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                 setGameState(GameState.Searching);
                 break; 
         }
-    }, [opponentPokemonRef])
+    }, [battleRecorderRef])
 
     const handleBattleStart = useCallback(async () => {
         console.log("Battle Start!");
@@ -234,7 +257,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
             handleMyPokemonFaint();
         }
 
-        return remainingHp;
+        return {damageResult,remainingHp};
     }, [battleCanvasRef, dialogBoxRef, handleMyPokemonFaint, myPokemonHandler, opponentPokemonHandler]);
 
     const handleAttackToOpponent = useCallback(async (move: PokemonMove) => {
@@ -272,7 +295,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
             handleOpponentPokemonFaint();
         }
 
-        return remainingHp;
+        return {damageResult,remainingHp};
     }, [myPokemonHandler, battleCanvasRef, opponentPokemonHandler, dialogBoxRef, handleOpponentPokemonFaint]);
 
     const handleOnAttack = useCallback(async (myPokemonMove: PokemonMove) => {
@@ -287,28 +310,37 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                 return;
             }
             console.log(`[BattleManager] Speeding to attack. My Speed: ${myPokemonRef.current.stats.speed}, Opponent Speed: ${opponentPokemonRef.current.stats.speed}`);
+            let myDamageResult = undefined;
+            let opponentdamageResult = undefined;
+            const opponentMove = opponentPokemonHandler.randomMove();
             // 速度判斷與攻擊順序邏輯
             if (myPokemonRef.current.stats.speed >= opponentPokemonRef.current.stats.speed) {
                 // 我方先攻
-                const opponentHp = await handleAttackToOpponent(myPokemonMove);
-                
+                const {damageResult: _opponentdamageResult, remainingHp: opponentRemainingHp} = await handleAttackToOpponent(myPokemonMove);
+                opponentdamageResult = _opponentdamageResult;
                 // 如果對方還活著，對方反擊
-                if (opponentHp > 0) {
-                    const opponentMove = opponentPokemonHandler.randomMove();
+                if (opponentRemainingHp > 0) {
                     await handleAttackFromOpponent(opponentMove);
                 }
             } else {
                 // 對方先攻
-                const opponentMove = opponentPokemonHandler.randomMove();
-                const myHp = await handleAttackFromOpponent(opponentMove);
-                
+                const {damageResult: _myDamageResult, remainingHp: myRemainingHp} = await handleAttackFromOpponent(opponentMove);
+                myDamageResult = _myDamageResult;
                 // 如果我方還活著，我方反擊
-                if (myHp > 0) {
+                if (myRemainingHp > 0) {
                     await handleAttackToOpponent(myPokemonMove);
                 }
             }
+            battleRecorderRef.onBattleAction(
+                false,
+                myDamageResult,
+                opponentdamageResult,
+                myPokemonMove,
+                opponentMove,
+            )
+
         });
-    }, [handleAttackFromOpponent, handleAttackToOpponent, opponentPokemonHandler, queue]);
+    }, [battleRecorderRef, handleAttackFromOpponent, handleAttackToOpponent, opponentPokemonHandler, queue]);
 
 
     const handleThrowBall = useCallback(async (ballDao: PokeBallDao) => {
@@ -336,6 +368,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                     text: `Caught ${currentOpponentPokemon.name.toUpperCase()} (Lv.${currentOpponentPokemon.level})!`,
                     pokemon: currentOpponentPokemon,
                 });
+                battleRecorderRef.onCatch()
                 onBattleEvent({
                     type: BattleEventType.WildPokemonCatched,
                     state: 'finish',
@@ -343,13 +376,23 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
             } else {
                 // 沒抓到，對方攻擊
                 const opponentMove = opponentPokemonHandler.randomMove();
-                await handleAttackFromOpponent(opponentMove);
+                const {damageResult: opponentdamageResult} = await handleAttackFromOpponent(opponentMove);
+                battleRecorderRef.onBattleAction(
+                    false,
+                    undefined,
+                    opponentdamageResult,
+                    undefined,
+                    opponentMove,
+                )
             }
         });
-    }, [opponentPokemonHandler, onBattleEvent, handleAttackFromOpponent, queue]);
+    }, [queue, opponentPokemonHandler, onBattleEvent, handleAttackFromOpponent, battleRecorderRef]);
 
-    const handleUseItem = useCallback(async (item: ItemDao) => {
+    const handleUseItem = useCallback(async (item: ItemDao, focusMove?: PokemonMove) => {
         await queue.execute(async () => {
+            if( myPokemonRef.current == undefined) {
+                throw new Error(" no my Pokemon")
+            }
             // 1. Send message to extension to consume item
             vscode.postMessage({
                 command: MessageType.RemoveItem,
@@ -357,11 +400,31 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                 count: 1
             });
 
+            let isUseless = false;
             // 2. Apply effect
             if (item.effect && item.effect.healHp) {
+                if(myPokemonRef.current.currentHp === myPokemonRef.current.maxHp) {
+                    // 滿血使用藥水無效
+                    isUseless = true;
+                }
                 await myPokemonHandler.heal(item.effect.healHp);
                 await dialogBoxRef.current?.setText(`Used ${CapitalizeFirstLetter(item.name)}!`);
                 await dialogBoxRef.current?.setText(`Restored ${item.effect.healHp} HP!`);
+            } else if(item.effect && item.effect.restorePp) {
+                if(focusMove == undefined) {
+                    throw new Error("No move specified for PP restoration.");
+                }
+                const currentMove = myPokemonRef.current.pokemonMoves.find(m => m.name === focusMove.name);
+                if(currentMove == undefined) {
+                    throw new Error(`Move ${focusMove.name} not found on current Pokemon.`);
+                }
+                if(currentMove.pp === currentMove.maxPP) {
+                    // 滿 PP 使用道具無效
+                    isUseless = true;
+                }
+                await myPokemonHandler.restorePp(focusMove, item.effect.restorePp);
+                await dialogBoxRef.current?.setText(`Used ${CapitalizeFirstLetter(item.name)}!`);
+                await dialogBoxRef.current?.setText(`Restored all PP!`);
             } else {
                 await dialogBoxRef.current?.setText(`Used ${CapitalizeFirstLetter(item.name)}!`);
             }
@@ -372,19 +435,64 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                 const opponentMove = opponentPokemonHandler.randomMove();
                 await handleAttackFromOpponent(opponentMove);
             }
+
+            ItemRecorder().onItemAction('use', item, 1, isUseless);
+
+            // MARK: TODO: Record item usage in battle recorder
         });
-    }, [myPokemonHandler, dialogBoxRef, opponentPokemonHandler, handleAttackFromOpponent, queue]);
+    }, [queue, myPokemonHandler, dialogBoxRef, opponentPokemonHandler, handleAttackFromOpponent]);
 
     const handleRunAway = useCallback(async () => {
         await queue.execute(async () => {
-            battleCanvasRef.current?.handleRunAway()
-            await dialogBoxRef.current?.setText("Got away safely!");
-            onBattleEvent({
-                type: BattleEventType.Escaped,
-                state: 'finish',
-            });
+
+            // 1. 嘗試逃跑成功率計算
+            if(myPokemonRef.current == undefined || opponentPokemonRef.current == undefined) {
+                throw new Error(" no opponent Pokemon or my Pokemon")
+            }
+
+            const mySpeed = myPokemonRef.current.stats.speed;
+            const opponentSpeed = opponentPokemonRef.current.stats.speed;
+            
+            runAttemptsRef.current += 1;
+            const attempts = runAttemptsRef.current;
+
+            // Formula: F = (A * 128 / B) + 30 * C
+            // A = My Speed, B = Opponent Speed (mod 256), C = Attempts
+            // If F > 255, escape guaranteed.
+            
+            let success = false;
+            // Gen 3/4 Formula
+            const f = ((mySpeed * 128) / (opponentSpeed % 256 || 1)) + (30 * attempts);
+            
+            if (f > 255) {
+                success = true;
+            } else {
+                const random = Math.floor(Math.random() * 256);
+                success = random < f;
+            }
+
+            if (success) {
+                battleCanvasRef.current?.handleRunAway()
+                await dialogBoxRef.current?.setText("Got away safely!");
+                onBattleEvent({
+                    type: BattleEventType.Escaped,
+                    state: 'finish',
+                });
+            } else {
+                await dialogBoxRef.current?.setText("Can't escape!");
+                // Opponent attacks
+                const opponentMove = opponentPokemonHandler.randomMove();
+                const {damageResult: opponentdamageResult} = await handleAttackFromOpponent(opponentMove);
+                battleRecorderRef.onBattleAction(
+                    false,
+                    undefined,
+                    opponentdamageResult,
+                    undefined,
+                    opponentMove,
+                )
+            }
         });
-    }, [queue, battleCanvasRef, dialogBoxRef, onBattleEvent]);
+    }, [queue, battleCanvasRef, dialogBoxRef, onBattleEvent, opponentPokemonHandler, handleAttackFromOpponent, battleRecorderRef]);
 
     const handleSwitchMyPokemon = useCallback(async (newPokemon: PokemonDao) => {
         await queue.execute(async () => {
@@ -394,15 +502,21 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
             // 1. 執行切換動畫與邏輯
             battleCanvasRef.current?.handleSwitchPokemon()
             await myPokemonHandler.switchPokemon(newPokemon);
-            
             // 2. 對方攻擊 (換人會被打)
             // 檢查對方是否還活著 (雖通常換人時對方都在)
             if (opponentPokemonRef.current) {
                 const opponentMove = opponentPokemonHandler.randomMove();
-                await handleAttackFromOpponent(opponentMove);
+                const {damageResult: opponentdamageResult} = await handleAttackFromOpponent(opponentMove);
+                battleRecorderRef.onBattleAction(
+                    true,
+                    undefined,
+                    opponentdamageResult,
+                    undefined,
+                    opponentMove,
+                )
             }
         });
-    }, [battleCanvasRef, myPokemonHandler, opponentPokemonHandler, handleAttackFromOpponent, queue]);
+    }, [queue, battleCanvasRef, myPokemonHandler, opponentPokemonHandler, handleAttackFromOpponent, battleRecorderRef]);
 
     // 這個function 不用 onBattleEvent 包起來，因為它本身就是被包起來的方法呼叫的
     const handleStart = useCallback(async (gameState: GameState, encounterResult: EncounterResult) => {
@@ -411,6 +525,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                 if (!opponentPokemonRef.current) {
                     opponentPokemonHandler.newEncounter(encounterResult);
                 }
+                battleBiomeRecorderRef.current = encounterResult.biomeType;
 
                 if(myPokemonRef.current !== undefined ) {
                     await handleBattleStart();

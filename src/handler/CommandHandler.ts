@@ -30,6 +30,8 @@ import { MessageType } from '../dataAccessObj/messageType';
 import { BiomeDataManager } from '../manager/BiomeManager';
 import { PokeDexManager } from '../manager/pokeDexManager';
 import { PokemonFactory } from '../core/CreatePokemonHandler';
+import { AchievementManager } from '../manager/AchievementManager';
+import { RecordBattleActionPayload, RecordBattleCatchPayload, RecordBattleFinishedPayload, RecordItemActionPayload } from '../utils/AchievementCritiria';
 
 export class CommandHandler {
     private readonly pokemonBoxManager: PokemonBoxManager;
@@ -39,6 +41,7 @@ export class CommandHandler {
     private readonly gameStateManager: GameStateManager;
     private readonly biomeManager: BiomeDataManager;
     private readonly pokeDexManager: PokeDexManager;
+    private readonly achievementManager: AchievementManager;
     private _handlerContext: HandlerContext | null = null;
 
     constructor(
@@ -49,6 +52,7 @@ export class CommandHandler {
         gameStateManager: GameStateManager,
         biomeManager: BiomeDataManager,
         pokeDexManager: PokeDexManager,
+        achievementManager: AchievementManager,
         context: vscode.ExtensionContext,
     ) {
         this.pokemonBoxManager = pokemonBoxManager;
@@ -58,6 +62,7 @@ export class CommandHandler {
         this.gameStateManager = gameStateManager;
         this.biomeManager = biomeManager;
         this.pokeDexManager = pokeDexManager;
+        this.achievementManager = achievementManager;
     }
 
     public setHandlerContext(handlerContext: HandlerContext): void {
@@ -481,5 +486,35 @@ export class CommandHandler {
         await this.pokeDexManager.updatePokemonStatus(payload.pokemonId, payload.status, payload.gen);
         // After update, send back the updated data
         this.handleGetPokeDex({ gen: payload.gen });
+    }
+
+    // ==================== Get Biome Data ====================
+    public async handleGetAchievements(): Promise<void> {
+        const achievements = this.achievementManager.getStatistics();
+        this.handlerContext.postMessage({ type: MessageType.AchievementsData, data: achievements });
+    }
+
+    // ==================== Battle Action ====================
+    public async handleRecordBattleAction(payload: RecordBattleActionPayload): Promise<void> {
+        await this.achievementManager.onBattleAction(payload);
+        this.handlerContext.updateAchievementsView();
+    }
+
+    // ==================== Battle Finished ====================
+    public async handleRecordBattleFinished(payload: RecordBattleFinishedPayload): Promise<void> {
+        await this.achievementManager.onBattleFinished(payload);
+        this.handlerContext.updateAchievementsView();
+    }
+
+    // ==================== Catch in Battle ====================
+    public async handleRecordCatchInBattle(payload: RecordBattleCatchPayload): Promise<void> {
+        await this.achievementManager.onCatchPokemon(payload);
+        this.handlerContext.updateAchievementsView();
+    }
+
+    // ==================== Item Action ====================
+    public async handleRecordItemAction(payload: RecordItemActionPayload): Promise<void> {
+        await this.achievementManager.onItemAction(payload);
+        this.handlerContext.updateAchievementsView();
     }
 }

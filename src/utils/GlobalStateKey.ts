@@ -7,6 +7,7 @@ const GlobalStateKey = {
     GAME_STATE: 'pokemon-game-state',
     POKEDEX_DATA_BASE: 'pokemon-pokedex-data',
     POKEDEX_CURRENT_GEN: 'pokemon-pokedex-current-gen',
+    ACHIEVEMENT: 'pokemon-achievement-data',
 };
 
 export default GlobalStateKey;

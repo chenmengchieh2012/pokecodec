@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { vscode, resolveAssetUrl } from '../utilities/vscode';
 import styles from './VPokemonBox.module.css';
 import { PokemonInfoModal } from '../model/PokemonInfoModal';
@@ -51,14 +51,11 @@ export const VPokemonBox = () => {
             return p as PokemonDao;
         });
         setPokemons(validPokemons);
-        setActiveBox(boxPayload.currentBox);
+        if (boxPayload.currentBox !== activeBox) {
+            setActiveBox(boxPayload.currentBox);
+        }
         setTotalBoxes(boxPayload.totalBoxLength);
     });
-
-    // Fetch data when activeBox changes
-    React.useEffect(() => {
-        vscode.postMessage({ command: MessageType.GetBox, boxIndex: activeBox });
-    }, [activeBox]);
 
     // Handlers
     const handleSlotClick = (p: PokemonDao) => {
@@ -145,12 +142,20 @@ export const VPokemonBox = () => {
         setSelectedPokemon(null);
     };
 
+    const handleOnClickBoxTab = useCallback((index: number) => {
+        setActiveBox(index);
+        vscode.postMessage({
+            command: MessageType.GetBox,
+            boxIndex: index
+        });
+    },[]);
+
     return (
         <EmeraldTabPanel
             tabs={
                 Array.from({ length: totalBoxes }).map((_, index) => ({
                     label: `BOX ${index + 1}`,
-                    onClick: () => setActiveBox(index),
+                    onClick: () => handleOnClickBoxTab(index),
                     isActive: activeBox === index,
                     disabled: isSelectionMode
                 }))

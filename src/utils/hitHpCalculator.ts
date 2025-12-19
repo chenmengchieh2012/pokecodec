@@ -36,6 +36,9 @@ export interface DamageResult {
     damage: number;
     isCritical: boolean;
     effectiveness: number;
+    isHit: boolean;
+    isSuccessfulEvade?: boolean;
+    isSuccessfulAttack?: boolean;
 }
 
 export const HitHpCalculator = {
@@ -57,7 +60,14 @@ export const HitHpCalculator = {
 
     // 2. & 3. 攻擊數值計算 (含 STAB 與屬性加成)
     calculateDamage: (attacker: PokemonDao, defender: PokemonDao, move: PokemonMove): DamageResult => {
-        if (!move.power) return { damage: 0, isCritical: false, effectiveness: 1 };
+        if (!move.power) {
+            return { 
+                damage: 0, 
+                isCritical: false, 
+                effectiveness: 1, 
+                isHit: true,
+            };
+        }
 
         const moveType = move.type;
         const category = getMoveCategory(moveType);
@@ -106,12 +116,44 @@ export const HitHpCalculator = {
             damage *= 1.5;
         }
 
+        // 是否成功命中
+        let isSuccessfulAttack = true;
+        if (move.accuracy !== null) {
+            isSuccessfulAttack = Math.random()*100 < move.accuracy;
+        }
+
+        // 是否成功閃避
+        let isSuccessfulEvade = false;
+        // 根據公式計算閃避率
+        if (defender.stats.speed > attacker.stats.speed) {
+            const evadeChance = Math.min((defender.stats.speed - attacker.stats.speed) / defender.stats.speed * 100, 50); // 最多50%閃避率
+            isSuccessfulEvade = Math.random()*100 < evadeChance;
+        }
+
+        // 最終命中結果
+        const isHit = isSuccessfulAttack && !isSuccessfulEvade;
+        if (!isHit) {
+            console.log(`[HitHpCalculator] The move ${move.name} missed!`);
+            return {
+                damage: 0,
+                isCritical: false,
+                effectiveness: 1,
+                isHit: false,
+                isSuccessfulEvade: isSuccessfulEvade,
+                isSuccessfulAttack: isSuccessfulAttack
+            };
+        }
+
+
         console.log(`Damage after critical hit (if applicable): ${damage}`);
 
         return {
             damage: Math.floor(damage),
             isCritical,
-            effectiveness
+            effectiveness,
+            isHit: isHit,
+            isSuccessfulEvade: isSuccessfulEvade,
+            isSuccessfulAttack: isSuccessfulAttack
         };
     }
 };

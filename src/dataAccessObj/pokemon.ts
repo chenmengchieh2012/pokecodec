@@ -35,7 +35,9 @@ export interface PokemonDao {
     gender: string;
     nature: string;      // e.g. "Adamant"
     ability: string;     // Ability name
-    isHiddenAbility?: boolean; // Is the ability hidden?
+    isHiddenAbility: boolean; // Is the ability hidden?
+    isLegendary: boolean;
+    isMythical: boolean;
     height: number;
     weight: number;
     baseExp: number;
@@ -93,6 +95,9 @@ export const initPokemonDao: () => PokemonDao = () => ({
     gender: '',
     nature: '',
     ability: '',
+    isHiddenAbility: false,
+    isLegendary: false,
+    isMythical: false,
     height: 0,
     weight: 0,
     baseExp: 0,
@@ -103,7 +108,6 @@ export const initPokemonDao: () => PokemonDao = () => ({
     caughtDate: 0,
     caughtBall: '',
     pokemonMoves: [],
-
 });
 
 export const initialPokemonState: () => PokemonState = () => ({
@@ -155,6 +159,8 @@ export interface RawPokemonData {
         flavor_text: string;
         genus: string;
         evolution_chain_url: string;
+        is_legendary: boolean;
+        is_mythical: boolean;
     };
 }
 

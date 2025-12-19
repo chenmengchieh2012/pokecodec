@@ -10,6 +10,7 @@ import { PokeBallDao } from '../../../src/dataAccessObj/pokeBall';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
 import { PokemonTypeIcon } from '../utilities/pokemonTypeIcon';
 import { CapitalizeFirstLetter } from '../utilities/util';
+import { SHOP_ITEMS_BALL_NAMES, SHOP_ITEMS_HP_MEDICINE_NAMES, SHOP_ITEMS_PP_MEDICINE_NAMES } from '../utilities/ItemName';
 export interface BattleControlHandle extends DialogBoxHandle {
     openPartyMenu: () => void;
 }
@@ -19,7 +20,7 @@ interface BattleControlProps {
     myParty: PokemonDao[];
     handleOnAttack: (move: PokemonMove) => void;
     handleThrowBall: (ball: PokeBallDao) => void;
-    handleUseItem: (item: ItemDao) => void;
+    handleUseItem: (item: ItemDao, targetMove?: PokemonMove) => void;
     handleRunAway: () => void;
     handleSwitchMyPokemon: (pokemon: PokemonDao) => void;
 }
@@ -35,8 +36,9 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
 }, ref) => {
     const messageStore = useMessageStore(); // 確保訂閱生效
     const defaultBagItems = messageStore.getRefs().bag || [];
-    const [menuState, setMenuState] = useState<'main' | 'moves' | 'party' | 'bag'>('main');
+    const [menuState, setMenuState] = useState<'main' | 'moves' | 'party' | 'bag' | 'pp-restore'>('main');
     const [bagItems, setBagItems] = useState<ItemDao[]>(defaultBagItems);
+    const [selectedPPItem, setSelectedPPItem] = useState<ItemDao | null>(null);
     const dialogBoxRef = useRef<DialogBoxHandle>(null);
 
     // 訂閱背包資料訊息
@@ -69,8 +71,8 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
     };
 
     const onItemClick = (item: ItemDao) => {
-        setMenuState('main');
-        if (item.category === 'PokeBalls') {
+        if (SHOP_ITEMS_BALL_NAMES.includes(item.apiName)) {
+            setMenuState('main');
             // Adapt ItemDao to PokeBallDao
             // Assuming catchRateMultiplier is in effect
             const catchRate = item.effect?.catchRateMultiplier || 1;
@@ -79,11 +81,24 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
                 category: item.category,
                 catchRateModifier: catchRate
             });
-        } else if (item.category === 'Medicine') {
+        } else if (SHOP_ITEMS_HP_MEDICINE_NAMES.includes(item.apiName)) {
+            setMenuState('main');
             handleUseItem(item);
+        } else if (SHOP_ITEMS_PP_MEDICINE_NAMES.includes(item.apiName)) {
+            setSelectedPPItem(item);
+            setMenuState('pp-restore');
         } else {
+            setMenuState('main');
             // Other items not supported yet in battle
-            console.log("Item not supported in battle yet:", item.name);
+            console.log("Item not supported in battle yet:", item.apiName);
+        }
+    };
+
+    const onPPRestoreMoveClick = (move: PokemonMove) => {
+        if (selectedPPItem) {
+            setMenuState('main');
+            handleUseItem(selectedPPItem, move);
+            setSelectedPPItem(null);
         }
     };
 
@@ -104,6 +119,28 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
                                 className={styles['move-btn']}
                                 onClick={() => onAttackClick(move)}
                                 disabled={move.pp <= 0}
+                            >
+                                <div className={styles['move-name']}>
+                                    <PokemonTypeIcon type={move.type} size={10} className={styles['move-type-icon']} />
+                                    {move.name.toUpperCase()}
+                                </div>
+                                <div className={styles['move-info-row']}>
+                                    <span className={styles['move-pp']}>PP {move.pp}/{move.maxPP}</span>
+                                </div>
+                            </button>
+                        ))}
+                        </div>
+                    </div>
+                )}
+
+                {menuState === 'pp-restore' && (
+                    <div className={styles['move-select-overlay-container']}>
+                        <div className={styles['move-select-overlay-content']}>
+                        {myPokemon?.pokemonMoves.map((move) => (
+                            <button 
+                                key={"pp-move-" + move.name} 
+                                className={styles['move-btn']}
+                                onClick={() => onPPRestoreMoveClick(move)}
                             >
                                 <div className={styles['move-name']}>
                                     <PokemonTypeIcon type={move.type} size={10} className={styles['move-type-icon']} />
@@ -167,7 +204,6 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
                                         ))}
                                     </div>
                                 </div>
-                                
                                 {bagItems.length === 0 && (
                                     <div style={{ padding: '10px', textAlign: 'center', fontSize: '10px', color: '#666' }}>Bag is empty</div>
                                 )}

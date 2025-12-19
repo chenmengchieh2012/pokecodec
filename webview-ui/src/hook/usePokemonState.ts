@@ -16,6 +16,7 @@ export interface PokemonStateHandler {
     resetPokemon: () => void;
     switchPokemon: (pokemon: PokemonDao) => Promise<void>;
     heal: (amount: number) => Promise<void>;
+    restorePp: (move: PokemonMove, amount: number) => Promise<void>;
     decrementPP: (move: PokemonMove) => void;
     increaseExp: (expGain: number) => void;
 }
@@ -154,6 +155,21 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
         setPokemon(prev => prev ? { ...prev, pokemonMoves: updatedMoves } : undefined);
     }, []);
 
+    const handleRestorePP = useCallback(async (move: PokemonMove, restoreAmount: number) => {
+        const currentPokemon = pokemonRef.current;
+        if (!currentPokemon) return;
+        // Find the move and restore its PP
+        const restoredMoves = currentPokemon.pokemonMoves.map(m => {
+            if (m.name === move.name) {
+                const newPp = Math.min(m.maxPP, m.pp + restoreAmount);
+                return { ...m, pp: newPp };
+            }
+            return m;
+        });
+
+        setPokemon(prev => prev ? { ...prev, pokemonMoves: restoredMoves } : undefined);
+    }, []);
+
     const handleIncreaseExperience = useCallback((expGain: number) => {
         const currentPokemon = pokemonRef.current;
         if (!currentPokemon) return;
@@ -178,8 +194,9 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
         resetPokemon: handleResetPokemon,
         heal: handleHeal,
         decrementPP: handleDecrementPP,
+        restorePp: handleRestorePP,
         increaseExp: handleIncreaseExperience
-    }), [handleNewEncounter, handleThrowBall, handleHited, handleRandomMove, handleSwitchPokemon, handleResetPokemon, handleHeal, handleDecrementPP, handleIncreaseExperience]);
+    }), [handleNewEncounter, handleThrowBall, handleHited, handleRandomMove, handleSwitchPokemon, handleResetPokemon, handleHeal, handleDecrementPP, handleRestorePP, handleIncreaseExperience]);
 
     return {
         pokemon,

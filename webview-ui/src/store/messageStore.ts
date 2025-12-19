@@ -7,6 +7,7 @@ import { MessageType } from '../../../src/dataAccessObj/messageType';
 import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
 import { UserDao } from '../../../src/dataAccessObj/userData';
 import { BoxPayload, PokeDexPayload } from '../../../src/dataAccessObj/MessagePayload';
+import { AchievementStatistics } from '../../../src/utils/AchievementCritiria';
 
 // ============================================================
 // Type Definitions
@@ -32,6 +33,7 @@ export interface StoreRefs {
     gameState: GameState | undefined;
     biome: BiomeData | undefined;
     pokeDex: PokeDexPayload | undefined;
+    achievements: AchievementStatistics | undefined;
 }
 
 /** MessageStore Context 的值類型 */
@@ -79,6 +81,7 @@ class MessageStore {
         gameState: undefined,
         biome: undefined,
         pokeDex: undefined,
+        achievements: undefined,
     };
     /** 是否已初始化 */
     private initialized: InitializedStateType = InitializedState.UnStart;
@@ -172,6 +175,12 @@ class MessageStore {
             case MessageType.BiomeData:
                 this.refs.biome = (message.data as BiomeData) ?? undefined;
                 break;
+            case MessageType.AchievementsData:
+                this.refs.achievements = (message.data as AchievementStatistics) ?? undefined;
+                break;
+            default:
+                // 非資料更新類型，無需更新 refs
+                break;
         }
     }
 
@@ -204,6 +213,7 @@ class MessageStore {
                     this.refs.gameState !== undefined && 
                     this.refs.biome !== undefined &&
                     this.refs.pokeDex !== undefined &&
+                    this.refs.achievements !== undefined &&
                     this.initialized === InitializedState.Initializing ){
                         this.initialized = InitializedState.finished;
                         console.log('[MessageStore] Initialization finished');
@@ -246,6 +256,8 @@ class MessageStore {
         vscode.postMessage({ command: MessageType.GetBiome });
         // 7. 請求圖鑑資料
         vscode.postMessage({ command: MessageType.GetPokeDex });
+        // 8. 請求成就資料
+        vscode.postMessage({ command: MessageType.GetAchievements });
     }
 
     /**
@@ -272,6 +284,9 @@ class MessageStore {
         }
         if (this.refs.biome !== undefined) {
             this.notify({ type: MessageType.BiomeData, data: this.refs.biome });
+        }
+        if (this.refs.achievements !== undefined) {
+            this.notify({ type: MessageType.AchievementsData, data: this.refs.achievements });
         }
     }
 

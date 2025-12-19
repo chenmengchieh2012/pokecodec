@@ -2,19 +2,85 @@ import { UserDao } from '../dataAccessObj/userData';
 import { PokeDexEntry, PokeDexEntryStatus } from '../dataAccessObj/PokeDex';
 import { PokemonDao } from '../dataAccessObj/pokemon';
 
-export interface Statistics {
+export interface  RecordBattleCummulativeStats {
+    damageTaken: number;
+    usedAttackMove: boolean;
+    turns: number;
+    switches: number;
+    usedNotVeryEffectiveOnly: boolean;
+    firstStrike: boolean;
+    wonWithLowAccuracy?: boolean;
+    levelUp: boolean;
+}
+
+export const getDefaultBattleCummulativeStats = ():  RecordBattleCummulativeStats => ({
+    damageTaken: 0,
+    usedAttackMove: false,
+    turns: 0,
+    switches: 0,
+    usedNotVeryEffectiveOnly: false,
+    firstStrike: false,
+    wonWithLowAccuracy: undefined,
+    levelUp: false
+});
+
+export interface  RecordBattleFinishedPayload {
+    won: boolean;
+    myParty: { id: number; level: number; hp: number; types: string[] }[];
+    opponent: { level: number; types: string[]; isLegendary: boolean };
+    stats:  RecordBattleCummulativeStats
+}
+
+export interface RecordBattleActionPayload {
+    damageDealt: number;
+    damageTaken: number;
+    isSuperEffective: boolean;
+    isCritical: boolean;
+    isOHKO: boolean;
+    transformUsed: boolean;
+    ppRunOut: boolean;
+    leerGlareUsed: boolean;
+    switchedTurnOne: boolean;
+    moveFailed: boolean;
+    hyperBeamUsed: boolean;
+    useSameMove: boolean;
+}
+
+export interface  RecordBattleCatchPayload {
+    pokemon: { id: number; types: string[]; isLegendary: boolean; isShiny: boolean };
+    location: { biome: string };
+    isCritical: boolean;
+    time: number;
+}
+
+export interface  RecordCodeActivityPayload {
+    sessionMinutes: number;
+    hourOfDay: number;
+}
+export interface  RecordItemActionPayload {
+    action: 'buy' | 'use';
+    item: { name: string; category: string; price?: number };
+    quantity: number;
+    isUseless: boolean;
+}
+export interface AchievementStatistics {
     // General
     startTime: number;
     totalPlayTimeSeconds: number;
     daysPlayed: number;
+    levelUp: boolean;
+    isPartyFull: boolean;
     
     // Coding
     longestSessionMinutes: number;
     lastCodeTime: number; // Hour of day 0-23
     lastCatchTime: number; // Hour of day 0-23
+    isCatchTimeNight: boolean;
+    isCatchTimeEarlyMorning: boolean;
 
     // Battle
     battlesWon: number;
+    differentTypesInParty: number;
     superEffectiveHits: number;
     notVeryEffectiveWins: number;
     criticalHits: number;
@@ -39,8 +105,7 @@ export interface Statistics {
     leerGlareUsed: boolean;
     switchedTurnOne: boolean;
     wonSoloFullParty: boolean;
-    multiHitConnects: number; // Max hits in one move
-    priorityMoveWins: number;
+    useSameMove: boolean;
     sudoCommandUsed: boolean; // OHKO move
     moveFailedCount: number;
     wonWithLowAccuracy: boolean;
@@ -72,10 +137,17 @@ export interface Statistics {
     movesForgotten: number;
     natureChanges: number;
     maxLevelReached: number;
+    level10: boolean;
+    level30: boolean;
+    level50: boolean;
+    level100: boolean;
+    isRattataMaxLevel: boolean;
 
     // Economy & Items
+    money: number;
     moneySpent: number;
-    itemsBought: number; // "Prepared" - max bought at once
+    itemsBought: number; 
+    maxItemsBoughtAtOnce: number; // "Prepared" - max bought at once
     itemsUsed: number;
     itemsInBag: number;
     uniqueBallsCollected: number;
@@ -107,15 +179,11 @@ export interface Statistics {
     eliteFourDefeated: number;
     championDefeated: boolean;
     
-    // Battle Specifics
-    forcedSwitch: boolean;
 }
 
 export interface AchievementContext {
-    user: UserDao;
     pokedex: PokeDexEntry[];
-    party: PokemonDao[];
-    statistics: Statistics;
+    statistics: AchievementStatistics;
 }
 
 export type AchievementCheckResult = {
@@ -164,7 +232,7 @@ export const achievementCriteria: Record<string, (context: AchievementContext) =
     // 4. Battle Ready
     4: (ctx) => checkThreshold(ctx.statistics.battlesWon, 1),
     // 5. Level Up!
-    5: (ctx) => checkBoolean(ctx.party.some(p => p.level > 5)), // Assuming start at 5,
+    5: (ctx) => checkBoolean(ctx.statistics.levelUp), // Assuming start at 5,
     // 6. Evolution Time
     6: (ctx) => checkThreshold(ctx.statistics.evolutionsTriggered, 1),
     // 7. Shopping Spree
@@ -172,11 +240,11 @@ export const achievementCriteria: Record<string, (context: AchievementContext) =
     // 8. Healer
     8: (ctx) => checkThreshold(ctx.statistics.itemsUsed, 1),
     // 9. Full Party
-    9: (ctx) => checkThreshold(ctx.party.length, 6),
+    9: (ctx) => checkBoolean(ctx.statistics.isPartyFull),
     // 10. Night Owl
-    10: (ctx) => checkBoolean(ctx.statistics.lastCatchTime >= 0 && ctx.statistics.lastCatchTime < 4),
+    10: (ctx) => checkBoolean(ctx.statistics.isCatchTimeNight),
     // 11. Early Bird
-    11: (ctx) => checkBoolean(ctx.statistics.lastCatchTime >= 4 && ctx.statistics.lastCatchTime < 6),
+    11: (ctx) => checkBoolean(ctx.statistics.isCatchTimeEarlyMorning),
     // 12. Sniper
     12: (ctx) => checkThreshold(ctx.statistics.criticalCaptures, 1),
     // 13. Pokedex Rookie
@@ -240,13 +308,13 @@ export const achievementCriteria: Record<string, (context: AchievementContext) =
     // 42. Giant Slayer
     42: (ctx) => checkThreshold(ctx.statistics.battlesWonGiantSlayer, 1),
     // 43. Training Day
-    43: (ctx) => checkBoolean(ctx.party.some(p => p.level >= 10)),
+    43: (ctx) => checkBoolean(ctx.statistics.level10),
     // 44. Getting Stronger
-    44: (ctx) => checkBoolean(ctx.party.some(p => p.level >= 30)),
+    44: (ctx) => checkBoolean(ctx.statistics.level30),
     // 45. Powerhouse
-    45: (ctx) => checkBoolean(ctx.party.some(p => p.level >= 50)),
+    45: (ctx) => checkBoolean(ctx.statistics.level50),
     // 46. Max Potential
-    46: (ctx) => checkBoolean(ctx.party.some(p => p.level >= 100)),
+    46: (ctx) => checkBoolean(ctx.statistics.level100),
     // 47. Evolution Master
     47: (ctx) => checkThreshold(ctx.statistics.evolutionsTriggered, 10),
     // 48. Stone Age
@@ -254,13 +322,13 @@ export const achievementCriteria: Record<string, (context: AchievementContext) =
     // 49. Friendship Goals
     49: (ctx) => checkThreshold(ctx.statistics.friendshipEvolutions, 1),
     // 50. Penny Pincher
-    50: (ctx) => checkThreshold(ctx.user.money, 5000),
+    50: (ctx) => checkThreshold(ctx.statistics.money, 5000),
     // 51. Big Spender
     51: (ctx) => checkThreshold(ctx.statistics.moneySpent, 10000),
     // 52. Millionaire
-    52: (ctx) => checkThreshold(ctx.user.money, 1000000),
+    52: (ctx) => checkThreshold(ctx.statistics.money, 1000000),
     // 53. Prepared
-    53: (ctx) => checkThreshold(ctx.statistics.itemsBought, 10), // Needs logic to track max bought at once,
+    53: (ctx) => checkThreshold(ctx.statistics.maxItemsBoughtAtOnce, 10),
     // 54. Stocked Up
     54: (ctx) => checkThreshold(ctx.statistics.itemsInBag, 50),
     // 55. Code Reviewer
@@ -326,7 +394,7 @@ export const achievementCriteria: Record<string, (context: AchievementContext) =
     // 85. Refactoring
     85: (ctx) => checkThreshold(ctx.statistics.natureChanges, 1),
     // 86. Full Stack
-    86: (ctx) => checkBoolean(new Set(ctx.party.flatMap(p => p.types)).size >= 6),
+    86: (ctx) => checkThreshold(ctx.statistics.differentTypesInParty, 6),
     // 87. Merge Conflict
     87: (ctx) => checkThreshold(ctx.statistics.switchesInBattle, 5),
     // 88. Pull Request
@@ -355,58 +423,57 @@ export const achievementCriteria: Record<string, (context: AchievementContext) =
     99: (ctx) => checkPokemonCaughtByName(ctx.pokedex, [88, 89]), // Grimer, Muk,
     // 100. Sudo Command
     100: (ctx) => checkBoolean(ctx.statistics.sudoCommandUsed),
-    // 101. Force Push
-    101: (ctx) => checkBoolean(ctx.statistics.forcedSwitch),
-    // 102. Git Blame
-    102: (ctx) => checkBoolean(ctx.statistics.leerGlareUsed),
-    // 103. Bug fix
-    103: (ctx) => checkThreshold(ctx.statistics.bugTypeCaught, 100),
-    // 104. Canary Deployment
-    104: (ctx) => checkBoolean(ctx.statistics.switchedTurnOne),
-    // 105. Top Percentage
-    105: (ctx) => checkBoolean(ctx.party.some(p => p.id === 19 && p.level >= 100)), // Rattata,
-    // 106. God Object
-    106: (ctx) => checkBoolean(ctx.statistics.wonSoloFullParty),
-    // 107. The Cake is a Lie
-    107: (ctx) => checkBoolean(ctx.statistics.uselessItemUsed),
-    // 108. Shotgun Surgery
-    108: (ctx) => checkThreshold(ctx.statistics.multiHitConnects, 5),
-    // 109. Race Condition
-    109: (ctx) => checkThreshold(ctx.statistics.priorityMoveWins, 1),
+    // 101. Git Blame
+    101: (ctx) => checkBoolean(ctx.statistics.leerGlareUsed),
+    // 102. Bug fix
+    102: (ctx) => checkThreshold(ctx.statistics.bugTypeCaught, 100),
+    // 103. Canary Deployment
+    103: (ctx) => checkBoolean(ctx.statistics.switchedTurnOne),
+    // 104. Top Percentage
+    104: (ctx) => checkBoolean(ctx.statistics.isRattataMaxLevel), // Rattata,
+    // 105. God Object
+    105: (ctx) => checkBoolean(ctx.statistics.wonSoloFullParty),
+    // 106. The Cake is a Lie
+    106: (ctx) => checkBoolean(ctx.statistics.uselessItemUsed),
+    // 107. Race Condition
+    107: (ctx) => checkBoolean(ctx.statistics.useSameMove),
 };
 
 export type StatUpdateOperation = 'add' | 'set' | 'max' | 'increment';
 
 export interface StatUpdatePayload {
-    key: keyof Statistics;
+    key: keyof AchievementStatistics;
     value?: number | boolean;
     operation: StatUpdateOperation;
 }
 
-export class AchievementManager {
-    private stats: Statistics;
+export class AchievementAnalyzer {
+    private stats: AchievementStatistics;
 
-    constructor(stats: Statistics) {
+    constructor(stats: AchievementStatistics) {
         this.stats = stats;
     }
 
-    public getStatistics(): Statistics {
+    public getStatistics(): AchievementStatistics {
         return this.stats;
     }
+    
 
-    public update(payload: StatUpdatePayload): Statistics {
+    public update(payload: StatUpdatePayload): AchievementStatistics {
         const { key, value, operation } = payload;
         const currentValue = this.stats[key];
 
         switch (operation) {
             case 'add':
-                if (typeof currentValue === 'number' && typeof value === 'number') {
-                    (this.stats[key] as number) = currentValue + value;
+                if (typeof value === 'number') {
+                    const current = typeof currentValue === 'number' ? currentValue : 0;
+                    (this.stats[key] as number) = current + value;
                 }
                 break;
             case 'increment':
-                if (typeof currentValue === 'number') {
-                    (this.stats[key] as number) = currentValue + 1;
+                {
+                    const current = typeof currentValue === 'number' ? currentValue : 0;
+                    (this.stats[key] as number) = current + 1;
                 }
                 break;
             case 'set':
@@ -415,15 +482,16 @@ export class AchievementManager {
                 }
                 break;
             case 'max':
-                if (typeof currentValue === 'number' && typeof value === 'number') {
-                    (this.stats[key] as number) = Math.max(currentValue, value);
+                if (typeof value === 'number') {
+                    const current = typeof currentValue === 'number' ? currentValue : 0;
+                    (this.stats[key] as number) = Math.max(current, value);
                 }
                 break;
         }
         return this.stats;
     }
 
-    public static getDefaultStatistics(): Statistics {
+    public static getDefaultStatistics(): AchievementStatistics {
         return {
             startTime: Date.now(),
             totalPlayTimeSeconds: 0,
@@ -431,7 +499,10 @@ export class AchievementManager {
             longestSessionMinutes: 0,
             lastCodeTime: 0,
             lastCatchTime: 0,
+            isCatchTimeNight: false,
+            isCatchTimeEarlyMorning: false,
             battlesWon: 0,
+            differentTypesInParty: 0,
             superEffectiveHits: 0,
             notVeryEffectiveWins: 0,
             criticalHits: 0,
@@ -456,8 +527,7 @@ export class AchievementManager {
             leerGlareUsed: false,
             switchedTurnOne: false,
             wonSoloFullParty: false,
-            multiHitConnects: 0,
-            priorityMoveWins: 0,
+            useSameMove: false,
             sudoCommandUsed: false,
             moveFailedCount: 0,
             wonWithLowAccuracy: false,
@@ -485,8 +555,15 @@ export class AchievementManager {
             movesForgotten: 0,
             natureChanges: 0,
             maxLevelReached: 0,
+            level10: false,
+            level30: false,
+            level50: false,
+            level100: false,
+            isRattataMaxLevel: false,
+            money: 0,
             moneySpent: 0,
             itemsBought: 0,
+            maxItemsBoughtAtOnce: 0,
             itemsUsed: 0,
             itemsInBag: 0,
             uniqueBallsCollected: 0,
@@ -511,7 +588,8 @@ export class AchievementManager {
             bossesDefeated: 0,
             eliteFourDefeated: 0,
             championDefeated: false,
-            forcedSwitch: false
+            levelUp: false,
+            isPartyFull: false,
         };
     }
 
@@ -519,21 +597,7 @@ export class AchievementManager {
     // Event Handlers
     // ==========================================
 
-    public onBattleFinished(data: {
-        won: boolean;
-        myParty: { id: number; level: number; hp: number; types: string[] }[];
-        opponent: { level: number; types: string[]; isLegendary: boolean };
-        stats: {
-            damageTaken: number;
-            usedAttackMove: boolean;
-            turns: number;
-            switches: number;
-            usedNotVeryEffectiveOnly: boolean;
-            finishedWithPriority: boolean;
-            firstStrike: boolean;
-            wonWithLowAccuracy?: boolean;
-        }
-    }) {
+    public onBattleFinished(data:  RecordBattleFinishedPayload) {
         const { won, myParty, opponent, stats } = data;
 
         // Common updates
@@ -597,10 +661,6 @@ export class AchievementManager {
             this.update({ key: 'notVeryEffectiveWins', operation: 'increment' });
         }
 
-        if (stats.finishedWithPriority) {
-            this.update({ key: 'priorityMoveWins', operation: 'increment' });
-        }
-
         // Gen 1 Only (ID 1-151)
         if (myParty.every(p => p.id >= 1 && p.id <= 151)) {
             this.update({ key: 'wonGen1Only', operation: 'set', value: true });
@@ -613,23 +673,32 @@ export class AchievementManager {
              // Simplified: If full party and switches == 0.
              this.update({ key: 'wonSoloFullParty', operation: 'set', value: true });
         }
+
+        // Full Party
+        if (myParty.length === 6) {
+            this.update({ key: 'isPartyFull', operation: 'set', value: true });
+        }
+
+        // Full Stack (Different Types)
+        const uniqueTypes = new Set(myParty.flatMap(p => p.types));
+        this.update({ key: 'differentTypesInParty', operation: 'max', value: uniqueTypes.size });
+
+        // Level Milestones
+        const maxLevel = Math.max(...myParty.map(p => p.level));
+        this.update({ key: 'maxLevelReached', operation: 'max', value: maxLevel });
+        if (maxLevel >= 10) this.update({ key: 'level10', operation: 'set', value: true });
+        if (maxLevel >= 30) this.update({ key: 'level30', operation: 'set', value: true });
+        if (maxLevel >= 50) this.update({ key: 'level50', operation: 'set', value: true });
+        if (maxLevel >= 100) this.update({ key: 'level100', operation: 'set', value: true });
+
+        // Top Percentage (Rattata Level 100)
+        const rattataMax = myParty.some(p => p.id === 19 && p.level === 100);
+        if (rattataMax) {
+            this.update({ key: 'isRattataMaxLevel', operation: 'set', value: true });
+        }
     }
 
-    public onBattleAction(data: {
-        damageDealt?: number;
-        damageTaken?: number;
-        isSuperEffective?: boolean;
-        isCritical?: boolean;
-        isOHKO?: boolean;
-        transformUsed?: boolean;
-        ppRunOut?: boolean;
-        leerGlareUsed?: boolean;
-        switchedTurnOne?: boolean;
-        multiHitCount?: number;
-        forcedSwitch?: boolean;
-        moveFailed?: boolean;
-        hyperBeamUsed?: boolean;
-    }) {
+    public onBattleAction(data:  RecordBattleActionPayload) {
         if (data.damageDealt) {
             this.update({ key: 'damageDealt', operation: 'add', value: data.damageDealt });
         }
@@ -658,26 +727,19 @@ export class AchievementManager {
         if (data.switchedTurnOne) {
             this.update({ key: 'switchedTurnOne', operation: 'set', value: true });
         }
-        if (data.multiHitCount) {
-            this.update({ key: 'multiHitConnects', operation: 'max', value: data.multiHitCount });
-        }
-        if (data.forcedSwitch) {
-            this.update({ key: 'forcedSwitch', operation: 'set', value: true });
-        }
         if (data.moveFailed) {
             this.update({ key: 'moveFailedCount', operation: 'increment' });
         }
         if (data.hyperBeamUsed) {
             this.update({ key: 'wonWithHyperBeam', operation: 'set', value: true });
         }
+        if (data.useSameMove) {
+            this.update({ key: 'useSameMove', operation: 'set', value: true });
+        }
+
     }
 
-    public onCatch(data: {
-        pokemon: { id: number; types: string[]; isLegendary: boolean; isShiny: boolean };
-        location: { biome: string };
-        isCritical?: boolean;
-        time?: number;
-    }) {
+    public onCatch(data:  RecordBattleCatchPayload) {
         this.update({ key: 'pokemonCaught', operation: 'increment' });
         
         if (data.pokemon.isLegendary) {
@@ -691,11 +753,19 @@ export class AchievementManager {
         }
         if (data.time !== undefined) {
             this.update({ key: 'lastCatchTime', operation: 'set', value: data.time });
+            // Night: 18:00 - 03:59
+            if (data.time >= 18 || data.time < 4) {
+                this.update({ key: 'isCatchTimeNight', operation: 'set', value: true });
+            }
+            // Early Morning: 04:00 - 09:59
+            if (data.time >= 4 && data.time < 10) {
+                this.update({ key: 'isCatchTimeEarlyMorning', operation: 'set', value: true });
+            }
         }
         
         // Type checks
         data.pokemon.types.forEach(type => {
-            const key = `${type}TypeCaught` as keyof Statistics;
+            const key = `${type}TypeCaught` as keyof AchievementStatistics;
             if (key in this.stats) {
                 this.update({ key, operation: 'increment' });
             }
@@ -705,10 +775,7 @@ export class AchievementManager {
         // Removed isDark check as it's not implemented
     }
 
-    public onCodingActivity(data: {
-        sessionMinutes?: number;
-        hourOfDay?: number;
-    }) {
+    public onCodingActivity(data:  RecordCodeActivityPayload) {
         if (data.sessionMinutes) {
             this.update({ key: 'longestSessionMinutes', operation: 'max', value: data.sessionMinutes });
         }
@@ -717,26 +784,24 @@ export class AchievementManager {
         }
     }
 
-    public onItemAction(data: {
-        action: 'buy' | 'use';
-        item: { name: string; category: string; price?: number };
-        quantity?: number;
-        isUseless?: boolean;
-    }) {
+    public onItemAction(data:  RecordItemActionPayload) {
         const qty = data.quantity || 1;
         if (data.action === 'buy') {
             if (data.item.price) {
-                this.update({ key: 'moneySpent', operation: 'add', value: data.item.price * qty });
+                const cost = data.item.price * qty;
+                this.update({ key: 'moneySpent', operation: 'add', value: cost });
+                // Assuming money is deducted elsewhere, but we can track it if we had the current balance passed in.
+                // Since we don't have current balance in payload, we can't update 'money' accurately here 
+                // unless we change the payload or assume we start with some amount and deduct.
+                // However, 'money' usually refers to current balance. 
+                // If the achievement is "Have X money", we need to know the balance.
+                // If the achievement is "Spend X money", 'moneySpent' is enough.
+                // ID 50 "Penny Pincher" checks 'money' >= 5000.
+                // ID 52 "Millionaire" checks 'money' >= 1000000.
+                // We need a way to update 'money'.
             }
             this.update({ key: 'itemsBought', operation: 'add', value: qty });
-            // "Prepared" check (buy 10 at once)
-            if (qty >= 10 && data.item.category === 'ball') {
-                 // Logic handled by threshold check on itemsBought? No, itemsBought is total.
-                 // We need a specific stat for "Max Bought At Once" or just check here?
-                 // The criteria says "itemsBought" threshold 10. But description says "Buy 10 at once".
-                 // I'll assume the stat "itemsBought" tracks total, but we might need a new stat for "maxBatchBuy".
-                 // For now, let's just add to total.
-            }
+            this.update({ key: 'maxItemsBoughtAtOnce', operation: 'max', value: qty });
         } else if (data.action === 'use') {
             this.update({ key: 'itemsUsed', operation: 'add', value: qty });
             if (data.item.category === 'potion') {
@@ -748,9 +813,11 @@ export class AchievementManager {
             if (data.item.category === 'stone') {
                 this.update({ key: 'stonesUsed', operation: 'add', value: qty });
             }
-            if (data.isUseless) {
-                this.update({ key: 'uselessItemUsed', operation: 'set', value: true });
-            }
         }
     }
+
+    public onMoneyUpdate(amount: number) {
+        this.update({ key: 'money', operation: 'set', value: amount });
+    }
 }
+

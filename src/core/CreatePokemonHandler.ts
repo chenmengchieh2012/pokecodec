@@ -234,7 +234,10 @@ export const PokemonFactory = {
                 bugsFixed: 0,
                 commits: 0,
                 coffeeConsumed: 0
-            }
+            },
+
+            isLegendary: pokemonData.species.is_legendary,
+            isMythical: pokemonData.species.is_mythical
         };
 
         return pokemonInstance;

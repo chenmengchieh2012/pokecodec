@@ -37,6 +37,8 @@ import { GitActivityHandler } from './core/GitActivityHandler';
 import { ExperienceCalculator } from './utils/ExperienceCalculator';
 import { randomUUID } from 'crypto';
 import { PokemonFactory } from './core/CreatePokemonHandler';
+import { AchievementManager } from './manager/AchievementManager';
+import { RecordBattleActionPayload, RecordItemActionPayload, RecordBattleCatchPayload, RecordBattleFinishedPayload } from './utils/AchievementCritiria';
 
 
 
@@ -59,6 +61,7 @@ export function activate(context: vscode.ExtensionContext) {
     const userDaoManager = UserDaoManager.initialize(context);
     const gameStateManager = GameStateManager.initialize(context);
     const biomeManager = BiomeDataManager.initialize(context);
+    const achievementManager = AchievementManager.initialize(context);
 
     const gameProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'game', context, biomeManager });
     const backpackProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'backpack', context, biomeManager });
@@ -129,6 +132,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
     private commandHandler: CommandHandler;
     private gameStateManager: GameStateManager;
     private biomeManager: BiomeDataManager;
+    private achievementManager: AchievementManager;
     private _context: vscode.ExtensionContext;
     private _extensionUri: vscode.Uri;
     private _viewType: string;
@@ -143,6 +147,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         this.userDaoManager = UserDaoManager.getInstance();
         this.gameStateManager = GameStateManager.getInstance();
         this.pokeDexManager = PokeDexManager.getInstance();
+        this.achievementManager = AchievementManager.getInstance();
         this.biomeManager = biomeManager;
         this._extensionUri = extensionUri;
         this._viewType = viewType;
@@ -155,6 +160,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             this.gameStateManager,
             this.biomeManager,
             this.pokeDexManager,
+            this.achievementManager,
             _context
         );
         PokemonViewProvider.providers.push(this);
@@ -188,6 +194,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             this.commandHandler.handleGetUserInfo();
             this.commandHandler.handleGetGameState();
             this.commandHandler.handleGetCurrentPokeDex();
+            this.commandHandler.handleGetAchievements();
         }
         this.updateBiomeState();
     }
@@ -199,6 +206,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         await this.pokemonBoxManager.clear();
         await this.gameStateManager.clear();
         await this.pokeDexManager.clear();
+        await this.achievementManager.clear();
         
         // Add default pokemon
         const starter = { ...defaultPokemon };
@@ -226,7 +234,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                 type: [],
                 catchRate: 0,
                 minDepth: 0
-            },'test/file/path')
+            },'test/file/path');
             await this.pokemonBoxManager.add(debugPokemon);
         }
 
@@ -245,6 +253,9 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         const handlerContext: HandlerContext = {
             postMessage: (msg: unknown) => webviewView.webview.postMessage(msg),
             updateAllViews: () => PokemonViewProvider.providers.forEach(p => p.updateViews()),
+            updateAchievementsView: () => {
+                this.commandHandler.handleGetAchievements();
+            }
         };
         this.commandHandler.setHandlerContext(handlerContext);
 
@@ -362,10 +373,33 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             if (message.command === MessageType.TriggerEncounter) {
                 this.triggerEncounter();
             }
+
             if (message.command === MessageType.GetBiome) {
                 const filePath = message.filePath as string;
                 this.handleGetBiomeData();
             }
+
+            if (message.command === MessageType.GetAchievements) {
+                await this.commandHandler.handleGetAchievements();
+            }
+
+            if (message.command === MessageType.RecordBattleAction) {
+                await this.commandHandler.handleRecordBattleAction(message as  RecordBattleActionPayload);
+            }
+
+            if (message.command === MessageType.RecordItemAction) {
+                await this.commandHandler.handleRecordItemAction(message as  RecordItemActionPayload);
+            }
+
+            if (message.command === MessageType.RecordBattleCatch) {
+                await this.commandHandler.handleRecordCatchInBattle(message as  RecordBattleCatchPayload);
+            }
+
+            if (message.command === MessageType.RecordBattleFinished) {
+                await this.commandHandler.handleRecordBattleFinished(message as  RecordBattleFinishedPayload);
+            }
+            
+
         });
 
     }
@@ -463,6 +497,9 @@ export const defaultPokemon: PokemonDao = {
     gender: 'male',
     nature: 'hardy',
     ability: 'static',
+    isHiddenAbility: false,
+    isLegendary: false,
+    isMythical: false,
     height: 4,
     weight: 60,
     baseExp: 112,

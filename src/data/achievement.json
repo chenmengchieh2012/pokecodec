@@ -366,7 +366,7 @@
   {
     "id": "53",
     "title": "Prepared",
-    "description": "Buy 10 Poke Balls at once",
+    "description": "Buy 10 items at once",
     "icon": "\ud83c\udf92",
     "category": "Economy"
   },
@@ -700,13 +700,6 @@
     "category": "Battle"
   },
   {
-    "id": "101",
-    "title": "Force Push",
-    "description": "Use Roar or Whirlwind to switch the opponent",
-    "icon": "\ud83d\udcaa",
-    "category": "Battle"
-  },
-  {
     "id": "102",
     "title": "Git Blame",
     "description": "Use the move Leer or Glare",
@@ -750,15 +743,8 @@
   },
   {
     "id": "108",
-    "title": "Shotgun Surgery",
-    "description": "Hit 5 times with a multi-hit move",
-    "icon": "\ud83d\udd2b",
-    "category": "Battle"
-  },
-  {
-    "id": "109",
     "title": "Race Condition",
-    "description": "Win a battle with a priority move",
+    "description": "Using same move with opponent",
     "icon": "\ud83c\udfce\ufe0f",
     "category": "Battle"
   }

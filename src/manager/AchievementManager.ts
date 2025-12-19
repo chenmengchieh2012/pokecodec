@@ -1,0 +1,104 @@
+import * as vscode from 'vscode';
+import { AchievementAnalyzer, AchievementStatistics, RecordBattleActionPayload, RecordBattleCatchPayload, RecordBattleFinishedPayload, RecordItemActionPayload } from '../utils/AchievementCritiria';
+import GlobalStateKey from '../utils/GlobalStateKey';
+import { SequentialExecutor } from '../utils/SequentialExecutor';
+
+
+export class AchievementManager {
+    private static instance: AchievementManager;
+    private context: vscode.ExtensionContext;
+    // Map<GenID, PokeDexData>
+    private achievementStatistics: AchievementStatistics = AchievementAnalyzer.getDefaultStatistics();
+    private readonly STORAGE_KEY = GlobalStateKey.ACHIEVEMENT;
+    private saveQueue = new SequentialExecutor();
+
+    private constructor(context: vscode.ExtensionContext) {
+        this.context = context;
+        this.reload();
+    }
+
+    public static getInstance(): AchievementManager {
+        if (!AchievementManager.instance) {
+            throw new Error("AchievementManager not initialized. Call initialize() first.");
+        }
+        return AchievementManager.instance;
+    }
+
+    public static initialize(context: vscode.ExtensionContext): AchievementManager {
+        AchievementManager.instance = new AchievementManager(context);
+        return AchievementManager.instance;
+    }
+
+    public reload() {
+        this.achievementStatistics = this.context.globalState.get<AchievementStatistics>(this.STORAGE_KEY, AchievementAnalyzer.getDefaultStatistics());
+    }
+
+    public getStatistics(): AchievementStatistics {
+        return this.achievementStatistics;
+    }
+
+
+    private async performTransaction(modifier: (statistic: AchievementStatistics) => AchievementStatistics): Promise<void> {
+        await this.saveQueue.execute(async () => {
+            // 1. Read
+            const key = this.STORAGE_KEY;
+            const storedData = this.context.globalState.get<AchievementStatistics>(key, AchievementAnalyzer.getDefaultStatistics());
+            
+            // 2. Modify
+            const newData = modifier(storedData);
+            // 3. Write
+            await this.context.globalState.update(key, newData);
+
+            // 4. Update Cache
+            this.achievementStatistics = newData;
+        });
+    }
+
+
+    public async onBattleFinished(payload: RecordBattleFinishedPayload): Promise<void> {
+        await this.performTransaction((stats) => {
+            const analyzer = new AchievementAnalyzer(stats);
+            analyzer.onBattleFinished({
+                ...payload
+            });
+            return analyzer.getStatistics();
+        });
+    }
+
+    public async onCatchPokemon(payload: RecordBattleCatchPayload): Promise<void> {
+        await this.performTransaction((stats) => {
+            const analyzer = new AchievementAnalyzer(stats);
+            analyzer.onCatch(payload);
+            return analyzer.getStatistics();
+        });
+    }
+
+    public async onBattleAction(payload: RecordBattleActionPayload): Promise<void> {
+        await this.performTransaction((stats) => {
+            const analyzer = new AchievementAnalyzer(stats);
+            analyzer.onBattleAction({
+                ...payload
+            });
+            return analyzer.getStatistics();
+        });
+    }
+
+    public async onItemAction(payload: RecordItemActionPayload): Promise<void> {
+        await this.performTransaction((stats) => {
+            const analyzer = new AchievementAnalyzer(stats);
+            analyzer.onItemAction({
+                ...payload
+            });
+            console.log("AchievementManager: onItemAction updated statistics:", analyzer.getStatistics());
+            console.log("AchievementManager: onItemAction payload:", payload);
+            return analyzer.getStatistics();
+        });
+    }
+
+    public async clear(): Promise<void> {
+        await this.context.globalState.update(this.STORAGE_KEY, AchievementAnalyzer.getDefaultStatistics());
+        this.achievementStatistics = AchievementAnalyzer.getDefaultStatistics();
+    }
+    
+
+}

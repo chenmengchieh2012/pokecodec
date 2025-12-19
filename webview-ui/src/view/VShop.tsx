@@ -10,6 +10,7 @@ import { MessageType } from '../../../src/dataAccessObj/messageType';
 import { EmeraldTabPanel } from '../frame/EmeraldTabPanel';
 import ItemDaoData from '../../../src/data/items.json';
 import { CapitalizeFirstLetter } from '../utilities/util';
+import { ItemRecorder } from '../manager/itemRecorder';
 
 
 const ItemDaoMap = ItemDaoData as unknown as Record<string, ItemDao>;
@@ -110,6 +111,8 @@ export const VShop = () => {
                 });
                 // 更新本地顯示 (雖然 extension 會回傳，但為了即時性先扣)
                 setMoney(prev => prev - totalPrice);
+
+                ItemRecorder().onItemAction('buy', selectedItem, quantity, false);
             } else {
                 alert("Not enough money!");
             }

@@ -102,4 +102,5 @@ export interface EvolvePokemonPayload {
 export interface HandlerContext {
     postMessage: (message: unknown) => void;
     updateAllViews: () => void;
+    updateAchievementsView: () => void;
 }

@@ -10,6 +10,7 @@ export const MessageType = {
     BiomeData: 'biomeData',
     PokeDexData: 'pokeDexData',
     GameState: 'gameState',
+    AchievementsData: 'achievementsData',
     
     // Request types (from webview to extension)
     GetUserInfo: 'getUserInfo',
@@ -19,6 +20,7 @@ export const MessageType = {
     GetGameState: 'getGameState',
     GetBiome: 'getBiome',
     GetPokeDex: 'getPokeDex',
+    GetAchievements: 'getAchievements',
     
     // Action types
     SetGameState: 'setGameState',
@@ -40,6 +42,12 @@ export const MessageType = {
     EvolvePokemon: 'evolvePokemon',
     ResetStorage: 'resetStorage',
     Error: 'error',
+
+    RecordBattleFinished: 'recordBattleFinished',
+    RecordBattleAction: 'recordBattleAction',
+    RecordBattleCatch: 'recordBattleCatch',
+
+    RecordItemAction: 'recordItemAction',
 } as const;
 
 

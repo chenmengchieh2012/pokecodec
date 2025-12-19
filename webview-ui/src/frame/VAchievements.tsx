@@ -1,87 +1,83 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import achievementDataSource from '../../../src/data/achievement.json';
+import { PokeDexEntry } from '../../../src/dataAccessObj/PokeDex';
+import { MessageType } from '../../../src/dataAccessObj/messageType';
+import { PokeDexPayload } from '../../../src/dataAccessObj/MessagePayload';
+import { AchievementAnalyzer, AchievementContext, achievementCriteria, AchievementStatistics } from '../../../src/utils/AchievementCritiria';
+import { useMessageStore, useMessageSubscription } from '../store/messageStore';
 import styles from './VAchievements.module.css';
-import { useMessageStore } from '../store/messageStore';
-import { PokeDexEntryStatus } from '../../../src/dataAccessObj/PokeDex';
-import achievementData from '../../../src/data/achievement.json';
 
 interface Achievement {
     id: string;
     title: string;
     description: string;
     icon: string;
+    category: string;
     isUnlocked: boolean;
     progress?: string;
 }
 
+const achievementDataMap: Record<string, Achievement> = achievementDataSource.reduce((map, desc) => {
+    map[desc.id] = {
+        id: desc.id,
+        title: desc.title,
+        description: desc.description,
+        icon: desc.icon,
+        category: desc.category,
+        isUnlocked: false,
+        progress: undefined
+    };
+    return map;
+}, {} as Record<string, Achievement>);
+
 export const VAchievements = () => {
     const messageStore = useMessageStore();
-    const user = messageStore.getRefs().userInfo;
-    const pokedex = messageStore.getRefs().pokeDex;
-    const party = messageStore.getRefs().party;
     const [selectedId, setSelectedId] = useState<string | null>(null);
+    const selectedAchievement = useMemo(()=>{
+        const achv = selectedId ? achievementDataMap[selectedId] : null;
+        return achv
+    }, [selectedId]);
+    const [achievements, setAchievements] = useState<Achievement[]>([]);
+    const achievementContextRef = useRef<AchievementContext>({
+        statistics: messageStore.getRefs().achievements || AchievementAnalyzer.getDefaultStatistics(),
+        pokedex: messageStore.getRefs().pokeDex?.entries || [],
+    })
 
-    const achievements: Achievement[] = achievementData.map((data) => {
-        let isUnlocked = false;
-        let progress = 'Locked';
+    const refresh = useCallback(()=>{
+        if (!achievementContextRef.current) return;
+        const context = achievementContextRef.current;
+        if( !context.statistics ) return;
+        if( !context.pokedex ) return;
+        const updatedAchievements: Achievement[] = Object.values(achievementDataMap).map(achv => {
+            const criteria = achievementCriteria[achv.id];
+            if (!criteria) return achv;
+            const result = criteria(context);
+            return {
+                ...achv,
+                isUnlocked: result.isUnlocked,
+                progress: result.progress
+            };
+        });
+        setAchievements(updatedAchievements);
+    },[])
+    
+    useEffect(()=>{
+        refresh();
+    },[refresh])
+    
 
-        // Basic logic mapping for demonstrable achievements
-        const caughtCount = pokedex?.entries.filter(e => e.status === PokeDexEntryStatus.Caught).length ?? 0;
-        const money = user?.money ?? 0;
-        const partySize = party?.length ?? 0;
-
-        switch (data.id) {
-            case '1': // Hello World
-                isUnlocked = true;
-                progress = 'Completed';
-                break;
-            case '9': // Full Party
-                isUnlocked = partySize >= 6;
-                progress = `${partySize}/6`;
-                break;
-            case '21': // Pokedex Rookie
-                isUnlocked = caughtCount >= 10;
-                progress = `${caughtCount}/10`;
-                break;
-            case '22': // Pokedex Explorer
-                isUnlocked = caughtCount >= 30;
-                progress = `${caughtCount}/30`;
-                break;
-            case '23': // Pokedex Pro
-                isUnlocked = caughtCount >= 50;
-                progress = `${caughtCount}/50`;
-                break;
-            case '24': // Pokedex Master
-                isUnlocked = caughtCount >= 100;
-                progress = `${caughtCount}/100`;
-                break;
-            case '58': // Penny Pincher
-                isUnlocked = money >= 5000;
-                progress = `$${money}/$5000`;
-                break;
-            case '59': // Big Spender
-                isUnlocked = money >= 10000; // Note: This tracks current money, not spent
-                progress = `$${money}/$10000`;
-                break;
-            case '60': // Millionaire
-                isUnlocked = money >= 1000000;
-                progress = `$${money}/$1000000`;
-                break;
-            default:
-                // Default state
-                break;
-        }
-
-        return {
-            id: data.id,
-            title: data.title,
-            description: data.description,
-            icon: data.icon,
-            isUnlocked,
-            progress
-        };
+    useMessageSubscription<AchievementStatistics>(MessageType.AchievementsData, (message) => {
+        if (!message.data) return;
+        achievementContextRef.current.statistics = message.data;
+        refresh();
     });
 
-    const selectedAchievement = achievements.find(a => a.id === selectedId);
+    useMessageSubscription<PokeDexPayload>(MessageType.PokeDexData, (message) => {
+        if (!message.data) return;
+        achievementContextRef.current.pokedex = message.data.entries;
+        refresh();
+    });
+
 
     return (
         <div className={styles.container}>
