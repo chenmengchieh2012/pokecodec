@@ -2,7 +2,7 @@ import React, { useCallback, useImperativeHandle, useState } from 'react';
 import { PartyGridInModal } from '../model/PartyGridInModal';
 import { PokemonMoveModal } from '../model/PokemonMoveModal';
 import { useMessageStore, useMessageSubscription } from '../store/messageStore';
-import { ItemUITag, ItemUiTagItemsMap, SHOP_ITEM_EVOLUTION_NAMES, SHOP_ITEM_FULL_MEDICINE_NAMES, SHOP_ITEMS_HP_MEDICINE_NAMES, SHOP_ITEMS_PP_MEDICINE_NAMES } from '../utilities/ItemName';
+import { ItemUITag, ItemUiTagItemsMap, SHOP_ITEM_EVOLUTION_NAMES, SHOP_ITEM_FULL_MEDICINE_NAMES, SHOP_ITEMS_HP_MEDICINE_NAMES, SHOP_ITEMS_PP_MEDICINE_NAMES, SHOP_ITEMS_REVIVE_NAMES } from '../utilities/ItemName';
 import { vscode, resolveAssetUrl } from '../utilities/vscode';
 import styles from './VBagBox.module.css';
 import { ItemDao } from '../../../src/dataAccessObj/item';
@@ -152,8 +152,15 @@ const ItemUseModal = React.forwardRef<ItemUserModalHandler, ItemUseModalProps>((
             } else if(item.pocket === 'medicine') {
                 if(
                     SHOP_ITEMS_HP_MEDICINE_NAMES.includes(item.apiName) ||
-                    SHOP_ITEM_FULL_MEDICINE_NAMES.includes(item.apiName)
+                    SHOP_ITEM_FULL_MEDICINE_NAMES.includes(item.apiName) ||
+                    SHOP_ITEMS_REVIVE_NAMES.includes(item.apiName)
                 ){
+                    if([...SHOP_ITEMS_HP_MEDICINE_NAMES, ...SHOP_ITEM_FULL_MEDICINE_NAMES].flat().includes(item.apiName)){
+                        setDisabledPartyUids(party.filter(p=>p.currentHp === 0 || p.ailment === 'fainted').map(p=>p.uid));
+                    }
+                    if(SHOP_ITEMS_REVIVE_NAMES.includes(item.apiName)){
+                        setDisabledPartyUids(party.filter(p=>p.currentHp > 0 && p.ailment !== 'fainted').map(p=>p.uid));
+                    }
                     setMedicineType(MedicineExtendType.HP);
                 }
 

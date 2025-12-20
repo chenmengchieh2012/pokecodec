@@ -293,7 +293,6 @@
     display: grid;
     flex-direction: column;
     gap: 2px;
-
 }
 
 .blueText {
@@ -385,4 +384,11 @@
     padding: 0;
     margin: 0;
     text-align: center;
+}
+
+.codeDetailSection {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1px 8px;
+    margin-bottom: 4px;
 }

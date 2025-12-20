@@ -296,15 +296,20 @@ export class CommandHandler {
                         pokemon.currentHp = Math.min(pokemon.maxHp, pokemon.currentHp + healAmount);
                         itemUsed = true;
                         usedMessage = `Restored ${pokemon.currentHp - oldHp} HP.`;
+                        if (payload.item.apiName === 'full-medicine') {
+                            // Full heal also cures status
+                            pokemon.ailment = 'healthy';
+                        }
                     } else {
                         vscode.window.showInformationMessage('HP is already full!');
                     }
                 }
                 // 3. Revive
                 else if (effect.revive) {
-                    if (pokemon.currentHp === 0) {
+                    if (pokemon.currentHp === 0 || pokemon.ailment === 'fainted') {
                         const healPercent = effect.reviveHpPercent || 50;
                         pokemon.currentHp = Math.floor(pokemon.maxHp * (healPercent / 100));
+                        pokemon.ailment = 'healthy';
                         itemUsed = true;
                         usedMessage = `Revived with ${pokemon.currentHp} HP.`;
                     } else {
@@ -347,7 +352,7 @@ export class CommandHandler {
                 }
                 // 5. Status Heal (Placeholder)
                 else if (effect.healStatus) {
-                     // TODO: Implement status healing
+                     // MARK: TODO: Implement status healing
                      vscode.window.showInformationMessage('Status healing not implemented yet.');
                 }                        // 5. Restore PP
                 else if (effect.restorePp) {

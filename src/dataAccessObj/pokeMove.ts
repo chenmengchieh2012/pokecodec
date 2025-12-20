@@ -1,3 +1,10 @@
+export type StatName = 'hp' | 'attack' | 'defense' | 'special-attack' | 'special-defense' | 'speed' | 'accuracy' | 'evasion';
+
+export interface StatChange {
+    change: number;
+    stat: StatName;
+}
+
 export interface PokemonMove {
     id: number;
     name: string;
@@ -8,6 +15,17 @@ export interface PokemonMove {
     priority: number;
     maxPP: number;
     effect: string;
+    meta?: {
+        ailment: string;
+        ailment_chance: number;
+        crit_rate: number;
+        drain: number;
+        flinch_chance: number;
+        healing: number;
+        stat_chance: number;
+    } | null;
+    stat_changes?: StatChange[];
+    target?: string;
 }
 
 export function MoveDecorator(localMoveData: PokemonMove){
@@ -20,7 +38,10 @@ export function MoveDecorator(localMoveData: PokemonMove){
         pp: localMoveData.pp,
         priority: localMoveData.priority,
         maxPP: localMoveData.pp,
-        effect: localMoveData.effect
+        effect: localMoveData.effect,
+        meta: localMoveData.meta,
+        stat_changes: localMoveData.stat_changes,
+        target: localMoveData.target
     };
 }
 

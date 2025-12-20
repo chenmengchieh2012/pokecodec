@@ -6,6 +6,18 @@ export type PokemonType =
     | 'fighting' | 'poison' | 'ground' | 'flying' | 'psychic' 
     | 'bug' | 'rock' | 'ghost' | 'dragon' | 'steel' | 'fairy' 
     | 'dark'; // 補上惡系，這是 PokeAPI 的標準 18 屬性
+
+export type PokemonAilment = 'healthy' | 'burn' | 'freeze' | 'paralysis' | 'poison' | 'badly-poison' | 'sleep' | 'fainted';
+
+export const getEmptyPokemonStats = (): PokemonStats => ({
+    hp: 0,
+    attack: 0,
+    defense: 0,
+    specialAttack: 0,
+    specialDefense: 0,
+    speed: 0,
+});
+
 export interface PokemonStats {
     hp: number;
     attack: number;
@@ -23,6 +35,7 @@ export interface PokemonDao {
     level: number;
     currentHp: number;
     maxHp: number;
+    ailment?: PokemonAilment; // Status condition (burn, paralysis, etc.)
     
     // Stats
     stats: PokemonStats; // Actual stats (calculated)

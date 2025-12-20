@@ -50,10 +50,34 @@ export const VHPBlock = React.forwardRef<VHPBlockHandle, VHPBlockProps>( ({ poke
     const genderSymbol = pokemonData.gender === 'Male' ? '♂' : (pokemonData.gender === 'Female' ? '♀' : '');
     const genderColor = pokemonData.gender === 'Male' ? '#6890F0' : (pokemonData.gender === 'Female' ? '#F08030' : '#000');
    
+    // 異常狀態顯示
+    const getAilmentBadge = () => {
+        if (!pokemonData.ailment || pokemonData.ailment === 'healthy') return null;
+        
+        const ailmentMap: Record<string, { text: string, color: string }> = {
+            'burn': { text: 'BRN', color: '#F08030' },
+            'freeze': { text: 'FRZ', color: '#98D8D8' },
+            'paralysis': { text: 'PAR', color: '#F8D030' },
+            'poison': { text: 'PSN', color: '#A040A0' },
+            'sleep': { text: 'SLP', color: '#8C888C' },
+            'fainted': { text: 'FNT', color: '#C03028' }
+        };
+
+        const ailment = ailmentMap[pokemonData.ailment];
+        if (!ailment) return null;
+
+        return (
+            <span className={styles['ailment-badge']} style={{ backgroundColor: ailment.color }}>
+                {ailment.text}
+            </span>
+        );
+    };
+
     return <>
         <div className={`${styles.hud} ${animClass === 'anim-catch' ? styles['anim-catch'] : ''}`}>
             <div className={styles['pokemon-info']}>
                 <span className={styles['pokemon-name']}>{pokemonData.name.toUpperCase()}</span>
+                {getAilmentBadge()}
                 <span className={styles['pokemon-gender']} style={{ color: genderColor }}>{genderSymbol}</span>
                 <span className={styles['pokemon-lv']}>Lv{pokemonData.level}</span>
             </div>

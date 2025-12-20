@@ -23,13 +23,12 @@ export const PartyGridInModal: React.FC<PartyGridInModalProps> = ({ party, onPok
                     const current = p.currentHp ?? p.stats?.hp ?? 100;
                     const max = p.maxHp ?? p.stats?.hp ?? 100;
                     const hpPercent = max > 0 ? (current / max) * 100 : 0;
-                    const isFainted = current <= 0;
                     const isDisabled = disabledPartyUids ? disabledPartyUids.includes(p.uid) : false;
 
                     return (
                         <button 
                             key={p.uid} 
-                            className={`${styles['party-card-btn']} ${isFainted ? styles.fainted : ''} ${isDisabled ? styles.disabled : ''}`}
+                            className={`${styles['party-card-btn']} ${isDisabled ? styles.disabled : ''}`}
                             onClick={() => onPokemonClick(p)}
                         >
                             {/* 左側：寶可夢圖示 */}

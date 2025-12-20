@@ -128,15 +128,65 @@ async function main() {
         'ether', 'max-ether', 'elixir', 'max-elixir',
         'oran-berry', 'sitrus-berry', 'lum-berry',
         'fire-stone', 'water-stone', 'thunder-stone', 'leaf-stone', 'moon-stone', 'sun-stone',
-        'protein', 'iron', 'calcium', 'zinc', 'carbos'
+        'shiny-stone', 'dusk-stone', 'dawn-stone',
+        'protein', 'iron', 'calcium', 'zinc', 'carbos',
+        // TMs (Gen 1)
+        'tm01', 'tm02', 'tm03', 'tm04', 'tm05', 'tm06', 'tm07', 'tm08', 'tm09', 'tm10',
+        'tm11', 'tm12', 'tm13', 'tm14', 'tm15', 'tm16', 'tm17', 'tm18', 'tm19', 'tm20',
+        'tm21', 'tm22', 'tm23', 'tm24', 'tm25', 'tm26', 'tm27', 'tm28', 'tm29', 'tm30',
+        'tm31', 'tm32', 'tm33', 'tm34', 'tm35', 'tm36', 'tm37', 'tm38', 'tm39', 'tm40',
+        'tm41', 'tm42', 'tm43', 'tm44', 'tm45', 'tm46', 'tm47', 'tm48', 'tm49', 'tm50',
+        // HMs (Gen 1)
+        'hm01', 'hm02', 'hm03', 'hm04', 'hm05'
     ];
 
     console.log('\nDownloading items...');
     for (const item of items) {
+        let url = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/${item}.png`;
+        
+        // Special handling for TMs/HMs (fetch correct sprite URL from API)
+        if (item.startsWith('tm') || item.startsWith('hm')) {
+            try {
+                const fetchedUrl = await new Promise((resolve) => {
+                    https.get(`https://pokeapi.co/api/v2/item/${item}`, (res) => {
+                        if (res.statusCode !== 200) {
+                            resolve(null);
+                            return;
+                        }
+                        let data = '';
+                        res.on('data', chunk => data += chunk);
+                        res.on('end', () => {
+                            try {
+                                const json = JSON.parse(data);
+                                resolve(json.sprites.default);
+                            } catch (e) {
+                                resolve(null);
+                            }
+                        });
+                    }).on('error', () => resolve(null));
+                });
+                
+                if (fetchedUrl) {
+                    url = fetchedUrl;
+                }
+            } catch (e) {
+                console.warn(`Failed to fetch info for ${item}, using default URL.`);
+            }
+        }
+
         downloads.push(downloadFile(
-            `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/${item}.png`,
+            url,
             path.join(DIRS.items, `${item}.png`)
         ));
+        
+        // Throttle TMs slightly to avoid API rate limits
+        if (item.startsWith('tm') || item.startsWith('hm')) {
+            if (downloads.length >= 5) {
+                await Promise.all(downloads);
+                downloads.length = 0;
+                process.stdout.write('.');
+            }
+        }
     }
 
     await Promise.all(downloads);

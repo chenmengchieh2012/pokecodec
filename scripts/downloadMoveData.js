@@ -16,13 +16,28 @@ function simplifyMoveData(data) {
     return {
         id: data.id,
         name: data.name,
-        type: data.type.name.toUpperCase(), // Convert to uppercase to match PokemonType
+        type: data.type.name, // Convert to uppercase to match PokemonType
         power: data.power,
         accuracy: data.accuracy,
         pp: data.pp,
         priority: data.priority,
         maxPP: Math.floor(data.pp * 1.6), // Max PP is usually PP * 1.6 (PP Up x3)
-        effect: data.effect_entries.find(e => e.language.name === 'en')?.short_effect || ''
+        effect: data.effect_entries.find(e => e.language.name === 'en')?.short_effect || '',
+        // Add structured meta data
+        meta: data.meta ? {
+            ailment: data.meta.ailment.name,
+            ailment_chance: data.meta.ailment_chance,
+            crit_rate: data.meta.crit_rate,
+            drain: data.meta.drain,
+            flinch_chance: data.meta.flinch_chance,
+            healing: data.meta.healing,
+            stat_chance: data.meta.stat_chance
+        } : null,
+        stat_changes: data.stat_changes ? data.stat_changes.map(sc => ({
+            change: sc.change,
+            stat: sc.stat.name
+        })) : [],
+        target: data.target ? data.target.name : 'selected-pokemon'
     };
 }
 

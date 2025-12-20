@@ -195,6 +195,10 @@ export const PokemonFactory = {
 
         const { caughtRepo, favoriteLanguage } = determineCodingContext(filePath);
         
+        // MARK: TEST Rand Ailment
+        const randomAilments = [ 'healthy', 'burn', 'freeze', 'paralysis', 'poison', 'sleep'] as const;
+        const ailment = randomAilments[Math.floor(Math.random() * randomAilments.length)];
+
         // 建立寶可夢實例
         const pokemonInstance: PokemonDao = {
             uid: randomUUID(),
@@ -226,6 +230,7 @@ export const PokemonFactory = {
             level: level,
 
             pokemonMoves: allMoves.slice(0, 4), // 只選前四招
+            ailment: ailment,
             
             codingStats: {
                 caughtRepo: caughtRepo,

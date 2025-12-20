@@ -1,1817 +1,3776 @@
 {
-  "razor-wind": {
-    "id": 13,
-    "name": "razor-wind",
-    "type": "NORMAL",
-    "power": 80,
-    "accuracy": 100,
-    "pp": 10,
-    "priority": 0,
-    "maxPP": 16,
-    "effect": "Requires a turn to charge before attacking."
-  },
-  "mega-punch": {
-    "id": 5,
-    "name": "mega-punch",
-    "type": "NORMAL",
-    "power": 80,
-    "accuracy": 85,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Inflicts regular damage with no additional effect."
-  },
-  "scratch": {
-    "id": 10,
-    "name": "scratch",
-    "type": "NORMAL",
-    "power": 40,
-    "accuracy": 100,
-    "pp": 35,
-    "priority": 0,
-    "maxPP": 56,
-    "effect": "Inflicts regular damage with no additional effect."
-  },
-  "vice-grip": {
-    "id": 11,
-    "name": "vice-grip",
-    "type": "NORMAL",
-    "power": 55,
-    "accuracy": 100,
-    "pp": 30,
-    "priority": 0,
-    "maxPP": 48,
-    "effect": "Inflicts regular damage with no additional effect."
-  },
-  "fire-punch": {
-    "id": 7,
-    "name": "fire-punch",
-    "type": "FIRE",
-    "power": 75,
-    "accuracy": 100,
-    "pp": 15,
-    "priority": 0,
-    "maxPP": 24,
-    "effect": "Has a 10% chance to burn the target."
-  },
-  "thunder-punch": {
-    "id": 9,
-    "name": "thunder-punch",
-    "type": "ELECTRIC",
-    "power": 75,
-    "accuracy": 100,
-    "pp": 15,
-    "priority": 0,
-    "maxPP": 24,
-    "effect": "Has a 10% chance to paralyze the target."
-  },
-  "ice-punch": {
-    "id": 8,
-    "name": "ice-punch",
-    "type": "ICE",
-    "power": 75,
-    "accuracy": 100,
-    "pp": 15,
-    "priority": 0,
-    "maxPP": 24,
-    "effect": "Has a 10% chance to freeze the target."
-  },
-  "whirlwind": {
-    "id": 18,
-    "name": "whirlwind",
-    "type": "NORMAL",
-    "power": null,
-    "accuracy": null,
-    "pp": 20,
-    "priority": -6,
-    "maxPP": 32,
-    "effect": "Immediately ends wild battles.  Forces trainers to switch Pokémon."
-  },
-  "cut": {
-    "id": 15,
-    "name": "cut",
-    "type": "NORMAL",
-    "power": 50,
-    "accuracy": 95,
-    "pp": 30,
-    "priority": 0,
-    "maxPP": 48,
-    "effect": "Inflicts regular damage with no additional effect."
-  },
-  "pound": {
-    "id": 1,
-    "name": "pound",
-    "type": "NORMAL",
-    "power": 40,
-    "accuracy": 100,
-    "pp": 35,
-    "priority": 0,
-    "maxPP": 56,
-    "effect": "Inflicts regular damage with no additional effect."
-  },
-  "wing-attack": {
-    "id": 17,
-    "name": "wing-attack",
-    "type": "FLYING",
-    "power": 60,
-    "accuracy": 100,
-    "pp": 35,
-    "priority": 0,
-    "maxPP": 56,
-    "effect": "Inflicts regular damage with no additional effect."
-  },
-  "gust": {
-    "id": 16,
-    "name": "gust",
-    "type": "FLYING",
-    "power": 40,
-    "accuracy": 100,
-    "pp": 35,
-    "priority": 0,
-    "maxPP": 56,
-    "effect": "Inflicts regular damage and can hit Pokémon in the air."
-  },
-  "fly": {
-    "id": 19,
-    "name": "fly",
-    "type": "FLYING",
-    "power": 90,
-    "accuracy": 95,
-    "pp": 15,
-    "priority": 0,
-    "maxPP": 24,
-    "effect": "User flies high into the air, dodging all attacks, and hits next turn."
-  },
-  "swords-dance": {
-    "id": 14,
-    "name": "swords-dance",
-    "type": "NORMAL",
-    "power": null,
-    "accuracy": null,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Raises the user’s Attack by two stages."
-  },
-  "bind": {
-    "id": 20,
-    "name": "bind",
-    "type": "NORMAL",
-    "power": 15,
-    "accuracy": 85,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Prevents the target from fleeing and inflicts damage for 2-5 turns."
-  },
   "comet-punch": {
     "id": 4,
     "name": "comet-punch",
-    "type": "NORMAL",
+    "type": "normal",
     "power": 18,
     "accuracy": 85,
     "pp": 15,
     "priority": 0,
     "maxPP": 24,
-    "effect": "Hits 2-5 times in one turn."
+    "effect": "Hits 2-5 times in one turn.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
   },
   "karate-chop": {
     "id": 2,
     "name": "karate-chop",
-    "type": "FIGHTING",
+    "type": "fighting",
     "power": 50,
     "accuracy": 100,
     "pp": 25,
     "priority": 0,
     "maxPP": 40,
-    "effect": "Has an increased chance for a critical hit."
+    "effect": "Has an increased chance for a critical hit.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 1,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
   },
-  "pay-day": {
-    "id": 6,
-    "name": "pay-day",
-    "type": "NORMAL",
+  "ice-punch": {
+    "id": 8,
+    "name": "ice-punch",
+    "type": "ice",
+    "power": 75,
+    "accuracy": 100,
+    "pp": 15,
+    "priority": 0,
+    "maxPP": 24,
+    "effect": "Has a 10% chance to freeze the target.",
+    "meta": {
+      "ailment": "freeze",
+      "ailment_chance": 10,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "gust": {
+    "id": 16,
+    "name": "gust",
+    "type": "flying",
     "power": 40,
     "accuracy": 100,
+    "pp": 35,
+    "priority": 0,
+    "maxPP": 56,
+    "effect": "Inflicts regular damage and can hit Pokémon in the air.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "swords-dance": {
+    "id": 14,
+    "name": "swords-dance",
+    "type": "normal",
+    "power": null,
+    "accuracy": null,
     "pp": 20,
     "priority": 0,
     "maxPP": 32,
-    "effect": "Scatters money on the ground worth five times the user’s level."
+    "effect": "Raises the user’s Attack by two stages.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [
+      {
+        "change": 2,
+        "stat": "attack"
+      }
+    ],
+    "target": "user"
+  },
+  "wing-attack": {
+    "id": 17,
+    "name": "wing-attack",
+    "type": "flying",
+    "power": 60,
+    "accuracy": 100,
+    "pp": 35,
+    "priority": 0,
+    "maxPP": 56,
+    "effect": "Inflicts regular damage with no additional effect.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
   },
   "double-slap": {
     "id": 3,
     "name": "double-slap",
-    "type": "NORMAL",
+    "type": "normal",
     "power": 15,
     "accuracy": 85,
     "pp": 10,
     "priority": 0,
     "maxPP": 16,
-    "effect": "Hits 2-5 times in one turn."
+    "effect": "Hits 2-5 times in one turn.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
   },
   "guillotine": {
     "id": 12,
     "name": "guillotine",
-    "type": "NORMAL",
+    "type": "normal",
     "power": null,
     "accuracy": 30,
     "pp": 5,
     "priority": 0,
     "maxPP": 8,
-    "effect": "Causes a one-hit KO."
+    "effect": "Causes a one-hit KO.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
   },
-  "stomp": {
-    "id": 23,
-    "name": "stomp",
-    "type": "NORMAL",
-    "power": 65,
-    "accuracy": 100,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Has a 30% chance to make the target flinch."
-  },
-  "slam": {
-    "id": 21,
-    "name": "slam",
-    "type": "NORMAL",
-    "power": 80,
-    "accuracy": 75,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Inflicts regular damage with no additional effect."
-  },
-  "rolling-kick": {
-    "id": 27,
-    "name": "rolling-kick",
-    "type": "FIGHTING",
-    "power": 60,
-    "accuracy": 85,
-    "pp": 15,
-    "priority": 0,
-    "maxPP": 24,
-    "effect": "Has a 30% chance to make the target flinch."
-  },
-  "double-kick": {
-    "id": 24,
-    "name": "double-kick",
-    "type": "FIGHTING",
-    "power": 30,
-    "accuracy": 100,
+  "cut": {
+    "id": 15,
+    "name": "cut",
+    "type": "normal",
+    "power": 50,
+    "accuracy": 95,
     "pp": 30,
     "priority": 0,
     "maxPP": 48,
-    "effect": "Hits twice in one turn."
+    "effect": "Inflicts regular damage with no additional effect.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
   },
-  "fury-attack": {
-    "id": 31,
-    "name": "fury-attack",
-    "type": "NORMAL",
-    "power": 15,
-    "accuracy": 85,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Hits 2-5 times in one turn."
-  },
-  "poison-sting": {
-    "id": 40,
-    "name": "poison-sting",
-    "type": "POISON",
-    "power": 15,
+  "scratch": {
+    "id": 10,
+    "name": "scratch",
+    "type": "normal",
+    "power": 40,
     "accuracy": 100,
     "pp": 35,
     "priority": 0,
     "maxPP": 56,
-    "effect": "Has a 30% chance to poison the target."
+    "effect": "Inflicts regular damage with no additional effect.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
   },
-  "tail-whip": {
-    "id": 39,
-    "name": "tail-whip",
-    "type": "NORMAL",
+  "razor-wind": {
+    "id": 13,
+    "name": "razor-wind",
+    "type": "normal",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 10,
+    "priority": 0,
+    "maxPP": 16,
+    "effect": "Requires a turn to charge before attacking.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 1,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "all-opponents"
+  },
+  "pound": {
+    "id": 1,
+    "name": "pound",
+    "type": "normal",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 35,
+    "priority": 0,
+    "maxPP": 56,
+    "effect": "Inflicts regular damage with no additional effect.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "whirlwind": {
+    "id": 18,
+    "name": "whirlwind",
+    "type": "normal",
     "power": null,
+    "accuracy": null,
+    "pp": 20,
+    "priority": -6,
+    "maxPP": 32,
+    "effect": "Immediately ends wild battles.  Forces trainers to switch Pokémon.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "fire-punch": {
+    "id": 7,
+    "name": "fire-punch",
+    "type": "fire",
+    "power": 75,
+    "accuracy": 100,
+    "pp": 15,
+    "priority": 0,
+    "maxPP": 24,
+    "effect": "Has a 10% chance to burn the target.",
+    "meta": {
+      "ailment": "burn",
+      "ailment_chance": 10,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "fly": {
+    "id": 19,
+    "name": "fly",
+    "type": "flying",
+    "power": 90,
+    "accuracy": 95,
+    "pp": 15,
+    "priority": 0,
+    "maxPP": 24,
+    "effect": "User flies high into the air, dodging all attacks, and hits next turn.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "pay-day": {
+    "id": 6,
+    "name": "pay-day",
+    "type": "normal",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Scatters money on the ground worth five times the user’s level.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "bind": {
+    "id": 20,
+    "name": "bind",
+    "type": "normal",
+    "power": 15,
+    "accuracy": 85,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Prevents the target from fleeing and inflicts damage for 2-5 turns.",
+    "meta": {
+      "ailment": "trap",
+      "ailment_chance": 100,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "thunder-punch": {
+    "id": 9,
+    "name": "thunder-punch",
+    "type": "electric",
+    "power": 75,
+    "accuracy": 100,
+    "pp": 15,
+    "priority": 0,
+    "maxPP": 24,
+    "effect": "Has a 10% chance to paralyze the target.",
+    "meta": {
+      "ailment": "paralysis",
+      "ailment_chance": 10,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "mega-punch": {
+    "id": 5,
+    "name": "mega-punch",
+    "type": "normal",
+    "power": 80,
+    "accuracy": 85,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Inflicts regular damage with no additional effect.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "vice-grip": {
+    "id": 11,
+    "name": "vice-grip",
+    "type": "normal",
+    "power": 55,
     "accuracy": 100,
     "pp": 30,
     "priority": 0,
     "maxPP": 48,
-    "effect": "Lowers the target’s Defense by one stage."
-  },
-  "wrap": {
-    "id": 35,
-    "name": "wrap",
-    "type": "NORMAL",
-    "power": 15,
-    "accuracy": 90,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Prevents the target from fleeing and inflicts damage for 2-5 turns."
-  },
-  "jump-kick": {
-    "id": 26,
-    "name": "jump-kick",
-    "type": "FIGHTING",
-    "power": 100,
-    "accuracy": 95,
-    "pp": 10,
-    "priority": 0,
-    "maxPP": 16,
-    "effect": "If the user misses, it takes half the damage it would have inflicted in recoil."
+    "effect": "Inflicts regular damage with no additional effect.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
   },
   "vine-whip": {
     "id": 22,
     "name": "vine-whip",
-    "type": "GRASS",
+    "type": "grass",
     "power": 45,
     "accuracy": 100,
     "pp": 25,
     "priority": 0,
     "maxPP": 40,
-    "effect": "Inflicts regular damage with no additional effect."
-  },
-  "thrash": {
-    "id": 37,
-    "name": "thrash",
-    "type": "NORMAL",
-    "power": 120,
-    "accuracy": 100,
-    "pp": 10,
-    "priority": 0,
-    "maxPP": 16,
-    "effect": "Hits every turn for 2-3 turns, then confuses the user."
-  },
-  "tackle": {
-    "id": 33,
-    "name": "tackle",
-    "type": "NORMAL",
-    "power": 40,
-    "accuracy": 100,
-    "pp": 35,
-    "priority": 0,
-    "maxPP": 56,
-    "effect": "Inflicts regular damage with no additional effect."
-  },
-  "body-slam": {
-    "id": 34,
-    "name": "body-slam",
-    "type": "NORMAL",
-    "power": 85,
-    "accuracy": 100,
-    "pp": 15,
-    "priority": 0,
-    "maxPP": 24,
-    "effect": "Has a 30% chance to paralyze the target."
-  },
-  "take-down": {
-    "id": 36,
-    "name": "take-down",
-    "type": "NORMAL",
-    "power": 90,
-    "accuracy": 85,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "User receives 1/4 the damage it inflicts in recoil."
+    "effect": "Inflicts regular damage with no additional effect.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
   },
   "horn-attack": {
     "id": 30,
     "name": "horn-attack",
-    "type": "NORMAL",
+    "type": "normal",
     "power": 65,
     "accuracy": 100,
     "pp": 25,
     "priority": 0,
     "maxPP": 40,
-    "effect": "Inflicts regular damage with no additional effect."
+    "effect": "Inflicts regular damage with no additional effect.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
   },
-  "sand-attack": {
-    "id": 28,
-    "name": "sand-attack",
-    "type": "GROUND",
-    "power": null,
-    "accuracy": 100,
-    "pp": 15,
-    "priority": 0,
-    "maxPP": 24,
-    "effect": "Lowers the target’s accuracy by one stage."
-  },
-  "mega-kick": {
-    "id": 25,
-    "name": "mega-kick",
-    "type": "NORMAL",
-    "power": 120,
+  "slam": {
+    "id": 21,
+    "name": "slam",
+    "type": "normal",
+    "power": 80,
     "accuracy": 75,
-    "pp": 5,
+    "pp": 20,
     "priority": 0,
-    "maxPP": 8,
-    "effect": "Inflicts regular damage with no additional effect."
+    "maxPP": 32,
+    "effect": "Inflicts regular damage with no additional effect.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
   },
-  "headbutt": {
-    "id": 29,
-    "name": "headbutt",
-    "type": "NORMAL",
-    "power": 70,
-    "accuracy": 100,
-    "pp": 15,
+  "wrap": {
+    "id": 35,
+    "name": "wrap",
+    "type": "normal",
+    "power": 15,
+    "accuracy": 90,
+    "pp": 20,
     "priority": 0,
-    "maxPP": 24,
-    "effect": "Has a 30% chance to make the target flinch."
+    "maxPP": 32,
+    "effect": "Prevents the target from fleeing and inflicts damage for 2-5 turns.",
+    "meta": {
+      "ailment": "trap",
+      "ailment_chance": 100,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
   },
   "horn-drill": {
     "id": 32,
     "name": "horn-drill",
-    "type": "NORMAL",
+    "type": "normal",
     "power": null,
     "accuracy": 30,
     "pp": 5,
     "priority": 0,
     "maxPP": 8,
-    "effect": "Causes a one-hit KO."
-  },
-  "double-edge": {
-    "id": 38,
-    "name": "double-edge",
-    "type": "NORMAL",
-    "power": 120,
-    "accuracy": 100,
-    "pp": 15,
-    "priority": 0,
-    "maxPP": 24,
-    "effect": "User receives 1/3 the damage inflicted in recoil."
-  },
-  "ice-beam": {
-    "id": 58,
-    "name": "ice-beam",
-    "type": "ICE",
-    "power": 90,
-    "accuracy": 100,
-    "pp": 10,
-    "priority": 0,
-    "maxPP": 16,
-    "effect": "Has a 10% chance to freeze the target."
-  },
-  "sing": {
-    "id": 47,
-    "name": "sing",
-    "type": "NORMAL",
-    "power": null,
-    "accuracy": 55,
-    "pp": 15,
-    "priority": 0,
-    "maxPP": 24,
-    "effect": "Puts the target to sleep."
-  },
-  "hydro-pump": {
-    "id": 56,
-    "name": "hydro-pump",
-    "type": "WATER",
-    "power": 110,
-    "accuracy": 80,
-    "pp": 5,
-    "priority": 0,
-    "maxPP": 8,
-    "effect": "Inflicts regular damage with no additional effect."
-  },
-  "sonic-boom": {
-    "id": 49,
-    "name": "sonic-boom",
-    "type": "NORMAL",
-    "power": null,
-    "accuracy": 90,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Inflicts 20 points of damage."
-  },
-  "leer": {
-    "id": 43,
-    "name": "leer",
-    "type": "NORMAL",
-    "power": null,
-    "accuracy": 100,
-    "pp": 30,
-    "priority": 0,
-    "maxPP": 48,
-    "effect": "Lowers the target’s Defense by one stage."
-  },
-  "twineedle": {
-    "id": 41,
-    "name": "twineedle",
-    "type": "BUG",
-    "power": 25,
-    "accuracy": 100,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Hits twice in the same turn.  Has a 20% chance to poison the target."
-  },
-  "mist": {
-    "id": 54,
-    "name": "mist",
-    "type": "ICE",
-    "power": null,
-    "accuracy": null,
-    "pp": 30,
-    "priority": 0,
-    "maxPP": 48,
-    "effect": "Protects the user’s stats from being changed by enemy moves."
-  },
-  "psybeam": {
-    "id": 60,
-    "name": "psybeam",
-    "type": "PSYCHIC",
-    "power": 65,
-    "accuracy": 100,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Has a 10% chance to confuse the target."
-  },
-  "blizzard": {
-    "id": 59,
-    "name": "blizzard",
-    "type": "ICE",
-    "power": 110,
-    "accuracy": 70,
-    "pp": 5,
-    "priority": 0,
-    "maxPP": 8,
-    "effect": "Has a 10% chance to freeze the target."
-  },
-  "flamethrower": {
-    "id": 53,
-    "name": "flamethrower",
-    "type": "FIRE",
-    "power": 90,
-    "accuracy": 100,
-    "pp": 15,
-    "priority": 0,
-    "maxPP": 24,
-    "effect": "Has a 10% chance to burn the target."
-  },
-  "bite": {
-    "id": 44,
-    "name": "bite",
-    "type": "DARK",
-    "power": 60,
-    "accuracy": 100,
-    "pp": 25,
-    "priority": 0,
-    "maxPP": 40,
-    "effect": "Has a 30% chance to make the target flinch."
-  },
-  "roar": {
-    "id": 46,
-    "name": "roar",
-    "type": "NORMAL",
-    "power": null,
-    "accuracy": null,
-    "pp": 20,
-    "priority": -6,
-    "maxPP": 32,
-    "effect": "Immediately ends wild battles.  Forces trainers to switch Pokémon."
-  },
-  "growl": {
-    "id": 45,
-    "name": "growl",
-    "type": "NORMAL",
-    "power": null,
-    "accuracy": 100,
-    "pp": 40,
-    "priority": 0,
-    "maxPP": 64,
-    "effect": "Lowers the target’s Attack by one stage."
-  },
-  "disable": {
-    "id": 50,
-    "name": "disable",
-    "type": "NORMAL",
-    "power": null,
-    "accuracy": 100,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Disables the target’s last used move for 1-8 turns."
-  },
-  "surf": {
-    "id": 57,
-    "name": "surf",
-    "type": "WATER",
-    "power": 90,
-    "accuracy": 100,
-    "pp": 15,
-    "priority": 0,
-    "maxPP": 24,
-    "effect": "Inflicts regular damage and can hit Dive users."
-  },
-  "ember": {
-    "id": 52,
-    "name": "ember",
-    "type": "FIRE",
-    "power": 40,
-    "accuracy": 100,
-    "pp": 25,
-    "priority": 0,
-    "maxPP": 40,
-    "effect": "Has a 10% chance to burn the target."
-  },
-  "water-gun": {
-    "id": 55,
-    "name": "water-gun",
-    "type": "WATER",
-    "power": 40,
-    "accuracy": 100,
-    "pp": 25,
-    "priority": 0,
-    "maxPP": 40,
-    "effect": "Inflicts regular damage with no additional effect."
-  },
-  "pin-missile": {
-    "id": 42,
-    "name": "pin-missile",
-    "type": "BUG",
-    "power": 25,
-    "accuracy": 95,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Hits 2-5 times in one turn."
-  },
-  "acid": {
-    "id": 51,
-    "name": "acid",
-    "type": "POISON",
-    "power": 40,
-    "accuracy": 100,
-    "pp": 30,
-    "priority": 0,
-    "maxPP": 48,
-    "effect": "Has a 10% chance to lower the target’s Special Defense by one stage."
-  },
-  "supersonic": {
-    "id": 48,
-    "name": "supersonic",
-    "type": "NORMAL",
-    "power": null,
-    "accuracy": 55,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Confuses the target."
-  },
-  "counter": {
-    "id": 68,
-    "name": "counter",
-    "type": "FIGHTING",
-    "power": null,
-    "accuracy": 100,
-    "pp": 20,
-    "priority": -5,
-    "maxPP": 32,
-    "effect": "Inflicts twice the damage the user received from the last physical hit it took."
-  },
-  "drill-peck": {
-    "id": 65,
-    "name": "drill-peck",
-    "type": "FLYING",
-    "power": 80,
-    "accuracy": 100,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Inflicts regular damage with no additional effect."
-  },
-  "bubble-beam": {
-    "id": 61,
-    "name": "bubble-beam",
-    "type": "WATER",
-    "power": 65,
-    "accuracy": 100,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Has a 10% chance to lower the target’s Speed by one stage."
-  },
-  "hyper-beam": {
-    "id": 63,
-    "name": "hyper-beam",
-    "type": "NORMAL",
-    "power": 150,
-    "accuracy": 90,
-    "pp": 5,
-    "priority": 0,
-    "maxPP": 8,
-    "effect": "User foregoes its next turn to recharge."
-  },
-  "aurora-beam": {
-    "id": 62,
-    "name": "aurora-beam",
-    "type": "ICE",
-    "power": 65,
-    "accuracy": 100,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Has a 10% chance to lower the target’s Attack by one stage."
-  },
-  "peck": {
-    "id": 64,
-    "name": "peck",
-    "type": "FLYING",
-    "power": 35,
-    "accuracy": 100,
-    "pp": 35,
-    "priority": 0,
-    "maxPP": 56,
-    "effect": "Inflicts regular damage with no additional effect."
-  },
-  "mega-drain": {
-    "id": 72,
-    "name": "mega-drain",
-    "type": "GRASS",
-    "power": 40,
-    "accuracy": 100,
-    "pp": 15,
-    "priority": 0,
-    "maxPP": 24,
-    "effect": "Drains half the damage inflicted to heal the user."
-  },
-  "strength": {
-    "id": 70,
-    "name": "strength",
-    "type": "NORMAL",
-    "power": 80,
-    "accuracy": 100,
-    "pp": 15,
-    "priority": 0,
-    "maxPP": 24,
-    "effect": "Inflicts regular damage with no additional effect."
-  },
-  "growth": {
-    "id": 74,
-    "name": "growth",
-    "type": "NORMAL",
-    "power": null,
-    "accuracy": null,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Raises the user’s Attack and Special Attack by one stage."
-  },
-  "seismic-toss": {
-    "id": 69,
-    "name": "seismic-toss",
-    "type": "FIGHTING",
-    "power": null,
-    "accuracy": 100,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Inflicts damage equal to the user’s level."
-  },
-  "petal-dance": {
-    "id": 80,
-    "name": "petal-dance",
-    "type": "GRASS",
-    "power": 120,
-    "accuracy": 100,
-    "pp": 10,
-    "priority": 0,
-    "maxPP": 16,
-    "effect": "Hits every turn for 2-3 turns, then confuses the user."
-  },
-  "poison-powder": {
-    "id": 77,
-    "name": "poison-powder",
-    "type": "POISON",
-    "power": null,
-    "accuracy": 75,
-    "pp": 35,
-    "priority": 0,
-    "maxPP": 56,
-    "effect": "Poisons the target."
-  },
-  "leech-seed": {
-    "id": 73,
-    "name": "leech-seed",
-    "type": "GRASS",
-    "power": null,
-    "accuracy": 90,
-    "pp": 10,
-    "priority": 0,
-    "maxPP": 16,
-    "effect": "Seeds the target, stealing HP from it every turn."
-  },
-  "stun-spore": {
-    "id": 78,
-    "name": "stun-spore",
-    "type": "GRASS",
-    "power": null,
-    "accuracy": 75,
-    "pp": 30,
-    "priority": 0,
-    "maxPP": 48,
-    "effect": "Paralyzes the target."
-  },
-  "solar-beam": {
-    "id": 76,
-    "name": "solar-beam",
-    "type": "GRASS",
-    "power": 120,
-    "accuracy": 100,
-    "pp": 10,
-    "priority": 0,
-    "maxPP": 16,
-    "effect": "Requires a turn to charge before attacking."
-  },
-  "low-kick": {
-    "id": 67,
-    "name": "low-kick",
-    "type": "FIGHTING",
-    "power": null,
-    "accuracy": 100,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Inflicts more damage to heavier targets, with a maximum of 120 power."
-  },
-  "sleep-powder": {
-    "id": 79,
-    "name": "sleep-powder",
-    "type": "GRASS",
-    "power": null,
-    "accuracy": 75,
-    "pp": 15,
-    "priority": 0,
-    "maxPP": 24,
-    "effect": "Puts the target to sleep."
-  },
-  "absorb": {
-    "id": 71,
-    "name": "absorb",
-    "type": "GRASS",
-    "power": 20,
-    "accuracy": 100,
-    "pp": 25,
-    "priority": 0,
-    "maxPP": 40,
-    "effect": "Drains half the damage inflicted to heal the user."
-  },
-  "submission": {
-    "id": 66,
-    "name": "submission",
-    "type": "FIGHTING",
-    "power": 80,
-    "accuracy": 80,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "User receives 1/4 the damage it inflicts in recoil."
-  },
-  "razor-leaf": {
-    "id": 75,
-    "name": "razor-leaf",
-    "type": "GRASS",
-    "power": 55,
-    "accuracy": 95,
-    "pp": 25,
-    "priority": 0,
-    "maxPP": 40,
-    "effect": "Has an increased chance for a critical hit."
-  },
-  "thunderbolt": {
-    "id": 85,
-    "name": "thunderbolt",
-    "type": "ELECTRIC",
-    "power": 90,
-    "accuracy": 100,
-    "pp": 15,
-    "priority": 0,
-    "maxPP": 24,
-    "effect": "Has a 10% chance to paralyze the target."
-  },
-  "thunder": {
-    "id": 87,
-    "name": "thunder",
-    "type": "ELECTRIC",
-    "power": 110,
-    "accuracy": 70,
-    "pp": 10,
-    "priority": 0,
-    "maxPP": 16,
-    "effect": "Has a 30% chance to paralyze the target."
-  },
-  "thunder-shock": {
-    "id": 84,
-    "name": "thunder-shock",
-    "type": "ELECTRIC",
-    "power": 40,
-    "accuracy": 100,
-    "pp": 30,
-    "priority": 0,
-    "maxPP": 48,
-    "effect": "Has a 10% chance to paralyze the target."
-  },
-  "dragon-rage": {
-    "id": 82,
-    "name": "dragon-rage",
-    "type": "DRAGON",
-    "power": null,
-    "accuracy": 100,
-    "pp": 10,
-    "priority": 0,
-    "maxPP": 16,
-    "effect": "Inflicts 40 points of damage."
-  },
-  "meditate": {
-    "id": 96,
-    "name": "meditate",
-    "type": "PSYCHIC",
-    "power": null,
-    "accuracy": null,
-    "pp": 40,
-    "priority": 0,
-    "maxPP": 64,
-    "effect": "Raises the user’s Attack by one stage."
-  },
-  "fissure": {
-    "id": 90,
-    "name": "fissure",
-    "type": "GROUND",
-    "power": null,
-    "accuracy": 30,
-    "pp": 5,
-    "priority": 0,
-    "maxPP": 8,
-    "effect": "Causes a one-hit KO."
-  },
-  "string-shot": {
-    "id": 81,
-    "name": "string-shot",
-    "type": "BUG",
-    "power": null,
-    "accuracy": 95,
-    "pp": 40,
-    "priority": 0,
-    "maxPP": 64,
-    "effect": "Lowers the target’s Speed by two stages."
-  },
-  "rage": {
-    "id": 99,
-    "name": "rage",
-    "type": "NORMAL",
-    "power": 20,
-    "accuracy": 100,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "If the user is hit after using this move, its Attack rises by one stage."
-  },
-  "psychic": {
-    "id": 94,
-    "name": "psychic",
-    "type": "PSYCHIC",
-    "power": 90,
-    "accuracy": 100,
-    "pp": 10,
-    "priority": 0,
-    "maxPP": 16,
-    "effect": "Has a 10% chance to lower the target’s Special Defense by one stage."
-  },
-  "earthquake": {
-    "id": 89,
-    "name": "earthquake",
-    "type": "GROUND",
-    "power": 100,
-    "accuracy": 100,
-    "pp": 10,
-    "priority": 0,
-    "maxPP": 16,
-    "effect": "Inflicts regular damage and can hit Dig users."
-  },
-  "agility": {
-    "id": 97,
-    "name": "agility",
-    "type": "PSYCHIC",
-    "power": null,
-    "accuracy": null,
-    "pp": 30,
-    "priority": 0,
-    "maxPP": 48,
-    "effect": "Raises the user’s Speed by two stages."
-  },
-  "hypnosis": {
-    "id": 95,
-    "name": "hypnosis",
-    "type": "PSYCHIC",
-    "power": null,
-    "accuracy": 60,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Puts the target to sleep."
-  },
-  "toxic": {
-    "id": 92,
-    "name": "toxic",
-    "type": "POISON",
-    "power": null,
-    "accuracy": 90,
-    "pp": 10,
-    "priority": 0,
-    "maxPP": 16,
-    "effect": "Badly poisons the target, inflicting more damage every turn."
-  },
-  "teleport": {
-    "id": 100,
-    "name": "teleport",
-    "type": "PSYCHIC",
-    "power": null,
-    "accuracy": null,
-    "pp": 20,
-    "priority": -6,
-    "maxPP": 32,
-    "effect": "Immediately ends wild battles.  No effect otherwise."
-  },
-  "thunder-wave": {
-    "id": 86,
-    "name": "thunder-wave",
-    "type": "ELECTRIC",
-    "power": null,
-    "accuracy": 90,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Paralyzes the target."
-  },
-  "fire-spin": {
-    "id": 83,
-    "name": "fire-spin",
-    "type": "FIRE",
-    "power": 35,
-    "accuracy": 85,
-    "pp": 15,
-    "priority": 0,
-    "maxPP": 24,
-    "effect": "Prevents the target from fleeing and inflicts damage for 2-5 turns."
-  },
-  "rock-throw": {
-    "id": 88,
-    "name": "rock-throw",
-    "type": "ROCK",
-    "power": 50,
-    "accuracy": 90,
-    "pp": 15,
-    "priority": 0,
-    "maxPP": 24,
-    "effect": "Inflicts regular damage with no additional effect."
-  },
-  "dig": {
-    "id": 91,
-    "name": "dig",
-    "type": "GROUND",
-    "power": 80,
-    "accuracy": 100,
-    "pp": 10,
-    "priority": 0,
-    "maxPP": 16,
-    "effect": "User digs underground, dodging all attacks, and hits next turn."
-  },
-  "quick-attack": {
-    "id": 98,
-    "name": "quick-attack",
-    "type": "NORMAL",
-    "power": 40,
-    "accuracy": 100,
-    "pp": 30,
-    "priority": 1,
-    "maxPP": 48,
-    "effect": "Inflicts regular damage with no additional effect."
-  },
-  "confusion": {
-    "id": 93,
-    "name": "confusion",
-    "type": "PSYCHIC",
-    "power": 50,
-    "accuracy": 100,
-    "pp": 25,
-    "priority": 0,
-    "maxPP": 40,
-    "effect": "Has a 10% chance to confuse the target."
-  },
-  "metronome": {
-    "id": 118,
-    "name": "metronome",
-    "type": "NORMAL",
-    "power": null,
-    "accuracy": null,
-    "pp": 10,
-    "priority": 0,
-    "maxPP": 16,
-    "effect": "Randomly selects and uses any move in the game."
-  },
-  "light-screen": {
-    "id": 113,
-    "name": "light-screen",
-    "type": "PSYCHIC",
-    "power": null,
-    "accuracy": null,
-    "pp": 30,
-    "priority": 0,
-    "maxPP": 48,
-    "effect": "Reduces damage from special attacks by 50% for five turns."
-  },
-  "night-shade": {
-    "id": 101,
-    "name": "night-shade",
-    "type": "GHOST",
-    "power": null,
-    "accuracy": 100,
-    "pp": 15,
-    "priority": 0,
-    "maxPP": 24,
-    "effect": "Inflicts damage equal to the user’s level."
-  },
-  "harden": {
-    "id": 106,
-    "name": "harden",
-    "type": "NORMAL",
-    "power": null,
-    "accuracy": null,
-    "pp": 30,
-    "priority": 0,
-    "maxPP": 48,
-    "effect": "Raises the user’s Defense by one stage."
-  },
-  "screech": {
-    "id": 103,
-    "name": "screech",
-    "type": "NORMAL",
-    "power": null,
-    "accuracy": 85,
-    "pp": 40,
-    "priority": 0,
-    "maxPP": 64,
-    "effect": "Lowers the target’s Defense by two stages."
-  },
-  "mimic": {
-    "id": 102,
-    "name": "mimic",
-    "type": "NORMAL",
-    "power": null,
-    "accuracy": null,
-    "pp": 10,
-    "priority": 0,
-    "maxPP": 16,
-    "effect": "Copies the target’s last used move."
-  },
-  "haze": {
-    "id": 114,
-    "name": "haze",
-    "type": "ICE",
-    "power": null,
-    "accuracy": null,
-    "pp": 30,
-    "priority": 0,
-    "maxPP": 48,
-    "effect": "Resets all Pokémon’s stats, accuracy, and evasion."
-  },
-  "defense-curl": {
-    "id": 111,
-    "name": "defense-curl",
-    "type": "NORMAL",
-    "power": null,
-    "accuracy": null,
-    "pp": 40,
-    "priority": 0,
-    "maxPP": 64,
-    "effect": "Raises user’s Defense by one stage."
-  },
-  "double-team": {
-    "id": 104,
-    "name": "double-team",
-    "type": "NORMAL",
-    "power": null,
-    "accuracy": null,
-    "pp": 15,
-    "priority": 0,
-    "maxPP": 24,
-    "effect": "Raises the user’s evasion by one stage."
-  },
-  "smokescreen": {
-    "id": 108,
-    "name": "smokescreen",
-    "type": "NORMAL",
-    "power": null,
-    "accuracy": 100,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Lowers the target’s accuracy by one stage."
-  },
-  "focus-energy": {
-    "id": 116,
-    "name": "focus-energy",
-    "type": "NORMAL",
-    "power": null,
-    "accuracy": null,
-    "pp": 30,
-    "priority": 0,
-    "maxPP": 48,
-    "effect": "Increases the user’s chance to score a critical hit."
-  },
-  "self-destruct": {
-    "id": 120,
-    "name": "self-destruct",
-    "type": "NORMAL",
-    "power": 200,
-    "accuracy": 100,
-    "pp": 5,
-    "priority": 0,
-    "maxPP": 8,
-    "effect": "User faints."
-  },
-  "reflect": {
-    "id": 115,
-    "name": "reflect",
-    "type": "PSYCHIC",
-    "power": null,
-    "accuracy": null,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Reduces damage from physical attacks by half."
-  },
-  "confuse-ray": {
-    "id": 109,
-    "name": "confuse-ray",
-    "type": "GHOST",
-    "power": null,
-    "accuracy": 100,
-    "pp": 10,
-    "priority": 0,
-    "maxPP": 16,
-    "effect": "Confuses the target."
-  },
-  "withdraw": {
-    "id": 110,
-    "name": "withdraw",
-    "type": "WATER",
-    "power": null,
-    "accuracy": null,
-    "pp": 40,
-    "priority": 0,
-    "maxPP": 64,
-    "effect": "Raises the user’s Defense by one stage."
-  },
-  "bide": {
-    "id": 117,
-    "name": "bide",
-    "type": "NORMAL",
-    "power": null,
-    "accuracy": null,
-    "pp": 10,
-    "priority": 1,
-    "maxPP": 16,
-    "effect": "User waits for two turns, then hits back for twice the damage it took."
-  },
-  "minimize": {
-    "id": 107,
-    "name": "minimize",
-    "type": "NORMAL",
-    "power": null,
-    "accuracy": null,
-    "pp": 10,
-    "priority": 0,
-    "maxPP": 16,
-    "effect": "Raises the user’s evasion by two stages."
-  },
-  "recover": {
-    "id": 105,
-    "name": "recover",
-    "type": "NORMAL",
-    "power": null,
-    "accuracy": null,
-    "pp": 5,
-    "priority": 0,
-    "maxPP": 8,
-    "effect": "Heals the user by half its max HP."
-  },
-  "barrier": {
-    "id": 112,
-    "name": "barrier",
-    "type": "PSYCHIC",
-    "power": null,
-    "accuracy": null,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Raises the user’s Defense by two stages."
-  },
-  "mirror-move": {
-    "id": 119,
-    "name": "mirror-move",
-    "type": "FLYING",
-    "power": null,
-    "accuracy": null,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Uses the target’s last used move."
-  },
-  "lick": {
-    "id": 122,
-    "name": "lick",
-    "type": "GHOST",
+    "effect": "Causes a one-hit KO.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "double-kick": {
+    "id": 24,
+    "name": "double-kick",
+    "type": "fighting",
     "power": 30,
     "accuracy": 100,
     "pp": 30,
     "priority": 0,
     "maxPP": 48,
-    "effect": "Has a 30% chance to paralyze the target."
+    "effect": "Hits twice in one turn.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
   },
-  "egg-bomb": {
-    "id": 121,
-    "name": "egg-bomb",
-    "type": "NORMAL",
-    "power": 100,
-    "accuracy": 75,
-    "pp": 10,
-    "priority": 0,
-    "maxPP": 16,
-    "effect": "Inflicts regular damage with no additional effect."
-  },
-  "clamp": {
-    "id": 128,
-    "name": "clamp",
-    "type": "WATER",
-    "power": 35,
-    "accuracy": 85,
-    "pp": 15,
-    "priority": 0,
-    "maxPP": 24,
-    "effect": "Prevents the target from fleeing and inflicts damage for 2-5 turns."
-  },
-  "waterfall": {
-    "id": 127,
-    "name": "waterfall",
-    "type": "WATER",
-    "power": 80,
-    "accuracy": 100,
-    "pp": 15,
-    "priority": 0,
-    "maxPP": 24,
-    "effect": "Has a 20% chance to make the target flinch."
-  },
-  "smog": {
-    "id": 123,
-    "name": "smog",
-    "type": "POISON",
-    "power": 30,
-    "accuracy": 70,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Has a 40% chance to poison the target."
-  },
-  "amnesia": {
-    "id": 133,
-    "name": "amnesia",
-    "type": "PSYCHIC",
-    "power": null,
-    "accuracy": null,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Raises the user’s Special Defense by two stages."
-  },
-  "glare": {
-    "id": 137,
-    "name": "glare",
-    "type": "NORMAL",
-    "power": null,
-    "accuracy": 100,
-    "pp": 30,
-    "priority": 0,
-    "maxPP": 48,
-    "effect": "Paralyzes the target."
-  },
-  "skull-bash": {
-    "id": 130,
-    "name": "skull-bash",
-    "type": "NORMAL",
-    "power": 130,
+  "thrash": {
+    "id": 37,
+    "name": "thrash",
+    "type": "normal",
+    "power": 120,
     "accuracy": 100,
     "pp": 10,
     "priority": 0,
     "maxPP": 16,
-    "effect": "Raises the user’s Defense by one stage.  User charges for one turn before attacking."
+    "effect": "Hits every turn for 2-3 turns, then confuses the user.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "random-opponent"
   },
-  "constrict": {
-    "id": 132,
-    "name": "constrict",
-    "type": "NORMAL",
-    "power": 10,
-    "accuracy": 100,
-    "pp": 35,
-    "priority": 0,
-    "maxPP": 56,
-    "effect": "Has a 10% chance to lower the target’s Speed by one stage."
-  },
-  "soft-boiled": {
-    "id": 135,
-    "name": "soft-boiled",
-    "type": "NORMAL",
-    "power": null,
-    "accuracy": null,
-    "pp": 5,
-    "priority": 0,
-    "maxPP": 8,
-    "effect": "Heals the user by half its max HP."
-  },
-  "barrage": {
-    "id": 140,
-    "name": "barrage",
-    "type": "NORMAL",
+  "fury-attack": {
+    "id": 31,
+    "name": "fury-attack",
+    "type": "normal",
     "power": 15,
     "accuracy": 85,
     "pp": 20,
     "priority": 0,
     "maxPP": 32,
-    "effect": "Hits 2-5 times in one turn."
+    "effect": "Hits 2-5 times in one turn.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
   },
-  "kinesis": {
-    "id": 134,
-    "name": "kinesis",
-    "type": "PSYCHIC",
+  "sand-attack": {
+    "id": 28,
+    "name": "sand-attack",
+    "type": "ground",
     "power": null,
-    "accuracy": 80,
+    "accuracy": 100,
     "pp": 15,
     "priority": 0,
     "maxPP": 24,
-    "effect": "Lowers the target’s accuracy by one stage."
+    "effect": "Lowers the target’s accuracy by one stage.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [
+      {
+        "change": -1,
+        "stat": "accuracy"
+      }
+    ],
+    "target": "selected-pokemon"
   },
-  "dream-eater": {
-    "id": 138,
-    "name": "dream-eater",
-    "type": "PSYCHIC",
+  "poison-sting": {
+    "id": 40,
+    "name": "poison-sting",
+    "type": "poison",
+    "power": 15,
+    "accuracy": 100,
+    "pp": 35,
+    "priority": 0,
+    "maxPP": 56,
+    "effect": "Has a 30% chance to poison the target.",
+    "meta": {
+      "ailment": "poison",
+      "ailment_chance": 30,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "tail-whip": {
+    "id": 39,
+    "name": "tail-whip",
+    "type": "normal",
+    "power": null,
+    "accuracy": 100,
+    "pp": 30,
+    "priority": 0,
+    "maxPP": 48,
+    "effect": "Lowers the target’s Defense by one stage.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [
+      {
+        "change": -1,
+        "stat": "defense"
+      }
+    ],
+    "target": "all-opponents"
+  },
+  "stomp": {
+    "id": 23,
+    "name": "stomp",
+    "type": "normal",
+    "power": 65,
+    "accuracy": 100,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Has a 30% chance to make the target flinch.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 30,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "tackle": {
+    "id": 33,
+    "name": "tackle",
+    "type": "normal",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 35,
+    "priority": 0,
+    "maxPP": 56,
+    "effect": "Inflicts regular damage with no additional effect.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "take-down": {
+    "id": 36,
+    "name": "take-down",
+    "type": "normal",
+    "power": 90,
+    "accuracy": 85,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "User receives 1/4 the damage it inflicts in recoil.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": -25,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "jump-kick": {
+    "id": 26,
+    "name": "jump-kick",
+    "type": "fighting",
     "power": 100,
-    "accuracy": 100,
-    "pp": 15,
-    "priority": 0,
-    "maxPP": 24,
-    "effect": "Only works on sleeping Pokémon.  Drains half the damage inflicted to heal the user."
-  },
-  "spike-cannon": {
-    "id": 131,
-    "name": "spike-cannon",
-    "type": "NORMAL",
-    "power": 20,
-    "accuracy": 100,
-    "pp": 15,
-    "priority": 0,
-    "maxPP": 24,
-    "effect": "Hits 2-5 times in one turn."
-  },
-  "fire-blast": {
-    "id": 126,
-    "name": "fire-blast",
-    "type": "FIRE",
-    "power": 110,
-    "accuracy": 85,
-    "pp": 5,
-    "priority": 0,
-    "maxPP": 8,
-    "effect": "Has a 10% chance to burn the target."
-  },
-  "bone-club": {
-    "id": 125,
-    "name": "bone-club",
-    "type": "GROUND",
-    "power": 65,
-    "accuracy": 85,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Has a 10% chance to make the target flinch."
-  },
-  "sludge": {
-    "id": 124,
-    "name": "sludge",
-    "type": "POISON",
-    "power": 65,
-    "accuracy": 100,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Has a 30% chance to poison the target."
-  },
-  "high-jump-kick": {
-    "id": 136,
-    "name": "high-jump-kick",
-    "type": "FIGHTING",
-    "power": 130,
-    "accuracy": 90,
+    "accuracy": 95,
     "pp": 10,
     "priority": 0,
     "maxPP": 16,
-    "effect": "If the user misses, it takes half the damage it would have inflicted in recoil."
+    "effect": "If the user misses, it takes half the damage it would have inflicted in recoil.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
   },
-  "poison-gas": {
-    "id": 139,
-    "name": "poison-gas",
-    "type": "POISON",
+  "mega-kick": {
+    "id": 25,
+    "name": "mega-kick",
+    "type": "normal",
+    "power": 120,
+    "accuracy": 75,
+    "pp": 5,
+    "priority": 0,
+    "maxPP": 8,
+    "effect": "Inflicts regular damage with no additional effect.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "headbutt": {
+    "id": 29,
+    "name": "headbutt",
+    "type": "normal",
+    "power": 70,
+    "accuracy": 100,
+    "pp": 15,
+    "priority": 0,
+    "maxPP": 24,
+    "effect": "Has a 30% chance to make the target flinch.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 30,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "body-slam": {
+    "id": 34,
+    "name": "body-slam",
+    "type": "normal",
+    "power": 85,
+    "accuracy": 100,
+    "pp": 15,
+    "priority": 0,
+    "maxPP": 24,
+    "effect": "Has a 30% chance to paralyze the target.",
+    "meta": {
+      "ailment": "paralysis",
+      "ailment_chance": 30,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "double-edge": {
+    "id": 38,
+    "name": "double-edge",
+    "type": "normal",
+    "power": 120,
+    "accuracy": 100,
+    "pp": 15,
+    "priority": 0,
+    "maxPP": 24,
+    "effect": "User receives 1/3 the damage inflicted in recoil.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": -33,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "rolling-kick": {
+    "id": 27,
+    "name": "rolling-kick",
+    "type": "fighting",
+    "power": 60,
+    "accuracy": 85,
+    "pp": 15,
+    "priority": 0,
+    "maxPP": 24,
+    "effect": "Has a 30% chance to make the target flinch.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 30,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "sing": {
+    "id": 47,
+    "name": "sing",
+    "type": "normal",
+    "power": null,
+    "accuracy": 55,
+    "pp": 15,
+    "priority": 0,
+    "maxPP": 24,
+    "effect": "Puts the target to sleep.",
+    "meta": {
+      "ailment": "sleep",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "supersonic": {
+    "id": 48,
+    "name": "supersonic",
+    "type": "normal",
+    "power": null,
+    "accuracy": 55,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Confuses the target.",
+    "meta": {
+      "ailment": "confusion",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "pin-missile": {
+    "id": 42,
+    "name": "pin-missile",
+    "type": "bug",
+    "power": 25,
+    "accuracy": 95,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Hits 2-5 times in one turn.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "disable": {
+    "id": 50,
+    "name": "disable",
+    "type": "normal",
+    "power": null,
+    "accuracy": 100,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Disables the target’s last used move for 1-8 turns.",
+    "meta": {
+      "ailment": "disable",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "flamethrower": {
+    "id": 53,
+    "name": "flamethrower",
+    "type": "fire",
+    "power": 90,
+    "accuracy": 100,
+    "pp": 15,
+    "priority": 0,
+    "maxPP": 24,
+    "effect": "Has a 10% chance to burn the target.",
+    "meta": {
+      "ailment": "burn",
+      "ailment_chance": 10,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "bite": {
+    "id": 44,
+    "name": "bite",
+    "type": "dark",
+    "power": 60,
+    "accuracy": 100,
+    "pp": 25,
+    "priority": 0,
+    "maxPP": 40,
+    "effect": "Has a 30% chance to make the target flinch.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 30,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "ember": {
+    "id": 52,
+    "name": "ember",
+    "type": "fire",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 25,
+    "priority": 0,
+    "maxPP": 40,
+    "effect": "Has a 10% chance to burn the target.",
+    "meta": {
+      "ailment": "burn",
+      "ailment_chance": 10,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "mist": {
+    "id": 54,
+    "name": "mist",
+    "type": "ice",
+    "power": null,
+    "accuracy": null,
+    "pp": 30,
+    "priority": 0,
+    "maxPP": 48,
+    "effect": "Protects the user’s stats from being changed by enemy moves.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "users-field"
+  },
+  "hydro-pump": {
+    "id": 56,
+    "name": "hydro-pump",
+    "type": "water",
+    "power": 110,
+    "accuracy": 80,
+    "pp": 5,
+    "priority": 0,
+    "maxPP": 8,
+    "effect": "Inflicts regular damage with no additional effect.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "psybeam": {
+    "id": 60,
+    "name": "psybeam",
+    "type": "psychic",
+    "power": 65,
+    "accuracy": 100,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Has a 10% chance to confuse the target.",
+    "meta": {
+      "ailment": "confusion",
+      "ailment_chance": 10,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "blizzard": {
+    "id": 59,
+    "name": "blizzard",
+    "type": "ice",
+    "power": 110,
+    "accuracy": 70,
+    "pp": 5,
+    "priority": 0,
+    "maxPP": 8,
+    "effect": "Has a 10% chance to freeze the target.",
+    "meta": {
+      "ailment": "freeze",
+      "ailment_chance": 10,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "all-opponents"
+  },
+  "water-gun": {
+    "id": 55,
+    "name": "water-gun",
+    "type": "water",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 25,
+    "priority": 0,
+    "maxPP": 40,
+    "effect": "Inflicts regular damage with no additional effect.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "surf": {
+    "id": 57,
+    "name": "surf",
+    "type": "water",
+    "power": 90,
+    "accuracy": 100,
+    "pp": 15,
+    "priority": 0,
+    "maxPP": 24,
+    "effect": "Inflicts regular damage and can hit Dive users.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "all-other-pokemon"
+  },
+  "ice-beam": {
+    "id": 58,
+    "name": "ice-beam",
+    "type": "ice",
+    "power": 90,
+    "accuracy": 100,
+    "pp": 10,
+    "priority": 0,
+    "maxPP": 16,
+    "effect": "Has a 10% chance to freeze the target.",
+    "meta": {
+      "ailment": "freeze",
+      "ailment_chance": 10,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "sonic-boom": {
+    "id": 49,
+    "name": "sonic-boom",
+    "type": "normal",
     "power": null,
     "accuracy": 90,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Inflicts 20 points of damage.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "growl": {
+    "id": 45,
+    "name": "growl",
+    "type": "normal",
+    "power": null,
+    "accuracy": 100,
     "pp": 40,
     "priority": 0,
     "maxPP": 64,
-    "effect": "Poisons the target."
+    "effect": "Lowers the target’s Attack by one stage.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [
+      {
+        "change": -1,
+        "stat": "attack"
+      }
+    ],
+    "target": "all-opponents"
   },
-  "swift": {
-    "id": 129,
-    "name": "swift",
-    "type": "NORMAL",
-    "power": 60,
-    "accuracy": null,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Never misses."
-  },
-  "leech-life": {
-    "id": 141,
-    "name": "leech-life",
-    "type": "BUG",
-    "power": 80,
-    "accuracy": 100,
-    "pp": 10,
-    "priority": 0,
-    "maxPP": 16,
-    "effect": "Drains half the damage inflicted to heal the user."
-  },
-  "lovely-kiss": {
-    "id": 142,
-    "name": "lovely-kiss",
-    "type": "NORMAL",
-    "power": null,
-    "accuracy": 75,
-    "pp": 10,
-    "priority": 0,
-    "maxPP": 16,
-    "effect": "Puts the target to sleep."
-  },
-  "flash": {
-    "id": 148,
-    "name": "flash",
-    "type": "NORMAL",
-    "power": null,
-    "accuracy": 100,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Lowers the target’s accuracy by one stage."
-  },
-  "bonemerang": {
-    "id": 155,
-    "name": "bonemerang",
-    "type": "GROUND",
-    "power": 50,
-    "accuracy": 90,
-    "pp": 10,
-    "priority": 0,
-    "maxPP": 16,
-    "effect": "Hits twice in one turn."
-  },
-  "crabhammer": {
-    "id": 152,
-    "name": "crabhammer",
-    "type": "WATER",
-    "power": 100,
-    "accuracy": 90,
-    "pp": 10,
-    "priority": 0,
-    "maxPP": 16,
-    "effect": "Has an increased chance for a critical hit."
-  },
-  "hyper-fang": {
-    "id": 158,
-    "name": "hyper-fang",
-    "type": "NORMAL",
-    "power": 80,
-    "accuracy": 90,
-    "pp": 15,
-    "priority": 0,
-    "maxPP": 24,
-    "effect": "Has a 10% chance to make the target flinch."
-  },
-  "psywave": {
-    "id": 149,
-    "name": "psywave",
-    "type": "PSYCHIC",
-    "power": null,
-    "accuracy": 100,
-    "pp": 15,
-    "priority": 0,
-    "maxPP": 24,
-    "effect": "Inflicts damage between 50% and 150% of the user’s level."
-  },
-  "transform": {
-    "id": 144,
-    "name": "transform",
-    "type": "NORMAL",
-    "power": null,
-    "accuracy": null,
-    "pp": 10,
-    "priority": 0,
-    "maxPP": 16,
-    "effect": "User becomes a copy of the target until it leaves battle."
-  },
-  "sky-attack": {
-    "id": 143,
-    "name": "sky-attack",
-    "type": "FLYING",
-    "power": 140,
-    "accuracy": 90,
-    "pp": 5,
-    "priority": 0,
-    "maxPP": 8,
-    "effect": "User charges for one turn before attacking.  Has a 30% chance to make the target flinch."
-  },
-  "explosion": {
-    "id": 153,
-    "name": "explosion",
-    "type": "NORMAL",
-    "power": 250,
-    "accuracy": 100,
-    "pp": 5,
-    "priority": 0,
-    "maxPP": 8,
-    "effect": "User faints."
-  },
-  "acid-armor": {
-    "id": 151,
-    "name": "acid-armor",
-    "type": "POISON",
-    "power": null,
-    "accuracy": null,
-    "pp": 20,
-    "priority": 0,
-    "maxPP": 32,
-    "effect": "Raises the user’s Defense by two stages."
-  },
-  "bubble": {
-    "id": 145,
-    "name": "bubble",
-    "type": "WATER",
+  "acid": {
+    "id": 51,
+    "name": "acid",
+    "type": "poison",
     "power": 40,
     "accuracy": 100,
     "pp": 30,
     "priority": 0,
     "maxPP": 48,
-    "effect": "Has a 10% chance to lower the target’s Speed by one stage."
+    "effect": "Has a 10% chance to lower the target’s Special Defense by one stage.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 10
+    },
+    "stat_changes": [
+      {
+        "change": -1,
+        "stat": "special-defense"
+      }
+    ],
+    "target": "all-opponents"
   },
-  "dizzy-punch": {
-    "id": 146,
-    "name": "dizzy-punch",
-    "type": "NORMAL",
-    "power": 70,
+  "twineedle": {
+    "id": 41,
+    "name": "twineedle",
+    "type": "bug",
+    "power": 25,
+    "accuracy": 100,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Hits twice in the same turn.  Has a 20% chance to poison the target.",
+    "meta": {
+      "ailment": "poison",
+      "ailment_chance": 20,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "roar": {
+    "id": 46,
+    "name": "roar",
+    "type": "normal",
+    "power": null,
+    "accuracy": null,
+    "pp": 20,
+    "priority": -6,
+    "maxPP": 32,
+    "effect": "Immediately ends wild battles.  Forces trainers to switch Pokémon.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "leer": {
+    "id": 43,
+    "name": "leer",
+    "type": "normal",
+    "power": null,
+    "accuracy": 100,
+    "pp": 30,
+    "priority": 0,
+    "maxPP": 48,
+    "effect": "Lowers the target’s Defense by one stage.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 100
+    },
+    "stat_changes": [
+      {
+        "change": -1,
+        "stat": "defense"
+      }
+    ],
+    "target": "all-opponents"
+  },
+  "peck": {
+    "id": 64,
+    "name": "peck",
+    "type": "flying",
+    "power": 35,
+    "accuracy": 100,
+    "pp": 35,
+    "priority": 0,
+    "maxPP": 56,
+    "effect": "Inflicts regular damage with no additional effect.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "petal-dance": {
+    "id": 80,
+    "name": "petal-dance",
+    "type": "grass",
+    "power": 120,
     "accuracy": 100,
     "pp": 10,
     "priority": 0,
     "maxPP": 16,
-    "effect": "Has a 20% chance to confuse the target."
+    "effect": "Hits every turn for 2-3 turns, then confuses the user.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "random-opponent"
   },
-  "rock-slide": {
-    "id": 157,
-    "name": "rock-slide",
-    "type": "ROCK",
-    "power": 75,
+  "razor-leaf": {
+    "id": 75,
+    "name": "razor-leaf",
+    "type": "grass",
+    "power": 55,
+    "accuracy": 95,
+    "pp": 25,
+    "priority": 0,
+    "maxPP": 40,
+    "effect": "Has an increased chance for a critical hit.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 1,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "all-opponents"
+  },
+  "aurora-beam": {
+    "id": 62,
+    "name": "aurora-beam",
+    "type": "ice",
+    "power": 65,
+    "accuracy": 100,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Has a 10% chance to lower the target’s Attack by one stage.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 10
+    },
+    "stat_changes": [
+      {
+        "change": -1,
+        "stat": "attack"
+      }
+    ],
+    "target": "selected-pokemon"
+  },
+  "sleep-powder": {
+    "id": 79,
+    "name": "sleep-powder",
+    "type": "grass",
+    "power": null,
+    "accuracy": 75,
+    "pp": 15,
+    "priority": 0,
+    "maxPP": 24,
+    "effect": "Puts the target to sleep.",
+    "meta": {
+      "ailment": "sleep",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "leech-seed": {
+    "id": 73,
+    "name": "leech-seed",
+    "type": "grass",
+    "power": null,
     "accuracy": 90,
     "pp": 10,
     "priority": 0,
     "maxPP": 16,
-    "effect": "Has a 30% chance to make the target flinch."
+    "effect": "Seeds the target, stealing HP from it every turn.",
+    "meta": {
+      "ailment": "leech-seed",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
   },
-  "rest": {
-    "id": 156,
-    "name": "rest",
-    "type": "PSYCHIC",
+  "poison-powder": {
+    "id": 77,
+    "name": "poison-powder",
+    "type": "poison",
     "power": null,
-    "accuracy": null,
-    "pp": 5,
+    "accuracy": 75,
+    "pp": 35,
     "priority": 0,
-    "maxPP": 8,
-    "effect": "User sleeps for two turns, completely healing itself."
+    "maxPP": 56,
+    "effect": "Poisons the target.",
+    "meta": {
+      "ailment": "poison",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
   },
-  "conversion": {
-    "id": 160,
-    "name": "conversion",
-    "type": "NORMAL",
+  "stun-spore": {
+    "id": 78,
+    "name": "stun-spore",
+    "type": "grass",
     "power": null,
-    "accuracy": null,
+    "accuracy": 75,
     "pp": 30,
     "priority": 0,
     "maxPP": 48,
-    "effect": "User’s type changes to the type of one of its moves at random."
+    "effect": "Paralyzes the target.",
+    "meta": {
+      "ailment": "paralysis",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
   },
-  "fury-swipes": {
-    "id": 154,
-    "name": "fury-swipes",
-    "type": "NORMAL",
-    "power": 18,
-    "accuracy": 80,
-    "pp": 15,
-    "priority": 0,
-    "maxPP": 24,
-    "effect": "Hits 2-5 times in one turn."
-  },
-  "spore": {
-    "id": 147,
-    "name": "spore",
-    "type": "GRASS",
+  "growth": {
+    "id": 74,
+    "name": "growth",
+    "type": "normal",
     "power": null,
+    "accuracy": null,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Raises the user’s Attack and Special Attack by one stage.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [
+      {
+        "change": 1,
+        "stat": "attack"
+      },
+      {
+        "change": 1,
+        "stat": "special-attack"
+      }
+    ],
+    "target": "user"
+  },
+  "counter": {
+    "id": 68,
+    "name": "counter",
+    "type": "fighting",
+    "power": null,
+    "accuracy": 100,
+    "pp": 20,
+    "priority": -5,
+    "maxPP": 32,
+    "effect": "Inflicts twice the damage the user received from the last physical hit it took.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "specific-move"
+  },
+  "mega-drain": {
+    "id": 72,
+    "name": "mega-drain",
+    "type": "grass",
+    "power": 40,
     "accuracy": 100,
     "pp": 15,
     "priority": 0,
     "maxPP": 24,
-    "effect": "Puts the target to sleep."
+    "effect": "Drains half the damage inflicted to heal the user.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 50,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
   },
-  "splash": {
-    "id": 150,
-    "name": "splash",
-    "type": "NORMAL",
+  "strength": {
+    "id": 70,
+    "name": "strength",
+    "type": "normal",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 15,
+    "priority": 0,
+    "maxPP": 24,
+    "effect": "Inflicts regular damage with no additional effect.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "solar-beam": {
+    "id": 76,
+    "name": "solar-beam",
+    "type": "grass",
+    "power": 120,
+    "accuracy": 100,
+    "pp": 10,
+    "priority": 0,
+    "maxPP": 16,
+    "effect": "Requires a turn to charge before attacking.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "drill-peck": {
+    "id": 65,
+    "name": "drill-peck",
+    "type": "flying",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Inflicts regular damage with no additional effect.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "seismic-toss": {
+    "id": 69,
+    "name": "seismic-toss",
+    "type": "fighting",
+    "power": null,
+    "accuracy": 100,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Inflicts damage equal to the user’s level.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "hyper-beam": {
+    "id": 63,
+    "name": "hyper-beam",
+    "type": "normal",
+    "power": 150,
+    "accuracy": 90,
+    "pp": 5,
+    "priority": 0,
+    "maxPP": 8,
+    "effect": "User foregoes its next turn to recharge.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "absorb": {
+    "id": 71,
+    "name": "absorb",
+    "type": "grass",
+    "power": 20,
+    "accuracy": 100,
+    "pp": 25,
+    "priority": 0,
+    "maxPP": 40,
+    "effect": "Drains half the damage inflicted to heal the user.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 50,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "submission": {
+    "id": 66,
+    "name": "submission",
+    "type": "fighting",
+    "power": 80,
+    "accuracy": 80,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "User receives 1/4 the damage it inflicts in recoil.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": -25,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "bubble-beam": {
+    "id": 61,
+    "name": "bubble-beam",
+    "type": "water",
+    "power": 65,
+    "accuracy": 100,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Has a 10% chance to lower the target’s Speed by one stage.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 10
+    },
+    "stat_changes": [
+      {
+        "change": -1,
+        "stat": "speed"
+      }
+    ],
+    "target": "selected-pokemon"
+  },
+  "low-kick": {
+    "id": 67,
+    "name": "low-kick",
+    "type": "fighting",
+    "power": null,
+    "accuracy": 100,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Inflicts more damage to heavier targets, with a maximum of 120 power.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "thunder-shock": {
+    "id": 84,
+    "name": "thunder-shock",
+    "type": "electric",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 30,
+    "priority": 0,
+    "maxPP": 48,
+    "effect": "Has a 10% chance to paralyze the target.",
+    "meta": {
+      "ailment": "paralysis",
+      "ailment_chance": 10,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "rock-throw": {
+    "id": 88,
+    "name": "rock-throw",
+    "type": "rock",
+    "power": 50,
+    "accuracy": 90,
+    "pp": 15,
+    "priority": 0,
+    "maxPP": 24,
+    "effect": "Inflicts regular damage with no additional effect.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "dragon-rage": {
+    "id": 82,
+    "name": "dragon-rage",
+    "type": "dragon",
+    "power": null,
+    "accuracy": 100,
+    "pp": 10,
+    "priority": 0,
+    "maxPP": 16,
+    "effect": "Inflicts 40 points of damage.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "confusion": {
+    "id": 93,
+    "name": "confusion",
+    "type": "psychic",
+    "power": 50,
+    "accuracy": 100,
+    "pp": 25,
+    "priority": 0,
+    "maxPP": 40,
+    "effect": "Has a 10% chance to confuse the target.",
+    "meta": {
+      "ailment": "confusion",
+      "ailment_chance": 10,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "hypnosis": {
+    "id": 95,
+    "name": "hypnosis",
+    "type": "psychic",
+    "power": null,
+    "accuracy": 60,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Puts the target to sleep.",
+    "meta": {
+      "ailment": "sleep",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "fissure": {
+    "id": 90,
+    "name": "fissure",
+    "type": "ground",
+    "power": null,
+    "accuracy": 30,
+    "pp": 5,
+    "priority": 0,
+    "maxPP": 8,
+    "effect": "Causes a one-hit KO.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "quick-attack": {
+    "id": 98,
+    "name": "quick-attack",
+    "type": "normal",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 30,
+    "priority": 1,
+    "maxPP": 48,
+    "effect": "Inflicts regular damage with no additional effect.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "meditate": {
+    "id": 96,
+    "name": "meditate",
+    "type": "psychic",
     "power": null,
     "accuracy": null,
     "pp": 40,
     "priority": 0,
     "maxPP": 64,
-    "effect": "Does nothing."
+    "effect": "Raises the user’s Attack by one stage.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [
+      {
+        "change": 1,
+        "stat": "attack"
+      }
+    ],
+    "target": "user"
   },
-  "sharpen": {
-    "id": 159,
-    "name": "sharpen",
-    "type": "NORMAL",
+  "psychic": {
+    "id": 94,
+    "name": "psychic",
+    "type": "psychic",
+    "power": 90,
+    "accuracy": 100,
+    "pp": 10,
+    "priority": 0,
+    "maxPP": 16,
+    "effect": "Has a 10% chance to lower the target’s Special Defense by one stage.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 10
+    },
+    "stat_changes": [
+      {
+        "change": -1,
+        "stat": "special-defense"
+      }
+    ],
+    "target": "selected-pokemon"
+  },
+  "rage": {
+    "id": 99,
+    "name": "rage",
+    "type": "normal",
+    "power": 20,
+    "accuracy": 100,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "If the user is hit after using this move, its Attack rises by one stage.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "teleport": {
+    "id": 100,
+    "name": "teleport",
+    "type": "psychic",
+    "power": null,
+    "accuracy": null,
+    "pp": 20,
+    "priority": -6,
+    "maxPP": 32,
+    "effect": "Immediately ends wild battles.  No effect otherwise.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "user"
+  },
+  "earthquake": {
+    "id": 89,
+    "name": "earthquake",
+    "type": "ground",
+    "power": 100,
+    "accuracy": 100,
+    "pp": 10,
+    "priority": 0,
+    "maxPP": 16,
+    "effect": "Inflicts regular damage and can hit Dig users.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "all-other-pokemon"
+  },
+  "agility": {
+    "id": 97,
+    "name": "agility",
+    "type": "psychic",
     "power": null,
     "accuracy": null,
     "pp": 30,
     "priority": 0,
     "maxPP": 48,
-    "effect": "Raises the user’s Attack by one stage."
+    "effect": "Raises the user’s Speed by two stages.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [
+      {
+        "change": 2,
+        "stat": "speed"
+      }
+    ],
+    "target": "user"
   },
-  "super-fang": {
-    "id": 162,
-    "name": "super-fang",
-    "type": "NORMAL",
+  "thunderbolt": {
+    "id": 85,
+    "name": "thunderbolt",
+    "type": "electric",
+    "power": 90,
+    "accuracy": 100,
+    "pp": 15,
+    "priority": 0,
+    "maxPP": 24,
+    "effect": "Has a 10% chance to paralyze the target.",
+    "meta": {
+      "ailment": "paralysis",
+      "ailment_chance": 10,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "toxic": {
+    "id": 92,
+    "name": "toxic",
+    "type": "poison",
     "power": null,
     "accuracy": 90,
     "pp": 10,
     "priority": 0,
     "maxPP": 16,
-    "effect": "Inflicts damage equal to half the target’s HP."
+    "effect": "Badly poisons the target, inflicting more damage every turn.",
+    "meta": {
+      "ailment": "poison",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
   },
-  "tri-attack": {
-    "id": 161,
-    "name": "tri-attack",
-    "type": "NORMAL",
+  "dig": {
+    "id": 91,
+    "name": "dig",
+    "type": "ground",
     "power": 80,
     "accuracy": 100,
     "pp": 10,
     "priority": 0,
     "maxPP": 16,
-    "effect": "Has a 20% chance to burn, freeze, or paralyze the target."
+    "effect": "User digs underground, dodging all attacks, and hits next turn.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
   },
-  "slash": {
-    "id": 163,
-    "name": "slash",
-    "type": "NORMAL",
-    "power": 70,
+  "thunder": {
+    "id": 87,
+    "name": "thunder",
+    "type": "electric",
+    "power": 110,
+    "accuracy": 70,
+    "pp": 10,
+    "priority": 0,
+    "maxPP": 16,
+    "effect": "Has a 30% chance to paralyze the target.",
+    "meta": {
+      "ailment": "paralysis",
+      "ailment_chance": 30,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "thunder-wave": {
+    "id": 86,
+    "name": "thunder-wave",
+    "type": "electric",
+    "power": null,
+    "accuracy": 90,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Paralyzes the target.",
+    "meta": {
+      "ailment": "paralysis",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "string-shot": {
+    "id": 81,
+    "name": "string-shot",
+    "type": "bug",
+    "power": null,
+    "accuracy": 95,
+    "pp": 40,
+    "priority": 0,
+    "maxPP": 64,
+    "effect": "Lowers the target’s Speed by two stages.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [
+      {
+        "change": -2,
+        "stat": "speed"
+      }
+    ],
+    "target": "all-opponents"
+  },
+  "fire-spin": {
+    "id": 83,
+    "name": "fire-spin",
+    "type": "fire",
+    "power": 35,
+    "accuracy": 85,
+    "pp": 15,
+    "priority": 0,
+    "maxPP": 24,
+    "effect": "Prevents the target from fleeing and inflicts damage for 2-5 turns.",
+    "meta": {
+      "ailment": "trap",
+      "ailment_chance": 100,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "smokescreen": {
+    "id": 108,
+    "name": "smokescreen",
+    "type": "normal",
+    "power": null,
     "accuracy": 100,
     "pp": 20,
     "priority": 0,
     "maxPP": 32,
-    "effect": "Has an increased chance for a critical hit."
+    "effect": "Lowers the target’s accuracy by one stage.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [
+      {
+        "change": -1,
+        "stat": "accuracy"
+      }
+    ],
+    "target": "selected-pokemon"
   },
-  "struggle": {
-    "id": 165,
-    "name": "struggle",
-    "type": "NORMAL",
-    "power": 50,
+  "reflect": {
+    "id": 115,
+    "name": "reflect",
+    "type": "psychic",
+    "power": null,
     "accuracy": null,
-    "pp": 1,
+    "pp": 20,
     "priority": 0,
-    "maxPP": 1,
-    "effect": "User takes 1/4 its max HP in recoil."
+    "maxPP": 32,
+    "effect": "Reduces damage from physical attacks by half.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "users-field"
   },
-  "substitute": {
-    "id": 164,
-    "name": "substitute",
-    "type": "NORMAL",
+  "withdraw": {
+    "id": 110,
+    "name": "withdraw",
+    "type": "water",
+    "power": null,
+    "accuracy": null,
+    "pp": 40,
+    "priority": 0,
+    "maxPP": 64,
+    "effect": "Raises the user’s Defense by one stage.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [
+      {
+        "change": 1,
+        "stat": "defense"
+      }
+    ],
+    "target": "user"
+  },
+  "metronome": {
+    "id": 118,
+    "name": "metronome",
+    "type": "normal",
     "power": null,
     "accuracy": null,
     "pp": 10,
     "priority": 0,
     "maxPP": 16,
-    "effect": "Transfers 1/4 of the user’s max HP into a doll, protecting the user from further damage or status changes until it breaks."
+    "effect": "Randomly selects and uses any move in the game.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "user"
+  },
+  "haze": {
+    "id": 114,
+    "name": "haze",
+    "type": "ice",
+    "power": null,
+    "accuracy": null,
+    "pp": 30,
+    "priority": 0,
+    "maxPP": 48,
+    "effect": "Resets all Pokémon’s stats, accuracy, and evasion.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "entire-field"
+  },
+  "self-destruct": {
+    "id": 120,
+    "name": "self-destruct",
+    "type": "normal",
+    "power": 200,
+    "accuracy": 100,
+    "pp": 5,
+    "priority": 0,
+    "maxPP": 8,
+    "effect": "User faints.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "all-other-pokemon"
+  },
+  "mirror-move": {
+    "id": 119,
+    "name": "mirror-move",
+    "type": "flying",
+    "power": null,
+    "accuracy": null,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Uses the target’s last used move.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "focus-energy": {
+    "id": 116,
+    "name": "focus-energy",
+    "type": "normal",
+    "power": null,
+    "accuracy": null,
+    "pp": 30,
+    "priority": 0,
+    "maxPP": 48,
+    "effect": "Increases the user’s chance to score a critical hit.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "user"
+  },
+  "mimic": {
+    "id": 102,
+    "name": "mimic",
+    "type": "normal",
+    "power": null,
+    "accuracy": null,
+    "pp": 10,
+    "priority": 0,
+    "maxPP": 16,
+    "effect": "Copies the target’s last used move.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "bide": {
+    "id": 117,
+    "name": "bide",
+    "type": "normal",
+    "power": null,
+    "accuracy": null,
+    "pp": 10,
+    "priority": 1,
+    "maxPP": 16,
+    "effect": "User waits for two turns, then hits back for twice the damage it took.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "user"
+  },
+  "barrier": {
+    "id": 112,
+    "name": "barrier",
+    "type": "psychic",
+    "power": null,
+    "accuracy": null,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Raises the user’s Defense by two stages.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [
+      {
+        "change": 2,
+        "stat": "defense"
+      }
+    ],
+    "target": "user"
+  },
+  "light-screen": {
+    "id": 113,
+    "name": "light-screen",
+    "type": "psychic",
+    "power": null,
+    "accuracy": null,
+    "pp": 30,
+    "priority": 0,
+    "maxPP": 48,
+    "effect": "Reduces damage from special attacks by 50% for five turns.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "users-field"
+  },
+  "recover": {
+    "id": 105,
+    "name": "recover",
+    "type": "normal",
+    "power": null,
+    "accuracy": null,
+    "pp": 5,
+    "priority": 0,
+    "maxPP": 8,
+    "effect": "Heals the user by half its max HP.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 50,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "user"
+  },
+  "confuse-ray": {
+    "id": 109,
+    "name": "confuse-ray",
+    "type": "ghost",
+    "power": null,
+    "accuracy": 100,
+    "pp": 10,
+    "priority": 0,
+    "maxPP": 16,
+    "effect": "Confuses the target.",
+    "meta": {
+      "ailment": "confusion",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "double-team": {
+    "id": 104,
+    "name": "double-team",
+    "type": "normal",
+    "power": null,
+    "accuracy": null,
+    "pp": 15,
+    "priority": 0,
+    "maxPP": 24,
+    "effect": "Raises the user’s evasion by one stage.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [
+      {
+        "change": 1,
+        "stat": "evasion"
+      }
+    ],
+    "target": "user"
+  },
+  "night-shade": {
+    "id": 101,
+    "name": "night-shade",
+    "type": "ghost",
+    "power": null,
+    "accuracy": 100,
+    "pp": 15,
+    "priority": 0,
+    "maxPP": 24,
+    "effect": "Inflicts damage equal to the user’s level.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "minimize": {
+    "id": 107,
+    "name": "minimize",
+    "type": "normal",
+    "power": null,
+    "accuracy": null,
+    "pp": 10,
+    "priority": 0,
+    "maxPP": 16,
+    "effect": "Raises the user’s evasion by two stages.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [
+      {
+        "change": 2,
+        "stat": "evasion"
+      }
+    ],
+    "target": "user"
+  },
+  "defense-curl": {
+    "id": 111,
+    "name": "defense-curl",
+    "type": "normal",
+    "power": null,
+    "accuracy": null,
+    "pp": 40,
+    "priority": 0,
+    "maxPP": 64,
+    "effect": "Raises user’s Defense by one stage.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [
+      {
+        "change": 1,
+        "stat": "defense"
+      }
+    ],
+    "target": "user"
+  },
+  "harden": {
+    "id": 106,
+    "name": "harden",
+    "type": "normal",
+    "power": null,
+    "accuracy": null,
+    "pp": 30,
+    "priority": 0,
+    "maxPP": 48,
+    "effect": "Raises the user’s Defense by one stage.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [
+      {
+        "change": 1,
+        "stat": "defense"
+      }
+    ],
+    "target": "user"
+  },
+  "screech": {
+    "id": 103,
+    "name": "screech",
+    "type": "normal",
+    "power": null,
+    "accuracy": 85,
+    "pp": 40,
+    "priority": 0,
+    "maxPP": 64,
+    "effect": "Lowers the target’s Defense by two stages.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [
+      {
+        "change": -2,
+        "stat": "defense"
+      }
+    ],
+    "target": "selected-pokemon"
+  },
+  "lick": {
+    "id": 122,
+    "name": "lick",
+    "type": "ghost",
+    "power": 30,
+    "accuracy": 100,
+    "pp": 30,
+    "priority": 0,
+    "maxPP": 48,
+    "effect": "Has a 30% chance to paralyze the target.",
+    "meta": {
+      "ailment": "paralysis",
+      "ailment_chance": 30,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "egg-bomb": {
+    "id": 121,
+    "name": "egg-bomb",
+    "type": "normal",
+    "power": 100,
+    "accuracy": 75,
+    "pp": 10,
+    "priority": 0,
+    "maxPP": 16,
+    "effect": "Inflicts regular damage with no additional effect.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "skull-bash": {
+    "id": 130,
+    "name": "skull-bash",
+    "type": "normal",
+    "power": 130,
+    "accuracy": 100,
+    "pp": 10,
+    "priority": 0,
+    "maxPP": 16,
+    "effect": "Raises the user’s Defense by one stage.  User charges for one turn before attacking.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 100,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "glare": {
+    "id": 137,
+    "name": "glare",
+    "type": "normal",
+    "power": null,
+    "accuracy": 100,
+    "pp": 30,
+    "priority": 0,
+    "maxPP": 48,
+    "effect": "Paralyzes the target.",
+    "meta": {
+      "ailment": "paralysis",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "sludge": {
+    "id": 124,
+    "name": "sludge",
+    "type": "poison",
+    "power": 65,
+    "accuracy": 100,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Has a 30% chance to poison the target.",
+    "meta": {
+      "ailment": "poison",
+      "ailment_chance": 30,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "high-jump-kick": {
+    "id": 136,
+    "name": "high-jump-kick",
+    "type": "fighting",
+    "power": 130,
+    "accuracy": 90,
+    "pp": 10,
+    "priority": 0,
+    "maxPP": 16,
+    "effect": "If the user misses, it takes half the damage it would have inflicted in recoil.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "barrage": {
+    "id": 140,
+    "name": "barrage",
+    "type": "normal",
+    "power": 15,
+    "accuracy": 85,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Hits 2-5 times in one turn.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "soft-boiled": {
+    "id": 135,
+    "name": "soft-boiled",
+    "type": "normal",
+    "power": null,
+    "accuracy": null,
+    "pp": 5,
+    "priority": 0,
+    "maxPP": 8,
+    "effect": "Heals the user by half its max HP.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 50,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "user"
+  },
+  "clamp": {
+    "id": 128,
+    "name": "clamp",
+    "type": "water",
+    "power": 35,
+    "accuracy": 85,
+    "pp": 15,
+    "priority": 0,
+    "maxPP": 24,
+    "effect": "Prevents the target from fleeing and inflicts damage for 2-5 turns.",
+    "meta": {
+      "ailment": "trap",
+      "ailment_chance": 100,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "kinesis": {
+    "id": 134,
+    "name": "kinesis",
+    "type": "psychic",
+    "power": null,
+    "accuracy": 80,
+    "pp": 15,
+    "priority": 0,
+    "maxPP": 24,
+    "effect": "Lowers the target’s accuracy by one stage.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [
+      {
+        "change": -1,
+        "stat": "accuracy"
+      }
+    ],
+    "target": "selected-pokemon"
+  },
+  "amnesia": {
+    "id": 133,
+    "name": "amnesia",
+    "type": "psychic",
+    "power": null,
+    "accuracy": null,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Raises the user’s Special Defense by two stages.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [
+      {
+        "change": 2,
+        "stat": "special-defense"
+      }
+    ],
+    "target": "user"
+  },
+  "dream-eater": {
+    "id": 138,
+    "name": "dream-eater",
+    "type": "psychic",
+    "power": 100,
+    "accuracy": 100,
+    "pp": 15,
+    "priority": 0,
+    "maxPP": 24,
+    "effect": "Only works on sleeping Pokémon.  Drains half the damage inflicted to heal the user.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 50,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "poison-gas": {
+    "id": 139,
+    "name": "poison-gas",
+    "type": "poison",
+    "power": null,
+    "accuracy": 90,
+    "pp": 40,
+    "priority": 0,
+    "maxPP": 64,
+    "effect": "Poisons the target.",
+    "meta": {
+      "ailment": "poison",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "all-opponents"
+  },
+  "constrict": {
+    "id": 132,
+    "name": "constrict",
+    "type": "normal",
+    "power": 10,
+    "accuracy": 100,
+    "pp": 35,
+    "priority": 0,
+    "maxPP": 56,
+    "effect": "Has a 10% chance to lower the target’s Speed by one stage.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 10
+    },
+    "stat_changes": [
+      {
+        "change": -1,
+        "stat": "speed"
+      }
+    ],
+    "target": "selected-pokemon"
+  },
+  "bone-club": {
+    "id": 125,
+    "name": "bone-club",
+    "type": "ground",
+    "power": 65,
+    "accuracy": 85,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Has a 10% chance to make the target flinch.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 10,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "swift": {
+    "id": 129,
+    "name": "swift",
+    "type": "normal",
+    "power": 60,
+    "accuracy": null,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Never misses.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "all-opponents"
+  },
+  "spike-cannon": {
+    "id": 131,
+    "name": "spike-cannon",
+    "type": "normal",
+    "power": 20,
+    "accuracy": 100,
+    "pp": 15,
+    "priority": 0,
+    "maxPP": 24,
+    "effect": "Hits 2-5 times in one turn.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "smog": {
+    "id": 123,
+    "name": "smog",
+    "type": "poison",
+    "power": 30,
+    "accuracy": 70,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Has a 40% chance to poison the target.",
+    "meta": {
+      "ailment": "poison",
+      "ailment_chance": 40,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "waterfall": {
+    "id": 127,
+    "name": "waterfall",
+    "type": "water",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 15,
+    "priority": 0,
+    "maxPP": 24,
+    "effect": "Has a 20% chance to make the target flinch.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 20,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "fire-blast": {
+    "id": 126,
+    "name": "fire-blast",
+    "type": "fire",
+    "power": 110,
+    "accuracy": 85,
+    "pp": 5,
+    "priority": 0,
+    "maxPP": 8,
+    "effect": "Has a 10% chance to burn the target.",
+    "meta": {
+      "ailment": "burn",
+      "ailment_chance": 10,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "hyper-fang": {
+    "id": 158,
+    "name": "hyper-fang",
+    "type": "normal",
+    "power": 80,
+    "accuracy": 90,
+    "pp": 15,
+    "priority": 0,
+    "maxPP": 24,
+    "effect": "Has a 10% chance to make the target flinch.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 10,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "splash": {
+    "id": 150,
+    "name": "splash",
+    "type": "normal",
+    "power": null,
+    "accuracy": null,
+    "pp": 40,
+    "priority": 0,
+    "maxPP": 64,
+    "effect": "Does nothing.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "user"
+  },
+  "lovely-kiss": {
+    "id": 142,
+    "name": "lovely-kiss",
+    "type": "normal",
+    "power": null,
+    "accuracy": 75,
+    "pp": 10,
+    "priority": 0,
+    "maxPP": 16,
+    "effect": "Puts the target to sleep.",
+    "meta": {
+      "ailment": "sleep",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "transform": {
+    "id": 144,
+    "name": "transform",
+    "type": "normal",
+    "power": null,
+    "accuracy": null,
+    "pp": 10,
+    "priority": 0,
+    "maxPP": 16,
+    "effect": "User becomes a copy of the target until it leaves battle.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "sharpen": {
+    "id": 159,
+    "name": "sharpen",
+    "type": "normal",
+    "power": null,
+    "accuracy": null,
+    "pp": 30,
+    "priority": 0,
+    "maxPP": 48,
+    "effect": "Raises the user’s Attack by one stage.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [
+      {
+        "change": 1,
+        "stat": "attack"
+      }
+    ],
+    "target": "user"
+  },
+  "crabhammer": {
+    "id": 152,
+    "name": "crabhammer",
+    "type": "water",
+    "power": 100,
+    "accuracy": 90,
+    "pp": 10,
+    "priority": 0,
+    "maxPP": 16,
+    "effect": "Has an increased chance for a critical hit.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 1,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "bonemerang": {
+    "id": 155,
+    "name": "bonemerang",
+    "type": "ground",
+    "power": 50,
+    "accuracy": 90,
+    "pp": 10,
+    "priority": 0,
+    "maxPP": 16,
+    "effect": "Hits twice in one turn.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "fury-swipes": {
+    "id": 154,
+    "name": "fury-swipes",
+    "type": "normal",
+    "power": 18,
+    "accuracy": 80,
+    "pp": 15,
+    "priority": 0,
+    "maxPP": 24,
+    "effect": "Hits 2-5 times in one turn.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "conversion": {
+    "id": 160,
+    "name": "conversion",
+    "type": "normal",
+    "power": null,
+    "accuracy": null,
+    "pp": 30,
+    "priority": 0,
+    "maxPP": 48,
+    "effect": "User’s type changes to the type of one of its moves at random.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "user"
+  },
+  "explosion": {
+    "id": 153,
+    "name": "explosion",
+    "type": "normal",
+    "power": 250,
+    "accuracy": 100,
+    "pp": 5,
+    "priority": 0,
+    "maxPP": 8,
+    "effect": "User faints.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "all-other-pokemon"
+  },
+  "bubble": {
+    "id": 145,
+    "name": "bubble",
+    "type": "water",
+    "power": 40,
+    "accuracy": 100,
+    "pp": 30,
+    "priority": 0,
+    "maxPP": 48,
+    "effect": "Has a 10% chance to lower the target’s Speed by one stage.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 10
+    },
+    "stat_changes": [
+      {
+        "change": -1,
+        "stat": "speed"
+      }
+    ],
+    "target": "all-opponents"
+  },
+  "psywave": {
+    "id": 149,
+    "name": "psywave",
+    "type": "psychic",
+    "power": null,
+    "accuracy": 100,
+    "pp": 15,
+    "priority": 0,
+    "maxPP": 24,
+    "effect": "Inflicts damage between 50% and 150% of the user’s level.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "flash": {
+    "id": 148,
+    "name": "flash",
+    "type": "normal",
+    "power": null,
+    "accuracy": 100,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Lowers the target’s accuracy by one stage.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [
+      {
+        "change": -1,
+        "stat": "accuracy"
+      }
+    ],
+    "target": "selected-pokemon"
+  },
+  "rock-slide": {
+    "id": 157,
+    "name": "rock-slide",
+    "type": "rock",
+    "power": 75,
+    "accuracy": 90,
+    "pp": 10,
+    "priority": 0,
+    "maxPP": 16,
+    "effect": "Has a 30% chance to make the target flinch.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 30,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "all-opponents"
+  },
+  "rest": {
+    "id": 156,
+    "name": "rest",
+    "type": "psychic",
+    "power": null,
+    "accuracy": null,
+    "pp": 5,
+    "priority": 0,
+    "maxPP": 8,
+    "effect": "User sleeps for two turns, completely healing itself.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "user"
+  },
+  "leech-life": {
+    "id": 141,
+    "name": "leech-life",
+    "type": "bug",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 10,
+    "priority": 0,
+    "maxPP": 16,
+    "effect": "Drains half the damage inflicted to heal the user.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 50,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "dizzy-punch": {
+    "id": 146,
+    "name": "dizzy-punch",
+    "type": "normal",
+    "power": 70,
+    "accuracy": 100,
+    "pp": 10,
+    "priority": 0,
+    "maxPP": 16,
+    "effect": "Has a 20% chance to confuse the target.",
+    "meta": {
+      "ailment": "confusion",
+      "ailment_chance": 20,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "acid-armor": {
+    "id": 151,
+    "name": "acid-armor",
+    "type": "poison",
+    "power": null,
+    "accuracy": null,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Raises the user’s Defense by two stages.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [
+      {
+        "change": 2,
+        "stat": "defense"
+      }
+    ],
+    "target": "user"
+  },
+  "sky-attack": {
+    "id": 143,
+    "name": "sky-attack",
+    "type": "flying",
+    "power": 140,
+    "accuracy": 90,
+    "pp": 5,
+    "priority": 0,
+    "maxPP": 8,
+    "effect": "User charges for one turn before attacking.  Has a 30% chance to make the target flinch.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 1,
+      "drain": 0,
+      "flinch_chance": 30,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "spore": {
+    "id": 147,
+    "name": "spore",
+    "type": "grass",
+    "power": null,
+    "accuracy": 100,
+    "pp": 15,
+    "priority": 0,
+    "maxPP": 24,
+    "effect": "Puts the target to sleep.",
+    "meta": {
+      "ailment": "sleep",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "super-fang": {
+    "id": 162,
+    "name": "super-fang",
+    "type": "normal",
+    "power": null,
+    "accuracy": 90,
+    "pp": 10,
+    "priority": 0,
+    "maxPP": 16,
+    "effect": "Inflicts damage equal to half the target’s HP.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "struggle": {
+    "id": 165,
+    "name": "struggle",
+    "type": "normal",
+    "power": 50,
+    "accuracy": null,
+    "pp": 1,
+    "priority": 0,
+    "maxPP": 1,
+    "effect": "User takes 1/4 its max HP in recoil.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": -25,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "random-opponent"
+  },
+  "substitute": {
+    "id": 164,
+    "name": "substitute",
+    "type": "normal",
+    "power": null,
+    "accuracy": null,
+    "pp": 10,
+    "priority": 0,
+    "maxPP": 16,
+    "effect": "Transfers 1/4 of the user’s max HP into a doll, protecting the user from further damage or status changes until it breaks.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "user"
+  },
+  "slash": {
+    "id": 163,
+    "name": "slash",
+    "type": "normal",
+    "power": 70,
+    "accuracy": 100,
+    "pp": 20,
+    "priority": 0,
+    "maxPP": 32,
+    "effect": "Has an increased chance for a critical hit.",
+    "meta": {
+      "ailment": "none",
+      "ailment_chance": 0,
+      "crit_rate": 1,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
+  },
+  "tri-attack": {
+    "id": 161,
+    "name": "tri-attack",
+    "type": "normal",
+    "power": 80,
+    "accuracy": 100,
+    "pp": 10,
+    "priority": 0,
+    "maxPP": 16,
+    "effect": "Has a 20% chance to burn, freeze, or paralyze the target.",
+    "meta": {
+      "ailment": "unknown",
+      "ailment_chance": 20,
+      "crit_rate": 0,
+      "drain": 0,
+      "flinch_chance": 0,
+      "healing": 0,
+      "stat_chance": 0
+    },
+    "stat_changes": [],
+    "target": "selected-pokemon"
   }
 }

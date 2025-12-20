@@ -82,3 +82,24 @@
     gap: 4px;
     height: 24px;
 }
+
+.moveName {
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+}
+
+.moveTypeIcon {
+    width: 12px;
+    height: 12px;
+    margin-right: 4px;
+}
+
+.movePP {
+    color: #666;
+    font-size: 10px;
+    text-align: right;
+}

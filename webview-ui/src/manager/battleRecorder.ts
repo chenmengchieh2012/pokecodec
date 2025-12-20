@@ -2,7 +2,7 @@ import { useCallback, useRef } from "react";
 import { PokemonDao } from "../../../src/dataAccessObj/pokemon";
 import { vscode } from "../utilities/vscode";
 import { MessageType } from "../../../src/dataAccessObj/messageType";
-import { DamageResult } from "../../../src/utils/hitHpCalculator";
+import { MoveEffectResult } from "../../../src/utils/MoveEffectCalculator";
 import { PokemonMove } from "../../../src/dataAccessObj/pokeMove";
 import { getDefaultBattleCummulativeStats, RecordBattleActionPayload, RecordBattleCatchPayload, RecordBattleCummulativeStats, RecordBattleFinishedPayload } from "../../../src/utils/AchievementCritiria";
 
@@ -17,8 +17,8 @@ export interface BattleRecorderHandler {
     onBattleFinished: () => void;
     onBattleAction: (
         isSwitch: boolean,
-        myPokemonDamageResult?: DamageResult, 
-        opponentPokemonDamageResult?: DamageResult,
+        myPokemonMoveEffectResult?: MoveEffectResult, 
+        opponentPokemonMoveEffectResult?: MoveEffectResult,
         myPokemonMove?: PokemonMove,
         opponentPokemonMove?: PokemonMove,
     ) => void;
@@ -63,19 +63,19 @@ export const BattleRecorder = (props: BattleRecoderInitProps) => {
 
     const onBattleAction = useCallback((
         isSwitch: boolean,
-        myPokemonDamageResult?: DamageResult, 
-        opponentPokemonDamageResult?: DamageResult,
+        myPokemonMoveEffectResult?: MoveEffectResult, 
+        opponentPokemonMoveEffectResult?: MoveEffectResult,
         myPokemonMove?: PokemonMove,
         opponentPokemonMove?: PokemonMove,
     )=>{
         battleCummulativeStatsRef.current.turns += 1;
-        const damageDealt = myPokemonDamageResult ? myPokemonDamageResult.damage : 0;
-        const damageTaken = opponentPokemonDamageResult ? opponentPokemonDamageResult.damage : 0;
+        const damageDealt = myPokemonMoveEffectResult ? myPokemonMoveEffectResult.damage : 0;
+        const damageTaken = opponentPokemonMoveEffectResult ? opponentPokemonMoveEffectResult.damage : 0;
 
-        const isCritical = (myPokemonDamageResult && myPokemonDamageResult.isCritical) || (opponentPokemonDamageResult && opponentPokemonDamageResult.isCritical) || false;
-        const isSuperEffective = (myPokemonDamageResult && myPokemonDamageResult.effectiveness > 1) || (opponentPokemonDamageResult && opponentPokemonDamageResult.effectiveness > 1) || false;
+        const isCritical = (myPokemonMoveEffectResult && myPokemonMoveEffectResult.isCritical) || (opponentPokemonMoveEffectResult && opponentPokemonMoveEffectResult.isCritical) || false;
+        const isSuperEffective = (myPokemonMoveEffectResult && myPokemonMoveEffectResult.effectiveness > 1) || (opponentPokemonMoveEffectResult && opponentPokemonMoveEffectResult.effectiveness > 1) || false;
        
-        const isOHKO = (opponentPokemonDamageResult && (opponentPokemonRef.current && opponentPokemonDamageResult.damage >= opponentPokemonRef.current?.currentHp)) || false;
+        const isOHKO = (opponentPokemonMoveEffectResult && (opponentPokemonRef.current && opponentPokemonMoveEffectResult.damage >= opponentPokemonRef.current?.currentHp)) || false;
         const transformUsed = myPokemonMove?.name === 'transform' || false;
         const ppRunOut = (myPokemonMove && myPokemonMove.pp <= 0) || false;
         const leerGlareUsed = (myPokemonMove && (myPokemonMove.name ==='leer' || myPokemonMove.name ==='glare')) || false;
@@ -86,7 +86,7 @@ export const BattleRecorder = (props: BattleRecoderInitProps) => {
         }
 
         const useSameMove = (myPokemonMove && opponentPokemonMove && myPokemonMove.name === opponentPokemonMove.name) || false;
-        const moveFailed = (myPokemonDamageResult && !myPokemonDamageResult.isHit) || false;
+        const moveFailed = (myPokemonMoveEffectResult && !myPokemonMoveEffectResult.isHit) || false;
         const hyperBeamUsed = myPokemonMove?.name === 'hyper beam' || false;
 
         // Update battle cummulative stats here as needed

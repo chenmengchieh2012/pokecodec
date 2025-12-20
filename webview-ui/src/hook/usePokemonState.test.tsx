@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { usePokemonState } from './usePokemonState';
 import { PokemonStateAction, PokemonDao } from '../../../src/dataAccessObj/pokemon';
 import { EncounterResult } from '../../../src/core/EncounterHandler';
-import { HitHpCalculator } from '../../../src/utils/hitHpCalculator';
+import { HitHpCalculator } from '../../../src/utils/MoveEffectCalculator';
 import { ExperienceCalculator } from '../utilities/ExperienceCalculator';
 import { BattleControlHandle } from '../frame/BattleControl';
 import { PokeBallDao } from '../../../src/dataAccessObj/pokeBall';

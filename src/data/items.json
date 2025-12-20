@@ -1,23 +1,4 @@
 {
-  "hyper-potion": {
-    "id": 25,
-    "name": "Hyper Potion",
-    "apiName": "hyper-potion",
-    "category": "Medicine",
-    "pocket": "medicine",
-    "description": "Restores the HP of a POKéMON by 200 points.",
-    "price": 1500,
-    "sellPrice": 750,
-    "isConsumable": true,
-    "isUsableInBattle": true,
-    "isUsableOverworld": true,
-    "isHoldable": true,
-    "effect": {
-      "healHp": 200
-    },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/hyper-potion.png",
-    "totalSize": 1
-  },
   "great-ball": {
     "id": 3,
     "name": "Great Ball",
@@ -27,6 +8,7 @@
     "description": "A good BALL with a higher catch rate than a POKé BALL.",
     "price": 600,
     "sellPrice": 300,
+    "rarity": 2,
     "isConsumable": true,
     "isUsableInBattle": true,
     "isUsableOverworld": false,
@@ -35,6 +17,49 @@
       "catchRateMultiplier": 1.5
     },
     "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png",
+    "totalSize": 1
+  },
+  "potion": {
+    "id": 17,
+    "name": "Potion",
+    "apiName": "potion",
+    "category": "Medicine",
+    "pocket": "medicine",
+    "description": "Restores the HP of a POKéMON by 20 points.",
+    "price": 200,
+    "sellPrice": 100,
+    "rarity": 1,
+    "isConsumable": true,
+    "isUsableInBattle": true,
+    "isUsableOverworld": true,
+    "isHoldable": true,
+    "effect": {
+      "healHp": 20
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/potion.png",
+    "totalSize": 1
+  },
+  "full-restore": {
+    "id": 23,
+    "name": "Full Restore",
+    "apiName": "full-restore",
+    "category": "Medicine",
+    "pocket": "medicine",
+    "description": "Fully restores the HP and status of a POKéMON.",
+    "price": 3000,
+    "sellPrice": 1500,
+    "rarity": 4,
+    "isConsumable": true,
+    "isUsableInBattle": true,
+    "isUsableOverworld": true,
+    "isHoldable": true,
+    "effect": {
+      "healHpPercent": 100,
+      "healStatus": [
+        "all"
+      ]
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/full-restore.png",
     "totalSize": 1
   },
   "master-ball": {
@@ -46,6 +71,7 @@
     "description": "The best BALL that catches a POKéMON without fail.",
     "price": 0,
     "sellPrice": 0,
+    "rarity": 5,
     "isConsumable": true,
     "isUsableInBattle": true,
     "isUsableOverworld": false,
@@ -54,6 +80,86 @@
       "catchRateMultiplier": 255
     },
     "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/master-ball.png",
+    "totalSize": 1
+  },
+  "poke-ball": {
+    "id": 4,
+    "name": "Poké Ball",
+    "apiName": "poke-ball",
+    "category": "PokeBalls",
+    "pocket": "balls",
+    "description": "A tool used for catching wild POKéMON.",
+    "price": 200,
+    "sellPrice": 100,
+    "rarity": 1,
+    "isConsumable": true,
+    "isUsableInBattle": true,
+    "isUsableOverworld": false,
+    "isHoldable": true,
+    "effect": {
+      "catchRateMultiplier": 1
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png",
+    "totalSize": 1
+  },
+  "hyper-potion": {
+    "id": 25,
+    "name": "Hyper Potion",
+    "apiName": "hyper-potion",
+    "category": "Medicine",
+    "pocket": "medicine",
+    "description": "Restores the HP of a POKéMON by 200 points.",
+    "price": 1500,
+    "sellPrice": 750,
+    "rarity": 3,
+    "isConsumable": true,
+    "isUsableInBattle": true,
+    "isUsableOverworld": true,
+    "isHoldable": true,
+    "effect": {
+      "healHp": 200
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/hyper-potion.png",
+    "totalSize": 1
+  },
+  "fresh-water": {
+    "id": 30,
+    "name": "Fresh Water",
+    "apiName": "fresh-water",
+    "category": "Medicine",
+    "pocket": "medicine",
+    "description": "A mineral water that restores HP by 50 points.",
+    "price": 200,
+    "sellPrice": 100,
+    "rarity": 2,
+    "isConsumable": true,
+    "isUsableInBattle": true,
+    "isUsableOverworld": true,
+    "isHoldable": true,
+    "effect": {
+      "healHp": 50
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/fresh-water.png",
+    "totalSize": 1
+  },
+  "ultra-ball": {
+    "id": 2,
+    "name": "Ultra Ball",
+    "apiName": "ultra-ball",
+    "category": "PokeBalls",
+    "pocket": "balls",
+    "description": "A better BALL with a higher catch rate than a GREAT BALL.",
+    "price": 800,
+    "sellPrice": 400,
+    "rarity": 3,
+    "isConsumable": true,
+    "isUsableInBattle": true,
+    "isUsableOverworld": false,
+    "isHoldable": true,
+    "effect": {
+      "catchRateMultiplier": 2
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/ultra-ball.png",
     "totalSize": 1
   },
   "max-potion": {
@@ -65,6 +171,7 @@
     "description": "Fully restores the HP of a POKéMON.",
     "price": 2500,
     "sellPrice": 1250,
+    "rarity": 4,
     "isConsumable": true,
     "isUsableInBattle": true,
     "isUsableOverworld": true,
@@ -84,6 +191,7 @@
     "description": "Restores the HP of a POKéMON by 50 points.",
     "price": 700,
     "sellPrice": 350,
+    "rarity": 2,
     "isConsumable": true,
     "isUsableInBattle": true,
     "isUsableOverworld": true,
@@ -94,102 +202,48 @@
     "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/super-potion.png",
     "totalSize": 1
   },
-  "full-restore": {
-    "id": 23,
-    "name": "Full Restore",
-    "apiName": "full-restore",
+  "lava-cookie": {
+    "id": 42,
+    "name": "Lava Cookie",
+    "apiName": "lava-cookie",
     "category": "Medicine",
     "pocket": "medicine",
-    "description": "Fully restores the HP and status of a POKéMON.",
-    "price": 3000,
-    "sellPrice": 1500,
+    "description": "A local specialty that heals all status problems.",
+    "price": 350,
+    "sellPrice": 175,
+    "rarity": 1,
     "isConsumable": true,
     "isUsableInBattle": true,
     "isUsableOverworld": true,
     "isHoldable": true,
     "effect": {
-      "healHpPercent": 100,
       "healStatus": [
         "all"
       ]
     },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/full-restore.png",
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/lava-cookie.png",
     "totalSize": 1
   },
-  "ultra-ball": {
-    "id": 2,
-    "name": "Ultra Ball",
-    "apiName": "ultra-ball",
-    "category": "PokeBalls",
-    "pocket": "balls",
-    "description": "A better BALL with a higher catch rate than a GREAT BALL.",
-    "price": 800,
-    "sellPrice": 400,
-    "isConsumable": true,
-    "isUsableInBattle": true,
-    "isUsableOverworld": false,
-    "isHoldable": true,
-    "effect": {
-      "catchRateMultiplier": 2
-    },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/ultra-ball.png",
-    "totalSize": 1
-  },
-  "potion": {
-    "id": 17,
-    "name": "Potion",
-    "apiName": "potion",
+  "full-heal": {
+    "id": 27,
+    "name": "Full Heal",
+    "apiName": "full-heal",
     "category": "Medicine",
     "pocket": "medicine",
-    "description": "Restores the HP of a POKéMON by 20 points.",
-    "price": 200,
-    "sellPrice": 100,
+    "description": "Heals all the status problems of one POKéMON.",
+    "price": 400,
+    "sellPrice": 200,
+    "rarity": 3,
     "isConsumable": true,
     "isUsableInBattle": true,
     "isUsableOverworld": true,
     "isHoldable": true,
     "effect": {
-      "healHp": 20
+      "healStatus": [
+        "all"
+      ]
     },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/potion.png",
-    "totalSize": 1
-  },
-  "fresh-water": {
-    "id": 30,
-    "name": "Fresh Water",
-    "apiName": "fresh-water",
-    "category": "Medicine",
-    "pocket": "medicine",
-    "description": "A mineral water that restores HP by 50 points.",
-    "price": 200,
-    "sellPrice": 100,
-    "isConsumable": true,
-    "isUsableInBattle": true,
-    "isUsableOverworld": true,
-    "isHoldable": true,
-    "effect": {
-      "healHp": 50
-    },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/fresh-water.png",
-    "totalSize": 1
-  },
-  "poke-ball": {
-    "id": 4,
-    "name": "Poké Ball",
-    "apiName": "poke-ball",
-    "category": "PokeBalls",
-    "pocket": "balls",
-    "description": "A tool used for catching wild POKéMON.",
-    "price": 200,
-    "sellPrice": 100,
-    "isConsumable": true,
-    "isUsableInBattle": true,
-    "isUsableOverworld": false,
-    "isHoldable": true,
-    "effect": {
-      "catchRateMultiplier": 1
-    },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png",
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/full-heal.png",
     "totalSize": 1
   },
   "antidote": {
@@ -201,6 +255,7 @@
     "description": "Heals a poisoned POKéMON.",
     "price": 200,
     "sellPrice": 100,
+    "rarity": 1,
     "isConsumable": true,
     "isUsableInBattle": true,
     "isUsableOverworld": true,
@@ -213,88 +268,6 @@
     "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/antidote.png",
     "totalSize": 1
   },
-  "lemonade": {
-    "id": 32,
-    "name": "Lemonade",
-    "apiName": "lemonade",
-    "category": "Medicine",
-    "pocket": "medicine",
-    "description": "A very sweet drink that restores HP by 80 points.",
-    "price": 400,
-    "sellPrice": 200,
-    "isConsumable": true,
-    "isUsableInBattle": true,
-    "isUsableOverworld": true,
-    "isHoldable": true,
-    "effect": {
-      "healHp": 80
-    },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/lemonade.png",
-    "totalSize": 1
-  },
-  "ice-heal": {
-    "id": 20,
-    "name": "Ice Heal",
-    "apiName": "ice-heal",
-    "category": "Medicine",
-    "pocket": "medicine",
-    "description": "Defrosts a frozen POKéMON.",
-    "price": 200,
-    "sellPrice": 100,
-    "isConsumable": true,
-    "isUsableInBattle": true,
-    "isUsableOverworld": true,
-    "isHoldable": true,
-    "effect": {
-      "healStatus": [
-        "freeze"
-      ]
-    },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/ice-heal.png",
-    "totalSize": 1
-  },
-  "paralyze-heal": {
-    "id": 22,
-    "name": "Paralyze Heal",
-    "apiName": "paralyze-heal",
-    "category": "Medicine",
-    "pocket": "medicine",
-    "description": "Heals a paralyzed POKéMON.",
-    "price": 200,
-    "sellPrice": 100,
-    "isConsumable": true,
-    "isUsableInBattle": true,
-    "isUsableOverworld": true,
-    "isHoldable": true,
-    "effect": {
-      "healStatus": [
-        "paralysis"
-      ]
-    },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/paralyze-heal.png",
-    "totalSize": 1
-  },
-  "awakening": {
-    "id": 21,
-    "name": "Awakening",
-    "apiName": "awakening",
-    "category": "Medicine",
-    "pocket": "medicine",
-    "description": "Awakens a sleeping POKéMON.",
-    "price": 200,
-    "sellPrice": 100,
-    "isConsumable": true,
-    "isUsableInBattle": true,
-    "isUsableOverworld": true,
-    "isHoldable": true,
-    "effect": {
-      "healStatus": [
-        "sleep"
-      ]
-    },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/awakening.png",
-    "totalSize": 1
-  },
   "burn-heal": {
     "id": 19,
     "name": "Burn Heal",
@@ -304,6 +277,7 @@
     "description": "Heals POKéMON of a burn.",
     "price": 200,
     "sellPrice": 100,
+    "rarity": 1,
     "isConsumable": true,
     "isUsableInBattle": true,
     "isUsableOverworld": true,
@@ -325,6 +299,7 @@
     "description": "A fizzy soda drink that restores HP by 60 points.",
     "price": 300,
     "sellPrice": 150,
+    "rarity": 2,
     "isConsumable": true,
     "isUsableInBattle": true,
     "isUsableOverworld": true,
@@ -333,6 +308,28 @@
       "healHp": 60
     },
     "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/soda-pop.png",
+    "totalSize": 1
+  },
+  "paralyze-heal": {
+    "id": 22,
+    "name": "Paralyze Heal",
+    "apiName": "paralyze-heal",
+    "category": "Medicine",
+    "pocket": "medicine",
+    "description": "Heals a paralyzed POKéMON.",
+    "price": 200,
+    "sellPrice": 100,
+    "rarity": 1,
+    "isConsumable": true,
+    "isUsableInBattle": true,
+    "isUsableOverworld": true,
+    "isHoldable": true,
+    "effect": {
+      "healStatus": [
+        "paralysis"
+      ]
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/paralyze-heal.png",
     "totalSize": 1
   },
   "moomoo-milk": {
@@ -344,6 +341,7 @@
     "description": "A nutritious milk that restores HP by 100 points.",
     "price": 600,
     "sellPrice": 300,
+    "rarity": 2,
     "isConsumable": true,
     "isUsableInBattle": true,
     "isUsableOverworld": true,
@@ -354,81 +352,80 @@
     "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/moomoo-milk.png",
     "totalSize": 1
   },
-  "full-heal": {
-    "id": 27,
-    "name": "Full Heal",
-    "apiName": "full-heal",
+  "lemonade": {
+    "id": 32,
+    "name": "Lemonade",
+    "apiName": "lemonade",
     "category": "Medicine",
     "pocket": "medicine",
-    "description": "Heals all the status problems of one POKéMON.",
+    "description": "A very sweet drink that restores HP by 80 points.",
     "price": 400,
     "sellPrice": 200,
+    "rarity": 2,
     "isConsumable": true,
     "isUsableInBattle": true,
     "isUsableOverworld": true,
     "isHoldable": true,
     "effect": {
-      "healStatus": [
-        "all"
-      ]
+      "healHp": 80
     },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/full-heal.png",
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/lemonade.png",
     "totalSize": 1
   },
-  "lava-cookie": {
-    "id": 42,
-    "name": "Lava Cookie",
-    "apiName": "lava-cookie",
+  "awakening": {
+    "id": 21,
+    "name": "Awakening",
+    "apiName": "awakening",
     "category": "Medicine",
     "pocket": "medicine",
-    "description": "A local specialty that heals all status problems.",
-    "price": 350,
-    "sellPrice": 175,
+    "description": "Awakens a sleeping POKéMON.",
+    "price": 200,
+    "sellPrice": 100,
+    "rarity": 1,
     "isConsumable": true,
     "isUsableInBattle": true,
     "isUsableOverworld": true,
     "isHoldable": true,
     "effect": {
       "healStatus": [
-        "all"
+        "sleep"
       ]
     },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/lava-cookie.png",
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/awakening.png",
     "totalSize": 1
   },
-  "x-defense": {
-    "id": 58,
-    "name": "X Defense",
-    "apiName": "x-defense",
-    "category": "BattleItems",
-    "pocket": "items",
-    "description": "Raises the stat DEFENSE during one battle.",
-    "price": 2000,
-    "sellPrice": 1000,
+  "ice-heal": {
+    "id": 20,
+    "name": "Ice Heal",
+    "apiName": "ice-heal",
+    "category": "Medicine",
+    "pocket": "medicine",
+    "description": "Defrosts a frozen POKéMON.",
+    "price": 200,
+    "sellPrice": 100,
+    "rarity": 1,
     "isConsumable": true,
     "isUsableInBattle": true,
-    "isUsableOverworld": false,
+    "isUsableOverworld": true,
     "isHoldable": true,
     "effect": {
-      "statBoosts": [
-        {
-          "stat": "defense",
-          "stages": 2
-        }
+      "healStatus": [
+        "freeze"
       ]
     },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/x-defense.png",
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/ice-heal.png",
     "totalSize": 1
   },
-  "x-attack": {
-    "id": 57,
-    "name": "X Attack",
-    "apiName": "x-attack",
+  "x-speed": {
+    "id": 59,
+    "name": "X Speed",
+    "apiName": "x-speed",
     "category": "BattleItems",
     "pocket": "items",
-    "description": "Raises the stat ATTACK during one battle.",
+    "description": "Raises the stat SPEED during one battle.",
     "price": 1000,
     "sellPrice": 500,
+    "rarity": 2,
     "isConsumable": true,
     "isUsableInBattle": true,
     "isUsableOverworld": false,
@@ -436,32 +433,12 @@
     "effect": {
       "statBoosts": [
         {
-          "stat": "attack",
+          "stat": "speed",
           "stages": 2
         }
       ]
     },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/x-attack.png",
-    "totalSize": 1
-  },
-  "max-revive": {
-    "id": 29,
-    "name": "Max Revive",
-    "apiName": "max-revive",
-    "category": "Medicine",
-    "pocket": "medicine",
-    "description": "Revives a fainted POKéMON with all its HP.",
-    "price": 4000,
-    "sellPrice": 2000,
-    "isConsumable": true,
-    "isUsableInBattle": true,
-    "isUsableOverworld": true,
-    "isHoldable": true,
-    "effect": {
-      "revive": true,
-      "reviveHpPercent": 100
-    },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/max-revive.png",
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/x-speed.png",
     "totalSize": 1
   },
   "max-ether": {
@@ -473,6 +450,7 @@
     "description": "Fully restores the PP of a selected move.",
     "price": 2000,
     "sellPrice": 1000,
+    "rarity": 3,
     "isConsumable": true,
     "isUsableInBattle": true,
     "isUsableOverworld": true,
@@ -481,44 +459,6 @@
       "restorePp": 10
     },
     "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/max-ether.png",
-    "totalSize": 1
-  },
-  "max-elixir": {
-    "id": 41,
-    "name": "Max Elixir",
-    "apiName": "max-elixir",
-    "category": "Medicine",
-    "pocket": "medicine",
-    "description": "Fully restores the PP of a POKéMON’s moves.",
-    "price": 4500,
-    "sellPrice": 2250,
-    "isConsumable": true,
-    "isUsableInBattle": true,
-    "isUsableOverworld": true,
-    "isHoldable": true,
-    "effect": {
-      "restorePpAll": true
-    },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/max-elixir.png",
-    "totalSize": 1
-  },
-  "ether": {
-    "id": 38,
-    "name": "Ether",
-    "apiName": "ether",
-    "category": "Medicine",
-    "pocket": "medicine",
-    "description": "Restores the PP of a selected move by 10.",
-    "price": 1200,
-    "sellPrice": 600,
-    "isConsumable": true,
-    "isUsableInBattle": true,
-    "isUsableOverworld": true,
-    "isHoldable": true,
-    "effect": {
-      "restorePp": 10
-    },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/ether.png",
     "totalSize": 1
   },
   "elixir": {
@@ -530,6 +470,7 @@
     "description": "Restores the PP of all moves by 10.",
     "price": 3000,
     "sellPrice": 1500,
+    "rarity": 2,
     "isConsumable": true,
     "isUsableInBattle": true,
     "isUsableOverworld": true,
@@ -549,6 +490,7 @@
     "description": "Revives a fainted POKéMON with half its HP.",
     "price": 2000,
     "sellPrice": 1000,
+    "rarity": 3,
     "isConsumable": true,
     "isUsableInBattle": true,
     "isUsableOverworld": true,
@@ -560,6 +502,26 @@
     "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/revive.png",
     "totalSize": 1
   },
+  "ether": {
+    "id": 38,
+    "name": "Ether",
+    "apiName": "ether",
+    "category": "Medicine",
+    "pocket": "medicine",
+    "description": "Restores the PP of a selected move by 10.",
+    "price": 1200,
+    "sellPrice": 600,
+    "rarity": 2,
+    "isConsumable": true,
+    "isUsableInBattle": true,
+    "isUsableOverworld": true,
+    "isHoldable": true,
+    "effect": {
+      "restorePp": 10
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/ether.png",
+    "totalSize": 1
+  },
   "x-sp-atk": {
     "id": 61,
     "name": "X Sp. Atk",
@@ -569,6 +531,7 @@
     "description": "Raises the stat SP. ATK during one battle.",
     "price": 1000,
     "sellPrice": 500,
+    "rarity": 2,
     "isConsumable": true,
     "isUsableInBattle": true,
     "isUsableOverworld": false,
@@ -584,197 +547,82 @@
     "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/x-sp-atk.png",
     "totalSize": 1
   },
-  "x-speed": {
-    "id": 59,
-    "name": "X Speed",
-    "apiName": "x-speed",
+  "max-revive": {
+    "id": 29,
+    "name": "Max Revive",
+    "apiName": "max-revive",
+    "category": "Medicine",
+    "pocket": "medicine",
+    "description": "Revives a fainted POKéMON with all its HP.",
+    "price": 4000,
+    "sellPrice": 2000,
+    "rarity": 4,
+    "isConsumable": true,
+    "isUsableInBattle": true,
+    "isUsableOverworld": true,
+    "isHoldable": true,
+    "effect": {
+      "revive": true,
+      "reviveHpPercent": 100
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/max-revive.png",
+    "totalSize": 1
+  },
+  "x-attack": {
+    "id": 57,
+    "name": "X Attack",
+    "apiName": "x-attack",
     "category": "BattleItems",
     "pocket": "items",
-    "description": "Raises the stat SPEED during one battle.",
+    "description": "Raises the stat ATTACK during one battle.",
     "price": 1000,
     "sellPrice": 500,
+    "rarity": 2,
     "isConsumable": true,
     "isUsableInBattle": true,
     "isUsableOverworld": false,
-    "isHoldable": true,
-    "effect": {
-      "statBoosts": [
-        {
-          "stat": "speed",
-          "stages": 2
-        }
-      ]
-    },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/x-speed.png",
-    "totalSize": 1
-  },
-  "iron": {
-    "id": 47,
-    "name": "Iron",
-    "apiName": "iron",
-    "category": "Medicine",
-    "pocket": "medicine",
-    "description": "Raises the base DEFENSE stat of one POKéMON.",
-    "price": 10000,
-    "sellPrice": 5000,
-    "isConsumable": true,
-    "isUsableInBattle": true,
-    "isUsableOverworld": true,
-    "isHoldable": true,
-    "effect": {
-      "statBoosts": [
-        {
-          "stat": "defense",
-          "evYield": 10
-        }
-      ]
-    },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/iron.png",
-    "totalSize": 1
-  },
-  "x-accuracy": {
-    "id": 60,
-    "name": "X Accuracy",
-    "apiName": "x-accuracy",
-    "category": "BattleItems",
-    "pocket": "items",
-    "description": "Raises accuracy of attack moves during one battle.",
-    "price": 1000,
-    "sellPrice": 500,
-    "isConsumable": true,
-    "isUsableInBattle": true,
-    "isUsableOverworld": false,
-    "isHoldable": true,
-    "effect": {
-      "statBoosts": [
-        {
-          "stat": "accuracy",
-          "stages": 2
-        }
-      ]
-    },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/x-accuracy.png",
-    "totalSize": 1
-  },
-  "guard-spec": {
-    "id": 55,
-    "name": "Guard Spec.",
-    "apiName": "guard-spec",
-    "category": "BattleItems",
-    "pocket": "items",
-    "description": "Prevents stat reduction when used in battle.",
-    "price": 1500,
-    "sellPrice": 750,
-    "isConsumable": true,
-    "isUsableInBattle": true,
-    "isUsableOverworld": false,
-    "isHoldable": true,
-    "effect": {
-      "statBoosts": []
-    },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/guard-spec.png",
-    "totalSize": 1
-  },
-  "calcium": {
-    "id": 49,
-    "name": "Calcium",
-    "apiName": "calcium",
-    "category": "Medicine",
-    "pocket": "medicine",
-    "description": "Raises the base SP. ATK stat of one POKéMON.",
-    "price": 10000,
-    "sellPrice": 5000,
-    "isConsumable": true,
-    "isUsableInBattle": true,
-    "isUsableOverworld": true,
-    "isHoldable": true,
-    "effect": {
-      "statBoosts": [
-        {
-          "stat": "special-attack",
-          "evYield": 10
-        }
-      ]
-    },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/calcium.png",
-    "totalSize": 1
-  },
-  "protein": {
-    "id": 46,
-    "name": "Protein",
-    "apiName": "protein",
-    "category": "Medicine",
-    "pocket": "medicine",
-    "description": "Raises the base ATTACK stat of one POKéMON.",
-    "price": 10000,
-    "sellPrice": 5000,
-    "isConsumable": true,
-    "isUsableInBattle": true,
-    "isUsableOverworld": true,
     "isHoldable": true,
     "effect": {
       "statBoosts": [
         {
           "stat": "attack",
-          "evYield": 10
+          "stages": 2
         }
       ]
     },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/protein.png",
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/x-attack.png",
     "totalSize": 1
   },
-  "dire-hit": {
-    "id": 56,
-    "name": "Dire Hit",
-    "apiName": "dire-hit",
-    "category": "BattleItems",
-    "pocket": "items",
-    "description": "Raises the critical-hit ratio during one battle.",
-    "price": 1000,
-    "sellPrice": 500,
-    "isConsumable": true,
-    "isUsableInBattle": true,
-    "isUsableOverworld": false,
-    "isHoldable": true,
-    "effect": {
-      "statBoosts": []
-    },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/dire-hit.png",
-    "totalSize": 1
-  },
-  "carbos": {
-    "id": 48,
-    "name": "Carbos",
-    "apiName": "carbos",
+  "max-elixir": {
+    "id": 41,
+    "name": "Max Elixir",
+    "apiName": "max-elixir",
     "category": "Medicine",
     "pocket": "medicine",
-    "description": "Raises the base SPEED stat of one POKéMON.",
-    "price": 10000,
-    "sellPrice": 5000,
+    "description": "Fully restores the PP of a POKéMON’s moves.",
+    "price": 4500,
+    "sellPrice": 2250,
+    "rarity": 4,
     "isConsumable": true,
     "isUsableInBattle": true,
     "isUsableOverworld": true,
     "isHoldable": true,
     "effect": {
-      "statBoosts": [
-        {
-          "stat": "speed",
-          "evYield": 10
-        }
-      ]
+      "restorePpAll": true
     },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/carbos.png",
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/max-elixir.png",
     "totalSize": 1
   },
-  "x-sp-def": {
-    "id": 62,
-    "name": "X Sp. Def",
-    "apiName": "x-sp-def",
+  "x-defense": {
+    "id": 58,
+    "name": "X Defense",
+    "apiName": "x-defense",
     "category": "BattleItems",
     "pocket": "items",
-    "description": "An item that raises the Sp. Def stat of a Pokémon in battle. It wears off if the Pokémon is withdrawn.",
+    "description": "Raises the stat DEFENSE during one battle.",
     "price": 2000,
     "sellPrice": 1000,
+    "rarity": 2,
     "isConsumable": true,
     "isUsableInBattle": true,
     "isUsableOverworld": false,
@@ -782,12 +630,12 @@
     "effect": {
       "statBoosts": [
         {
-          "stat": "special-defense",
+          "stat": "defense",
           "stages": 2
         }
       ]
     },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/x-sp-def.png",
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/x-defense.png",
     "totalSize": 1
   },
   "zinc": {
@@ -799,6 +647,7 @@
     "description": "Raises the base SP. DEF stat of one POKéMON.",
     "price": 10000,
     "sellPrice": 5000,
+    "rarity": 3,
     "isConsumable": true,
     "isUsableInBattle": true,
     "isUsableOverworld": true,
@@ -814,6 +663,146 @@
     "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/zinc.png",
     "totalSize": 1
   },
+  "guard-spec": {
+    "id": 55,
+    "name": "Guard Spec.",
+    "apiName": "guard-spec",
+    "category": "BattleItems",
+    "pocket": "items",
+    "description": "Prevents stat reduction when used in battle.",
+    "price": 1500,
+    "sellPrice": 750,
+    "rarity": 1,
+    "isConsumable": true,
+    "isUsableInBattle": true,
+    "isUsableOverworld": false,
+    "isHoldable": true,
+    "effect": {
+      "statBoosts": []
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/guard-spec.png",
+    "totalSize": 1
+  },
+  "x-sp-def": {
+    "id": 62,
+    "name": "X Sp. Def",
+    "apiName": "x-sp-def",
+    "category": "BattleItems",
+    "pocket": "items",
+    "description": "An item that raises the Sp. Def stat of a Pokémon in battle. It wears off if the Pokémon is withdrawn.",
+    "price": 2000,
+    "sellPrice": 1000,
+    "rarity": 2,
+    "isConsumable": true,
+    "isUsableInBattle": true,
+    "isUsableOverworld": false,
+    "isHoldable": true,
+    "effect": {
+      "statBoosts": [
+        {
+          "stat": "special-defense",
+          "stages": 2
+        }
+      ]
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/x-sp-def.png",
+    "totalSize": 1
+  },
+  "iron": {
+    "id": 47,
+    "name": "Iron",
+    "apiName": "iron",
+    "category": "Medicine",
+    "pocket": "medicine",
+    "description": "Raises the base DEFENSE stat of one POKéMON.",
+    "price": 10000,
+    "sellPrice": 5000,
+    "rarity": 3,
+    "isConsumable": true,
+    "isUsableInBattle": true,
+    "isUsableOverworld": true,
+    "isHoldable": true,
+    "effect": {
+      "statBoosts": [
+        {
+          "stat": "defense",
+          "evYield": 10
+        }
+      ]
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/iron.png",
+    "totalSize": 1
+  },
+  "calcium": {
+    "id": 49,
+    "name": "Calcium",
+    "apiName": "calcium",
+    "category": "Medicine",
+    "pocket": "medicine",
+    "description": "Raises the base SP. ATK stat of one POKéMON.",
+    "price": 10000,
+    "sellPrice": 5000,
+    "rarity": 3,
+    "isConsumable": true,
+    "isUsableInBattle": true,
+    "isUsableOverworld": true,
+    "isHoldable": true,
+    "effect": {
+      "statBoosts": [
+        {
+          "stat": "special-attack",
+          "evYield": 10
+        }
+      ]
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/calcium.png",
+    "totalSize": 1
+  },
+  "carbos": {
+    "id": 48,
+    "name": "Carbos",
+    "apiName": "carbos",
+    "category": "Medicine",
+    "pocket": "medicine",
+    "description": "Raises the base SPEED stat of one POKéMON.",
+    "price": 10000,
+    "sellPrice": 5000,
+    "rarity": 3,
+    "isConsumable": true,
+    "isUsableInBattle": true,
+    "isUsableOverworld": true,
+    "isHoldable": true,
+    "effect": {
+      "statBoosts": [
+        {
+          "stat": "speed",
+          "evYield": 10
+        }
+      ]
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/carbos.png",
+    "totalSize": 1
+  },
+  "dire-hit": {
+    "id": 56,
+    "name": "Dire Hit",
+    "apiName": "dire-hit",
+    "category": "BattleItems",
+    "pocket": "items",
+    "description": "Raises the critical-hit ratio during one battle.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 1,
+    "isConsumable": true,
+    "isUsableInBattle": true,
+    "isUsableOverworld": false,
+    "isHoldable": true,
+    "effect": {
+      "statBoosts": []
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/dire-hit.png",
+    "totalSize": 1
+  },
   "hp-up": {
     "id": 45,
     "name": "HP Up",
@@ -823,6 +812,7 @@
     "description": "Raises the base HP of one POKéMON.",
     "price": 10000,
     "sellPrice": 5000,
+    "rarity": 3,
     "isConsumable": true,
     "isUsableInBattle": true,
     "isUsableOverworld": true,
@@ -838,15 +828,66 @@
     "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/hp-up.png",
     "totalSize": 1
   },
-  "water-stone": {
-    "id": 84,
-    "name": "Water Stone",
-    "apiName": "water-stone",
+  "x-accuracy": {
+    "id": 60,
+    "name": "X Accuracy",
+    "apiName": "x-accuracy",
+    "category": "BattleItems",
+    "pocket": "items",
+    "description": "Raises accuracy of attack moves during one battle.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 2,
+    "isConsumable": true,
+    "isUsableInBattle": true,
+    "isUsableOverworld": false,
+    "isHoldable": true,
+    "effect": {
+      "statBoosts": [
+        {
+          "stat": "accuracy",
+          "stages": 2
+        }
+      ]
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/x-accuracy.png",
+    "totalSize": 1
+  },
+  "protein": {
+    "id": 46,
+    "name": "Protein",
+    "apiName": "protein",
+    "category": "Medicine",
+    "pocket": "medicine",
+    "description": "Raises the base ATTACK stat of one POKéMON.",
+    "price": 10000,
+    "sellPrice": 5000,
+    "rarity": 3,
+    "isConsumable": true,
+    "isUsableInBattle": true,
+    "isUsableOverworld": true,
+    "isHoldable": true,
+    "effect": {
+      "statBoosts": [
+        {
+          "stat": "attack",
+          "evYield": 10
+        }
+      ]
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/protein.png",
+    "totalSize": 1
+  },
+  "dawn-stone": {
+    "id": 109,
+    "name": "Dawn Stone",
+    "apiName": "dawn-stone",
     "category": "Evolution",
     "pocket": "items",
-    "description": "Makes certain species of POKéMON evolve.",
+    "description": "A peculiar stone that makes certain species of Pokémon evolve. It sparkles like eyes.",
     "price": 3000,
     "sellPrice": 1500,
+    "rarity": 3,
     "isConsumable": false,
     "isUsableInBattle": false,
     "isUsableOverworld": false,
@@ -855,16 +896,12 @@
       "evolutionCriteria": {
         "type": "stone",
         "targetPokemon": [
-          "poliwhirl",
-          "shellder",
-          "staryu",
-          "eevee",
-          "lombre",
-          "panpour"
+          "kirlia",
+          "snorunt"
         ]
       }
     },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/water-stone.png",
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/dawn-stone.png",
     "totalSize": 1
   },
   "leaf-stone": {
@@ -876,6 +913,7 @@
     "description": "Makes certain species of POKéMON evolve.",
     "price": 3000,
     "sellPrice": 1500,
+    "rarity": 3,
     "isConsumable": false,
     "isUsableInBattle": false,
     "isUsableOverworld": false,
@@ -895,15 +933,16 @@
     "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/leaf-stone.png",
     "totalSize": 1
   },
-  "sun-stone": {
-    "id": 80,
-    "name": "Sun Stone",
-    "apiName": "sun-stone",
+  "thunder-stone": {
+    "id": 83,
+    "name": "Thunder Stone",
+    "apiName": "thunder-stone",
     "category": "Evolution",
     "pocket": "items",
     "description": "Makes certain species of POKéMON evolve.",
     "price": 3000,
     "sellPrice": 1500,
+    "rarity": 3,
     "isConsumable": false,
     "isUsableInBattle": false,
     "isUsableOverworld": false,
@@ -912,42 +951,13 @@
       "evolutionCriteria": {
         "type": "stone",
         "targetPokemon": [
-          "gloom",
-          "sunkern",
-          "cottonee",
-          "petilil",
-          "helioptile"
-        ]
-      }
-    },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/sun-stone.png",
-    "totalSize": 1
-  },
-  "fire-stone": {
-    "id": 82,
-    "name": "Fire Stone",
-    "apiName": "fire-stone",
-    "category": "Evolution",
-    "pocket": "items",
-    "description": "Makes certain species of POKéMON evolve.",
-    "price": 3000,
-    "sellPrice": 1500,
-    "isConsumable": false,
-    "isUsableInBattle": false,
-    "isUsableOverworld": false,
-    "isHoldable": false,
-    "effect": {
-      "evolutionCriteria": {
-        "type": "stone",
-        "targetPokemon": [
-          "vulpix",
-          "growlithe",
+          "pikachu",
           "eevee",
-          "pansear"
+          "eelektrik"
         ]
       }
     },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/fire-stone.png",
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/thunder-stone.png",
     "totalSize": 1
   },
   "moon-stone": {
@@ -959,6 +969,7 @@
     "description": "Makes certain species of POKéMON evolve.",
     "price": 3000,
     "sellPrice": 1500,
+    "rarity": 3,
     "isConsumable": false,
     "isUsableInBattle": false,
     "isUsableOverworld": false,
@@ -979,15 +990,36 @@
     "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/moon-stone.png",
     "totalSize": 1
   },
-  "thunder-stone": {
-    "id": 83,
-    "name": "Thunder Stone",
-    "apiName": "thunder-stone",
+  "tm01": {
+    "id": 305,
+    "name": "TM01",
+    "apiName": "tm01",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Powerful, but makes the user flinch if hit by the foe.",
+    "price": 40000,
+    "sellPrice": 20000,
+    "rarity": 1,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "mega-punch"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "fire-stone": {
+    "id": 82,
+    "name": "Fire Stone",
+    "apiName": "fire-stone",
     "category": "Evolution",
     "pocket": "items",
     "description": "Makes certain species of POKéMON evolve.",
     "price": 3000,
     "sellPrice": 1500,
+    "rarity": 3,
     "isConsumable": false,
     "isUsableInBattle": false,
     "isUsableOverworld": false,
@@ -996,38 +1028,14 @@
       "evolutionCriteria": {
         "type": "stone",
         "targetPokemon": [
-          "pikachu",
+          "vulpix",
+          "growlithe",
           "eevee",
-          "eelektrik"
+          "pansear"
         ]
       }
     },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/thunder-stone.png",
-    "totalSize": 1
-  },
-  "dawn-stone": {
-    "id": 109,
-    "name": "Dawn Stone",
-    "apiName": "dawn-stone",
-    "category": "Evolution",
-    "pocket": "items",
-    "description": "A peculiar stone that makes certain species of Pokémon evolve. It sparkles like eyes.",
-    "price": 3000,
-    "sellPrice": 1500,
-    "isConsumable": false,
-    "isUsableInBattle": false,
-    "isUsableOverworld": false,
-    "isHoldable": false,
-    "effect": {
-      "evolutionCriteria": {
-        "type": "stone",
-        "targetPokemon": [
-          "kirlia",
-          "snorunt"
-        ]
-      }
-    },
-    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/dawn-stone.png",
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/fire-stone.png",
     "totalSize": 1
   },
   "shiny-stone": {
@@ -1039,6 +1047,7 @@
     "description": "A peculiar stone that makes certain species of Pokémon evolve. It shines with a dazzling light.",
     "price": 3000,
     "sellPrice": 1500,
+    "rarity": 3,
     "isConsumable": false,
     "isUsableInBattle": false,
     "isUsableOverworld": false,
@@ -1057,6 +1066,65 @@
     "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/shiny-stone.png",
     "totalSize": 1
   },
+  "sun-stone": {
+    "id": 80,
+    "name": "Sun Stone",
+    "apiName": "sun-stone",
+    "category": "Evolution",
+    "pocket": "items",
+    "description": "Makes certain species of POKéMON evolve.",
+    "price": 3000,
+    "sellPrice": 1500,
+    "rarity": 3,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "evolutionCriteria": {
+        "type": "stone",
+        "targetPokemon": [
+          "gloom",
+          "sunkern",
+          "cottonee",
+          "petilil",
+          "helioptile"
+        ]
+      }
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/sun-stone.png",
+    "totalSize": 1
+  },
+  "water-stone": {
+    "id": 84,
+    "name": "Water Stone",
+    "apiName": "water-stone",
+    "category": "Evolution",
+    "pocket": "items",
+    "description": "Makes certain species of POKéMON evolve.",
+    "price": 3000,
+    "sellPrice": 1500,
+    "rarity": 3,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "evolutionCriteria": {
+        "type": "stone",
+        "targetPokemon": [
+          "poliwhirl",
+          "shellder",
+          "staryu",
+          "eevee",
+          "lombre",
+          "panpour"
+        ]
+      }
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/water-stone.png",
+    "totalSize": 1
+  },
   "dusk-stone": {
     "id": 108,
     "name": "Dusk Stone",
@@ -1066,6 +1134,7 @@
     "description": "A peculiar stone that makes certain species of Pokémon evolve. It is as dark as dark can be.",
     "price": 3000,
     "sellPrice": 1500,
+    "rarity": 3,
     "isConsumable": false,
     "isUsableInBattle": false,
     "isUsableOverworld": false,
@@ -1082,6 +1151,1086 @@
       }
     },
     "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/dusk-stone.png",
+    "totalSize": 1
+  },
+  "tm05": {
+    "id": 309,
+    "name": "TM05",
+    "apiName": "tm05",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "A savage roar that makes the foe flee  to end the battle.",
+    "price": 50000,
+    "sellPrice": 25000,
+    "rarity": 1,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "mega-kick"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm10": {
+    "id": 314,
+    "name": "TM10",
+    "apiName": "tm10",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "The attack power varies among different POKéMON.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 2,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "double-edge"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm09": {
+    "id": 313,
+    "name": "TM09",
+    "apiName": "tm09",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Shoots 2 to 5 seeds in a row to strike the foe.",
+    "price": 50000,
+    "sellPrice": 25000,
+    "rarity": 1,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "take-down"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm07": {
+    "id": 311,
+    "name": "TM07",
+    "apiName": "tm07",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Creates a hailstorm that damages all types except ICE.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 1,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "horn-drill"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm04": {
+    "id": 308,
+    "name": "TM04",
+    "apiName": "tm04",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Raises SP. ATK and SP. DEF by focusing the mind.",
+    "price": 50000,
+    "sellPrice": 25000,
+    "rarity": 1,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "whirlwind"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm03": {
+    "id": 307,
+    "name": "TM03",
+    "apiName": "tm03",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Generates an ultrasonic wave that may confuse.",
+    "price": 50000,
+    "sellPrice": 25000,
+    "rarity": 3,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "swords-dance"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm08": {
+    "id": 312,
+    "name": "TM08",
+    "apiName": "tm08",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Bulks up the body to boost both ATTACK & DEFENSE.",
+    "price": 50000,
+    "sellPrice": 25000,
+    "rarity": 2,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "body-slam"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm11": {
+    "id": 315,
+    "name": "TM11",
+    "apiName": "tm11",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Raises the power of FIRE-type moves for 5 turns.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 2,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "bubble-beam"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm02": {
+    "id": 306,
+    "name": "TM02",
+    "apiName": "tm02",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Hooks and slashes the foe with long, sharp claws.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 1,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "razor-wind"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm06": {
+    "id": 310,
+    "name": "TM06",
+    "apiName": "tm06",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Poisons the foe with a toxin that gradually worsens.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 3,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "toxic"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm18": {
+    "id": 322,
+    "name": "TM18",
+    "apiName": "tm18",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Raises the power of WATER-type moves for 5 turns.",
+    "price": 10000,
+    "sellPrice": 5000,
+    "rarity": 1,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "counter"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm14": {
+    "id": 318,
+    "name": "TM14",
+    "apiName": "tm14",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "A brutal snow-and- wind attack that may freeze the foe.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 4,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "blizzard"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm20": {
+    "id": 324,
+    "name": "TM20",
+    "apiName": "tm20",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Prevents status abnormality with a mystical power.",
+    "price": 100000,
+    "sellPrice": 50000,
+    "rarity": 1,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "rage"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm16": {
+    "id": 320,
+    "name": "TM16",
+    "apiName": "tm16",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Creates a wall of light that lowers SP. ATK damage.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 1,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "pay-day"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm15": {
+    "id": 319,
+    "name": "TM15",
+    "apiName": "tm15",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Powerful, but needs recharging the next turn.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 4,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "hyper-beam"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm19": {
+    "id": 323,
+    "name": "TM19",
+    "apiName": "tm19",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Recovers half the HP of the damage  this move inflicts.",
+    "price": 10000,
+    "sellPrice": 5000,
+    "rarity": 2,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "seismic-toss"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm17": {
+    "id": 321,
+    "name": "TM17",
+    "apiName": "tm17",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Negates all damage, but may fail if used in succession.",
+    "price": 10000,
+    "sellPrice": 5000,
+    "rarity": 1,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "submission"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm21": {
+    "id": 325,
+    "name": "TM21",
+    "apiName": "tm21",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "The less the user likes you, the more powerful this move.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 2,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "mega-drain"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm13": {
+    "id": 317,
+    "name": "TM13",
+    "apiName": "tm13",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Fires an icy cold beam that may freeze the foe.",
+    "price": 10000,
+    "sellPrice": 5000,
+    "rarity": 3,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "ice-beam"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm12": {
+    "id": 316,
+    "name": "TM12",
+    "apiName": "tm12",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Enrages the foe so it can only use attack moves.",
+    "price": 50000,
+    "sellPrice": 25000,
+    "rarity": 1,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "water-gun"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm25": {
+    "id": 329,
+    "name": "TM25",
+    "apiName": "tm25",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Strikes the foe with a thunderbolt. It may paralyze.",
+    "price": 10000,
+    "sellPrice": 5000,
+    "rarity": 4,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "thunder"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm30": {
+    "id": 334,
+    "name": "TM30",
+    "apiName": "tm30",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Hurls a dark lump at the foe. It may lower SP. DEF.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 1,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "teleport"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm27": {
+    "id": 331,
+    "name": "TM27",
+    "apiName": "tm27",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "The more the user likes you, the more powerful this move.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 2,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "fissure"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm29": {
+    "id": 333,
+    "name": "TM29",
+    "apiName": "tm29",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "A powerful psychic attack that may lower SP. DEF.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 4,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "psychic"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm26": {
+    "id": 330,
+    "name": "TM26",
+    "apiName": "tm26",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Causes a quake that has no effect on flying foes.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 4,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "earthquake"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm24": {
+    "id": 328,
+    "name": "TM24",
+    "apiName": "tm24",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "A powerful electric attack that may cause paralysis.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 3,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "thunderbolt"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm31": {
+    "id": 335,
+    "name": "TM31",
+    "apiName": "tm31",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Destroys barriers like LIGHT SCREEN and causes damage.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 2,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "mimic"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm28": {
+    "id": 332,
+    "name": "TM28",
+    "apiName": "tm28",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Digs underground the 1st turn, then strikes next turn.",
+    "price": 100000,
+    "sellPrice": 50000,
+    "rarity": 3,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "dig"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm23": {
+    "id": 327,
+    "name": "TM23",
+    "apiName": "tm23",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Slams the foe with a hard tail. It may lower DEFENSE.",
+    "price": 10000,
+    "sellPrice": 5000,
+    "rarity": 1,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "dragon-rage"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm22": {
+    "id": 326,
+    "name": "TM22",
+    "apiName": "tm22",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Absorbs sunlight in the 1st turn, then attacks next turn.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 4,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "solar-beam"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm32": {
+    "id": 336,
+    "name": "TM32",
+    "apiName": "tm32",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Creates illusory copies to enhance elusiveness.",
+    "price": 10000,
+    "sellPrice": 5000,
+    "rarity": 2,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "double-team"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm38": {
+    "id": 342,
+    "name": "TM38",
+    "apiName": "tm38",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "A powerful fire attack that may burn the foe.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 4,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "fire-blast"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm40": {
+    "id": 344,
+    "name": "TM40",
+    "apiName": "tm40",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "An extremely fast attack that can’t be avoided.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 1,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "skull-bash"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm35": {
+    "id": 339,
+    "name": "TM35",
+    "apiName": "tm35",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Looses a stream of fire that may burn the foe.",
+    "price": 10000,
+    "sellPrice": 5000,
+    "rarity": 1,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "metronome"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm39": {
+    "id": 343,
+    "name": "TM39",
+    "apiName": "tm39",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Stops the foe from moving with rocks. May lower SPEED.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 1,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "swift"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm37": {
+    "id": 341,
+    "name": "TM37",
+    "apiName": "tm37",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Causes a sandstorm that hits the foe over several turns.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 1,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "egg-bomb"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm33": {
+    "id": 337,
+    "name": "TM33",
+    "apiName": "tm33",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Creates a wall of light that weakens physical attacks.",
+    "price": 10000,
+    "sellPrice": 5000,
+    "rarity": 2,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "reflect"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm41": {
+    "id": 345,
+    "name": "TM41",
+    "apiName": "tm41",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Prevents the foe from using the same move in a row.",
+    "price": 10000,
+    "sellPrice": 5000,
+    "rarity": 3,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "soft-boiled"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm34": {
+    "id": 338,
+    "name": "TM34",
+    "apiName": "tm34",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Zaps the foe with a jolt of electricity that never misses.",
+    "price": 10000,
+    "sellPrice": 5000,
+    "rarity": 1,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "bide"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm36": {
+    "id": 340,
+    "name": "TM36",
+    "apiName": "tm36",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Hurls sludge at the foe. It may poison the foe.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 3,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "self-destruct"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm50": {
+    "id": 354,
+    "name": "TM50",
+    "apiName": "tm50",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Enables full-power attack, but sharply lowers SP. ATK.",
+    "price": 10000,
+    "sellPrice": 5000,
+    "rarity": 3,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "substitute"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm45": {
+    "id": 349,
+    "name": "TM45",
+    "apiName": "tm45",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Makes it tough to attack a foe of the opposite gender.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 3,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "thunder-wave"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "hm01": {
+    "id": 397,
+    "name": "HM01",
+    "apiName": "hm01",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Attacks the foe with sharp blades or claws.",
+    "price": 0,
+    "sellPrice": 0,
+    "rarity": 5,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "cut"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/hm-normal.png",
+    "totalSize": 1
+  },
+  "tm49": {
+    "id": 353,
+    "name": "TM49",
+    "apiName": "tm49",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Steals the effects of the move the foe is trying to use.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 2,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "tri-attack"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm47": {
+    "id": 351,
+    "name": "TM47",
+    "apiName": "tm47",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Spreads hard- edged wings and slams into the foe.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 4,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "explosion"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm43": {
+    "id": 347,
+    "name": "TM43",
+    "apiName": "tm43",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Adds an effect to attack depending on the location.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 3,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "sky-attack"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm48": {
+    "id": 352,
+    "name": "TM48",
+    "apiName": "tm48",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Switches abilities with the foe on the turn this is used.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 3,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "rock-slide"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm46": {
+    "id": 350,
+    "name": "TM46",
+    "apiName": "tm46",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "While attacking, it may steal the foe’s held item.",
+    "price": 30000,
+    "sellPrice": 15000,
+    "rarity": 1,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "psywave"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm44": {
+    "id": 348,
+    "name": "TM44",
+    "apiName": "tm44",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "The user sleeps for 2 turns to restore health and status.",
+    "price": 100000,
+    "sellPrice": 50000,
+    "rarity": 2,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "rest"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "tm42": {
+    "id": 346,
+    "name": "TM42",
+    "apiName": "tm42",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Raises ATTACK when poisoned, burned, or paralyzed.",
+    "price": 1000,
+    "sellPrice": 500,
+    "rarity": 3,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "dream-eater"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/tm-normal.png",
+    "totalSize": 1
+  },
+  "hm05": {
+    "id": 401,
+    "name": "HM05",
+    "apiName": "hm05",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Looses a powerful blast of light that reduces accuracy.",
+    "price": 0,
+    "sellPrice": 0,
+    "rarity": 5,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "flash"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/hm-normal.png",
+    "totalSize": 1
+  },
+  "hm03": {
+    "id": 399,
+    "name": "HM03",
+    "apiName": "hm03",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Creates a huge wave, then crashes it down on the foe.",
+    "price": 0,
+    "sellPrice": 0,
+    "rarity": 5,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "surf"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/hm-normal.png",
+    "totalSize": 1
+  },
+  "hm04": {
+    "id": 400,
+    "name": "HM04",
+    "apiName": "hm04",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Builds enormous power, then slams the foe.",
+    "price": 0,
+    "sellPrice": 0,
+    "rarity": 5,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "strength"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/hm-normal.png",
+    "totalSize": 1
+  },
+  "hm02": {
+    "id": 398,
+    "name": "HM02",
+    "apiName": "hm02",
+    "category": "Treasures",
+    "pocket": "items",
+    "description": "Flies up on the first turn, then attacks next turn.",
+    "price": 0,
+    "sellPrice": 0,
+    "rarity": 5,
+    "isConsumable": false,
+    "isUsableInBattle": false,
+    "isUsableOverworld": false,
+    "isHoldable": false,
+    "effect": {
+      "teachMove": "fly"
+    },
+    "spriteUrl": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/hm-normal.png",
     "totalSize": 1
   }
 }

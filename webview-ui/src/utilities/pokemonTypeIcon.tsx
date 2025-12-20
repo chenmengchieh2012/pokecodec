@@ -11,7 +11,7 @@ interface PokemonTypeIconProps {
     type: PokemonType | string;
     size?: number;
     className?: string;
-    variant?: 'circle' | 'text-badge'; // Option for different styles
+    variant?: 'circle' | 'text-badge';
 }
 
 const typeColors: Record<string, string> = {
@@ -35,67 +35,73 @@ const typeColors: Record<string, string> = {
     fairy: '#D685AD',
 };
 
+// Custom SVG Paths for "Classic" look
 const TypePaths: Record<string, React.ReactNode> = {
     normal: (
-        <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 18C8.69 18 6 15.31 6 12C6 8.69 8.69 6 12 6C15.31 6 18 8.69 18 12C18 15.31 15.31 18 12 18Z" fill="white"/>
+        <circle cx="12" cy="12" r="7" fill="currentColor" />
     ),
     fire: (
-        <path d="M12 23C7.03 23 3 18.97 3 14C3 9 12 1 12 1C12 1 21 9 21 14C21 18.97 16.97 23 12 23ZM12 18C13.1 18 14 17.1 14 16C14 14.9 13.1 14 12 14C10.9 14 10 14.9 10 16C10 17.1 10.9 18 12 18Z" fill="white"/>
+        <path d="M12 23C7.03 23 3 18.97 3 14C3 9 12 1 12 1C12 1 21 9 21 14C21 18.97 16.97 23 12 23ZM12 18C13.1 18 14 17.1 14 16C14 14.9 13.1 14 12 14C10.9 14 10 14.9 10 16C10 17.1 10.9 18 12 18Z" fill="currentColor"/>
     ),
     water: (
-        <path d="M12 2C12 2 4 10 4 15C4 19.42 7.58 23 12 23C16.42 23 20 19.42 20 15C20 10 12 2 12 2ZM12 19C9.79 19 8 17.21 8 15C8 13.5 9 11 12 7C15 11 16 13.5 16 15C16 17.21 14.21 19 12 19Z" fill="white"/>
+        <path d="M12 2C12 2 5 8 5 13C5 17 8 20 12 20C16 20 19 17 19 13C19 8 12 2 12 2Z" fill="currentColor"/>
     ),
     grass: (
-        <path d="M12 22C12 22 18 17 18 11C18 6 12 2 12 2C12 2 6 6 6 11C6 17 12 22 12 22ZM12 22V11" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+        <path d="M17 8C8 10 5.9 16.17 3.82 21.34L5.71 22L6.66 19.7C7.14 19.87 7.64 20 8 20C19 20 22 3 22 3C21 5 14 5.25 9 6.25C4 7.25 2 11.5 2 13.5C2 15.5 3.75 17.25 3.75 17.25C7 8 17 8 17 8Z" fill="currentColor"/>
     ),
     electric: (
-        <path d="M7 14L13 2V11H18L11 23V14H7Z" fill="white"/>
+        <path d="M7 2V11H3L13 22V13H17L7 2Z" fill="currentColor"/>
     ),
     ice: (
-        <path d="M12 2V22M2 12H22M5 5L19 19M5 19L19 5" stroke="white" strokeWidth="3" strokeLinecap="round"/>
+        <path d="M12 2L14 6L18 4L16 8L20 10L16 12L20 14L16 16L18 20L14 18L12 22L10 18L6 20L8 16L4 14L8 12L4 10L8 8L6 4L10 6L12 2Z" fill="currentColor"/>
     ),
     fighting: (
-        <path d="M18 4H6C3.8 4 2 5.8 2 8V16C2 18.2 3.8 20 6 20H18C20.2 20 22 18.2 22 16V8C22 5.8 20.2 4 18 4ZM8 16C6.9 16 6 15.1 6 14C6 12.9 6.9 12 8 12C9.1 12 10 12.9 10 14C10 15.1 9.1 16 8 16ZM16 16C14.9 16 14 15.1 14 14C14 12.9 14.9 12 16 12C17.1 12 18 12.9 18 14C18 15.1 17.1 16 16 16Z" fill="white"/>
+        <path d="M20 11H13V7H20M20 15H13V19H20M20 3H13V7H20M7 3H2V21H7V3Z" fill="currentColor"/>
     ),
     poison: (
-        <path d="M12 2C8 2 5 4 5 8C5 10.5 6.5 12.5 8.5 13.5C8.2 14.5 8 15.5 8 16.5V18H16V16.5C16 15.5 15.8 14.5 15.5 13.5C17.5 12.5 19 10.5 19 8C19 4 16 2 12 2ZM10 9C9.4 9 9 8.6 9 8C9 7.4 9.4 7 10 7C10.6 7 11 7.4 11 8C11 8.6 10.6 9 10 9ZM14 9C13.4 9 13 8.6 13 8C13 7.4 13.4 7 14 7C14.6 7 15 7.4 15 8C15 8.6 14.6 9 14 9Z" fill="white"/>
+        <path d="M12 2C8 2 5 5 5 9C5 11.38 6.19 13.47 8 14.74V17A1 1 0 0 0 9 18H15A1 1 0 0 0 16 17V14.74C17.81 13.47 19 11.38 19 9C19 5 16 2 12 2M10 19H14V21H10V19Z" fill="currentColor"/>
     ),
     ground: (
-        <path d="M2 18H22M4 13H20M6 8H18" stroke="white" strokeWidth="3" strokeLinecap="round"/>
+        <path d="M14 6L10.25 11L13.1 14.8L11.5 16C9.81 13.75 7 10 7 10L1 18H23L14 6Z" fill="currentColor"/>
     ),
     flying: (
-        <path d="M22 12C22 17.5 17.5 22 12 22C6.5 22 2 17.5 2 12C2 6.5 12 2 12 2C12 2 14 8 14 12C14 16 17 18 22 12Z" fill="white"/>
+        <path d="M22 16V4C22 4 10 2 5 10C5 10 15 12 15 16C15 16 8 16 8 16C8 16 14 18 14 20C14 20 10 20 10 20C10 20 15 22 15 22L22 16Z" fill="currentColor"/>
     ),
     psychic: (
-        <path d="M12 4C7.6 4 4 7.6 4 12C4 16.4 7.6 20 12 20C16.4 20 20 16.4 20 12C20 7.6 16.4 4 12 4ZM12 17C9.2 17 7 14.8 7 12C7 9.2 9.2 7 12 7C14.8 7 17 9.2 17 12C17 14.8 14.8 17 12 17Z" fill="white"/>
+        <path d="M12 4.5C7 4.5 2.73 7.61 1 12C2.73 16.39 7 19.5 12 19.5C17 19.5 21.27 16.39 23 12C21.27 7.61 17 4.5 12 4.5M12 17A5 5 0 0 1 7 12A5 5 0 0 1 12 7A5 5 0 0 1 17 12A5 5 0 0 1 12 17M12 9A3 3 0 0 0 9 12A3 3 0 0 0 12 15A3 3 0 0 0 15 12A3 3 0 0 0 12 9Z" fill="currentColor"/>
     ),
     bug: (
-        <path d="M12 3C9 3 7 5 7 8V10H5V12H7V14H5V16H7C7 19 9 21 12 21C15 21 17 19 17 16H19V14H17V12H19V10H17V8C17 5 15 3 12 3ZM10 14C9.4 14 9 13.6 9 13C9 12.4 9.4 12 10 12C10.6 12 11 12.4 11 13C11 13.6 10.6 14 10 14ZM14 14C13.4 14 13 13.6 13 13C13 12.4 13.4 12 14 12C14.6 12 15 12.4 15 13C15 13.6 14.6 14 14 14Z" fill="white"/>
+        <path d="M12 2C9 2 7 4 7 7C7 8 7.2 9 7.5 10H5V12H8.2C8.6 13.5 9.6 14.7 11 15.4V19H6V21H11V23H13V21H18V19H13V15.4C14.4 14.7 15.4 13.5 15.8 12H19V10H16.5C16.8 9 17 8 17 7C17 4 15 2 12 2M12 4C13.7 4 15 5.3 15 7C15 8.7 13.7 10 12 10C10.3 10 9 8.7 9 7C9 5.3 10.3 4 12 4Z" fill="currentColor"/>
     ),
     rock: (
-        <path d="M12 2L4 8V16L12 22L20 16V8L12 2ZM12 18L7 14L12 10L17 14L12 18Z" fill="white"/>
+        <path d="M5 19H19V17H5V19M5 15H19V13H5V15M5 11H19V9H5V11M5 7H19V5H5V7Z" fill="currentColor"/>
     ),
     ghost: (
-        <path d="M12 2C8 2 5 5 5 9V20L8 17L12 21L16 17L19 20V9C19 5 16 2 12 2ZM9 10C8.4 10 8 9.6 8 9C8 8.4 8.4 8 9 8C9.6 8 10 8.4 10 9C10 9.6 9.6 10 9 10ZM15 10C14.4 10 14 9.6 14 9C14 8.4 14.4 8 15 8C15.6 8 16 8.4 16 9C16 9.6 15.6 10 15 10Z" fill="white"/>
+        <path d="M12 2A9 9 0 0 0 3 11C3 14.03 4.53 16.74 6.9 18.35L6 22L9 21L12 22L15 21L18 22L17.1 18.35C19.47 16.74 21 14.03 21 11A9 9 0 0 0 12 2M12 15C10.5 15 9.25 14 9.25 14C9.25 14 10.5 13 12 13C13.5 13 14.75 14 14.75 14C14.75 14 13.5 15 12 15M9 10A1.5 1.5 0 1 1 10.5 8.5A1.5 1.5 0 0 1 9 10M15 10A1.5 1.5 0 1 1 16.5 8.5A1.5 1.5 0 0 1 15 10Z" fill="currentColor"/>
     ),
     dragon: (
-        <path d="M12 2C5 4 2 9 2 9C2 14 6 22 12 22C18 22 22 14 22 9C22 9 19 4 12 2ZM12 16C9.8 16 8 14.2 8 12C8 9.8 9.8 8 12 8C14.2 8 16 9.8 16 12C16 14.2 14.2 16 12 16Z" fill="white"/>
+        <path d="M12 2C12 2 16 6 16 10C16 14 12 18 12 18C12 18 8 14 8 10C8 6 12 2 12 2M12 22C12 22 18 18 18 14C18 10 12 6 12 6C12 6 6 10 6 14C6 18 12 22 12 22Z" fill="currentColor"/>
     ),
     steel: (
-        <path d="M12 2L19 6V18L12 22L5 18V6L12 2ZM12 8C9.8 8 8 9.8 8 12C8 14.2 9.8 16 12 16C14.2 16 16 14.2 16 12C16 9.8 14.2 8 12 8Z" fill="white"/>
+        <path d="M12 2L20.66 7V17L12 22L3.34 17V7L12 2M12 7A5 5 0 1 0 17 12A5 5 0 0 0 12 7Z" fill="currentColor"/>
     ),
     dark: (
-        <path d="M12 2C11.2 2 10.5 2.1 9.7 2.3C11.7 3.6 13 5.8 13 8.5C13 12.6 9.6 16 5.5 16C4.8 16 4.1 15.9 3.4 15.7C4.9 19.4 8.6 22 12.9 22C17.9 22 22 17.9 22 12.9C22 6.9 17.5 2 12 2Z" fill="white"/>
+        <path d="M12 2A10 10 0 1 0 22 12A10 10 0 0 1 12 2Z" fill="currentColor"/>
     ),
     fairy: (
-        <path d="M12 6C14 2 18 2 20 4C22 6 21 10 18 12C21 14 22 18 20 20C18 22 14 22 12 18C10 22 6 22 4 20C2 18 3 14 6 12C3 10 2 6 4 4C6 2 10 2 12 6Z" fill="white"/>
+        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="currentColor"/>
     ),
 };
 
-export const PokemonTypeIcon: React.FC<PokemonTypeIconProps> = ({ type, size = 24, className, variant = 'circle' }) => {
-    const t = (type || 'normal');
-    const color = typeColors[t] || '#A8A77A';
-    const icon = TypePaths[t] || TypePaths['normal'];
+export const PokemonTypeIcon: React.FC<PokemonTypeIconProps> = ({ 
+    type, 
+    size = 14, 
+    className,
+    variant = 'circle' 
+}) => {
+    const t = type.toLowerCase();
+    const color = typeColors[t] || '#777';
+    const iconPath = TypePaths[t] || TypePaths['normal'];
 
     if (variant === 'text-badge') {
         return (
@@ -116,18 +122,24 @@ export const PokemonTypeIcon: React.FC<PokemonTypeIconProps> = ({ type, size = 2
             className={`pokemon-type-icon ${className || ''}`}
             style={{
                 backgroundColor: color,
-                '--icon-size': `${size}px`
+                width: size,
+                height: size,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '50%',
+                color: 'white'
             } as React.CSSProperties}
             title={t}
         >
             <svg 
-                width="75%" 
-                height="75%" 
+                width="60%" 
+                height="60%" 
                 viewBox="0 0 24 24" 
                 fill="none" 
                 xmlns="http://www.w3.org/2000/svg"
             >
-                {icon}
+                {iconPath}
             </svg>
         </div>
     );

@@ -32,6 +32,18 @@
   letter-spacing: 1px;
 }
 
+.ailment-badge {
+  font-size: 10px;
+  font-weight: bold;
+  color: white;
+  padding: 1px 4px;
+  border-radius: 4px;
+  margin-right: 6px;
+  text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+  box-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+  vertical-align: middle;
+}
+
 .pokemon-gender {
   font-size: 18px;
   font-weight: bold;

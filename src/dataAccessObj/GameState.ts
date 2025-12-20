@@ -2,6 +2,7 @@
 
 export const BattleEventType = {
     Start: 'Start',
+    RoundFinish: 'RoundFinish',
     AllMyPokemonFainted: 'AllMyPokemonFainted',
     MyPokemonFaint: 'MyPokemonFaint',
     WildPokemonFaint: 'WildPokemonFaint',

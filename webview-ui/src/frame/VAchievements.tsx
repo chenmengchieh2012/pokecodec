@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import achievementDataSource from '../../../src/data/achievement.json';
-import { PokeDexEntry } from '../../../src/dataAccessObj/PokeDex';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
 import { PokeDexPayload } from '../../../src/dataAccessObj/MessagePayload';
 import { AchievementAnalyzer, AchievementContext, achievementCriteria, AchievementStatistics } from '../../../src/utils/AchievementCritiria';
 import { useMessageStore, useMessageSubscription } from '../store/messageStore';
 import styles from './VAchievements.module.css';
+import { AchievementIcons, CategoryIcons } from './AchievementIcons';
 
 interface Achievement {
     id: string;
@@ -79,6 +79,16 @@ export const VAchievements = () => {
     });
 
 
+    const getIcon = (achievement: Achievement) => {
+        if (AchievementIcons[achievement.id]) {
+            return AchievementIcons[achievement.id];
+        }
+        if (CategoryIcons[achievement.category]) {
+            return CategoryIcons[achievement.category];
+        }
+        return achievement.icon; // Fallback to emoji from JSON
+    };
+
     return (
         <div className={styles.container}>
             <div className={styles.header}>
@@ -95,7 +105,8 @@ export const VAchievements = () => {
                         className={`${styles.achievementItem} ${achievement.isUnlocked ? styles.unlocked : styles.locked}`}
                         onClick={() => setSelectedId(achievement.id)}
                     >
-                        {achievement.isUnlocked ? achievement.icon : '🔒'}
+                        {/*{achievement.isUnlocked ? getIcon(achievement) : '🔒'}*/}
+                        {getIcon(achievement)}
                     </div>
                 ))}
             </div>
@@ -104,7 +115,7 @@ export const VAchievements = () => {
                 <div className={styles.modalOverlay} onClick={() => setSelectedId(null)}>
                     <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
                         <div className={styles.modalIcon}>
-                            {selectedAchievement.isUnlocked ? selectedAchievement.icon : '🔒'}
+                            {selectedAchievement.isUnlocked ? getIcon(selectedAchievement) : '🔒'}
                         </div>
                         <div className={styles.modalTitle}>{selectedAchievement.title}</div>
                         <div className={styles.modalDesc}>{selectedAchievement.description}</div>

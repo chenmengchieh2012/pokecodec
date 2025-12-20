@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { BattleCanvasHandle, VBattleCanvas } from '../frame/VBattleCanvas';
 import { VSearchScene } from '../frame/VSearchScene';
 import { BattleControl, BattleControlHandle } from '../frame/BattleControl';
@@ -8,6 +8,8 @@ import { useMessageSubscription } from '../store/messageStore';
 import { EncounterResult } from '../../../src/core/EncounterHandler';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
 import { GameState } from '../../../src/dataAccessObj/GameState';
+import { vscode } from '../utilities/vscode';
+import { SetGameStatePayload } from '../../../src/dataAccessObj/MessagePayload';
 
 // 定義遊戲狀態
 
@@ -34,6 +36,16 @@ export const VBattlePage = () => {
         const data = message.data as EncounterResult;
         battleManagerMethod.handleStart(GameState.WildAppear, data);
     });
+
+    useEffect(() => {
+        const payload : SetGameStatePayload = {
+            gameState: GameState.Searching
+        }
+        vscode.postMessage({
+            command: MessageType.SetGameState,
+            ...payload
+        });
+    }, []);
 
 
   return (

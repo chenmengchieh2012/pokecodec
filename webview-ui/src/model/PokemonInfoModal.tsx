@@ -26,14 +26,9 @@ interface PokemonInfoModalProps {
 
 export const PokemonInfoModal: React.FC<PokemonInfoModalProps> = ({ isInParty,pokemon, onClose, onAction, actionLabel }) => {
     const [activeTab, setActiveTab] = useState<'stats' | 'moves' | 'iv'>('stats');
-    const [currentMoves, setCurrentMoves] = useState<PokemonMove[]>(pokemon.pokemonMoves);
     const [showEvolutionModal, setShowEvolutionModal] = useState(false);
     const editNickNameRef = React.useRef<HTMLInputElement>(null);
     const [isEditingNickName, setIsEditingNickName] = useState(false);
-
-    React.useEffect(() => {
-        setCurrentMoves(pokemon.pokemonMoves);
-    }, [pokemon.pokemonMoves, pokemon.name]);
 
     const handleNameSave = () => {
         const editNickNameRefCurrent = editNickNameRef.current;
@@ -199,7 +194,7 @@ export const PokemonInfoModal: React.FC<PokemonInfoModalProps> = ({ isInParty,po
                                 </div>
                                 </>
                             ) : activeTab === 'moves' ? (
-                                <MoveSelector isInParty={isInParty} pokemon={pokemon} moves={currentMoves} />
+                                <MoveSelector isInParty={isInParty} pokemon={pokemon} moves={pokemon.pokemonMoves} />
                             ) : (
                                 <>
                                 <div className={styles.battleStats}>
@@ -209,6 +204,17 @@ export const PokemonInfoModal: React.FC<PokemonInfoModalProps> = ({ isInParty,po
                                     <div className={styles.statItem}><span>SPA</span><b>{pokemon.iv.specialAttack}</b></div>
                                     <div className={styles.statItem}><span>SPD</span><b>{pokemon.iv.specialDefense}</b></div>
                                     <div className={styles.statItem}><span>SPE</span><b>{pokemon.iv.speed}</b></div>
+                                </div>
+                                <div className={styles.codeDetailSection}> 
+                                    <div className={styles.statItem}>
+                                        <span>LINE</span><span className={styles.blueText}><b>{pokemon.codingStats?.linesOfCode}</b></span>
+                                    </div>
+                                    <div className={styles.statItem}>
+                                        <span>BUGS</span><span className={styles.blueText}><b>{pokemon.codingStats?.bugsFixed}</b></span>
+                                    </div>
+                                    <div className={styles.statItem}>
+                                        <span>COMM.</span><span className={styles.blueText}><b>{pokemon.codingStats?.commits}</b></span>
+                                    </div>
                                 </div>
                                 <div className={styles.codeInfoSection}>
                                     <div className={styles.infoItem}>

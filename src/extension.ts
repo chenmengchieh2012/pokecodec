@@ -62,11 +62,16 @@ export function activate(context: vscode.ExtensionContext) {
     const gameStateManager = GameStateManager.initialize(context);
     const biomeManager = BiomeDataManager.initialize(context);
     const achievementManager = AchievementManager.initialize(context);
+    
+    // Initialize Git Activity Handler
+    const gitHandler = GitActivityHandler.getInstance();
+    gitHandler.initialize();
+    context.subscriptions.push({ dispose: () => gitHandler.dispose() });
 
-    const gameProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'game', context, biomeManager });
-    const backpackProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'backpack', context, biomeManager });
-    const computerProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'computer', context, biomeManager });
-    const shopProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'shop', context, biomeManager });
+    const gameProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'game', context});
+    const backpackProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'backpack', context});
+    const computerProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'computer', context});
+    const shopProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'shop', context});
     
     
     var BiomeIndex = -1;
@@ -116,7 +121,6 @@ interface PokemonViewProviderOptions {
     extensionUri: vscode.Uri;
     viewType: string;
     context: vscode.ExtensionContext;
-    biomeManager: BiomeDataManager;
 }
 
 // 🔥 修改點 2: 建立一個 Provider 類別來管理側邊欄
@@ -133,6 +137,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
     private gameStateManager: GameStateManager;
     private biomeManager: BiomeDataManager;
     private achievementManager: AchievementManager;
+    private gitHandler: GitActivityHandler;
     private _context: vscode.ExtensionContext;
     private _extensionUri: vscode.Uri;
     private _viewType: string;
@@ -140,7 +145,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
     constructor(
         private readonly options: PokemonViewProviderOptions,
     ) { 
-        const { extensionUri, viewType, context: _context, biomeManager } = options;
+        const { extensionUri, viewType, context: _context } = options;
         this.pokemonBoxManager = PokemonBoxManager.getInstance();
         this.partyManager = JoinPokemonManager.getInstance();
         this.bagManager = BagManager.getInstance();
@@ -148,7 +153,8 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         this.gameStateManager = GameStateManager.getInstance();
         this.pokeDexManager = PokeDexManager.getInstance();
         this.achievementManager = AchievementManager.getInstance();
-        this.biomeManager = biomeManager;
+        this.biomeManager = BiomeDataManager.getInstance();
+        this.gitHandler = GitActivityHandler.getInstance();
         this._extensionUri = extensionUri;
         this._viewType = viewType;
         this._context = _context;
@@ -164,6 +170,13 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             _context
         );
         PokemonViewProvider.providers.push(this);
+        
+        // 使用新的事件監聽方式
+        this.gitHandler.onDidProcessCommit(() => {
+            if(this.gameStateManager.getGameState() === GameState.Searching){
+                this.updateViews();
+            }
+        });
     }
 
     public handleGetBiomeData() {
@@ -220,8 +233,13 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         starter.stats.specialAttack = ExperienceCalculator.calculateStat(starter.baseStats.specialAttack, starter.iv.specialAttack, starter.ev.specialAttack, starter.level);
         starter.stats.specialDefense = ExperienceCalculator.calculateStat(starter.baseStats.specialDefense, starter.iv.specialDefense, starter.ev.specialDefense, starter.level);
         starter.stats.speed = ExperienceCalculator.calculateStat(starter.baseStats.speed, starter.iv.speed, starter.ev.speed, starter.level);
-        starter.currentHp = starter.stats.hp;
+        starter.currentHp = 1;
         starter.maxHp = starter.stats.hp;
+        // MARK: TEST Rand Ailment
+        starter.ailment = 'burn'
+        // Rand Flinched
+        
+
         
         await this.partyManager.add(starter);
 
@@ -509,6 +527,7 @@ export const defaultPokemon: PokemonDao = {
     originalTrainer: 'Player',
     caughtDate: Date.now(),
     caughtBall: 'poke-ball',
+    ailment: 'healthy',
     pokemonMoves: [
         {
             id: 1,

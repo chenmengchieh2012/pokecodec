@@ -1,10 +1,9 @@
-import * as vscode from 'vscode';
+import { exec } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
-import { exec } from 'child_process';
 import { promisify } from 'util';
+import * as vscode from 'vscode';
 import { JoinPokemonManager } from '../manager/joinPokemonManager';
-import { MessageType } from '../dataAccessObj/messageType';
 
 const execAsync = promisify(exec);
 
@@ -13,6 +12,10 @@ export class GitActivityHandler {
     private watchers: vscode.FileSystemWatcher[] = [];
     private lastHeadHashes: Map<string, string> = new Map(); // workspaceFolder -> commitHash
     private partyManager: JoinPokemonManager | undefined;
+    
+    // 使用 EventEmitter 來支援多個監聽者
+    private _onDidProcessCommit = new vscode.EventEmitter<void>();
+    public readonly onDidProcessCommit = this._onDidProcessCommit.event;
 
     private constructor() {}
 
@@ -111,16 +114,25 @@ export class GitActivityHandler {
             
             // 解析輸出 (git show --stat 的輸出比較雜，這裡簡化處理)
             // 更好的方式是用 git log -1 --shortstat
-            const { stdout: statOutput } = await execAsync(`git log -1 --shortstat --format="%H|%an|%s" ${commitHash}`, { cwd: folderPath });
+            // 使用 LC_ALL=C 強制輸出英文，避免語系問題導致解析失敗
+            const { stdout: statOutput } = await execAsync(`git log -1 --shortstat --format="%H|%an|%s" ${commitHash}`, { 
+                cwd: folderPath,
+                env: { ...process.env, LC_ALL: 'C' }
+            });
             
             // Output format example:
             // <hash>|<author>|<subject>
+            // 
             //  1 file changed, 1 insertion(+), 1 deletion(-)
             
-            const lines = statOutput.trim().split('\n');
+            // 過濾掉空行，確保我們拿到的是有內容的行
+            const lines = statOutput.trim().split('\n').filter(line => line.trim().length > 0);
             if (lines.length < 2) return;
 
-            const [metaInfo, statsLine] = lines;
+            const metaInfo = lines[0];
+            // 統計資訊通常在最後一行
+            const statsLine = lines[lines.length - 1]; 
+            
             const [hash, author, message] = metaInfo.split('|');
 
             // 解析 statsLine
@@ -147,6 +159,9 @@ export class GitActivityHandler {
                 commitHash: hash
             });
 
+            // 觸發事件通知所有監聽者
+            this._onDidProcessCommit.fire();
+
         } catch (error) {
             console.error(`[GitActivityHandler] Error processing commit:`, error);
         }
@@ -159,41 +174,35 @@ export class GitActivityHandler {
 
         if (party.length === 0) return;
 
-        // 簡單邏輯：隊伍中的第一隻寶可夢 (帶頭大哥) 獲得經驗
-        // 或者全部都加？這裡先只加第一隻
-        const leader = party[0];
+        // 寶可夢一起升級，升級幅度按照行數與修改量計算
+        // 第一隻寶可夢的升級幅度較大
         
-        if (!leader.codingStats) {
-            leader.codingStats = {
-                caughtRepo: 'Unknown',
-                favoriteLanguage: 'Unknown',
-                linesOfCode: 0,
-                bugsFixed: 0,
-                commits: 0,
-                coffeeConsumed: 0
-            };
+
+
+        // 紀錄codingStats在PokemonDao中
+        for(const pokemon of party) {
+            if (!pokemon.codingStats) {
+                pokemon.codingStats = {
+                    caughtRepo: 'Unknown',
+                    favoriteLanguage: 'Unknown',
+                    linesOfCode: 0,
+                    bugsFixed: 0,
+                    commits: 0,
+                    coffeeConsumed: 0
+                };
+            }
+            // 更新數據
+            pokemon.codingStats.commits += 1;
+            pokemon.codingStats.linesOfCode += data.linesChanged;
+            if (data.isBugFix) {
+                pokemon.codingStats.bugsFixed += 1;
+            }
+            // 儲存更新
+            this.partyManager.update(pokemon);
+            console.log(`[GitActivityHandler] Updated Pokemon ${pokemon.name} stats!`, pokemon.codingStats);
+       
         }
 
-        // 更新數據
-        leader.codingStats.commits += 1;
-        leader.codingStats.linesOfCode += data.linesChanged;
-        if (data.isBugFix) {
-            leader.codingStats.bugsFixed += 1;
-        }
-
-        // 如果還沒有紀錄 Repo，就紀錄一下
-        if (leader.codingStats.caughtRepo === 'Unknown') {
-            leader.codingStats.caughtRepo = path.basename(repoPath);
-        }
-
-        // 儲存更新
-        this.partyManager.update(leader);
-        
-        // 通知前端更新 (可選，如果前端有即時顯示這些數據)
-        // vscode.postMessage(...) // 這邊是在 Extension Host，需要透過 Webview Panel 傳送
-        // 暫時先不傳，等打開介面時會自動讀取最新資料
-        
-        console.log(`[GitActivityHandler] Updated Pokemon ${leader.name} stats!`, leader.codingStats);
         
         // 可以在這裡觸發一些遊戲事件，例如升級、進化檢查等
         // ...

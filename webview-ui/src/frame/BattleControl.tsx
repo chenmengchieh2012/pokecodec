@@ -10,7 +10,7 @@ import { PokeBallDao } from '../../../src/dataAccessObj/pokeBall';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
 import { PokemonTypeIcon } from '../utilities/pokemonTypeIcon';
 import { CapitalizeFirstLetter } from '../utilities/util';
-import { SHOP_ITEMS_BALL_NAMES, SHOP_ITEMS_HP_MEDICINE_NAMES, SHOP_ITEMS_PP_MEDICINE_NAMES } from '../utilities/ItemName';
+import { SHOP_ITEMS_BALL_NAMES, SHOP_ITEMS_HP_MEDICINE_NAMES, SHOP_ITEMS_PP_MEDICINE_NAMES, SHOP_ITEMS_STATUS_MEDICINE_NAMES, SHOP_ITEM_FULL_MEDICINE_NAMES } from '../utilities/ItemName';
 export interface BattleControlHandle extends DialogBoxHandle {
     openPartyMenu: () => void;
 }
@@ -81,7 +81,7 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
                 category: item.category,
                 catchRateModifier: catchRate
             });
-        } else if (SHOP_ITEMS_HP_MEDICINE_NAMES.includes(item.apiName)) {
+        } else if (SHOP_ITEMS_HP_MEDICINE_NAMES.includes(item.apiName) || SHOP_ITEMS_STATUS_MEDICINE_NAMES.includes(item.apiName) || SHOP_ITEM_FULL_MEDICINE_NAMES.includes(item.apiName)) {
             setMenuState('main');
             handleUseItem(item);
         } else if (SHOP_ITEMS_PP_MEDICINE_NAMES.includes(item.apiName)) {
@@ -160,6 +160,7 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
                     <div className={styles['move-select-overlay-container']}>
                         <PartyGridInModal 
                             party={myParty} 
+                            disabledPartyUids={myParty.filter(p=>p.currentHp == 0 || p.ailment === 'fainted').map(p=>p.uid) }
                             onPokemonClick={onPokemonClick} 
                         />
                     </div>
