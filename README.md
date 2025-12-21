@@ -77,4 +77,6 @@ This project is for educational and personal use.
 - [x]: git commit logic
 - [ ]: i18n
 - [ ]: catch rate
+- [ ]: game page reload need to check last encounter 
+- [ ]: leval up restore hp
 
