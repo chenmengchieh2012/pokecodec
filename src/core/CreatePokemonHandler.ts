@@ -99,7 +99,7 @@ export const PokemonFactory = {
         }
 
         // 根據深度調整等級 (Gaussian distribution)
-        const baseLevel = 5 + depth * 2;
+        const baseLevel =  depth * 2;
 
         // 根據遊玩時間增加等級
         const timeBasedMaxLevel = Math.min(100, Math.floor(playingTime / (24 * 60 * 60 * 1000)) + 5); // 每24小時增加一等級，最高100級
