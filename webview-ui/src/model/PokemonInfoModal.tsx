@@ -10,6 +10,7 @@ import { UpdatePartyPokemonPayload } from '../../../src/dataAccessObj/MessagePay
 import { PokemonTypeIcon } from '../utilities/pokemonTypeIcon';
 import { EvolutionModal } from './EvolutionModal';
 import { LearnableMoveListModal } from './LearnableMoveListModal';
+import { GiFemale, GiMale } from 'react-icons/gi';
 
 const IconClose = () => (
     <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
@@ -136,7 +137,9 @@ export const PokemonInfoModal: React.FC<PokemonInfoModalProps> = ({ isInParty,po
                                     title={isInParty ? "Click to rename" : ""}
                                     style={{ cursor: isInParty ? 'pointer' : 'default' }}
                                 >
+                                    {pokemon.gender === 'Male' ? <GiMale/> : <GiFemale/>}
                                     {pokemon.nickname || pokemon.name}
+                                    
                                 </div>
                             )}
                             <div className={styles.lvlBadge}>Lv.{pokemon.level} ({Math.floor((pokemon.currentExp / pokemon.toNextLevelExp) * 100)}%)</div>
@@ -183,6 +186,24 @@ export const PokemonInfoModal: React.FC<PokemonInfoModalProps> = ({ isInParty,po
                                     <div className={styles.statItem}><span>SPE</span><b>{pokemon.stats.speed}</b></div>
                                     <div className={styles.statItem}><span>EXP</span><b>{pokemon.currentExp}</b></div>
                                     <div className={styles.statItem}><span>NEXT</span><b>{pokemon.toNextLevelExp}</b></div>
+                                    <div className={styles.statItem}>
+                                        <span></span>
+                                        {pokemon.ailment && pokemon.ailment !== 'healthy' && (
+                                            <span className={`${styles.typeTag} ${styles.ailmentTag}`} style={{
+                                                backgroundColor: 
+                                                    pokemon.ailment === 'burn' ? '#F08030' :
+                                                    pokemon.ailment === 'freeze' ? '#98D8D8' :
+                                                    pokemon.ailment === 'paralysis' ? '#F8D030' :
+                                                    pokemon.ailment === 'poison' ? '#A040A0' :
+                                                    pokemon.ailment === 'sleep' ? '#8C888C' :
+                                                    pokemon.ailment === 'fainted' ? '#C03028' : '#555',
+                                                color: '#fff',
+                                                marginLeft: '4px'
+                                            }}>
+                                                {pokemon.ailment.toUpperCase()}
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
                                 <div className={styles.extraInfo}>
                                     <div className={styles.infoItem}>

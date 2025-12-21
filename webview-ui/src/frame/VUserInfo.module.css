@@ -107,3 +107,61 @@
     margin-top: 20px;
 }
 
+/* Selection Screen */
+.selectionContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 20px;
+    text-align: center;
+    font-family: 'Press Start 2P', monospace;
+}
+
+.selectionTitle {
+    font-size: 12px;
+    font-weight: bold;
+    color: #202020;
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+.startersRow {
+    display: flex;
+    gap: 20px;
+}
+
+.starterCard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    padding: 10px;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    transition: all 0.2s;
+    background: rgba(255, 255, 255, 0.5);
+}
+
+.starterCard:hover {
+    background: rgba(255, 255, 255, 0.8);
+    transform: scale(1.1);
+    border-color: #F8B050;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.starterImg {
+    width: 64px;
+    height: 64px;
+    image-rendering: pixelated;
+}
+
+.starterName {
+    margin-top: 8px;
+    font-weight: bold;
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #333;
+}
+

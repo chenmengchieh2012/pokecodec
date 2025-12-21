@@ -40,6 +40,11 @@ export class UserDaoManager {
         return { ...this.userDao }; // 回傳複製品以防外部修改
     }
 
+    public setStarter(starter: 'pikachu' | 'eevee'): void {
+        this.userDao.starter = starter;
+        this.context.globalState.update(this.STORAGE_KEY, this.userDao);
+    }
+
     /**
      * 通用交易處理器
      */

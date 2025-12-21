@@ -25,7 +25,7 @@ export const PokemonMoveModal = (props: PokemonMoveModalProps) => {
                 <div className={styles.moveGrid}>
                     {selectedPokemon.pokemonMoves.map(move => (
                         <div key={move.id} className={styles.moveItem} onClick={() => handleMoveSelect(move.id)}>
-                            <div className={styles.moveName}><PokemonTypeIcon type={move.type} />{move.name}</div>
+                            <div className={styles.moveName}><span><PokemonTypeIcon type={move.type} /></span>{move.name}</div>
                             <div className={styles.movePP}>PP {move.pp}/{move.maxPP}</div>
                         </div>
                     ))}

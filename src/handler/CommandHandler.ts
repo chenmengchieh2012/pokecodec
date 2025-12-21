@@ -33,6 +33,14 @@ import { PokemonFactory } from '../core/CreatePokemonHandler';
 import { AchievementManager } from '../manager/AchievementManager';
 import { RecordBattleActionPayload, RecordBattleCatchPayload, RecordBattleFinishedPayload, RecordItemActionPayload } from '../utils/AchievementCritiria';
 
+import pokemonGen1Data from '../data/pokemonGen1.json';
+import moveData from '../data/pokemonMoves.json';
+import { RawPokemonData } from '../dataAccessObj/pokemon';
+import { pokemonMoveInit } from '../dataAccessObj/pokeMove';
+import { ExperienceCalculator } from '../utils/ExperienceCalculator';
+
+const pokemonDataMap = pokemonGen1Data as unknown as Record<string, RawPokemonData>;
+const pokemonMoveDataMap = moveData as unknown as Record<string, any>;
 export class CommandHandler {
     private readonly pokemonBoxManager: PokemonBoxManager;
     private readonly partyManager: JoinPokemonManager;
@@ -74,6 +82,39 @@ export class CommandHandler {
             throw new Error('HandlerContext not set. Call setHandlerContext first.');
         }
         return this._handlerContext;
+    }
+
+    // ==================== Select Starter ====================
+    public async handleSelectStarter(payload: { starter: 'pikachu' | 'eevee' }): Promise<void> {
+        const { starter } = payload;
+        
+        // 1. Update User Dao
+        const user = this.userDaoManager.getUserInfo();
+        user.starter = starter;
+
+        // 2. Create Pokemon
+        const pokemonId = starter === 'pikachu' ? 25 : 133;
+        const starterPokemon = await PokemonFactory.createWildPokemonInstance({
+            pokemonId: pokemonId,
+            nameZh: '',
+            nameEn: '',
+            type: [],
+            catchRate: 0,
+            minDepth: 0 // Level 5
+        }, undefined, 5);
+        
+        starterPokemon.originalTrainer = user.name || 'GOLD';
+        starterPokemon.caughtDate = Date.now();
+        starterPokemon.caughtBall = 'poke-ball';
+        
+        await this.userDaoManager.setStarter(starterPokemon.name as 'pikachu' | 'eevee');
+
+        // 3. Add to Party
+        await this.partyManager.add(starterPokemon);
+
+        // 4. Update Views
+        this.handlerContext.updateAllViews();
+        vscode.window.showInformationMessage(`You chose ${starter.toUpperCase()} as your partner!`);
     }
 
     // ==================== Evolve Pokemon ====================
@@ -296,8 +337,7 @@ export class CommandHandler {
                         pokemon.currentHp = Math.min(pokemon.maxHp, pokemon.currentHp + healAmount);
                         itemUsed = true;
                         usedMessage = `Restored ${pokemon.currentHp - oldHp} HP.`;
-                        if (payload.item.apiName === 'full-medicine') {
-                            // Full heal also cures status
+                        if (effect.healStatus && effect.healStatus.includes('all')) {
                             pokemon.ailment = 'healthy';
                         }
                     } else {
@@ -352,9 +392,20 @@ export class CommandHandler {
                 }
                 // 5. Status Heal (Placeholder)
                 else if (effect.healStatus) {
-                     // MARK: TODO: Implement status healing
-                     vscode.window.showInformationMessage('Status healing not implemented yet.');
-                }                        // 5. Restore PP
+                    if(pokemon.ailment && pokemon.ailment !== 'healthy' && pokemon.ailment !== 'fainted') {
+                        if(effect.healStatus.includes(pokemon.ailment) || effect.healStatus.includes('all')) {
+                            pokemon.ailment = 'healthy';
+                            itemUsed = true;
+                            usedMessage = `Cured status condition.`;
+                        } else {
+                            vscode.window.showInformationMessage('This item cannot cure the current status condition!');
+                        }
+                    } else {
+                        vscode.window.showInformationMessage('No status condition to heal!');
+                    }
+                    
+                }                        
+                // 5. Restore PP
                 else if (effect.restorePp) {
                     if (effect.restorePpAll) {
                         // Restore All Moves
@@ -380,22 +431,71 @@ export class CommandHandler {
                             console.warn('[Extension] Move ID missing for PP restore item');
                         }
                     }
-                }                    } else {
+                // 6. Teach Move
+                } else if (effect.teachMove) {
+                    if(payload.moveId !== undefined){
+                        // Teach Move Logic Here
+                        const moveIdToTeach = effect.teachMove;
+                        const canLearnMove = pokemonDataMap[pokemon.id].moves.filter(m => m.name === moveIdToTeach);
+                        if(canLearnMove.length > 0){
+                            const learnMoveName = canLearnMove[0].name;
+                            const learnMoveData = pokemonMoveDataMap[learnMoveName];
+                            // Check if already knows the move
+                            const alreadyKnows = pokemon.pokemonMoves.some(m => m.name === moveIdToTeach);
+                            if(!alreadyKnows){
+                                // Teach the move
+                                let newMoves = pokemon.pokemonMoves.filter(m=>m.id !== payload.moveId);
+                                newMoves.push(pokemonMoveInit(learnMoveData));
+                                pokemon.pokemonMoves = newMoves;
+                                itemUsed = true;
+                                usedMessage = `Taught ${pokemon.name} the move ${moveIdToTeach}.`;
+                            } else {
+                                vscode.window.showInformationMessage(`${pokemon.name} already knows the move ${moveIdToTeach}.`);
+                            }
+                        } else {
+                            vscode.window.showInformationMessage(`${pokemon.name} cannot learn the move ${moveIdToTeach}.`);
+                        }
+                    } else {
+                        console.warn('[Extension] Move ID missing for teach move item');
+                    }
+                }                
+            } else {
                 console.warn('[Extension] Item has no effect defined.');
                 vscode.window.showWarningMessage('This item has no effect defined.');
+            }
+            let isTreasure = false;
+            if(itemId){
+                const itemActionPayload : RecordItemActionPayload = {
+                    action: 'use',
+                    item: {
+                        name: payload.item.name,
+                        category: payload.item.category,
+                        price: payload.item.price,
+                    },
+                    quantity: 1,
+                    isUseless: itemUsed
+                };
+                isTreasure = payload.item.category === 'Treasures';
+                this.achievementManager.onItemAction(itemActionPayload);
             }
 
             if (itemUsed && itemId) {
                 // 更新寶可夢狀態
                 await this.partyManager.update(pokemon);
                 
-                // 扣除道具
-                await this.bagManager.useItem(itemId, 1);
+                // 不是寶藏道具才扣除
+                if(!isTreasure){
+                    // 扣除道具
+                    await this.bagManager.useItem(itemId, 1);
+                }
                 
                 vscode.window.showInformationMessage(`Used ${payload.item.name} on ${pokemon.name}. ${usedMessage}`);
                 
                 this.handlerContext.updateAllViews();
+            }else{
+                vscode.window.showInformationMessage('No changes made to Pokemon.');
             }
+
         }
     }
 

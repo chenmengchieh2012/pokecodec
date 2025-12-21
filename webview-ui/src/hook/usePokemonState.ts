@@ -247,10 +247,11 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
         if (newPokemon.level > currentPokemon.level) {
             // 可以在這裡處理升級動畫或訊息
             console.log(`Leveled up to ${newPokemon.level}!`);
+            dialogRef.current?.setText(`${CapitalizeFirstLetter(newPokemon.name)} leveled up to Lv${newPokemon.level}!`);
         }
 
         setPokemon(newPokemon);
-    }, []);
+    }, [dialogRef]);
 
     const handleUseMoveEffect = useCallback((moveEffectResult: MoveEffectResult) => {
         // 這裡可以根據 move 的效果來更新 pokemonState 或 battlePokemonState

@@ -39,8 +39,10 @@ import { randomUUID } from 'crypto';
 import { PokemonFactory } from './core/CreatePokemonHandler';
 import { AchievementManager } from './manager/AchievementManager';
 import { RecordBattleActionPayload, RecordItemActionPayload, RecordBattleCatchPayload, RecordBattleFinishedPayload } from './utils/AchievementCritiria';
+import itemData from './data/items.json';
+import { ItemDao } from './dataAccessObj/item';
 
-
+const itemDataMap = itemData as unknown as Record<string, ItemDao>;
 
 export function activate(context: vscode.ExtensionContext) {
     // 在 activate 函式一開始執行
@@ -256,6 +258,13 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             await this.pokemonBoxManager.add(debugPokemon);
         }
 
+        // MARK: TEST all TM
+        const allTMItems = Object.values(itemDataMap).filter(item => item.apiName.startsWith('tm'));
+        console.log('[ResetStorage] Adding all TM items:', allTMItems.map(i => i.apiName));
+        allTMItems.map(async (tmItem) => {
+            await this.bagManager.add(tmItem,1);
+        });
+
         vscode.window.showInformationMessage('Global storage 已重置！');
         PokemonViewProvider.providers.forEach(p => p.updateViews());
     }
@@ -386,6 +395,10 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
 
             if (message.command === MessageType.EvolvePokemon) {
                 await this.commandHandler.handleEvolvePokemon(message as EvolvePokemonPayload);
+            }
+
+            if (message.command === MessageType.SelectStarter) {
+                await this.commandHandler.handleSelectStarter(message as any);
             }
 
             if (message.command === MessageType.TriggerEncounter) {

@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import styles from './VShop.module.css';
 import { vscode } from '../utilities/vscode';
-import { ItemUITag, ItemUiTagItemsMap, SHOP_ITEM_EVOLUTION_NAMES, SHOP_ITEM_FULL_MEDICINE_NAMES, SHOP_ITEMS_BALL_NAMES, SHOP_ITEMS_HP_MEDICINE_NAMES, SHOP_ITEMS_PP_MEDICINE_NAMES, SHOP_ITEMS_REVIVE_NAMES } from '../utilities/ItemName';
+import { ItemUITag, ItemUiTagItemsMap, SHOP_ITEM_EVOLUTION_NAMES, SHOP_ITEM_FULL_MEDICINE_NAMES, SHOP_ITEMS_BALL_NAMES, SHOP_ITEMS_HP_MEDICINE_NAMES, SHOP_ITEMS_PP_MEDICINE_NAMES, SHOP_ITEMS_REVIVE_NAMES, SHOP_ITEMS_STATUS_MEDICINE_NAMES } from '../utilities/ItemName';
 import { useMessageSubscription, messageStore } from '../store/messageStore';
 import { UserDao } from '../../../src/dataAccessObj/userData';
 import { MenuSideBar } from '../frame/SideBar';
@@ -23,6 +23,7 @@ const SHOP_ITEMS_MEDICINE_NAMES = [
     ...SHOP_ITEMS_PP_MEDICINE_NAMES,
     ...SHOP_ITEM_FULL_MEDICINE_NAMES,
     ...SHOP_ITEMS_REVIVE_NAMES,
+    ...SHOP_ITEMS_STATUS_MEDICINE_NAMES
 ];
 
 const IconBuy = () => (

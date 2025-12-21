@@ -118,7 +118,7 @@ function simplifyPokemonData(data, species, evolutions) {
         height: data.height,
         weight: data.weight,
         base_experience: data.base_experience,
-        gender_rate: data.gender_rate,
+        gender_rate: species.gender_rate,
         moves: moves,
         evolutions: evolutions,
         species: {

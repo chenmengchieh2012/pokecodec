@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { PokeEncounterData } from "../dataAccessObj/pokeEncounterData";
 import { PokemonDao, PokemonStats, PokemonType, RawPokemonData } from "../dataAccessObj/pokemon";
-import { MoveDecorator, PokemonMove } from "../dataAccessObj/pokeMove";
+import { MoveDecorator, PokemonMove, pokemonMoveInit } from "../dataAccessObj/pokeMove";
 import { ExperienceCalculator } from "../utils/ExperienceCalculator";
 import * as pokemonGen1Data from "../data/pokemonGen1.json";
 import * as pokemonMovesData from "../data/pokemonMoves.json";
@@ -86,7 +86,7 @@ function gaussianRandom(mean: number, stdev: number): number {
 }
 
 export const PokemonFactory = {
-    createWildPokemonInstance: async (pokemonEncounterData: PokeEncounterData, filePath?: string): Promise<PokemonDao> => {
+    createWildPokemonInstance: async (pokemonEncounterData: PokeEncounterData, filePath?: string, fixLevel?: number): Promise<PokemonDao> => {
         // 從資料庫取得寶可夢基本資料
         const finalPokemonId = pokemonEncounterData.pokemonId;
         const depth = pokemonEncounterData.minDepth;
@@ -103,7 +103,11 @@ export const PokemonFactory = {
         // Standard deviation of 3 gives some variety
         const randomLevel = Math.round(gaussianRandom(baseLevel, 3));
         // Clamp between 1 and 100
-        const level = Math.min(100, Math.max(1, randomLevel));
+        let level = Math.min(100, Math.max(1, randomLevel));
+
+        if(fixLevel){
+            level = fixLevel;
+        }
         
         // Nature
         const natures = ['Hardy', 'Lonely', 'Brave', 'Adamant', 'Naughty', 'Bold', 'Docile', 'Relaxed', 'Impish', 'Lax', 'Timid', 'Hasty', 'Serious', 'Jolly', 'Naive', 'Modest', 'Mild', 'Quiet', 'Bashful', 'Rash', 'Calm', 'Gentle', 'Sassy', 'Careful', 'Quirky'];
@@ -178,7 +182,7 @@ export const PokemonFactory = {
 
         const allMoves: PokemonMove[] = pokemonData.moves.map((moveInfo) => {
             const moveDetails = moveDataMap[moveInfo.name];
-            if (moveDetails !== undefined) {
+            if (moveDetails !== undefined && moveInfo.level_learned_at <= level && moveInfo.learn_method === 'level-up') {
                 return moveDetails as PokemonMove;
             }
             return null;
@@ -188,8 +192,8 @@ export const PokemonFactory = {
             (Math.random() * 8 < pokemonData.gender_rate) ? 'Female' : 'Male';
 
         // 生成隨機 height, weight
-        const height = pokemonData.height; // 以 dm 為單位
-        const weight = pokemonData.weight; // 以 hg 為單位
+        const height = Math.round(gaussianRandom(pokemonData.height, 3)); // 以 dm 為單位
+        const weight = Math.round(gaussianRandom(pokemonData.weight, 3)); // 以 hg 為單位
 
         const isShiny = Math.random() < 0.5;
 
@@ -198,6 +202,16 @@ export const PokemonFactory = {
         // MARK: TEST Rand Ailment
         const randomAilments = [ 'healthy', 'burn', 'freeze', 'paralysis', 'poison', 'sleep'] as const;
         const ailment = randomAilments[Math.floor(Math.random() * randomAilments.length)];
+
+        // 隨機選四個技能
+        const moveIndicator = allMoves.length <=4 ? allMoves.length : 4;
+        const ramdomFourMoveIndex = new Set<number>();
+        while (ramdomFourMoveIndex.size < moveIndicator) {
+            const randIndex = Math.floor(Math.random() * allMoves.length);
+            ramdomFourMoveIndex.add(randIndex);
+        }
+        
+        const myMoves = Array.from(ramdomFourMoveIndex).map(index => pokemonMoveInit(allMoves[index]));
 
         // 建立寶可夢實例
         const pokemonInstance: PokemonDao = {
@@ -229,7 +243,7 @@ export const PokemonFactory = {
             caughtBall: 'None',
             level: level,
 
-            pokemonMoves: allMoves.slice(0, 4), // 只選前四招
+            pokemonMoves: myMoves, // 只選前四招
             ailment: ailment,
             
             codingStats: {

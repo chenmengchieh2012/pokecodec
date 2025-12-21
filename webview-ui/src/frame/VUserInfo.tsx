@@ -3,7 +3,7 @@ import styles from './VUserInfo.module.css';
 import { useMessageStore, useMessageSubscription } from '../store/messageStore';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
 import { UserDao } from '../../../src/dataAccessObj/userData';
-import { resolveAssetUrl } from '../utilities/vscode';
+import { resolveAssetUrl, vscode } from '../utilities/vscode';
 
 export const VUserInfo = () => {
     const messageStore = useMessageStore();
@@ -16,6 +16,43 @@ export const VUserInfo = () => {
 
     if (!user) {
         return <div className={styles.loading}>Loading Trainer Card...</div>;
+    }
+
+    const handleSelectStarter = (starter: 'pikachu' | 'eevee') => {
+        vscode.postMessage({
+            command: MessageType.SelectStarter,
+            starter: starter
+        });
+        // Optimistic update
+        setUser({ ...user, starter: starter });
+    };
+
+    if (!user.starter) {
+        return (
+            <div className={styles.selectionContainer}>
+                <div className={styles.selectionTitle}>
+                    CHOOSE YOUR PARTNER<br/>POKEMON!
+                </div>
+                <div className={styles.startersRow}>
+                    <div className={styles.starterCard} onClick={() => handleSelectStarter('pikachu')}>
+                        <img 
+                            src={resolveAssetUrl('./sprites/pokemon/normal/25.gif')} 
+                            alt="Pikachu" 
+                            className={styles.starterImg}
+                        />
+                        <div className={styles.starterName}>Pikachu</div>
+                    </div>
+                    <div className={styles.starterCard} onClick={() => handleSelectStarter('eevee')}>
+                        <img 
+                            src={resolveAssetUrl('./sprites/pokemon/normal/133.gif')} 
+                            alt="Eevee" 
+                            className={styles.starterImg}
+                        />
+                        <div className={styles.starterName}>Eevee</div>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     return (

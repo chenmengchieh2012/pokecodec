@@ -4,6 +4,14 @@ import * as path from 'path';
 import { promisify } from 'util';
 import * as vscode from 'vscode';
 import { JoinPokemonManager } from '../manager/joinPokemonManager';
+import { ExperienceCalculator } from '../utils/ExperienceCalculator';
+import { BagManager } from '../manager/bagsManager';
+
+import itemData from '../data/items.json';
+import { ItemDao } from '../dataAccessObj/item';
+import { UserDaoManager } from '../manager/userDaoManager';
+
+const itemDataMap = itemData as Record<string, ItemDao>;
 
 const execAsync = promisify(exec);
 
@@ -12,6 +20,8 @@ export class GitActivityHandler {
     private watchers: vscode.FileSystemWatcher[] = [];
     private lastHeadHashes: Map<string, string> = new Map(); // workspaceFolder -> commitHash
     private partyManager: JoinPokemonManager | undefined;
+    private bagManager: BagManager| undefined;
+    private userDaoManager: UserDaoManager| undefined;
     
     // 使用 EventEmitter 來支援多個監聽者
     private _onDidProcessCommit = new vscode.EventEmitter<void>();
@@ -28,6 +38,8 @@ export class GitActivityHandler {
 
     public initialize() {
         this.partyManager = JoinPokemonManager.getInstance();
+        this.bagManager = BagManager.getInstance();
+        this.userDaoManager = UserDaoManager.getInstance();
 
         // 監聽 workspace 資料夾變化 (例如使用者新增/移除專案資料夾)
         vscode.workspace.onDidChangeWorkspaceFolders(() => {
@@ -151,13 +163,27 @@ export class GitActivityHandler {
                 hash, author, message, linesChanged, isBugFix
             });
 
-            // TODO: 更新寶可夢數據
+            /**  
+             * 根據 commit 資訊來更新寶可夢的經驗值或其他屬性
+            */
             // 這裡我們需要存取 GameStateManager 來更新隊伍中的寶可夢
             this.updatePokemonStats(folderPath, {
                 linesChanged,
                 isBugFix,
                 commitHash: hash
             });
+
+            /**
+             * 隨機發放道具給玩家
+             * 根據 commit 的規模 (linesChanged) 來決定發放機率
+             */
+
+            this.giveItemsToPlayer(folderPath, linesChanged);
+
+            /**
+             * 給予玩家遊戲幣獎勵
+             */
+            this.giveMoneyToPlayer(folderPath, linesChanged);
 
             // 觸發事件通知所有監聽者
             this._onDidProcessCommit.fire();
@@ -167,22 +193,102 @@ export class GitActivityHandler {
         }
     }
 
+    private giveMoneyToPlayer(folderPath: string, linesChanged: number) {
+        const userInfo = this.userDaoManager?.getUserInfo();
+        // 根據 linesChanged 給予玩家遊戲幣
+        if (!userInfo) return;
+
+        const moneyEarned = Math.max(1, Math.floor(linesChanged / 10)); // 每 10 行程式碼給 1 遊戲幣
+        // 最高給予 100 遊戲幣
+        const cappedMoney = Math.min(moneyEarned, 100);
+        this.userDaoManager?.updateMoney(cappedMoney);
+        console.log(`[GitActivityHandler] Given ${cappedMoney} money to player for coding effort.`);
+        vscode.window.showInformationMessage(`You earned ${cappedMoney} PokéDollars for your coding effort!`);
+    }
+
+    private giveItemsToPlayer(folderPath: string, linesChanged: number) {
+        // 根據 linesChanged 決定給予道具的機率
+        // 這裡我們簡單設定：每 50 行程式碼，有 10% 機率獲得一個小道具
+
+        // const chance = Math.min(0.5, (linesChanged / 50) * 0.1); // 最多 50% 機率
+
+
+        // MARK: test chance = 1.0;
+        const chance = 1.0;
+        if (Math.random() < chance) {
+            // 隨機選擇一個道具給玩家
+            const TMPrefix = "tm";
+            const allTMApiName = [ ...Array.from({length: 50}, (_, i) => {
+                const num = (i + 1).toString().padStart(2, '0');
+                return `${TMPrefix}${num}`;
+            })]; // 假設有 50 個 TM 道具
+
+            const HMPrefix = "hm";
+            const allHMApiName = [ ...Array.from({length: 8}, (_, i) => {
+                const num = (i + 1).toString().padStart(2, '0');
+                return `${HMPrefix}${num}`;
+            })];
+            
+            const myBagItems = this.bagManager?.getAll() || [];
+            const ownedTMSet = new Set(
+                myBagItems
+                    .filter(item => item.apiName.startsWith(TMPrefix))
+                    .map(item => item.apiName)
+            );
+            const availableMachines = [...allTMApiName,...allHMApiName].filter(tmName => !ownedTMSet.has(tmName));
+
+            if (availableMachines.length === 0) {
+                console.log("[GitActivityHandler] Player already owns all TMs. No item given.");
+                return;
+            }
+
+            const rarityWeightedList = [
+                ...availableMachines.filter((_, idx) => idx < 10).flatMap(tm => [tm, tm, tm]), // Common TMs (first 10) x3
+                ...availableMachines.filter((_, idx) => idx >= 10 && idx < 30).flatMap(tm => [tm, tm]), // Uncommon TMs (next 20) x2
+                ...availableMachines.filter((_, idx) => idx >= 30) // Rare TMs (last 20) x1
+            ];
+
+            const randomIndex = Math.floor(Math.random() * rarityWeightedList.length);
+            const selectedItemName = rarityWeightedList[randomIndex];
+            const givenItem = itemDataMap[selectedItemName];
+            if(!givenItem){
+                console.warn(`[GitActivityHandler] Item data not found for ${selectedItemName}`);
+                return;
+            }
+
+            // 將道具加入玩家背包
+            this.bagManager?.add(givenItem, 1);
+            console.log(`[GitActivityHandler] Given item ${givenItem.name} to player for coding effort.`);
+            vscode.window.showInformationMessage(`You received a ${givenItem.name} for your coding effort!`);
+
+        }
+    }
+
     private updatePokemonStats(repoPath: string, data: { linesChanged: number, isBugFix: boolean, commitHash: string }) {
         if (!this.partyManager) return;
         
-        const party = this.partyManager.getAll();
+        const newParty = JSON.parse(JSON.stringify(this.partyManager.getAll()));
 
-        if (party.length === 0) return;
-
-        // 寶可夢一起升級，升級幅度按照行數與修改量計算
-        // 第一隻寶可夢的升級幅度較大
-        
-
+        if (newParty.length === 0) return;
 
         // 紀錄codingStats在PokemonDao中
-        for(const pokemon of party) {
-            if (!pokemon.codingStats) {
-                pokemon.codingStats = {
+        for(let modifyPokemon of newParty) {
+
+
+            /**
+             * 更新寶可夢的經驗值與等級
+             */
+            const expGain = Math.max(1, Math.floor(data.linesChanged / newParty.length)); // 每隻寶可夢分得的經驗值
+            modifyPokemon.currentExp = (modifyPokemon.currentExp || 0) + expGain;
+            modifyPokemon = ExperienceCalculator.addExperience(modifyPokemon, expGain);
+            console.log(`[GitActivityHandler] Gave ${expGain} EXP to Pokemon ${modifyPokemon.name}. New EXP: ${modifyPokemon.currentExp}, Level: ${modifyPokemon.level}`);
+
+
+            /**
+             * 更新寶可夢的 codingStats 統計數據
+             */
+            if (!modifyPokemon.codingStats) {
+                modifyPokemon.codingStats = {
                     caughtRepo: 'Unknown',
                     favoriteLanguage: 'Unknown',
                     linesOfCode: 0,
@@ -192,19 +298,16 @@ export class GitActivityHandler {
                 };
             }
             // 更新數據
-            pokemon.codingStats.commits += 1;
-            pokemon.codingStats.linesOfCode += data.linesChanged;
+            modifyPokemon.codingStats.commits += 1;
+            modifyPokemon.codingStats.linesOfCode += data.linesChanged;
             if (data.isBugFix) {
-                pokemon.codingStats.bugsFixed += 1;
+                modifyPokemon.codingStats.bugsFixed += 1;
             }
             // 儲存更新
-            this.partyManager.update(pokemon);
-            console.log(`[GitActivityHandler] Updated Pokemon ${pokemon.name} stats!`, pokemon.codingStats);
+            this.partyManager.update(modifyPokemon);
+            console.log(`[GitActivityHandler] Updated Pokemon ${modifyPokemon.name} stats!`, modifyPokemon.codingStats);
        
         }
 
-        
-        // 可以在這裡觸發一些遊戲事件，例如升級、進化檢查等
-        // ...
     }
 }

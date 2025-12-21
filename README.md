@@ -72,4 +72,8 @@ This project is for educational and personal use.
 - [ ]: user playing time
 - [ ]: encounter event
 - [ ]: money earning logic
-- [ ]: miss move
+- [x]: miss move
+- [x]: pokemon aliment
+- [ ]: git commit logic
+- [ ]: i18n
+

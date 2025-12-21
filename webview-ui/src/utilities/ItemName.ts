@@ -28,11 +28,26 @@ export const SHOP_ITEM_EVOLUTION_NAMES = [
     'moon-stone', 'sun-stone', 'shiny-stone', 'dusk-stone', 'dawn-stone'
 ];
 
+export const SHOP_ITEM_TM_NAMES = [
+    ...Array.from({length: 50}, (_, i) => {
+        const num = (i + 1).toString().padStart(2, '0');
+        return `tm${num}`;
+    })
+]
+
+export const SHOP_ITEM_HM_NAMES = [
+    ...Array.from({length: 8}, (_, i) => {
+        const num = (i + 1).toString().padStart(2, '0');
+        return `hm${num}`;
+    })
+]
+
 
 export const ItemUITag = {
     Medicine: "MEDICINE",
     Balls: "BALLS",
     Evolution: "EVOLUTION",
+    Machine: "MACHINE",
 } as const;
 export type ItemUITag = typeof ItemUITag[keyof typeof ItemUITag];
 
@@ -50,6 +65,10 @@ export const ItemUiTagItemsMap: Record<ItemUITag, string[]> = {
     ],
     [ItemUITag.Evolution]: [
         ...SHOP_ITEM_EVOLUTION_NAMES
+    ],
+    [ItemUITag.Machine]: [
+        ...SHOP_ITEM_TM_NAMES,
+        ...SHOP_ITEM_HM_NAMES
     ]
 };  
 

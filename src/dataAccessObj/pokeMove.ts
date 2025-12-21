@@ -5,6 +5,13 @@ export interface StatChange {
     stat: StatName;
 }
 
+export const pokemonMoveInit = (move: PokemonMove): PokemonMove => {
+    return {
+        ...move,
+        maxPP: move.pp,
+    }
+}
+
 export interface PokemonMove {
     id: number;
     name: string;

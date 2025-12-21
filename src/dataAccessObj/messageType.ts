@@ -48,6 +48,7 @@ export const MessageType = {
     RecordBattleCatch: 'recordBattleCatch',
 
     RecordItemAction: 'recordItemAction',
+    SelectStarter: 'selectStarter',
 } as const;
 
 

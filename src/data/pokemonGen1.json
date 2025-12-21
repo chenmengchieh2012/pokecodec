@@ -27,6 +27,7 @@
     "height": 7,
     "weight": 69,
     "base_experience": 64,
+    "gender_rate": 1,
     "moves": [
       {
         "name": "tackle",
@@ -193,6 +194,7 @@
     "height": 10,
     "weight": 130,
     "base_experience": 142,
+    "gender_rate": 1,
     "moves": [
       {
         "name": "tackle",
@@ -359,6 +361,7 @@
     "height": 20,
     "weight": 1000,
     "base_experience": 236,
+    "gender_rate": 1,
     "moves": [
       {
         "name": "vine-whip",
@@ -520,6 +523,7 @@
     "height": 6,
     "weight": 85,
     "base_experience": 62,
+    "gender_rate": 1,
     "moves": [
       {
         "name": "scratch",
@@ -725,6 +729,7 @@
     "height": 11,
     "weight": 190,
     "base_experience": 142,
+    "gender_rate": 1,
     "moves": [
       {
         "name": "scratch",
@@ -931,6 +936,7 @@
     "height": 17,
     "weight": 905,
     "base_experience": 240,
+    "gender_rate": 1,
     "moves": [
       {
         "name": "scratch",
@@ -1147,6 +1153,7 @@
     "height": 5,
     "weight": 90,
     "base_experience": 63,
+    "gender_rate": 1,
     "moves": [
       {
         "name": "tackle",
@@ -1347,6 +1354,7 @@
     "height": 10,
     "weight": 225,
     "base_experience": 142,
+    "gender_rate": 1,
     "moves": [
       {
         "name": "tackle",
@@ -1547,6 +1555,7 @@
     "height": 16,
     "weight": 855,
     "base_experience": 239,
+    "gender_rate": 1,
     "moves": [
       {
         "name": "tackle",
@@ -1753,6 +1762,7 @@
     "height": 3,
     "weight": 29,
     "base_experience": 39,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "tackle",
@@ -1809,6 +1819,7 @@
     "height": 7,
     "weight": 99,
     "base_experience": 72,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "harden",
@@ -1865,6 +1876,7 @@
     "height": 11,
     "weight": 320,
     "base_experience": 178,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "confusion",
@@ -2042,6 +2054,7 @@
     "height": 3,
     "weight": 32,
     "base_experience": 39,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "poison-sting",
@@ -2099,6 +2112,7 @@
     "height": 6,
     "weight": 100,
     "base_experience": 72,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "harden",
@@ -2155,6 +2169,7 @@
     "height": 10,
     "weight": 295,
     "base_experience": 178,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "fury-attack",
@@ -2306,6 +2321,7 @@
     "height": 3,
     "weight": 18,
     "base_experience": 50,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "gust",
@@ -2466,6 +2482,7 @@
     "height": 11,
     "weight": 300,
     "base_experience": 122,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "gust",
@@ -2626,6 +2643,7 @@
     "height": 15,
     "weight": 395,
     "base_experience": 216,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "gust",
@@ -2781,6 +2799,7 @@
     "height": 3,
     "weight": 35,
     "base_experience": 51,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "tackle",
@@ -2955,6 +2974,7 @@
     "height": 7,
     "weight": 185,
     "base_experience": 145,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "tackle",
@@ -3127,6 +3147,7 @@
     "height": 3,
     "weight": 20,
     "base_experience": 52,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "growl",
@@ -3283,6 +3304,7 @@
     "height": 12,
     "weight": 380,
     "base_experience": 155,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "leer",
@@ -3438,6 +3460,7 @@
     "height": 20,
     "weight": 69,
     "base_experience": 58,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "wrap",
@@ -3612,6 +3635,7 @@
     "height": 35,
     "weight": 650,
     "base_experience": 157,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "wrap",
@@ -3778,6 +3802,7 @@
     "height": 4,
     "weight": 60,
     "base_experience": 112,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "growl",
@@ -3978,6 +4003,7 @@
     "height": 8,
     "weight": 300,
     "base_experience": 218,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "growl",
@@ -4144,6 +4170,7 @@
     "height": 6,
     "weight": 120,
     "base_experience": 60,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "scratch",
@@ -4324,6 +4351,7 @@
     "height": 10,
     "weight": 295,
     "base_experience": 158,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "scratch",
@@ -4504,6 +4532,7 @@
     "height": 4,
     "weight": 70,
     "base_experience": 55,
+    "gender_rate": 8,
     "moves": [
       {
         "name": "tackle",
@@ -4673,6 +4702,7 @@
     "height": 8,
     "weight": 200,
     "base_experience": 128,
+    "gender_rate": 8,
     "moves": [
       {
         "name": "scratch",
@@ -4863,6 +4893,7 @@
     "height": 13,
     "weight": 600,
     "base_experience": 227,
+    "gender_rate": 8,
     "moves": [
       {
         "name": "scratch",
@@ -5093,6 +5124,7 @@
     "height": 5,
     "weight": 90,
     "base_experience": 55,
+    "gender_rate": 0,
     "moves": [
       {
         "name": "tackle",
@@ -5262,6 +5294,7 @@
     "height": 9,
     "weight": 195,
     "base_experience": 128,
+    "gender_rate": 0,
     "moves": [
       {
         "name": "horn-attack",
@@ -5447,6 +5480,7 @@
     "height": 14,
     "weight": 620,
     "base_experience": 227,
+    "gender_rate": 0,
     "moves": [
       {
         "name": "horn-attack",
@@ -5677,6 +5711,7 @@
     "height": 6,
     "weight": 75,
     "base_experience": 113,
+    "gender_rate": 6,
     "moves": [
       {
         "name": "pound",
@@ -5931,6 +5966,7 @@
     "height": 13,
     "weight": 400,
     "base_experience": 217,
+    "gender_rate": 6,
     "moves": [
       {
         "name": "double-slap",
@@ -6157,6 +6193,7 @@
     "height": 6,
     "weight": 99,
     "base_experience": 60,
+    "gender_rate": 6,
     "moves": [
       {
         "name": "tail-whip",
@@ -6317,6 +6354,7 @@
     "height": 11,
     "weight": 199,
     "base_experience": 177,
+    "gender_rate": 6,
     "moves": [
       {
         "name": "tail-whip",
@@ -6463,6 +6501,7 @@
     "height": 5,
     "weight": 55,
     "base_experience": 95,
+    "gender_rate": 6,
     "moves": [
       {
         "name": "sing",
@@ -6703,6 +6742,7 @@
     "height": 10,
     "weight": 120,
     "base_experience": 196,
+    "gender_rate": 6,
     "moves": [
       {
         "name": "double-slap",
@@ -6930,6 +6970,7 @@
     "height": 8,
     "weight": 75,
     "base_experience": 49,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "leech-life",
@@ -7076,6 +7117,7 @@
     "height": 16,
     "weight": 550,
     "base_experience": 159,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "bite",
@@ -7232,6 +7274,7 @@
     "height": 5,
     "weight": 54,
     "base_experience": 64,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "absorb",
@@ -7383,6 +7426,7 @@
     "height": 8,
     "weight": 86,
     "base_experience": 138,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "absorb",
@@ -7542,6 +7586,7 @@
     "height": 12,
     "weight": 186,
     "base_experience": 221,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "acid",
@@ -7693,6 +7738,7 @@
     "height": 3,
     "weight": 54,
     "base_experience": 57,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "scratch",
@@ -7863,6 +7909,7 @@
     "height": 10,
     "weight": 295,
     "base_experience": 142,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "scratch",
@@ -8029,6 +8076,7 @@
     "height": 10,
     "weight": 300,
     "base_experience": 61,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "tackle",
@@ -8204,6 +8252,7 @@
     "height": 15,
     "weight": 125,
     "base_experience": 158,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "tackle",
@@ -8394,6 +8443,7 @@
     "height": 2,
     "weight": 8,
     "base_experience": 53,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "scratch",
@@ -8543,6 +8593,7 @@
     "height": 7,
     "weight": 333,
     "base_experience": 149,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "scratch",
@@ -8688,6 +8739,7 @@
     "height": 4,
     "weight": 42,
     "base_experience": 58,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "scratch",
@@ -8865,6 +8917,7 @@
     "height": 10,
     "weight": 320,
     "base_experience": 154,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "scratch",
@@ -9030,6 +9083,7 @@
     "height": 8,
     "weight": 196,
     "base_experience": 64,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "scratch",
@@ -9239,6 +9293,7 @@
     "height": 17,
     "weight": 766,
     "base_experience": 175,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "scratch",
@@ -9444,6 +9499,7 @@
     "height": 5,
     "weight": 280,
     "base_experience": 61,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "scratch",
@@ -9658,6 +9714,7 @@
     "height": 10,
     "weight": 320,
     "base_experience": 159,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "karate-chop",
@@ -9877,6 +9934,7 @@
     "height": 7,
     "weight": 190,
     "base_experience": 70,
+    "gender_rate": 2,
     "moves": [
       {
         "name": "bite",
@@ -10041,6 +10099,7 @@
     "height": 19,
     "weight": 1550,
     "base_experience": 194,
+    "gender_rate": 2,
     "moves": [
       {
         "name": "take-down",
@@ -10191,6 +10250,7 @@
     "height": 6,
     "weight": 124,
     "base_experience": 60,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "bubble",
@@ -10360,6 +10420,7 @@
     "height": 10,
     "weight": 200,
     "base_experience": 135,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "water-gun",
@@ -10583,6 +10644,7 @@
     "height": 13,
     "weight": 540,
     "base_experience": 230,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "double-slap",
@@ -10778,6 +10840,7 @@
     "height": 9,
     "weight": 195,
     "base_experience": 62,
+    "gender_rate": 2,
     "moves": [
       {
         "name": "teleport",
@@ -10952,6 +11015,7 @@
     "height": 13,
     "weight": 565,
     "base_experience": 140,
+    "gender_rate": 2,
     "moves": [
       {
         "name": "disable",
@@ -11156,6 +11220,7 @@
     "height": 15,
     "weight": 480,
     "base_experience": 225,
+    "gender_rate": 2,
     "moves": [
       {
         "name": "disable",
@@ -11356,6 +11421,7 @@
     "height": 8,
     "weight": 195,
     "base_experience": 61,
+    "gender_rate": 2,
     "moves": [
       {
         "name": "karate-chop",
@@ -11545,6 +11611,7 @@
     "height": 15,
     "weight": 705,
     "base_experience": 142,
+    "gender_rate": 2,
     "moves": [
       {
         "name": "karate-chop",
@@ -11734,6 +11801,7 @@
     "height": 16,
     "weight": 1300,
     "base_experience": 227,
+    "gender_rate": 2,
     "moves": [
       {
         "name": "karate-chop",
@@ -11916,6 +11984,7 @@
     "height": 7,
     "weight": 40,
     "base_experience": 60,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "vine-whip",
@@ -12082,6 +12151,7 @@
     "height": 10,
     "weight": 64,
     "base_experience": 137,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "vine-whip",
@@ -12248,6 +12318,7 @@
     "height": 17,
     "weight": 155,
     "base_experience": 221,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "acid",
@@ -12404,6 +12475,7 @@
     "height": 9,
     "weight": 455,
     "base_experience": 67,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "acid",
@@ -12594,6 +12666,7 @@
     "height": 16,
     "weight": 550,
     "base_experience": 180,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "wrap",
@@ -12780,6 +12853,7 @@
     "height": 4,
     "weight": 200,
     "base_experience": 60,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "tackle",
@@ -12970,6 +13044,7 @@
     "height": 10,
     "weight": 1050,
     "base_experience": 137,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "tackle",
@@ -13160,6 +13235,7 @@
     "height": 14,
     "weight": 3000,
     "base_experience": 223,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "tackle",
@@ -13350,6 +13426,7 @@
     "height": 10,
     "weight": 300,
     "base_experience": 82,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "ember",
@@ -13509,6 +13586,7 @@
     "height": 17,
     "weight": 950,
     "base_experience": 175,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "stomp",
@@ -13665,6 +13743,7 @@
     "height": 12,
     "weight": 360,
     "base_experience": 63,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "confusion",
@@ -13903,6 +13982,7 @@
     "height": 16,
     "weight": 785,
     "base_experience": 172,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "headbutt",
@@ -14159,6 +14239,7 @@
     "height": 3,
     "weight": 60,
     "base_experience": 65,
+    "gender_rate": -1,
     "moves": [
       {
         "name": "tackle",
@@ -14319,6 +14400,7 @@
     "height": 10,
     "weight": 600,
     "base_experience": 163,
+    "gender_rate": -1,
     "moves": [
       {
         "name": "tackle",
@@ -14484,6 +14566,7 @@
     "height": 8,
     "weight": 150,
     "base_experience": 132,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "sand-attack",
@@ -14659,6 +14742,7 @@
     "height": 14,
     "weight": 392,
     "base_experience": 62,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "peck",
@@ -14819,6 +14903,7 @@
     "height": 18,
     "weight": 852,
     "base_experience": 165,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "fury-attack",
@@ -14974,6 +15059,7 @@
     "height": 11,
     "weight": 900,
     "base_experience": 65,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "headbutt",
@@ -15139,6 +15225,7 @@
     "height": 17,
     "weight": 1200,
     "base_experience": 166,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "headbutt",
@@ -15299,6 +15386,7 @@
     "height": 9,
     "weight": 300,
     "base_experience": 65,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "pound",
@@ -15463,6 +15551,7 @@
     "height": 12,
     "weight": 300,
     "base_experience": 175,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "pound",
@@ -15623,6 +15712,7 @@
     "height": 3,
     "weight": 40,
     "base_experience": 61,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "tackle",
@@ -15808,6 +15898,7 @@
     "height": 15,
     "weight": 1325,
     "base_experience": 184,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "supersonic",
@@ -15976,6 +16067,7 @@
     "height": 13,
     "weight": 1,
     "base_experience": 62,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "night-shade",
@@ -16118,6 +16210,7 @@
     "height": 16,
     "weight": 1,
     "base_experience": 142,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "night-shade",
@@ -16260,6 +16353,7 @@
     "height": 15,
     "weight": 405,
     "base_experience": 225,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "night-shade",
@@ -16461,6 +16555,7 @@
     "height": 88,
     "weight": 2100,
     "base_experience": 77,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "tackle",
@@ -16635,6 +16730,7 @@
     "height": 10,
     "weight": 324,
     "base_experience": 66,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "pound",
@@ -16849,6 +16945,7 @@
     "height": 16,
     "weight": 756,
     "base_experience": 169,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "pound",
@@ -17059,6 +17156,7 @@
     "height": 4,
     "weight": 65,
     "base_experience": 65,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "leer",
@@ -17238,6 +17336,7 @@
     "height": 13,
     "weight": 600,
     "base_experience": 166,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "vice-grip",
@@ -17413,6 +17512,7 @@
     "height": 5,
     "weight": 104,
     "base_experience": 66,
+    "gender_rate": -1,
     "moves": [
       {
         "name": "tackle",
@@ -17572,6 +17672,7 @@
     "height": 12,
     "weight": 666,
     "base_experience": 172,
+    "gender_rate": -1,
     "moves": [
       {
         "name": "tackle",
@@ -17729,6 +17830,7 @@
     "height": 4,
     "weight": 25,
     "base_experience": 65,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "hypnosis",
@@ -17895,6 +17997,7 @@
     "height": 20,
     "weight": 1200,
     "base_experience": 186,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "hypnosis",
@@ -18055,6 +18158,7 @@
     "height": 4,
     "weight": 65,
     "base_experience": 64,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "growl",
@@ -18274,6 +18378,7 @@
     "height": 10,
     "weight": 450,
     "base_experience": 149,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "tail-whip",
@@ -18489,6 +18594,7 @@
     "height": 15,
     "weight": 498,
     "base_experience": 159,
+    "gender_rate": 0,
     "moves": [
       {
         "name": "double-kick",
@@ -18659,6 +18765,7 @@
     "height": 14,
     "weight": 502,
     "base_experience": 159,
+    "gender_rate": 0,
     "moves": [
       {
         "name": "comet-punch",
@@ -18824,6 +18931,7 @@
     "height": 12,
     "weight": 655,
     "base_experience": 77,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "wrap",
@@ -19063,6 +19171,7 @@
     "height": 6,
     "weight": 10,
     "base_experience": 68,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "tackle",
@@ -19202,6 +19311,7 @@
     "height": 12,
     "weight": 95,
     "base_experience": 172,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "tackle",
@@ -19338,6 +19448,7 @@
     "height": 10,
     "weight": 1150,
     "base_experience": 69,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "horn-attack",
@@ -19518,6 +19629,7 @@
     "height": 19,
     "weight": 1200,
     "base_experience": 170,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "stomp",
@@ -19757,6 +19869,7 @@
     "height": 11,
     "weight": 346,
     "base_experience": 395,
+    "gender_rate": 8,
     "moves": [
       {
         "name": "pound",
@@ -20031,6 +20144,7 @@
     "height": 10,
     "weight": 350,
     "base_experience": 87,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "bind",
@@ -20210,6 +20324,7 @@
     "height": 22,
     "weight": 800,
     "base_experience": 172,
+    "gender_rate": 8,
     "moves": [
       {
         "name": "comet-punch",
@@ -20425,6 +20540,7 @@
     "height": 4,
     "weight": 80,
     "base_experience": 59,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "bubble",
@@ -20584,6 +20700,7 @@
     "height": 12,
     "weight": 250,
     "base_experience": 154,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "smokescreen",
@@ -20748,6 +20865,7 @@
     "height": 6,
     "weight": 150,
     "base_experience": 64,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "tail-whip",
@@ -20922,6 +21040,7 @@
     "height": 13,
     "weight": 390,
     "base_experience": 158,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "tail-whip",
@@ -21092,6 +21211,7 @@
     "height": 8,
     "weight": 345,
     "base_experience": 68,
+    "gender_rate": -1,
     "moves": [
       {
         "name": "tackle",
@@ -21302,6 +21422,7 @@
     "height": 11,
     "weight": 800,
     "base_experience": 182,
+    "gender_rate": -1,
     "moves": [
       {
         "name": "tackle",
@@ -21488,6 +21609,7 @@
     "height": 13,
     "weight": 545,
     "base_experience": 161,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "confusion",
@@ -21703,6 +21825,7 @@
     "height": 15,
     "weight": 560,
     "base_experience": 100,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "quick-attack",
@@ -21866,6 +21989,7 @@
     "height": 14,
     "weight": 406,
     "base_experience": 159,
+    "gender_rate": 8,
     "moves": [
       {
         "name": "pound",
@@ -22067,6 +22191,7 @@
     "height": 11,
     "weight": 300,
     "base_experience": 172,
+    "gender_rate": 2,
     "moves": [
       {
         "name": "leer",
@@ -22287,6 +22412,7 @@
     "height": 13,
     "weight": 445,
     "base_experience": 173,
+    "gender_rate": 2,
     "moves": [
       {
         "name": "ember",
@@ -22491,6 +22617,7 @@
     "height": 15,
     "weight": 550,
     "base_experience": 175,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "vice-grip",
@@ -22646,6 +22773,7 @@
     "height": 14,
     "weight": 884,
     "base_experience": 172,
+    "gender_rate": 0,
     "moves": [
       {
         "name": "tackle",
@@ -22812,6 +22940,7 @@
     "height": 9,
     "weight": 100,
     "base_experience": 40,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "splash",
@@ -22873,6 +23002,7 @@
     "height": 65,
     "weight": 2350,
     "base_experience": 189,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "tackle",
@@ -23054,6 +23184,7 @@
     "height": 25,
     "weight": 2200,
     "base_experience": 187,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "growl",
@@ -23250,6 +23381,7 @@
     "height": 3,
     "weight": 40,
     "base_experience": 101,
+    "gender_rate": -1,
     "moves": [
       {
         "name": "transform",
@@ -23300,6 +23432,7 @@
     "height": 3,
     "weight": 65,
     "base_experience": 65,
+    "gender_rate": 1,
     "moves": [
       {
         "name": "sand-attack",
@@ -23506,6 +23639,7 @@
     "height": 10,
     "weight": 290,
     "base_experience": 184,
+    "gender_rate": 1,
     "moves": [
       {
         "name": "sand-attack",
@@ -23692,6 +23826,7 @@
     "height": 8,
     "weight": 245,
     "base_experience": 184,
+    "gender_rate": 1,
     "moves": [
       {
         "name": "sand-attack",
@@ -23863,6 +23998,7 @@
     "height": 9,
     "weight": 250,
     "base_experience": 184,
+    "gender_rate": 1,
     "moves": [
       {
         "name": "sand-attack",
@@ -24033,6 +24169,7 @@
     "height": 8,
     "weight": 365,
     "base_experience": 79,
+    "gender_rate": -1,
     "moves": [
       {
         "name": "tackle",
@@ -24233,6 +24370,7 @@
     "height": 4,
     "weight": 75,
     "base_experience": 71,
+    "gender_rate": 1,
     "moves": [
       {
         "name": "water-gun",
@@ -24393,6 +24531,7 @@
     "height": 10,
     "weight": 350,
     "base_experience": 173,
+    "gender_rate": 1,
     "moves": [
       {
         "name": "horn-attack",
@@ -24569,6 +24708,7 @@
     "height": 5,
     "weight": 115,
     "base_experience": 71,
+    "gender_rate": 1,
     "moves": [
       {
         "name": "scratch",
@@ -24734,6 +24874,7 @@
     "height": 13,
     "weight": 405,
     "base_experience": 173,
+    "gender_rate": 1,
     "moves": [
       {
         "name": "scratch",
@@ -24930,6 +25071,7 @@
     "height": 18,
     "weight": 590,
     "base_experience": 180,
+    "gender_rate": 1,
     "moves": [
       {
         "name": "wing-attack",
@@ -25085,6 +25227,7 @@
     "height": 21,
     "weight": 4600,
     "base_experience": 189,
+    "gender_rate": 1,
     "moves": [
       {
         "name": "headbutt",
@@ -25322,6 +25465,7 @@
     "height": 17,
     "weight": 554,
     "base_experience": 261,
+    "gender_rate": -1,
     "moves": [
       {
         "name": "ice-beam",
@@ -25479,6 +25623,7 @@
     "height": 16,
     "weight": 526,
     "base_experience": 261,
+    "gender_rate": -1,
     "moves": [
       {
         "name": "drill-peck",
@@ -25641,6 +25786,7 @@
     "height": 20,
     "weight": 600,
     "base_experience": 261,
+    "gender_rate": -1,
     "moves": [
       {
         "name": "peck",
@@ -25787,6 +25933,7 @@
     "height": 18,
     "weight": 33,
     "base_experience": 60,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "wrap",
@@ -25977,6 +26124,7 @@
     "height": 40,
     "weight": 165,
     "base_experience": 147,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "wrap",
@@ -26173,6 +26321,7 @@
     "height": 22,
     "weight": 2100,
     "base_experience": 270,
+    "gender_rate": 4,
     "moves": [
       {
         "name": "wrap",
@@ -26369,6 +26518,7 @@
     "height": 20,
     "weight": 1220,
     "base_experience": 306,
+    "gender_rate": -1,
     "moves": [
       {
         "name": "disable",
@@ -26621,6 +26771,7 @@
     "height": 4,
     "weight": 40,
     "base_experience": 270,
+    "gender_rate": -1,
     "moves": [
       {
         "name": "pound",

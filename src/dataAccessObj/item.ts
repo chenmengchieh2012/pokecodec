@@ -40,6 +40,9 @@ export interface ItemEffect {
         evYield?: number;       // 努力值提升 (Protein = 10)
     }[];
 
+    // --- 教招式類 (TM/HM) ---
+    teachMove?: string;        // 教招式 名稱列表
+
     // --- 進化類 ---
     evolutionCriteria?: {
         type: 'stone' | 'trade' | 'level-up' | 'location';
