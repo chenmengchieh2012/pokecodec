@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { BattleCanvasHandle, VBattleCanvas } from '../frame/VBattleCanvas';
 import { VSearchScene } from '../frame/VSearchScene';
 import { BattleControl, BattleControlHandle } from '../frame/BattleControl';
@@ -8,8 +8,6 @@ import { useMessageSubscription } from '../store/messageStore';
 import { EncounterResult } from '../../../src/core/EncounterHandler';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
 import { GameState } from '../../../src/dataAccessObj/GameState';
-import { vscode } from '../utilities/vscode';
-import { SetGameStatePayload } from '../../../src/dataAccessObj/MessagePayload';
 
 // 定義遊戲狀態
 
@@ -29,6 +27,7 @@ export const VBattlePage = () => {
     const opponentPokemonState = battleManagerState.opponentPokemonState
     
     const [isEncountering, setIsEncountering] = useState(false);
+    
   
     useMessageSubscription<EncounterResult>(MessageType.TriggerEncounter, (message) => {
         if (message.data === undefined) {
@@ -44,16 +43,17 @@ export const VBattlePage = () => {
         }, 1500);
     });
 
-    useEffect(() => {
-        const payload : SetGameStatePayload = {
-            gameState: GameState.Searching
-        }
-        vscode.postMessage({
-            command: MessageType.SetGameState,
-            ...payload
-        });
-    }, []);
+    // useEffect(() => {
+    //     const payload : SetGameStatePayload = {
+    //         gameState: GameState.Searching
+    //     }
+    //     vscode.postMessage({
+    //         command: MessageType.SetGameState,
+    //         ...payload
+    //     });
+    // }, []);
 
+    console.log("[VBattlePage] Rendering VBattlePage with gameState:", gameState);
 
   return (
     <div className={styles["game-container"]}>

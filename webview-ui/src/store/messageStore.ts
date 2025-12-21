@@ -1,13 +1,13 @@
 import React, { createContext, useContext, useRef, useEffect, ReactNode } from 'react';
 import { vscode } from '../utilities/vscode';
 import { BiomeData } from '../../../src/dataAccessObj/BiomeData';
-import { GameState } from '../../../src/dataAccessObj/GameState';
 import { ItemDao } from '../../../src/dataAccessObj/item';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
 import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
 import { UserDao } from '../../../src/dataAccessObj/userData';
 import { BoxPayload, PokeDexPayload } from '../../../src/dataAccessObj/MessagePayload';
 import { AchievementStatistics } from '../../../src/utils/AchievementCritiria';
+import { GameStateData } from '../../../src/dataAccessObj/gameStateData';
 
 // ============================================================
 // Type Definitions
@@ -30,7 +30,7 @@ export interface StoreRefs {
     party: PokemonDao[] | undefined;
     box: BoxPayload | undefined;
     userInfo: UserDao | undefined;
-    gameState: GameState | undefined;
+    gameStateData: GameStateData | undefined;
     biome: BiomeData | undefined;
     pokeDex: PokeDexPayload | undefined;
     achievements: AchievementStatistics | undefined;
@@ -78,7 +78,7 @@ class MessageStore {
         party: undefined,
         box: undefined,
         userInfo: undefined,
-        gameState: undefined,
+        gameStateData: undefined,
         biome: undefined,
         pokeDex: undefined,
         achievements: undefined,
@@ -169,8 +169,8 @@ class MessageStore {
             case MessageType.UserData:
                 this.refs.userInfo = (message.data as UserDao) ?? undefined;
                 break;
-            case MessageType.GameState:
-                this.refs.gameState = (message.data as GameState) ?? undefined;
+            case MessageType.GameStateData:
+                this.refs.gameStateData = (message.data as GameStateData) ?? undefined;
                 break;
             case MessageType.BiomeData:
                 this.refs.biome = (message.data as BiomeData) ?? undefined;
@@ -210,7 +210,7 @@ class MessageStore {
                     this.refs.party !== undefined &&
                     this.refs.box !== undefined &&
                     this.refs.userInfo !== undefined &&
-                    this.refs.gameState !== undefined && 
+                    this.refs.gameStateData !== undefined && 
                     this.refs.biome !== undefined &&
                     this.refs.pokeDex !== undefined &&
                     this.refs.achievements !== undefined &&
@@ -251,7 +251,7 @@ class MessageStore {
         // 4. 請求盒子資訊
         vscode.postMessage({ command: MessageType.GetBox });
         // 5. 請求遊戲狀態
-        vscode.postMessage({ command: MessageType.GetGameState });
+        vscode.postMessage({ command: MessageType.GetGameStateData });
         // 6. 請求更新地形狀態
         vscode.postMessage({ command: MessageType.GetBiome });
         // 7. 請求圖鑑資料
@@ -276,8 +276,8 @@ class MessageStore {
         if (this.refs.userInfo !== undefined) {
             this.notify({ type: MessageType.UserData, data: this.refs.userInfo });
         }
-        if (this.refs.gameState !== undefined) {
-            this.notify({ type: MessageType.GameState, data: this.refs.gameState });
+        if (this.refs.gameStateData !== undefined) {
+            this.notify({ type: MessageType.GameStateData, data: this.refs.gameStateData });
         }
         if (this.refs.pokeDex !== undefined) {
             this.notify({ type: MessageType.PokeDexData, data: this.refs.pokeDex });

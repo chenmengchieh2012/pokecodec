@@ -7,6 +7,7 @@ import { MenuSideBar } from '../frame/SideBar';
 import { GameState } from '../../../src/dataAccessObj/GameState';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
 import { AccessDenied } from '../frame/AccessDenied';
+import { GameStateData } from '../../../src/dataAccessObj/gameStateData';
 
 const IconPokeball = () => (
     <svg viewBox="0 0 24 24" className={styles.tabSvg}>
@@ -25,10 +26,10 @@ const IconBackpack = () => (
 export const VPartyPokemonAndBag = () => {
     const loadingRef = useRef<NodeJS.Timeout | null>(null);
     const [activeTab, setActiveTab] = useState<string>('party');
-    const [gameState, setGameState] = useState<GameState | undefined>(undefined);
+    const [gameState, setGameState] = useState<GameStateData | undefined>(undefined);
 
-    useMessageSubscription(MessageType.GameState, (message) => {
-        const gameState = message.data as GameState;
+    useMessageSubscription(MessageType.GameStateData, (message) => {
+        const gameState = message.data as GameStateData;
         if (gameState === undefined) {
             return;
         }
@@ -39,7 +40,7 @@ export const VPartyPokemonAndBag = () => {
         }
     });
 
-    if (gameState === GameState.Battle) {
+    if (gameState?.state === GameState.Battle) {
         return (
             <AccessDenied 
                 className={styles.emeraldContainer}

@@ -9,6 +9,7 @@ import { VPokeDex } from '../frame/VPokeDex';
 import { VUserInfo } from '../frame/VUserInfo';
 import { VAchievements } from '../frame/VAchievements';
 import { AccessDenied } from '../frame/AccessDenied';
+import { GameStateData } from '../../../src/dataAccessObj/gameStateData';
 
 const IconPCBox = () => (
     <svg viewBox="0 0 24 24" className={styles.tabSvg} fill="currentColor">
@@ -40,10 +41,10 @@ const IconAchievement = () => (
 export const VPokemonComputer = () => {
     const loadingRef = useRef<NodeJS.Timeout | null>(null);
     const [activeTab, setActiveTab] = useState<string>('pokemonBox');
-    const [gameState, setGameState] = useState<GameState | undefined>(undefined);
+    const [gameState, setGameState] = useState<GameStateData | undefined>(undefined);
 
-    useMessageSubscription(MessageType.GameState, (message) => {
-        const gameState = message.data as GameState;
+    useMessageSubscription(MessageType.GameStateData, (message) => {
+        const gameState = message.data as GameStateData;
         if (gameState === undefined) {
             return;
         }
@@ -54,7 +55,7 @@ export const VPokemonComputer = () => {
         }
     });
 
-    if (gameState === GameState.Battle) {
+    if (gameState?.state === GameState.Battle) {
         return (
             <AccessDenied 
                 className={styles.emeraldContainer}

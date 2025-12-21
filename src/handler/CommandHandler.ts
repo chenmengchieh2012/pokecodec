@@ -17,13 +17,15 @@ import {
     AddItemPayload,
     RemoveItemPayload,
     UpdateMoneyPayload,
-    SetGameStatePayload,
     GetPokeDexPayload,
     UpdatePokeDexPayload,
     HandlerContext,
     BoxPayload,
     PokeDexPayload,
     EvolvePokemonPayload,
+    UpdateEncounteredPokemonPayload,
+    UpdateDefenderPokemonPayload,
+    SetGameStateDataPayload,
 } from '../dataAccessObj/MessagePayload';
 import { GameStateManager } from '../manager/gameStateManager';
 import { MessageType } from '../dataAccessObj/messageType';
@@ -557,15 +559,15 @@ export class CommandHandler {
     }
 
     // ==================== Set Game State ====================
-    public async handleSetGameState(payload: SetGameStatePayload): Promise<void> {
-        await this.gameStateManager.updateGameState( payload.gameState );
+    public async handleSetGameStateData(payload: SetGameStateDataPayload): Promise<void> {
+        await this.gameStateManager.updateGameState( payload.gameStateData.state, payload.gameStateData.encounteredPokemon, payload.gameStateData.defendPokemon );
         this.handlerContext.updateAllViews();
     }
 
     // ==================== Get Game State ====================
-    public handleGetGameState(): void {
-        const gameState = this.gameStateManager.getGameState();
-        this.handlerContext.postMessage({ type: MessageType.GameState, data: gameState });
+    public handleGetGameStateData(): void {
+        const gameStateData = this.gameStateManager.getGameStateData();
+        this.handlerContext.postMessage({ type: MessageType.GameStateData, data: gameStateData });
     }
 
     // ==================== Get PokeDex ====================
@@ -600,6 +602,16 @@ export class CommandHandler {
         await this.pokeDexManager.updatePokemonStatus(payload.pokemonId, payload.status, payload.gen);
         // After update, send back the updated data
         this.handleGetPokeDex({ gen: payload.gen });
+    }
+
+    // ==================== Update Encountered Pokemon ====================
+    public async handleUpdateEncounteredPokemon(payload: UpdateEncounteredPokemonPayload): Promise<void> {
+        await this.gameStateManager.updateEncounteredPokemon(payload.pokemon);
+    }
+
+    // ==================== Update Defender Pokemon UId ====================
+    public async handleUpdateDefenderPokemon(payload: UpdateDefenderPokemonPayload): Promise<void> {
+        await this.gameStateManager.updateDefenderPokemon(payload.pokemon);
     }
 
     // ==================== Get Biome Data ====================

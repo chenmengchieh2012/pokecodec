@@ -2,6 +2,7 @@ import { GameState } from './GameState';
 import { ItemDao } from './item';
 import { PokemonDao } from './pokemon';
 import { PokeDexEntry, PokeDexEntryStatus } from './PokeDex';
+import { GameStateData } from './gameStateData';
 
 export interface BoxPayload {
     pokemons: PokemonDao[];
@@ -88,8 +89,16 @@ export interface UpdateMoneyPayload {
     amount: number;
 }
 
-export interface SetGameStatePayload {
-    gameState: GameState;
+export interface SetGameStateDataPayload {
+    gameStateData: GameStateData;
+}
+
+export interface UpdateEncounteredPokemonPayload {
+    pokemon: PokemonDao | undefined;
+}
+
+export interface UpdateDefenderPokemonPayload {
+    pokemon: PokemonDao | undefined;
 }
 
 export interface EvolvePokemonPayload {

@@ -23,12 +23,14 @@ import {
     AddItemPayload,
     RemoveItemPayload,
     UpdateMoneyPayload,
-    SetGameStatePayload,
+    SetGameStateDataPayload,
     UseMedicineInBagPayload,
     GetPokeDexPayload,
     UpdatePokeDexPayload,
     EvolvePokemonPayload,
-    SetAutoEncounterPayload
+    SetAutoEncounterPayload,
+    UpdateEncounteredPokemonPayload,
+    UpdateDefenderPokemonPayload
 } from './handler';
 import GlobalStateKey from './utils/GlobalStateKey';
 import { GameState } from './dataAccessObj/GameState';
@@ -65,6 +67,10 @@ export function activate(context: vscode.ExtensionContext) {
     const userDaoManager = UserDaoManager.initialize(context);
     const gameStateManager = GameStateManager.initialize(context);
     const achievementManager = AchievementManager.initialize(context);
+
+    if(gameStateManager.getGameStateData()?.state !== GameState.Searching){
+        gameStateManager.updateGameState(GameState.Searching);
+    }
     
     // Initialize Biome Data Handler
     const biomeHandler = BiomeDataHandler.initialize(context,userDaoManager);
@@ -162,7 +168,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         
         // 使用新的事件監聽方式
         this.gitHandler.onDidProcessCommit(() => {
-            if(this.gameStateManager.getGameState() === GameState.Searching){
+            if(this.gameStateManager.getGameStateData()?.state === GameState.Searching){
                 this.updateViews();
             }
         });
@@ -208,7 +214,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             this.commandHandler.handleGetCurrentBox();
             this.commandHandler.handleGetBag();
             this.commandHandler.handleGetUserInfo();
-            this.commandHandler.handleGetGameState();
+            this.commandHandler.handleGetGameStateData();
             this.commandHandler.handleGetCurrentPokeDex();
             this.commandHandler.handleGetAchievements();
         }
@@ -362,11 +368,17 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             if (message.command === MessageType.SetAutoEncounter) {
                 await this.commandHandler.handleSetAutoEncounter(message as SetAutoEncounterPayload);
             }
-            if (message.command === MessageType.SetGameState) {
-                await this.commandHandler.handleSetGameState(message as SetGameStatePayload);
+            if (message.command === MessageType.SetGameStateData) {
+                await this.commandHandler.handleSetGameStateData(message as SetGameStateDataPayload);
             }
-            if (message.command === MessageType.GetGameState) {
-                this.commandHandler.handleGetGameState();
+            if (message.command === MessageType.GetGameStateData) {
+                this.commandHandler.handleGetGameStateData();
+            }
+            if (message.command === MessageType.UpdateEncounteredPokemon) {
+                await this.commandHandler.handleUpdateEncounteredPokemon(message as UpdateEncounteredPokemonPayload);
+            }
+            if (message.command === MessageType.UpdateDefenderPokemon) {
+                await this.commandHandler.handleUpdateDefenderPokemon(message as UpdateDefenderPokemonPayload);
             }
             if (message.command === MessageType.GetPokeDex) {
                 this.commandHandler.handleGetPokeDex(message as GetPokeDexPayload);
@@ -419,7 +431,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
     }
 
     public async triggerEncounter() {
-        if (this._view && this.gameStateManager.getGameState() === GameState.Searching) {
+        if (this._view && this.gameStateManager.getGameStateData()?.state === GameState.Searching) {
             const encounterEvent = await this.biomeHandler.getEncountered();
             this._view.webview.postMessage({ type: MessageType.TriggerEncounter, data: encounterEvent });
         }
