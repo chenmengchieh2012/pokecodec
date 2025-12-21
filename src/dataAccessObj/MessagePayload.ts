@@ -104,3 +104,7 @@ export interface HandlerContext {
     updateAllViews: () => void;
     updateAchievementsView: () => void;
 }
+
+export interface SetAutoEncounterPayload {
+    enabled: boolean;
+}

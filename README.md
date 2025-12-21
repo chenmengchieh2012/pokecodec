@@ -68,12 +68,13 @@ This project is for educational and personal use.
 *Disclaimer: This is a fan-made project and is not affiliated with, endorsed, sponsored, or specifically approved by Nintendo, Game Freak, or The Pokémon Company. Pokémon and Pokémon character names are trademarks of Nintendo.*
 
 ## TODO
-- [ ]: first pokemon choosing
-- [ ]: user playing time
-- [ ]: encounter event
-- [ ]: money earning logic
+- [x]: first pokemon choosing
+- [x]: user playing time
+- [x]: encounter event
+- [x]: money earning logic
 - [x]: miss move
 - [x]: pokemon aliment
-- [ ]: git commit logic
+- [x]: git commit logic
 - [ ]: i18n
+- [ ]: catch rate
 

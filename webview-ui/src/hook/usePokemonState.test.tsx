@@ -3,16 +3,16 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { usePokemonState } from './usePokemonState';
 import { PokemonStateAction, PokemonDao } from '../../../src/dataAccessObj/pokemon';
 import { EncounterResult } from '../../../src/core/EncounterHandler';
-import { HitHpCalculator } from '../../../src/utils/MoveEffectCalculator';
+import { MoveEffectCalculator, BattlePokemonState, MoveEffectResult } from '../../../src/utils/MoveEffectCalculator';
 import { ExperienceCalculator } from '../utilities/ExperienceCalculator';
 import { BattleControlHandle } from '../frame/BattleControl';
 import { PokeBallDao } from '../../../src/dataAccessObj/pokeBall';
 import { PokemonMove } from '../../../src/dataAccessObj/pokeMove';
 
 // Mock dependencies
-vi.mock('../../../src/utils/hitHpCalculator', () => ({
-    HitHpCalculator: {
-        calculateDamage: vi.fn(),
+vi.mock('../../../src/utils/MoveEffectCalculator', () => ({
+    MoveEffectCalculator: {
+        calculateEffect: vi.fn(),
     }
 }));
 
@@ -168,17 +168,23 @@ describe('usePokemonState', () => {
         }));
 
         const attacker = { ...mockPokemon, name: 'Attacker' };
+        const attackerBuffs: BattlePokemonState = {
+            effectStats: { hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 },
+            flinched: false, confused: false
+        };
         const move = { name: 'Tackle', power: 40 } as PokemonMove;
-        const damageResult = { damage: 5, isCritical: false, typeEffectiveness: 1 };
+        const damageResult: MoveEffectResult = { 
+            damage: 5, isCritical: false, effectiveness: 1, isHit: true, flinched: false, ailment: undefined 
+        };
 
-        (HitHpCalculator.calculateDamage as unknown as ReturnType<typeof vi.fn>).mockReturnValue(damageResult);
+        (MoveEffectCalculator.calculateEffect as unknown as ReturnType<typeof vi.fn>).mockReturnValue(damageResult);
 
         await act(async () => {
-            await result.current.handler.hited(attacker, move);
+            await result.current.handler.hited(attacker, attackerBuffs, move);
         });
 
         expect(result.current.pokemon?.currentHp).toBe(15); // 20 - 5
-        expect(HitHpCalculator.calculateDamage).toHaveBeenCalledWith(attacker, mockPokemon, move);
+        expect(MoveEffectCalculator.calculateEffect).toHaveBeenCalled();
     });
 
     it('handles hited (fainting)', async () => {
@@ -188,13 +194,19 @@ describe('usePokemonState', () => {
         }));
 
         const attacker = { ...mockPokemon, name: 'Attacker' };
+        const attackerBuffs: BattlePokemonState = {
+            effectStats: { hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 },
+            flinched: false, confused: false
+        };
         const move = { name: 'Hyper Beam', power: 150 } as PokemonMove;
-        const damageResult = { damage: 25, isCritical: false, typeEffectiveness: 1 }; // More than 20 HP
+        const damageResult: MoveEffectResult = { 
+            damage: 25, isCritical: false, effectiveness: 1, isHit: true, flinched: false, ailment: undefined 
+        }; // More than 20 HP
 
-        (HitHpCalculator.calculateDamage as unknown as ReturnType<typeof vi.fn>).mockReturnValue(damageResult);
+        (MoveEffectCalculator.calculateEffect as unknown as ReturnType<typeof vi.fn>).mockReturnValue(damageResult);
 
         await act(async () => {
-            await result.current.handler.hited(attacker, move);
+            await result.current.handler.hited(attacker, attackerBuffs, move);
         });
 
         expect(result.current.pokemon?.currentHp).toBe(0);

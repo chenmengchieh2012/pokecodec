@@ -27,11 +27,12 @@ import {
     UseMedicineInBagPayload,
     GetPokeDexPayload,
     UpdatePokeDexPayload,
-    EvolvePokemonPayload
+    EvolvePokemonPayload,
+    SetAutoEncounterPayload
 } from './handler';
 import GlobalStateKey from './utils/GlobalStateKey';
 import { GameState } from './dataAccessObj/GameState';
-import { BiomeDataManager } from './manager/BiomeManager';
+import { BiomeDataHandler } from './core/BiomeHandler';
 import { BiomeData } from './dataAccessObj/BiomeData';
 import { GitActivityHandler } from './core/GitActivityHandler';
 import { ExperienceCalculator } from './utils/ExperienceCalculator';
@@ -41,6 +42,7 @@ import { AchievementManager } from './manager/AchievementManager';
 import { RecordBattleActionPayload, RecordItemActionPayload, RecordBattleCatchPayload, RecordBattleFinishedPayload } from './utils/AchievementCritiria';
 import itemData from './data/items.json';
 import { ItemDao } from './dataAccessObj/item';
+import { SessionHandler } from './core/SessionHandler';
 
 const itemDataMap = itemData as unknown as Record<string, ItemDao>;
 
@@ -62,8 +64,15 @@ export function activate(context: vscode.ExtensionContext) {
     const bagManager = BagManager.initialize(context);
     const userDaoManager = UserDaoManager.initialize(context);
     const gameStateManager = GameStateManager.initialize(context);
-    const biomeManager = BiomeDataManager.initialize(context);
     const achievementManager = AchievementManager.initialize(context);
+    
+    // Initialize Biome Data Handler
+    const biomeHandler = BiomeDataHandler.initialize(context,userDaoManager);
+    context.subscriptions.push({ dispose: () => biomeHandler.dispose() });
+    
+    // Initialize Session Handler
+    const sessionHandler = SessionHandler.initialize(context);
+    context.subscriptions.push({ dispose: () => sessionHandler.dispose() });
     
     // Initialize Git Activity Handler
     const gitHandler = GitActivityHandler.getInstance();
@@ -84,30 +93,6 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.window.registerWebviewViewProvider('pokemonComputer', computerProvider),
         vscode.window.registerWebviewViewProvider('pokemonShop', shopProvider),
         
-    );
-
-    context.subscriptions.push(
-        vscode.window.onDidChangeActiveTextEditor((editor) => {
-            if (editor) {
-                const filePath = editor.document.fileName;
-                const biomeData = biomeManager.handleOnChangeBiome(filePath);
-                gameProvider.updateBiomeState(biomeData);
-            }
-        })
-    );
-
-    // (選用) 保留一個指令來強制開啟遊戲面板
-    context.subscriptions.push(
-        vscode.commands.registerCommand('pokemon.openReactPanel', () => {
-            vscode.commands.executeCommand('workbench.view.extension.pokemon-panel');
-        })
-    );
-
-    // 🔥 新增指令：手動觸發遭遇
-    context.subscriptions.push(
-        vscode.commands.registerCommand('pokemon.triggerEncounter', () => {
-            gameProvider.triggerEncounter();
-        })
     );
 
     // 🔥 新增指令：重置儲存
@@ -137,9 +122,11 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
     private pokeDexManager: PokeDexManager;
     private commandHandler: CommandHandler;
     private gameStateManager: GameStateManager;
-    private biomeManager: BiomeDataManager;
     private achievementManager: AchievementManager;
+
+    private biomeHandler: BiomeDataHandler;
     private gitHandler: GitActivityHandler;
+
     private _context: vscode.ExtensionContext;
     private _extensionUri: vscode.Uri;
     private _viewType: string;
@@ -155,7 +142,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         this.gameStateManager = GameStateManager.getInstance();
         this.pokeDexManager = PokeDexManager.getInstance();
         this.achievementManager = AchievementManager.getInstance();
-        this.biomeManager = BiomeDataManager.getInstance();
+        this.biomeHandler = BiomeDataHandler.getInstance();
         this.gitHandler = GitActivityHandler.getInstance();
         this._extensionUri = extensionUri;
         this._viewType = viewType;
@@ -166,7 +153,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             this.bagManager,
             this.userDaoManager,
             this.gameStateManager,
-            this.biomeManager,
+            this.biomeHandler,
             this.pokeDexManager,
             this.achievementManager,
             _context
@@ -179,13 +166,27 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                 this.updateViews();
             }
         });
+
+        this.biomeHandler.onDidChangeBiome(() => {
+            this.updateBiomeState();
+        });
+
+        this.userDaoManager.onDidAddingPlayingTime(() => {
+            this.commandHandler.handleGetUserInfo();
+            if(this.userDaoManager.getUserInfo().autoEncounter) {
+                const randomEncounterChance = Math.random();
+                if(randomEncounterChance < 1) { // 20% 機率觸發隨機遭遇
+                    this.triggerEncounter();
+                }
+            }
+        });
     }
 
     public handleGetBiomeData() {
         if (!this._view) {
             return;
         }
-        const biomeData = this.biomeManager.getBiomeData();
+        const biomeData = this.biomeHandler.getBiomeData();
         this._view.webview.postMessage({
             type: MessageType.BiomeData,
             data: biomeData
@@ -196,7 +197,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         if (this._view) {
             this._view?.webview.postMessage({
                 type: MessageType.BiomeData,
-                data: biomeData ?? this.biomeManager.getBiomeData()
+                data: biomeData ?? this.biomeHandler.getBiomeData()
             });
         }
     }
@@ -222,48 +223,50 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         await this.gameStateManager.clear();
         await this.pokeDexManager.clear();
         await this.achievementManager.clear();
-        
-        // Add default pokemon
-        const starter = { ...defaultPokemon };
-        starter.uid = 'starter-' + Date.now();
-        starter.caughtDate = Date.now();
-        starter.currentExp = 0;
-        starter.toNextLevelExp = ExperienceCalculator.calculateRequiredExp(starter.level);
-        starter.stats.hp = ExperienceCalculator.calculateHp(starter.baseStats.hp, starter.iv.hp, starter.ev.hp, starter.level);
-        starter.stats.attack = ExperienceCalculator.calculateStat(starter.baseStats.attack, starter.iv.attack, starter.ev.attack, starter.level);
-        starter.stats.defense = ExperienceCalculator.calculateStat(starter.baseStats.defense, starter.iv.defense, starter.ev.defense, starter.level);
-        starter.stats.specialAttack = ExperienceCalculator.calculateStat(starter.baseStats.specialAttack, starter.iv.specialAttack, starter.ev.specialAttack, starter.level);
-        starter.stats.specialDefense = ExperienceCalculator.calculateStat(starter.baseStats.specialDefense, starter.iv.specialDefense, starter.ev.specialDefense, starter.level);
-        starter.stats.speed = ExperienceCalculator.calculateStat(starter.baseStats.speed, starter.iv.speed, starter.ev.speed, starter.level);
-        starter.currentHp = 1;
-        starter.maxHp = starter.stats.hp;
-        // MARK: TEST Rand Ailment
-        starter.ailment = 'burn'
-        // Rand Flinched
-        
+        const isProduction = this._context.extensionMode === vscode.ExtensionMode.Production;
+        if (!isProduction) {
+            // Add default pokemon
+            const starter = { ...defaultPokemon };
+            starter.uid = 'starter-' + Date.now();
+            starter.caughtDate = Date.now();
+            starter.currentExp = 0;
+            starter.toNextLevelExp = ExperienceCalculator.calculateRequiredExp(starter.level);
+            starter.stats.hp = ExperienceCalculator.calculateHp(starter.baseStats.hp, starter.iv.hp, starter.ev.hp, starter.level);
+            starter.stats.attack = ExperienceCalculator.calculateStat(starter.baseStats.attack, starter.iv.attack, starter.ev.attack, starter.level);
+            starter.stats.defense = ExperienceCalculator.calculateStat(starter.baseStats.defense, starter.iv.defense, starter.ev.defense, starter.level);
+            starter.stats.specialAttack = ExperienceCalculator.calculateStat(starter.baseStats.specialAttack, starter.iv.specialAttack, starter.ev.specialAttack, starter.level);
+            starter.stats.specialDefense = ExperienceCalculator.calculateStat(starter.baseStats.specialDefense, starter.iv.specialDefense, starter.ev.specialDefense, starter.level);
+            starter.stats.speed = ExperienceCalculator.calculateStat(starter.baseStats.speed, starter.iv.speed, starter.ev.speed, starter.level);
+            starter.currentHp = 1;
+            starter.maxHp = starter.stats.hp;
+            // MARK: TEST Rand Ailment
+            starter.ailment = 'burn'
+            // Rand Flinched
+            
 
-        
-        await this.partyManager.add(starter);
+            
+            await this.partyManager.add(starter);
 
-        // full two box starter to party
-        for (let i = 0; i < PokemonBoxManager.getMaxBoxCapacity() * 2; i++) {
-            let debugPokemon = await PokemonFactory.createWildPokemonInstance({
-                pokemonId: Math.floor(Math.random() * 150) + 1,
-                nameZh: '',
-                nameEn: '',
-                type: [],
-                catchRate: 0,
-                minDepth: 0
-            },'test/file/path');
-            await this.pokemonBoxManager.add(debugPokemon);
+            // full two box starter to party
+            for (let i = 0; i < PokemonBoxManager.getMaxBoxCapacity() * 2; i++) {
+                let debugPokemon = await PokemonFactory.createWildPokemonInstance({
+                    pokemonId: Math.floor(Math.random() * 150) + 1,
+                    nameZh: '',
+                    nameEn: '',
+                    type: [],
+                    catchRate: 0,
+                    minDepth: 0
+                },0,'test/file/path');
+                await this.pokemonBoxManager.add(debugPokemon);
+            }
+
+            // MARK: TEST all TM
+            const allTMItems = Object.values(itemDataMap).filter(item => item.apiName.startsWith('tm'));
+            console.log('[ResetStorage] Adding all TM items:', allTMItems.map(i => i.apiName));
+            allTMItems.map(async (tmItem) => {
+                await this.bagManager.add(tmItem,1);
+            });
         }
-
-        // MARK: TEST all TM
-        const allTMItems = Object.values(itemDataMap).filter(item => item.apiName.startsWith('tm'));
-        console.log('[ResetStorage] Adding all TM items:', allTMItems.map(i => i.apiName));
-        allTMItems.map(async (tmItem) => {
-            await this.bagManager.add(tmItem,1);
-        });
 
         vscode.window.showInformationMessage('Global storage 已重置！');
         PokemonViewProvider.providers.forEach(p => p.updateViews());
@@ -297,29 +300,6 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
 
         // 設定 HTML 內容
         webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
-
-        // 每次打開都強制刷新資料
-        // setTimeout(() => {
-        //     this.updateViews();
-        //     const editor = vscode.window.activeTextEditor || vscode.window.visibleTextEditors[0];
-        //     if (editor) {
-        //         console.log("[Extension] Updating game state for file:", editor.document.fileName);
-        //         this.updateBiomeState(editor.document.fileName);
-        //     }
-        // }, 100);
-
-        // 當 Webview 變為可見時自動刷新
-        // webviewView.onDidChangeVisibility(() => {
-        //     if (webviewView.visible) {
-        //         this.updateViews();
-        //         setTimeout(() => {
-        //             const editor = vscode.window.activeTextEditor || vscode.window.visibleTextEditors[0];
-        //             if (editor) {
-        //                 this.updateBiomeState(editor.document.fileName);
-        //             }
-        //         }, 500);
-        //     }
-        // });
 
         // 處理來自 React 的訊息
         webviewView.webview.onDidReceiveMessage(async message => {
@@ -379,6 +359,9 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             if (message.command === MessageType.UpdateMoney) {
                 await this.commandHandler.handleUpdateMoney(message as UpdateMoneyPayload);
             }
+            if (message.command === MessageType.SetAutoEncounter) {
+                await this.commandHandler.handleSetAutoEncounter(message as SetAutoEncounterPayload);
+            }
             if (message.command === MessageType.SetGameState) {
                 await this.commandHandler.handleSetGameState(message as SetGameStatePayload);
             }
@@ -436,15 +419,15 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
     }
 
     public async triggerEncounter() {
-        if (this._view) {
-            const encounterEvent = await this.biomeManager.getEncountered();
+        if (this._view && this.gameStateManager.getGameState() === GameState.Searching) {
+            const encounterEvent = await this.biomeHandler.getEncountered();
             this._view.webview.postMessage({ type: MessageType.TriggerEncounter, data: encounterEvent });
         }
     }
 
     private _getHtmlForWebview(webview: vscode.Webview) {
-        // ⚠️ 開發模式開關 (請依據需求切換)
-        const isProduction = false; 
+        // 自動偵測是否為生產模式
+        const isProduction = this._context.extensionMode === vscode.ExtensionMode.Production;
 
         if (!isProduction) {
             // [開發模式]
@@ -480,6 +463,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             const styleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "webview-ui", "build", "assets", "index.css"));
             const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "webview-ui", "build", "assets", "index.js"));
             const baseUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, "webview-ui", "build"));
+            const nonce = getNonce();
 
             return `<!DOCTYPE html>
             <html lang="en">
@@ -487,18 +471,18 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
                 
-                <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} https: data:; style-src ${webview.cspSource} 'unsafe-inline'; script-src 'nonce-${getNonce()}' ${webview.cspSource}; connect-src https://pokeapi.co;">
+                <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} https: data:; style-src ${webview.cspSource} 'unsafe-inline'; script-src 'nonce-${nonce}' ${webview.cspSource}; connect-src https://pokeapi.co;">
                 
                 <link rel="stylesheet" href="${styleUri}">
                 <title>Pokemon React Prod</title>
-                <script nonce="${getNonce()}">
+                <script nonce="${nonce}">
                     window.viewType = "${this._viewType}";
                     window.baseUri = "${baseUri}";
                 </script>
             </head>
             <body style="min-width: 280px; margin: 0; padding: 0;">
                 <div id="root"></div>
-                <script nonce="${getNonce()}" type="module" src="${scriptUri}"></script>
+                <script nonce="${nonce}" type="module" src="${scriptUri}"></script>
             </body>
             </html>`;
         }

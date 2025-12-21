@@ -3,7 +3,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import { PokeEncounterData } from "../dataAccessObj/pokeEncounterData";
 import { PokemonDao, PokemonStats, PokemonType, RawPokemonData } from "../dataAccessObj/pokemon";
-import { MoveDecorator, PokemonMove, pokemonMoveInit } from "../dataAccessObj/pokeMove";
+import { PokemonMove, pokemonMoveInit } from "../dataAccessObj/pokeMove";
 import { ExperienceCalculator } from "../utils/ExperienceCalculator";
 import * as pokemonGen1Data from "../data/pokemonGen1.json";
 import * as pokemonMovesData from "../data/pokemonMoves.json";
@@ -86,7 +86,7 @@ function gaussianRandom(mean: number, stdev: number): number {
 }
 
 export const PokemonFactory = {
-    createWildPokemonInstance: async (pokemonEncounterData: PokeEncounterData, filePath?: string, fixLevel?: number): Promise<PokemonDao> => {
+    createWildPokemonInstance: async (pokemonEncounterData: PokeEncounterData, playingTime: number, filePath?: string, fixLevel?: number): Promise<PokemonDao> => {
         // 從資料庫取得寶可夢基本資料
         const finalPokemonId = pokemonEncounterData.pokemonId;
         const depth = pokemonEncounterData.minDepth;
@@ -100,8 +100,13 @@ export const PokemonFactory = {
 
         // 根據深度調整等級 (Gaussian distribution)
         const baseLevel = 5 + depth * 2;
+
+        // 根據遊玩時間增加等級
+        const timeBasedMaxLevel = Math.min(100, Math.floor(playingTime / (24 * 60 * 60 * 1000)) + 5); // 每24小時增加一等級，最高100級
+        const adjustedBaseLevel = Math.min(60, (baseLevel + timeBasedMaxLevel)); // 最高60級
+
         // Standard deviation of 3 gives some variety
-        const randomLevel = Math.round(gaussianRandom(baseLevel, 3));
+        const randomLevel = Math.round(gaussianRandom(adjustedBaseLevel, Math.max(3, baseLevel / 6)));
         // Clamp between 1 and 100
         let level = Math.min(100, Math.max(1, randomLevel));
 
@@ -195,13 +200,11 @@ export const PokemonFactory = {
         const height = Math.round(gaussianRandom(pokemonData.height, 3)); // 以 dm 為單位
         const weight = Math.round(gaussianRandom(pokemonData.weight, 3)); // 以 hg 為單位
 
-        const isShiny = Math.random() < 0.5;
+        const isShiny = Math.random() < (1 / 4096);
 
         const { caughtRepo, favoriteLanguage } = determineCodingContext(filePath);
         
-        // MARK: TEST Rand Ailment
-        const randomAilments = [ 'healthy', 'burn', 'freeze', 'paralysis', 'poison', 'sleep'] as const;
-        const ailment = randomAilments[Math.floor(Math.random() * randomAilments.length)];
+        const ailment = 'healthy';
 
         // 隨機選四個技能
         const moveIndicator = allMoves.length <=4 ? allMoves.length : 4;

@@ -119,9 +119,6 @@ export const VAchievements = () => {
                         </div>
                         <div className={styles.modalTitle}>{selectedAchievement.title}</div>
                         <div className={styles.modalDesc}>{selectedAchievement.description}</div>
-                        <div className={styles.modalProgress}>
-                            Progress: {selectedAchievement.progress}
-                        </div>
                         <button className={styles.closeButton} onClick={() => setSelectedId(null)}>
                             Close
                         </button>

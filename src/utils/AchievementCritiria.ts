@@ -1,6 +1,4 @@
-import { UserDao } from '../dataAccessObj/userData';
 import { PokeDexEntry, PokeDexEntryStatus } from '../dataAccessObj/PokeDex';
-import { PokemonDao } from '../dataAccessObj/pokemon';
 
 export interface  RecordBattleCummulativeStats {
     damageTaken: number;
@@ -224,7 +222,7 @@ const checkPokemonCaughtByName = (entries: PokeDexEntry[], pokemonIds: number[])
 
 export const achievementCriteria: Record<string, (context: AchievementContext) => AchievementCheckResult> = {
     // 1. Hello World
-    1: (ctx) => checkBoolean(true),
+    1: (_ctx) => checkBoolean(true),
     // 2. First Encounter
     2: (ctx) => checkBoolean(ctx.statistics.battlesWon > 0 || ctx.statistics.battlesEscaped > 0), // Simplified,
     // 3. Gotcha!
@@ -632,7 +630,6 @@ export class AchievementAnalyzer {
         }
 
         // Check if all party members share at least one type
-        const allTypes = myParty.flatMap(p => p.types);
         const commonType = ['normal', 'fire', 'water', 'grass', 'electric', 'ice', 'fighting', 'poison', 'ground', 'flying', 'psychic', 'bug', 'rock', 'ghost', 'dragon', 'steel', 'fairy'].find(type => 
             myParty.every(p => p.types.includes(type))
         );

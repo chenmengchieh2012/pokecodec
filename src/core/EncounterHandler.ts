@@ -1,6 +1,6 @@
 import { BIOME_GROUPS, KantoPokemonEncounterData, TOXIC_POOL_POKEMONIDS } from "../utils/KantoPokemonCatchRate";
 import { PokeEncounterData } from "../dataAccessObj/pokeEncounterData";
-import { PokemonDao, PokemonType } from "../dataAccessObj/pokemon";
+import { PokemonDao } from "../dataAccessObj/pokemon";
 import { BiomeData, BiomeType } from "../dataAccessObj/BiomeData";
 import { PokemonFactory } from "./CreatePokemonHandler";
 
@@ -11,7 +11,7 @@ export interface EncounterResult {
 }
 
 export interface EncounterHandlerMethods {
-    calculateEncounter: (filePath: string) => Promise<EncounterResult>;
+    calculateEncounter: (filePath: string, playingTime:number) => Promise<EncounterResult>;
     getBiome: (filePath: string) => BiomeData;
 }
 
@@ -29,14 +29,25 @@ export const EncounterHandler = (pathResolver?: (path: string) => string): Encou
 
     // 加權隨機抽取 (Weighted Random Selection)
     // 核心邏輯：CatchRate 越高，被選中的區間越大
-    function pickWeightedPokemon(candidates: PokeEncounterData[]): PokeEncounterData | null {
+    function pickWeightedPokemon(candidates: PokeEncounterData[],playingTime: number): PokeEncounterData | null {
         if (candidates.length === 0) return null;
 
         // 1. 計算總權重 (Total Weight)
-        const totalWeight = candidates.reduce((sum, p) => sum + p.catchRate, 0);
+        // 遊玩時間越久，增加遇到稀有寶可夢的機率
+        // 透過加入一個固定的「幸運權重」，對於原本權重低 (稀有) 的寶可夢來說，相對提升幅度會比常見寶可夢大
+        // 例如：加 10 點權重。稀有 (10->20, 翻倍)，常見 (100->110, 僅增 10%)
+        const maxBonusWeight = 10; 
+        const progress = Math.min(1, playingTime / (90 * 24 * 60 * 60 * 1000)); // 90天滿
+        const bonusWeight = maxBonusWeight * progress;
+
+        const boostedCandidates = candidates.map(p => ({
+            ...p,
+            catchRate: p.catchRate + bonusWeight
+        }));
+        const boostedTotalWeight = boostedCandidates.reduce((sum, p) => sum + p.catchRate, 0);
 
         // 2. 取隨機數
-        let random = Math.random() * totalWeight;
+        let random = Math.random() * boostedTotalWeight;
 
         // 3. 找出落在區間內的寶可夢
         for (const pokemon of candidates) {
@@ -81,7 +92,7 @@ export const EncounterHandler = (pathResolver?: (path: string) => string): Encou
         };
     }
 
-    async function calculateEncounter(filePath: string): Promise<EncounterResult> {
+    async function calculateEncounter(filePath: string,playingTime: number): Promise<EncounterResult> {
         // 1. 解析路徑與深度
         // 去除 workspace root 等前綴，確保路徑相對乾淨
         // 深度計算 (假設 src/index.ts 深度為 2)
@@ -116,7 +127,7 @@ export const EncounterHandler = (pathResolver?: (path: string) => string): Encou
         }
 
         // 3. 進行加權抽取
-        const encounterResult = pickWeightedPokemon(candidatePool);
+        const encounterResult = pickWeightedPokemon(candidatePool,playingTime);
         if(encounterResult === null){
             return {
                 biomeType: biomeType,
@@ -126,7 +137,7 @@ export const EncounterHandler = (pathResolver?: (path: string) => string): Encou
         }
 
 
-        const newPokemon = await PokemonFactory.createWildPokemonInstance(encounterResult as PokeEncounterData, filePath);
+        const newPokemon = await PokemonFactory.createWildPokemonInstance(encounterResult as PokeEncounterData,playingTime, filePath);
 
         console.log(`[Encounter] Depth: ${depth} | Biome: ${biomeType} | Candidates: ${candidatePool.length}`);
 

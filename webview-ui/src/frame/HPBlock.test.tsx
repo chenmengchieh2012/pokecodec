@@ -1,4 +1,4 @@
-import React, { createRef } from 'react';
+import { createRef } from 'react';
 import { render, screen, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { VHPBlock, VHPBlockHandle, VHPBlockAnimation } from './HPBlock';
@@ -31,7 +31,11 @@ const mockPokemon: PokemonDao = {
     baseExp: 0,
     caughtDate: 0,
     caughtBall: '',
-    pokemonMoves: []
+    pokemonMoves: [],
+    isHiddenAbility: false,
+    isLegendary: false,
+    isMythical: false,
+    ailment: 'healthy'
 };
 
 describe('VHPBlock', () => {

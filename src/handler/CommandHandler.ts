@@ -27,7 +27,7 @@ import {
 } from '../dataAccessObj/MessagePayload';
 import { GameStateManager } from '../manager/gameStateManager';
 import { MessageType } from '../dataAccessObj/messageType';
-import { BiomeDataManager } from '../manager/BiomeManager';
+import { BiomeDataHandler } from '../core/BiomeHandler';
 import { PokeDexManager } from '../manager/pokeDexManager';
 import { PokemonFactory } from '../core/CreatePokemonHandler';
 import { AchievementManager } from '../manager/AchievementManager';
@@ -47,9 +47,11 @@ export class CommandHandler {
     private readonly bagManager: BagManager;
     private readonly userDaoManager: UserDaoManager;
     private readonly gameStateManager: GameStateManager;
-    private readonly biomeManager: BiomeDataManager;
     private readonly pokeDexManager: PokeDexManager;
     private readonly achievementManager: AchievementManager;
+
+    private readonly biomeHandler: BiomeDataHandler;
+
     private _handlerContext: HandlerContext | null = null;
 
     constructor(
@@ -58,7 +60,7 @@ export class CommandHandler {
         bagManager: BagManager,
         userDaoManager: UserDaoManager,
         gameStateManager: GameStateManager,
-        biomeManager: BiomeDataManager,
+        biomeHandler: BiomeDataHandler,
         pokeDexManager: PokeDexManager,
         achievementManager: AchievementManager,
         context: vscode.ExtensionContext,
@@ -68,7 +70,7 @@ export class CommandHandler {
         this.bagManager = bagManager;
         this.userDaoManager = userDaoManager;
         this.gameStateManager = gameStateManager;
-        this.biomeManager = biomeManager;
+        this.biomeHandler = biomeHandler;
         this.pokeDexManager = pokeDexManager;
         this.achievementManager = achievementManager;
     }
@@ -94,6 +96,7 @@ export class CommandHandler {
 
         // 2. Create Pokemon
         const pokemonId = starter === 'pikachu' ? 25 : 133;
+        const playingTime = this.userDaoManager.getUserInfo().playtime || 0;
         const starterPokemon = await PokemonFactory.createWildPokemonInstance({
             pokemonId: pokemonId,
             nameZh: '',
@@ -101,7 +104,7 @@ export class CommandHandler {
             type: [],
             catchRate: 0,
             minDepth: 0 // Level 5
-        }, undefined, 5);
+        }, playingTime , undefined, 5);
         
         starterPokemon.originalTrainer = user.name || 'GOLD';
         starterPokemon.caughtDate = Date.now();
@@ -545,6 +548,12 @@ export class CommandHandler {
             await this.userDaoManager.updateMoney(payload.amount);
             this.handlerContext.updateAllViews();
         }
+    }
+
+    // ==================== Set Auto Encounter ====================
+    public async handleSetAutoEncounter(payload: { enabled: boolean }): Promise<void> {
+        await this.userDaoManager.setAutoEncounter(payload.enabled);
+        this.handlerContext.updateAllViews();
     }
 
     // ==================== Set Game State ====================

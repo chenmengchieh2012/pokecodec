@@ -89,6 +89,30 @@
   z-index: 10;
 }
 
+.flashOverlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: white;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.encounterFlash {
+  animation: encounterFlashAnim 1.5s steps(4, end);
+}
+
+@keyframes encounterFlashAnim {
+  0% { opacity: 0; background-color: #000; }
+  10% { opacity: 1; background-color: #000; }
+  20% { opacity: 0; background-color: #000; }
+  30% { opacity: 1; background-color: #000; }
+  40% { opacity: 0; background-color: #000; }
+  50% { opacity: 1; background-color: #000; }
+  60% { opacity: 1; background-color: #000; }
+  100% { opacity: 1; background-color: #000; }
+}
+
 /* 地圖顯示區域 */
 .mapGrid {
   display: grid;
@@ -179,6 +203,75 @@
   z-index: 5;
 }
 
+.controls {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 100;
+}
+
+.pauseButton {
+  width: 32px;
+  height: 32px;
+  
+  /* Emerald Green Theme */
+  background-color: #68d0a8; 
+  border: 2px solid #205c45;
+  border-radius: 4px; /* Slightly rounded corners for GBA feel */
+  
+  /* Pixel bevel */
+  box-shadow: 
+    inset 2px 2px 0px #a0e8cc, /* Highlight */
+    inset -2px -2px 0px #3d8c70, /* Shadow */
+    2px 2px 0px #1a3b2e; /* Drop Shadow (Dark Green) */
+
+  color: #0e3324;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  font-size: 14px;
+  
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  image-rendering: pixelated;
+  transition: none; /* Pixel art usually snaps */
+}
+
+.pauseButton:hover {
+  background-color: #7ce0bb;
+  filter: brightness(1.1);
+}
+
+.pauseButton:active {
+  background-color: #5ab892;
+  box-shadow: 
+    inset 2px 2px 0px #3d8c70, /* Inverted */
+    inset -2px -2px 0px #a0e8cc;
+  transform: translate(2px, 2px); /* Move down to replace shadow */
+}
+
+.pauseButton.paused {
+  /* Red/Orange for Pause state */
+  background-color: #ff9966;
+  border-color: #8a3324;
+  color: #5c1a0e;
+  box-shadow: 
+    inset 2px 2px 0px #ffccaa,
+    inset -2px -2px 0px #cc6633,
+    2px 2px 0px #4d1f15;
+  animation: none; /* Remove pulse animation */
+}
+
+.pauseButton.paused:active {
+  box-shadow: 
+    inset 2px 2px 0px #cc6633,
+    inset -2px -2px 0px #ffccaa;
+  transform: translate(2px, 2px);
+}
+
+
+
 /* --- Player & Items --- */
 .objSprite {
   width: 24px; height: 24px;
@@ -217,3 +310,26 @@
 .flashing { animation: encounterFlash 0.4s steps(2) forwards; }
 @keyframes popUp { 0% { transform: translateX(-50%) scale(0); } 100% { transform: translateX(-50%) scale(1); } }
 @keyframes encounterFlash { 0% { opacity: 0; } 25% { opacity: 0.8; } 50% { opacity: 0; } 75% { opacity: 0.8; } 100% { opacity: 0; } }
+
+/* --- Encounter Animation --- */
+.encounterExclamation {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ff0000;
+  font-size: 32px;
+  font-weight: bold;
+  text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff;
+  z-index: 100;
+  animation: popUp 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+.playerJump {
+  animation: jumpAnim 0.5s ease-in-out infinite;
+}
+
+@keyframes jumpAnim {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}

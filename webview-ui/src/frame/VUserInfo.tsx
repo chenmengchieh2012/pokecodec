@@ -5,9 +5,25 @@ import { MessageType } from '../../../src/dataAccessObj/messageType';
 import { UserDao } from '../../../src/dataAccessObj/userData';
 import { resolveAssetUrl, vscode } from '../utilities/vscode';
 
+const formatPlaytime = (ms: number) => {
+    const totalSeconds = Math.floor(ms / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const sec = totalSeconds % 60;
+
+    const day = Math.floor(hours / 24);
+    if (day > 0) {
+        const remainingHours = hours % 24;
+        return `${day}d ${remainingHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+    }else{
+        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
+    }
+};
+
 export const VUserInfo = () => {
     const messageStore = useMessageStore();
     const defaultUser = messageStore.getRefs().userInfo;
+    const pokeDex = messageStore.getRefs().pokeDex;
     const [user, setUser] = useState<UserDao | undefined>(defaultUser);
 
     useMessageSubscription<UserDao>(MessageType.UserData, (message) => {
@@ -72,15 +88,23 @@ export const VUserInfo = () => {
                         </div>
                         <div className={styles.row}>
                             <span className={styles.label}>MONEY</span>
-                            <span className={styles.value}>${user.money}</span>
+                            <span className={styles.value}>${user.money.toFixed(2)}</span>
                         </div>
                         <div className={styles.row}>
                             <span className={styles.label}>POKEDEX</span>
-                            <span className={styles.value}>0</span>
+                            <span className={styles.value}>{pokeDex ? Object.keys(pokeDex).length : 0}</span>
                         </div>
                         <div className={styles.row}>
                             <span className={styles.label}>TIME</span>
-                            <span className={styles.value}>00:00</span>
+                            <span className={styles.value}>{formatPlaytime(user.playtime || 0)}</span>
+                        </div>
+                        <div className={styles.row}>
+                            <span className={styles.label}>STARTER</span>
+                            <span className={styles.value}>{user.starter === 'pikachu' ? 'Pikachu' : 'Eevee'}</span>
+                        </div>
+                        <div className={styles.row}>
+                            <span className={styles.label}>AUTO</span>
+                            <span className={styles.value}>{user.autoEncounter ? 'On' : 'Off'}</span>
                         </div>
                     </div>
 

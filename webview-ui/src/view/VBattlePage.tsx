@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BattleCanvasHandle, VBattleCanvas } from '../frame/VBattleCanvas';
 import { VSearchScene } from '../frame/VSearchScene';
 import { BattleControl, BattleControlHandle } from '../frame/BattleControl';
@@ -28,13 +28,20 @@ export const VBattlePage = () => {
     const opponentPokemon = battleManagerState.opponentPokemon
     const opponentPokemonState = battleManagerState.opponentPokemonState
     
+    const [isEncountering, setIsEncountering] = useState(false);
   
     useMessageSubscription<EncounterResult>(MessageType.TriggerEncounter, (message) => {
         if (message.data === undefined) {
             return;
         }
         const data = message.data as EncounterResult;
-        battleManagerMethod.handleStart(GameState.WildAppear, data);
+        
+        setIsEncountering(true);
+        // Wait for the encounter animation (flash) in VSearchScene to finish
+        setTimeout(() => {
+            setIsEncountering(false);
+            battleManagerMethod.handleStart(GameState.WildAppear, data);
+        }, 1500);
     });
 
     useEffect(() => {
@@ -53,6 +60,7 @@ export const VBattlePage = () => {
       {gameState === GameState.Searching ? (
              <VSearchScene 
                 myPokemon={myPokemon} 
+                isEncountering={isEncountering}
              />
         ) : (
             <>

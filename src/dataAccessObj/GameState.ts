@@ -27,11 +27,11 @@ export type BattleType = typeof BattleType[keyof typeof BattleType];
 
 
 export const GameState = {
-  Searching: 'searching',
-  WildAppear: 'wild_appear',
-  Battle: 'battle',
-  Catching: 'catching',
-  Caught: 'caught'
+    Searching: 'searching',
+    WildAppear: 'wild_appear',
+    Battle: 'battle',
+    Catching: 'catching',
+    Caught: 'caught'
 } as const;
 export type GameState = typeof GameState[keyof typeof GameState];
 

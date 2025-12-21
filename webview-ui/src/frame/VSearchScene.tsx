@@ -2,14 +2,16 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styles from './VSearchScene.module.css';
 import { BIOME_BACKGROUNDS } from '../utilities/biomeAssets';
 import { useMessageStore, useMessageSubscription } from '../store/messageStore';
-import { vscode, resolveAssetUrl } from '../utilities/vscode';
+import { resolveAssetUrl, vscode } from '../utilities/vscode';
 import { BiomeType, BiomeData } from '../../../src/dataAccessObj/BiomeData';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
 import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
+import { UserDao } from '../../../src/dataAccessObj/userData';
 
 interface SearchSceneProps {
     myPokemon?: PokemonDao;
     biomeType?: number; // 新增：接收外部傳入的生態系 index (0-4)
+    isEncountering?: boolean;
 }
 
 // 0:地板, 1:樹, 2:草, 3:岩, 4:水, 5:花, 6:磚, 7:果樹, 8:球
@@ -39,7 +41,7 @@ const INITIAL_MAP = [
 const OBSTACLES = [1, 3, 4, 6]; 
 const EMOTES = ["♥", "♪", "!", "...", "?"];
 
-export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
+export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon, isEncountering = false }) => {
     const messageStore = useMessageStore(); // 確保訂閱生效
     const defaultBiome = messageStore.getRefs().biome
     
@@ -53,7 +55,18 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
 
     const [transitionStage, setTransitionStage] = useState<'idle' | 'fading-in' | 'fading-out'>('idle');
     const [isAutoWalking, setIsAutoWalking] = useState(true);
+    const [enableAutoEncounter, setEnableAutoEncounter] = useState(true);
 
+
+    useMessageSubscription<UserDao>(MessageType.UserData, (message) => {
+        const userData = message.data;
+        if(!userData) return;
+        if (userData.autoEncounter === false) {
+            setEnableAutoEncounter(false);
+        } else {
+            setEnableAutoEncounter(true);
+        }
+    });
 
     useMessageSubscription(MessageType.BiomeData, (message) => {
         const newBiomeData = (message.data as BiomeData);
@@ -69,7 +82,6 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
             setBgImage(BIOME_BACKGROUNDS[newBiomeData.biomeType]);
         }
     });
-
 
     const onTransitionOverlayAnimationEnd = () => {
         const currentBiome = currentBiomeRef.current;
@@ -105,11 +117,16 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
     const handlePokeInteract = () => {
         setEmote(EMOTES[Math.floor(Math.random() * EMOTES.length)]);
         setTimeout(() => setEmote(null), 1500);
+
+        const randomChance = Math.random();
+        if ( randomChance < 0.3) { // 30% 機率觸發遭遇
+            vscode.postMessage({ command: MessageType.TriggerEncounter });
+        }
     };
 
     // 自動走動邏輯
     useEffect(() => {
-        if (!isAutoWalking) return;
+        if (!isAutoWalking || enableAutoEncounter) return; // 暫停時也不走動
 
         const moveInterval = setInterval(() => {
             // 隨機決定是否移動 (70% 機率移動，30% 停在原地)
@@ -126,7 +143,7 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
         }, 1000); // 每 1 秒嘗試移動一次
 
         return () => clearInterval(moveInterval);
-    }, [handleMove, isAutoWalking]);
+    }, [handleMove, isAutoWalking, enableAutoEncounter]);
 
     // 保留鍵盤控制 (可選，若想完全自動可移除)
     useEffect(() => {
@@ -164,9 +181,9 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
         }
     };
 
-    const testEncouter = () => {
-        vscode.postMessage({ command: MessageType.TriggerEncounter });
-    }
+    // const testEncouter = () => {
+    //     vscode.postMessage({ command: MessageType.TriggerEncounter });
+    // }
 
     return (
         <div 
@@ -198,14 +215,17 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
 
                                     {isPlayerHere && (
                                         <div 
-                                            className={styles.playerSprite}
+                                            className={`${styles.playerSprite} ${isEncountering ? styles.playerJump : ''}`}
                                             onClick={handlePokeInteract}
                                             style={{ 
                                                 transform: direction === 'left' ? 'scaleX(-1)' : 'scaleX(1)',
                                                 cursor: 'pointer'
                                             }}
                                         >
-                                            {emote && (
+                                            {isEncountering && (
+                                                <div className={styles.encounterExclamation}>!</div>
+                                            )}
+                                            {emote && !isEncountering && (
                                                 <div className={styles.emoteBubble} style={{ transform: direction === 'left' ? 'scaleX(-1)' : 'scaleX(1)' }}>{emote}</div>
                                             )}
                                             { myPokemon?.id && <img src={spriteUrl} alt="Player" className={styles.spriteImg} /> }  
@@ -216,15 +236,20 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
                         })
                     ))}
                 </div>
-
-                <div>
-                    <button 
-                        className={styles.autoWalkToggle} 
-                        onClick={() => testEncouter()}
-                    >
-                        GOGO
-                    </button>
-                </div>
+            </div>
+            <div className={styles.controls}>
+                <button 
+                    className={`${styles.pauseButton} ${enableAutoEncounter ? styles.paused : ''}`} 
+                    onClick={() => {
+                        vscode.postMessage({ 
+                            command: MessageType.SetAutoEncounter, 
+                            enabled: !enableAutoEncounter 
+                        });
+                    }}
+                    title={enableAutoEncounter ? "Pause Encounter" : "Resume Encounter"}
+                >
+                    {enableAutoEncounter ? "▶" : "⏸"}
+                </button>
             </div>
         </div>
     );

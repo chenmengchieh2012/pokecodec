@@ -24,6 +24,7 @@ export const MessageType = {
     
     // Action types
     SetGameState: 'setGameState',
+    SetAutoEncounter: 'setAutoEncounter',
     UpdateMoney: 'updateMoney',
     UpdatePokeDex: 'updatePokeDex',
     AddItem: 'addItem',

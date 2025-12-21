@@ -179,7 +179,7 @@ export const VShop = () => {
                     ]}
                     actions={[
                         {
-                            label: `$${money}`,
+                            label: `$${Math.floor(money)}`,
                             onClick: () => {}
                         }
                     ]}            

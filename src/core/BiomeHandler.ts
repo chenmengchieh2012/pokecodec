@@ -4,15 +4,22 @@ import { UserDao } from '../dataAccessObj/userData';
 import GlobalStateKey from '../utils/GlobalStateKey';
 import { BiomeData, BiomeType } from '../dataAccessObj/BiomeData';
 import { BIOME_GROUPS } from '../utils/KantoPokemonCatchRate';
-import { EncounterHandler, EncounterHandlerMethods, EncounterResult } from '../core/EncounterHandler';
+import { EncounterHandler, EncounterHandlerMethods, EncounterResult } from './EncounterHandler';
+import { UserDaoManager } from '../manager/userDaoManager';
 
-export class BiomeDataManager {
-    private static instance: BiomeDataManager;
+export class BiomeDataHandler {
+    private static instance: BiomeDataHandler;
     // 記憶體快取 (只供讀取與 UI 顯示)
     private biomeData: BiomeData = { biomeType: BiomeType.Grassland, pokemonTypes: BIOME_GROUPS[ BiomeType.Grassland ] };
     private currentFilePath: string = "";
     private encounterHandler: EncounterHandlerMethods = EncounterHandler((path) => vscode.workspace.asRelativePath(path));
     private context: vscode.ExtensionContext;
+    private userDaoManager: UserDaoManager | undefined;
+
+   
+    // 使用 EventEmitter 來支援多個監聽者
+    private _onDidChangeBiome = new vscode.EventEmitter<void>();
+    public readonly onDidChangeBiome = this._onDidChangeBiome.event;
 
     private saveQueue = new SequentialExecutor();
 
@@ -20,16 +27,29 @@ export class BiomeDataManager {
         this.context = context;
     }
 
-    public static getInstance(): BiomeDataManager {
-        if (!BiomeDataManager.instance) {
-            throw new Error("BiomeDataManager not initialized. Call initialize() first.");
+    public static getInstance(): BiomeDataHandler {
+        if (!BiomeDataHandler.instance) {
+            throw new Error("BiomeDataHandler not initialized. Call initialize() first.");
         }
-        return BiomeDataManager.instance;
+        return BiomeDataHandler.instance;
     }
 
-    public static initialize(context: vscode.ExtensionContext): BiomeDataManager {
-        BiomeDataManager.instance = new BiomeDataManager(context);
-        return BiomeDataManager.instance;
+    public static initialize(context: vscode.ExtensionContext, userDaoManager: UserDaoManager): BiomeDataHandler {
+        BiomeDataHandler.instance = new BiomeDataHandler(context);
+        BiomeDataHandler.instance.userDaoManager = userDaoManager;
+        
+        // 註冊事件監聽器
+        context.subscriptions.push(
+            vscode.window.onDidChangeActiveTextEditor((editor) => {
+                if (editor) {
+                    const filePath = editor.document.fileName;
+                    BiomeDataHandler.instance.handleOnChangeBiome(filePath);
+                    BiomeDataHandler.instance._onDidChangeBiome.fire();
+                }
+            })
+        );
+
+        return BiomeDataHandler.instance;
     }
 
 
@@ -47,7 +67,8 @@ export class BiomeDataManager {
     }
 
     public async getEncountered(): Promise<EncounterResult> {
-        return await this.encounterHandler.calculateEncounter(this.currentFilePath);
+        const playingTime = this.userDaoManager?.getUserInfo().playtime || 0;
+        return await this.encounterHandler.calculateEncounter(this.currentFilePath, playingTime);
     }
 
     /**
@@ -66,5 +87,7 @@ export class BiomeDataManager {
         });
     }
 
-
+    public dispose() {
+        this._onDidChangeBiome.dispose();
+    }
 }

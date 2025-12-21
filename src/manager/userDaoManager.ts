@@ -6,9 +6,14 @@ import GlobalStateKey from '../utils/GlobalStateKey';
 export class UserDaoManager {
     private static instance: UserDaoManager;
     // 記憶體快取 (只供讀取與 UI 顯示)
-    private userDao: UserDao = { money: 0 };
+    private userDao: UserDao = { money: 50000, autoEncounter: true };
     private context: vscode.ExtensionContext;
     private readonly STORAGE_KEY = GlobalStateKey.USER_DATA;
+
+
+    // 使用 EventEmitter 來支援多個監聽者
+    private _onDidAddingPlayingTime = new vscode.EventEmitter<void>();
+    public readonly onDidAddingPlayingTime = this._onDidAddingPlayingTime.event;
     
     private saveQueue = new SequentialExecutor();
 
@@ -51,7 +56,7 @@ export class UserDaoManager {
     private async performTransaction(modifier: (data: UserDao) => UserDao): Promise<void> {
         await this.saveQueue.execute(async () => {
             // 1. 從硬碟讀取最新資料
-            const storedData = this.context.globalState.get<UserDao>(this.STORAGE_KEY) || { money: 0 };
+            const storedData = this.context.globalState.get<UserDao>(this.STORAGE_KEY) || { money: 0, autoEncounter: true };
             // 合併預設值 (防止資料欄位缺失)
 
             // 2. 執行修改
@@ -62,6 +67,13 @@ export class UserDaoManager {
 
             // 4. 更新記憶體快取
             this.userDao = newData;
+        });
+    }
+
+    public async setAutoEncounter(enabled: boolean): Promise<void> {
+        await this.performTransaction((data) => {
+            data.autoEncounter = enabled;
+            return data;
         });
     }
 
@@ -92,8 +104,18 @@ export class UserDaoManager {
         });
     }
 
+
+    public async updatePlaytimeAndMoney(time: number, amount: number): Promise<void> {
+        await this.performTransaction((data) => {
+            data.playtime = time;
+            data.money += amount;
+            return data;
+        });
+        this._onDidAddingPlayingTime.fire();
+    }
+
     public async clear(): Promise<void> {
-        this.context.globalState.update(this.STORAGE_KEY, { money: 50000 });
-        this.userDao = { money: 50000 };
+        this.context.globalState.update(this.STORAGE_KEY, { money: 50000, autoEncounter: true });
+        this.userDao = { money: 50000, autoEncounter: true };
     }
 }

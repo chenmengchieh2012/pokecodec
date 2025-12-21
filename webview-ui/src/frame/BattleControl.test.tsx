@@ -43,7 +43,8 @@ const mockMove: PokemonMove = {
     accuracy: 100,
     pp: 30,
     maxPP: 30,
-    effect: ''
+    effect: '',
+    priority: 0
 };
 
 const mockPokemon: PokemonDao = {
@@ -58,27 +59,23 @@ const mockPokemon: PokemonDao = {
     ev: { hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 },
     types: ['electric'],
     pokemonMoves: [mockMove],
-    baseStats: { hp: 35, attack: 55, defense: 40, specialAttack: 50, specialDefense: 50, speed: 90 },
-    codingStats: {
-        caughtRepo: 'test-repo',
-        favoriteLanguage: 'TypeScript',
-        linesOfCode: 100,
-        bugsFixed: 10,
-        commits: 50,
-        coffeeConsumed: 5
-    },
-    caughtDate: Date.now(),
-    isShiny: false,
-    originalTrainer: 'Ash',
-    caughtBall: 'poke-ball',
-    gender: 'Male',
-    nature: 'Hardy',
-    ability: 'Static',
-    height: 0.4,
-    weight: 6.0,
+    isHiddenAbility: false,
+    isLegendary: false,
+    isMythical: false,
+    gender: 'male',
+    nature: 'hardy',
+    ability: 'static',
+    height: 4,
+    weight: 60,
     baseExp: 112,
     currentExp: 0,
-    toNextLevelExp: 100
+    toNextLevelExp: 100,
+    isShiny: false,
+    originalTrainer: 'Player',
+    caughtDate: Date.now(),
+    caughtBall: 'poke-ball',
+    ailment: 'healthy',
+    baseStats: { hp: 35, attack: 55, defense: 40, specialAttack: 50, specialDefense: 50, speed: 90 }
 };
 
 describe('BattleControl', () => {
