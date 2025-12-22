@@ -8,6 +8,8 @@ import { useMessageSubscription } from '../store/messageStore';
 import { EncounterResult } from '../../../src/core/EncounterHandler';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
 import { GameState } from '../../../src/dataAccessObj/GameState';
+import { SetGameStateDataPayload } from '../../../src/dataAccessObj/MessagePayload';
+import { vscode } from '../utilities/vscode';
 
 // 定義遊戲狀態
 
@@ -25,6 +27,7 @@ export const VBattlePage = () => {
     const myParty = battleManagerState.myParty
     const opponentPokemon = battleManagerState.opponentPokemon
     const opponentPokemonState = battleManagerState.opponentPokemonState
+    const mutex = battleManagerState.mutex
     
     const [isEncountering, setIsEncountering] = useState(false);
     
@@ -33,25 +36,32 @@ export const VBattlePage = () => {
         if (message.data === undefined) {
             return;
         }
+        // Prevent multiple triggers if already encountering or in battle
+        if (isEncountering || gameState !== GameState.Searching) {
+            return;
+        }
+
         const data = message.data as EncounterResult;
         
         setIsEncountering(true);
         // Wait for the encounter animation (flash) in VSearchScene to finish
         setTimeout(() => {
             setIsEncountering(false);
-            battleManagerMethod.handleStart(GameState.WildAppear, data);
+
+            const payload: SetGameStateDataPayload = {
+                gameStateData: {
+                    state: GameState.WildAppear,
+                    encounterResult: data,
+                    defendPokemon: myPokemon
+                }
+            }
+            vscode.postMessage({
+                command: MessageType.SetGameStateData,
+                ...payload
+            });
+
         }, 1500);
     });
-
-    // useEffect(() => {
-    //     const payload : SetGameStatePayload = {
-    //         gameState: GameState.Searching
-    //     }
-    //     vscode.postMessage({
-    //         command: MessageType.SetGameState,
-    //         ...payload
-    //     });
-    // }, []);
 
     console.log("[VBattlePage] Rendering VBattlePage with gameState:", gameState);
 
@@ -74,6 +84,7 @@ export const VBattlePage = () => {
             <BattleControl
                 myPokemon={myPokemon}
                 myParty={myParty}
+                mutex={mutex}
                 ref={dialogBoxRef}
                 handleOnAttack={battleManagerMethod.handleOnAttack}
                 handleThrowBall={battleManagerMethod.handleThrowBall}

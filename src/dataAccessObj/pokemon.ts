@@ -9,6 +9,7 @@ export type PokemonType =
 
 export type PokemonAilment = 'healthy' | 'burn' | 'freeze' | 'paralysis' | 'poison' | 'badly-poison' | 'sleep' | 'fainted';
 
+
 export const getEmptyPokemonStats = (): PokemonStats => ({
     hp: 0,
     attack: 0,

@@ -165,6 +165,16 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             _context
         );
         PokemonViewProvider.providers.push(this);
+
+        // Initialize HandlerContext immediately
+        const handlerContext: HandlerContext = {
+            postMessage: (msg: unknown) => this._view?.webview.postMessage(msg),
+            updateAllViews: () => PokemonViewProvider.providers.forEach(p => p.updateViews()),
+            updateAchievementsView: () => {
+                this.commandHandler.handleGetAchievements();
+            }
+        };
+        this.commandHandler.setHandlerContext(handlerContext);
         
         // 使用新的事件監聽方式
         this.gitHandler.onDidProcessCommit(() => {
@@ -174,38 +184,23 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         });
 
         this.biomeHandler.onDidChangeBiome(() => {
-            this.updateBiomeState();
+            if(this.gameStateManager.getGameStateData()?.state === GameState.Searching ){
+                this.commandHandler.handleGetBiomeData();
+            }
         });
 
         this.userDaoManager.onDidAddingPlayingTime(() => {
             this.commandHandler.handleGetUserInfo();
-            if(this.userDaoManager.getUserInfo().autoEncounter) {
+            if(this.userDaoManager.getUserInfo().autoEncounter === true  &&
+               this.gameStateManager.getGameStateData()?.state === GameState.Searching &&
+               this.partyManager.getAll().length > 0 &&
+                this.partyManager.getAll().some(p => p.currentHp > 0)) {
                 const randomEncounterChance = Math.random();
-                if(randomEncounterChance < 1) { // 20% 機率觸發隨機遭遇
-                    this.triggerEncounter();
+                if(randomEncounterChance < 0.2) { // 20% 機率觸發隨機遭遇
+                    this.commandHandler.handleTriggerEncounter();
                 }
             }
         });
-    }
-
-    public handleGetBiomeData() {
-        if (!this._view) {
-            return;
-        }
-        const biomeData = this.biomeHandler.getBiomeData();
-        this._view.webview.postMessage({
-            type: MessageType.BiomeData,
-            data: biomeData
-        });
-    }
-
-    public updateBiomeState(biomeData?: BiomeData) {
-        if (this._view) {
-            this._view?.webview.postMessage({
-                type: MessageType.BiomeData,
-                data: biomeData ?? this.biomeHandler.getBiomeData()
-            });
-        }
     }
 
     public updateViews() {
@@ -217,8 +212,8 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             this.commandHandler.handleGetGameStateData();
             this.commandHandler.handleGetCurrentPokeDex();
             this.commandHandler.handleGetAchievements();
+            this.commandHandler.handleGetBiomeData();
         }
-        this.updateBiomeState();
     }
 
     public async resetStorage() {
@@ -231,28 +226,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         await this.achievementManager.clear();
         const isProduction = this._context.extensionMode === vscode.ExtensionMode.Production;
         if (!isProduction) {
-            // Add default pokemon
-            const starter = { ...defaultPokemon };
-            starter.uid = 'starter-' + Date.now();
-            starter.caughtDate = Date.now();
-            starter.currentExp = 0;
-            starter.toNextLevelExp = ExperienceCalculator.calculateRequiredExp(starter.level);
-            starter.stats.hp = ExperienceCalculator.calculateHp(starter.baseStats.hp, starter.iv.hp, starter.ev.hp, starter.level);
-            starter.stats.attack = ExperienceCalculator.calculateStat(starter.baseStats.attack, starter.iv.attack, starter.ev.attack, starter.level);
-            starter.stats.defense = ExperienceCalculator.calculateStat(starter.baseStats.defense, starter.iv.defense, starter.ev.defense, starter.level);
-            starter.stats.specialAttack = ExperienceCalculator.calculateStat(starter.baseStats.specialAttack, starter.iv.specialAttack, starter.ev.specialAttack, starter.level);
-            starter.stats.specialDefense = ExperienceCalculator.calculateStat(starter.baseStats.specialDefense, starter.iv.specialDefense, starter.ev.specialDefense, starter.level);
-            starter.stats.speed = ExperienceCalculator.calculateStat(starter.baseStats.speed, starter.iv.speed, starter.ev.speed, starter.level);
-            starter.currentHp = 1;
-            starter.maxHp = starter.stats.hp;
-            // MARK: TEST Rand Ailment
-            starter.ailment = 'burn'
-            // Rand Flinched
             
-
-            
-            await this.partyManager.add(starter);
-
             // full two box starter to party
             for (let i = 0; i < PokemonBoxManager.getMaxBoxCapacity() * 2; i++) {
                 let debugPokemon = await PokemonFactory.createWildPokemonInstance({
@@ -284,16 +258,9 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         _token: vscode.CancellationToken,
     ) {
         this._view = webviewView;
-
-        // Initialize HandlerContext immediately
-        const handlerContext: HandlerContext = {
-            postMessage: (msg: unknown) => webviewView.webview.postMessage(msg),
-            updateAllViews: () => PokemonViewProvider.providers.forEach(p => p.updateViews()),
-            updateAchievementsView: () => {
-                this.commandHandler.handleGetAchievements();
-            }
-        };
-        this.commandHandler.setHandlerContext(handlerContext);
+        
+        // 畫面開啟時，檢查當前編輯器的 Biome
+        this.biomeHandler.checkActiveEditor();
 
         // 設定 Webview 選項
         webviewView.webview.options = {
@@ -397,12 +364,14 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             }
 
             if (message.command === MessageType.TriggerEncounter) {
-                this.triggerEncounter();
+                if (this.gameStateManager.getGameStateData()?.state === GameState.Searching) {
+                    await this.commandHandler.handleTriggerEncounter();
+                }
             }
 
             if (message.command === MessageType.GetBiome) {
                 const filePath = message.filePath as string;
-                this.handleGetBiomeData();
+                await this.commandHandler.handleGetBiomeData();
             }
 
             if (message.command === MessageType.GetAchievements) {
@@ -430,12 +399,6 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
 
     }
 
-    public async triggerEncounter() {
-        if (this._view && this.gameStateManager.getGameStateData()?.state === GameState.Searching) {
-            const encounterEvent = await this.biomeHandler.getEncountered();
-            this._view.webview.postMessage({ type: MessageType.TriggerEncounter, data: encounterEvent });
-        }
-    }
 
     private _getHtmlForWebview(webview: vscode.Webview) {
         // 自動偵測是否為生產模式

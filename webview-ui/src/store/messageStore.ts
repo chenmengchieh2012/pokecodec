@@ -195,9 +195,9 @@ class MessageStore {
         this.initialized = InitializedState.Initializing;
 
         this.messageHandler = (event: MessageEvent) => {
-            console.log('[MessageStore] Received message from VS Code:', event.data);
-            console.log('[MessageStore] Current Refs:', this.refs);
-            console.log('[MessageStore] Current Initialized State:', this.initialized);
+            // console.log('[MessageStore] Received message from VS Code:', event.data);
+            // console.log('[MessageStore] Current Refs:', this.refs);
+            // console.log('[MessageStore] Current Initialized State:', this.initialized);
             const message = event.data as VSCodeMessage;
             if (message && message.type) {
                 if( this.initialized === InitializedState.Initializing ){

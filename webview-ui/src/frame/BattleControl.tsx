@@ -16,6 +16,7 @@ export interface BattleControlHandle extends DialogBoxHandle {
 }
 
 interface BattleControlProps {
+    mutex: boolean;
     myPokemon?: PokemonDao;
     myParty: PokemonDao[];
     handleOnAttack: (move: PokemonMove) => void;
@@ -26,6 +27,7 @@ interface BattleControlProps {
 }
 
 export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>(({
+    mutex,
     myPokemon,
     myParty,
     handleOnAttack,
@@ -238,6 +240,7 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
                         <button 
                             className={styles['menu-btn-outer']} 
                             onClick={() => setMenuState('moves')}
+                            disabled={mutex}
                         >
                             <div className={styles['menu-btn-inner']}>
                                 FIGHT
@@ -248,6 +251,7 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
                         <button 
                             className={styles['menu-btn-outer']} 
                             onClick={() => setMenuState('bag')}
+                            disabled={mutex}
                         >
                             <div className={styles['menu-btn-inner']}>
                                 BAG
@@ -258,6 +262,7 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
                         <button 
                             className={styles['menu-btn-outer']} 
                             onClick={() => setMenuState('party')}
+                            disabled={mutex}
                         >
                             <div className={styles['menu-btn-inner']}>
                                 POKÉMON
@@ -268,6 +273,7 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
                         <button 
                             className={styles['menu-btn-outer']} 
                             onClick={handleRunAway}
+                            disabled={mutex}
                         >
                             <div className={styles['menu-btn-inner']}>
                                 RUN

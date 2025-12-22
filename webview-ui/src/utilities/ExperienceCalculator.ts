@@ -49,7 +49,7 @@ export const ExperienceCalculator = {
 
             // Recalculate Stats using Standard Formula
             const newHp = calculateHp(newPokemon.baseStats.hp, newPokemon.iv.hp, newPokemon.ev.hp, newPokemon.level);
-            const hpDiff = newHp - newPokemon.stats.hp;
+            
 
             newPokemon.stats.hp = newHp;
             newPokemon.stats.attack = calculateStat(newPokemon.baseStats.attack, newPokemon.iv.attack, newPokemon.ev.attack, newPokemon.level);
@@ -59,7 +59,7 @@ export const ExperienceCalculator = {
             newPokemon.stats.speed = calculateStat(newPokemon.baseStats.speed, newPokemon.iv.speed, newPokemon.ev.speed, newPokemon.level);
 
             // Heal HP by the amount increased (standard RPG behavior)
-            newPokemon.currentHp += hpDiff;
+            newPokemon.currentHp = newHp;
             newPokemon.maxHp = newHp;
         }
 

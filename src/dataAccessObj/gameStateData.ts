@@ -1,8 +1,9 @@
+import { EncounterResult } from "../core/EncounterHandler";
 import { GameState } from "./GameState";
 import { PokemonDao } from "./pokemon";
 
 export interface GameStateData {
     state: GameState;
-    encounteredPokemon: PokemonDao | undefined;
+    encounterResult: EncounterResult | undefined;
     defendPokemon: PokemonDao | undefined;
 }

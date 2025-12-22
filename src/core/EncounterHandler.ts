@@ -7,7 +7,7 @@ import { PokemonFactory } from "./CreatePokemonHandler";
 export interface EncounterResult {
     biomeType: BiomeType;
     depth: number;
-    pokemon: PokemonDao | null
+    pokemon: PokemonDao | undefined
 }
 
 export interface EncounterHandlerMethods {
@@ -75,9 +75,11 @@ export const EncounterHandler = (pathResolver?: (path: string) => string): Encou
         const { depth, folderPath } = getfilePattern(filePath);
         console.log(`[Biome Detection] Path: ${folderPath} | Depth: ${depth}`);
         const folderHash = getHash(folderPath);
+        console.log(`[Biome Detection] Folder Hash: ${folderHash}`);
         
         // 取得所有可用的 Biome Key (排除 None)
         const availableBiomes = Object.keys(BIOME_GROUPS) as BiomeType[];
+        console.log(`[Biome Detection] Available Biomes: ${availableBiomes.join(", ")}`);
         
         // 根據 Hash 決定 Index
         var index = folderHash % availableBiomes.length;
@@ -131,7 +133,7 @@ export const EncounterHandler = (pathResolver?: (path: string) => string): Encou
         if(encounterResult === null){
             return {
                 biomeType: biomeType,
-                pokemon: null,
+                pokemon: undefined,
                 depth: depth
             };
         }

@@ -1,4 +1,3 @@
-import { GameState } from './GameState';
 import { ItemDao } from './item';
 import { PokemonDao } from './pokemon';
 import { PokeDexEntry, PokeDexEntryStatus } from './PokeDex';

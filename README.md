@@ -75,8 +75,7 @@ This project is for educational and personal use.
 - [x]: miss move
 - [x]: pokemon aliment
 - [x]: git commit logic
-- [ ]: i18n
-- [ ]: catch rate
-- [ ]: game page reload need to check last encounter 
-- [ ]: leval up restore hp
+- [x]: catch rate
+- [x]: game page reload need to check last encounter 
+- [x]: leval up restore hp
 

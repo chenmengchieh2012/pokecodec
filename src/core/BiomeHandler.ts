@@ -40,11 +40,10 @@ export class BiomeDataHandler {
         
         // 註冊事件監聽器
         context.subscriptions.push(
-            vscode.window.onDidChangeActiveTextEditor((editor) => {
+            vscode.window.onDidChangeActiveTextEditor(async (editor) => {
                 if (editor) {
                     const filePath = editor.document.fileName;
-                    BiomeDataHandler.instance.handleOnChangeBiome(filePath);
-                    BiomeDataHandler.instance._onDidChangeBiome.fire();
+                    await BiomeDataHandler.instance.handleOnChangeBiome(filePath);
                 }
             })
         );
@@ -52,14 +51,23 @@ export class BiomeDataHandler {
         return BiomeDataHandler.instance;
     }
 
+    public async checkActiveEditor() {
+        console.log("[BiomeDataHandler] Checking active editor for biome",vscode.window.activeTextEditor);
+        if (vscode.window.activeTextEditor) {
+            console.log("[BiomeDataHandler] Checking active editor for biome");
+            const filePath = vscode.window.activeTextEditor.document.fileName;
+            await this.handleOnChangeBiome(filePath);
+        }
+    }
+
 
     public getBiomeData(): BiomeData {
         return { ...this.biomeData }; // 回傳複製品以防外部修改
     }
 
-    public handleOnChangeBiome(filePath: string): BiomeData {
+    public async handleOnChangeBiome(filePath: string): Promise<BiomeData> {
         const biomeData = this.encounterHandler.getBiome(filePath);
-        this.performTransaction(() => {
+        await this.performTransaction(() => {
             const currentFilePath = filePath;
             return {biomeData: biomeData, currentFilePath: currentFilePath};
         });
@@ -80,8 +88,13 @@ export class BiomeDataHandler {
             const newData = modifier();
             // 4. 更新記憶體快取
             // console.log(`[BiomeDataManager] Biome changed to type ${newData.biomeData.biomeType}`);
+            const lastBiomeType = this.biomeData.biomeType;
             this.biomeData = newData.biomeData;
             this.currentFilePath = newData.currentFilePath;
+            
+            if (newData.biomeData.biomeType !== lastBiomeType) {
+                this._onDidChangeBiome.fire();
+            }
             // console.log(`[BiomeDataManager] setting finish ${this.biomeData.biomeType}`);
             
         });

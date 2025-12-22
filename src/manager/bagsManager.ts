@@ -127,7 +127,7 @@ export class BagManager {
                 if (currentQty >= count) {
                     currentItems[index].totalSize = currentQty - count;
                     
-                    if (currentItems[index].totalSize === 0) {
+                    if (currentItems[index].totalSize <= 0) {
                         currentItems.splice(index, 1);
                     }
                     success = true; // 標記成功

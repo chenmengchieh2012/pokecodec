@@ -38,14 +38,27 @@ export const DialogBox = forwardRef<DialogBoxHandle, unknown>((_ , ref) => {
         // 1. 清空文字 (如果需要的話，或者直接從空字串開始)
         setDisplayedText(""); 
         
-        // 2. 逐字顯示
-        for (let i = 1; i <= fullText.length; i++) {
-            if (!isMounted.current) return; // 防止卸載後更新
+        const startTime = Date.now();
+        const msPerChar = 30; // 設定每個字的顯示時間 (毫秒)，越小越快
 
-            setDisplayedText(fullText.slice(0, i));
+        while (true) {
+            if (!isMounted.current) return;
+
+            const now = Date.now();
+            const elapsed = now - startTime;
             
-            // 打字速度 (50ms)
-            await new Promise(r => setTimeout(r, 50));
+            // 根據經過時間計算應該顯示多少字
+            const charCount = Math.floor(elapsed / msPerChar) + 1;
+            
+            if (charCount >= fullText.length) {
+                setDisplayedText(fullText);
+                break;
+            }
+
+            setDisplayedText(fullText.slice(0, charCount));
+            
+            // 使用 requestAnimationFrame 讓動畫更流暢，並避免 setTimeout 的延遲累積
+            await new Promise(r => requestAnimationFrame(r));
         }
 
         // 3. (選擇性) 打完字後，給予一點「閱讀時間」再結束這個 Task

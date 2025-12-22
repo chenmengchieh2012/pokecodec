@@ -2,12 +2,19 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { EncounterResult } from "../../../src/core/EncounterHandler";
 import { PokeBallDao } from "../../../src/dataAccessObj/pokeBall";
 import { PokemonMove } from "../../../src/dataAccessObj/pokeMove";
-import { getEmptyPokemonStats, initialPokemonState, PokemonAilment, PokemonDao, PokemonState, PokemonStateAction, PokemonStats } from "../../../src/dataAccessObj/pokemon";
+import { getEmptyPokemonStats, initialPokemonState, PokemonAilment, PokemonDao, PokemonState, PokemonStateAction, PokemonStats, RawPokemonData } from "../../../src/dataAccessObj/pokemon";
 import { BattleControlHandle } from "../frame/BattleControl";
 
 import { MoveEffectResult, MoveEffectCalculator, BattlePokemonState } from "../../../src/utils/MoveEffectCalculator";
 import { ExperienceCalculator } from "../utilities/ExperienceCalculator";
 import { CapitalizeFirstLetter } from "../utilities/util";
+import { CatchCalculator } from "../utilities/CatchCalculator";
+
+import pokemonGen1Data from '../../../src/data/pokemonGen1.json';
+
+const pokemonDataMap = pokemonGen1Data as unknown as Record<string, RawPokemonData>;
+
+
 
 export interface PokemonStateHandler {
     getBuffs: () => PokemonStats;
@@ -77,10 +84,25 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
         await sleep(500);
         await dialogRef.current?.setText("... ... ...");
         await sleep(500);
+        
+        // 計算捕獲率
+        const baseCatchRate = pokemonDataMap[currentPokemon.id]?.species.capture_rate || 45;
+        const catchRate = CatchCalculator.calculateCatchRate(baseCatchRate, currentPokemon.currentHp / currentPokemon.stats.hp, ballDao.catchRateModifier, currentPokemon.ailment || 'healthy');
+        
+        await dialogRef.current?.setText(`( catch rate: ${catchRate.toFixed(2)} )`);
 
-        const isSuccess = Math.random() > 0.4; // 60% 捕獲率
+
+        const isSuccess = Math.random() < catchRate; //
         if (isSuccess) {
-            setPokemonState(prev => ({ ...prev, action: PokemonStateAction.Caught }));
+            setPokemonState(prev => ({ ...prev, 
+                action: PokemonStateAction.Caught,
+            }));
+            setPokemon(prev=>{
+                if(!prev){
+                    return prev;
+                }
+                return { ...prev, caughtBall: ballDao.apiName  };
+            })
             await dialogRef.current?.setText(`All right! ${currentPokemon.name.toUpperCase()} was caught!`);
         } else {
             setPokemonState(prev => ({ ...prev, action: PokemonStateAction.Escaped }));

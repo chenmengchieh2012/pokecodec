@@ -560,7 +560,7 @@ export class CommandHandler {
 
     // ==================== Set Game State ====================
     public async handleSetGameStateData(payload: SetGameStateDataPayload): Promise<void> {
-        await this.gameStateManager.updateGameState( payload.gameStateData.state, payload.gameStateData.encounteredPokemon, payload.gameStateData.defendPokemon );
+        await this.gameStateManager.updateGameState( payload.gameStateData.state, payload.gameStateData.encounterResult, payload.gameStateData.defendPokemon );
         this.handlerContext.updateAllViews();
     }
 
@@ -614,7 +614,7 @@ export class CommandHandler {
         await this.gameStateManager.updateDefenderPokemon(payload.pokemon);
     }
 
-    // ==================== Get Biome Data ====================
+    // ==================== Get Achievements Data ====================
     public async handleGetAchievements(): Promise<void> {
         const achievements = this.achievementManager.getStatistics();
         this.handlerContext.postMessage({ type: MessageType.AchievementsData, data: achievements });
@@ -643,4 +643,21 @@ export class CommandHandler {
         await this.achievementManager.onItemAction(payload);
         this.handlerContext.updateAchievementsView();
     }
+
+    // ==================== Get Biome Data ====================
+    public async handleGetBiomeData(): Promise<void> {
+        const biomeData = this.biomeHandler.getBiomeData();
+        this.handlerContext.postMessage({
+            type: MessageType.BiomeData,
+            data: biomeData
+        });
+    }   
+
+    // ==================== Trigger Encounter ====================
+    public async handleTriggerEncounter() {
+        const encounterEvent = await this.biomeHandler.getEncountered();
+        this.handlerContext.postMessage({ type: MessageType.TriggerEncounter, data: encounterEvent });
+        
+    }
+
 }
