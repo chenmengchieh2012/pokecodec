@@ -6,3 +6,4 @@ webview-ui/public/sprites/*
 node_modules
 .vscode-test/
 *.vsix
+.DS_Store
