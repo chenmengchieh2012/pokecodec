@@ -110,13 +110,15 @@ export class UserDaoManager {
     }
 
 
-    public async updatePlaytimeAndMoney(time: number, amount: number): Promise<void> {
+    public async updatePlaytimeAndMoney(time: number, amount: number, onTrigger: boolean): Promise<void> {
         await this.performTransaction((data) => {
             data.playtime = time;
             data.money += amount;
             return data;
         });
-        this._onDidAddingPlayingTime.fire();
+        if(onTrigger){
+            this._onDidAddingPlayingTime.fire();
+        }
     }
 
     public async clear(): Promise<void> {

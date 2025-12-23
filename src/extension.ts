@@ -194,8 +194,14 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
 
         this.userDaoManager.onDidAddingPlayingTime(() => {
             this.commandHandler.handleGetUserInfo();
+
+            
+            if (this._viewType !== 'game') {
+                return;
+            }
+
             if(this.userDaoManager.getUserInfo().autoEncounter === true  &&
-               this.gameStateManager.getGameStateData()?.state === GameState.Searching &&
+               this.gameStateManager.getGameStateData().state === GameState.Searching &&
                this.partyManager.getAll().length > 0 &&
                 this.partyManager.getAll().some(p => p.currentHp > 0)) {
                 const randomEncounterChance = Math.random();

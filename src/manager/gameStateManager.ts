@@ -41,7 +41,7 @@ export class GameStateManager{
         }
     }
 
-    public getGameStateData(): GameStateData | undefined {
+    public getGameStateData(): GameStateData {
         console.log("GameState.getGameState:", this.gameStateData.state);
         console.log("GameState.getEncounterResult:", this.gameStateData.encounterResult);
         return this.gameStateData; // 回傳複製品以防外部修改

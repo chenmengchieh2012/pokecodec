@@ -41,7 +41,7 @@ export class SessionHandler {
 
         // Periodic save to ensure data isn't lost on crash
         this.intervalId = setInterval(() => {
-            this.savePlaytime();
+            this.savePlaytime({onTrigger:true});
         }, this.SAVE_INTERVAL);
     }
 
@@ -54,7 +54,7 @@ export class SessionHandler {
             // Window lost focus
             // Important: Calculate and save BEFORE setting isFocused to false
             // This ensures 'diff' is calculated correctly in savePlaytime
-            this.savePlaytime();
+            this.savePlaytime({onTrigger:false});
             this.isFocused = false;
         }
     }
@@ -67,7 +67,7 @@ export class SessionHandler {
         return this.accumulatedTime + currentSession;
     }
 
-    public savePlaytime() {
+    public savePlaytime(props: {onTrigger: boolean}) {
         let diff = 0;
         // Update accumulated time before saving if currently focused
         if (this.isFocused) {
@@ -84,7 +84,7 @@ export class SessionHandler {
                 // 但我們不能用 accumulatedTime (總時間) 來算，否則會重複給錢
                 // 應該只針對「這次新增的時間 (diff)」來給錢
                 const moneyEarned = (5 * diff) / (60 * 1000); 
-                this.userDaoManager.updatePlaytimeAndMoney(this.accumulatedTime, moneyEarned);
+                this.userDaoManager.updatePlaytimeAndMoney(this.accumulatedTime, moneyEarned, props.onTrigger);
             }
         }
     }

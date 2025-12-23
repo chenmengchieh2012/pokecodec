@@ -53,7 +53,6 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon}) => {
     const currentBiomeRef = useRef<BiomeData | undefined>(undefined);
 
     const [transitionStage, setTransitionStage] = useState<'idle' | 'fading-in' | 'fading-out'>('idle');
-    const [isAutoWalking, setIsAutoWalking] = useState(true);
     const [enableAutoEncounter, setEnableAutoEncounter] = useState(true);
     const [isEncountering, setIsEncountering] = useState(false);
 
@@ -137,8 +136,8 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon}) => {
 
     // 自動走動邏輯
     useEffect(() => {
-        if (!isAutoWalking || enableAutoEncounter) return; // 暫停時也不走動
-
+        console.log("[VSearchScene] Auto-walking enabled",enableAutoEncounter);
+        if ( !enableAutoEncounter ) return; // 暫停時也不走動
         const moveInterval = setInterval(() => {
             // 隨機決定是否移動 (70% 機率移動，30% 停在原地)
             if (Math.random() > 0.3) {
@@ -154,26 +153,9 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon}) => {
         }, 1000); // 每 1 秒嘗試移動一次
 
         return () => clearInterval(moveInterval);
-    }, [handleMove, isAutoWalking, enableAutoEncounter]);
+    }, [handleMove, enableAutoEncounter]);
 
-    // 保留鍵盤控制 (可選，若想完全自動可移除)
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
-                setIsAutoWalking(false);
-            }
-            switch(e.key) {
-                case "ArrowUp": handleMove(0, -1); break;
-                case "ArrowDown": handleMove(0, 1); break;
-                case "ArrowLeft": handleMove(-1, 0); break;
-                case "ArrowRight": handleMove(1, 0); break;
-                default: break;
-            }
-        };
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [handleMove]);
-
+    
     // 使用 PokeAPI 圖片
     const spriteUrl = resolveAssetUrl(`./sprites/pokemon/icon/${myPokemon?.id}.png`);
     const berryUrl = resolveAssetUrl("./sprites/items/oran-berry.png");
