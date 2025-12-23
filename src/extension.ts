@@ -132,6 +132,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
 
     private biomeHandler: BiomeDataHandler;
     private gitHandler: GitActivityHandler;
+    private sessionHandler: SessionHandler;
 
     private _context: vscode.ExtensionContext;
     private _extensionUri: vscode.Uri;
@@ -150,6 +151,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         this.achievementManager = AchievementManager.getInstance();
         this.biomeHandler = BiomeDataHandler.getInstance();
         this.gitHandler = GitActivityHandler.getInstance();
+        this.sessionHandler = SessionHandler.getInstance();
         this._extensionUri = extensionUri;
         this._viewType = viewType;
         this._context = _context;
@@ -225,6 +227,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         await this.gameStateManager.clear();
         await this.pokeDexManager.clear();
         await this.achievementManager.clear();
+        await this.sessionHandler.clear();
         const isProduction = this._context.extensionMode === vscode.ExtensionMode.Production;
         if (!isProduction) {
             

@@ -89,6 +89,12 @@ export class SessionHandler {
         }
     }
 
+    public clear() {
+        this.accumulatedTime = 0;
+        this.startTime = Date.now();
+        this.isFocused = vscode.window.state.focused;
+    }
+
     public dispose() {
         if (this.intervalId) {
             clearInterval(this.intervalId);
