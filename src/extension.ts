@@ -220,6 +220,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
     }
 
     public async resetStorage() {
+        this.sessionHandler.clear();
         await this.bagManager.clear();
         await this.userDaoManager.clear();
         await this.partyManager.clear();
@@ -227,7 +228,6 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         await this.gameStateManager.clear();
         await this.pokeDexManager.clear();
         await this.achievementManager.clear();
-        await this.sessionHandler.clear();
         const isProduction = this._context.extensionMode === vscode.ExtensionMode.Production;
         if (!isProduction) {
             

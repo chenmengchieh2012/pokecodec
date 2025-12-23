@@ -120,7 +120,8 @@ export class UserDaoManager {
     }
 
     public async clear(): Promise<void> {
-        this.context.globalState.update(this.STORAGE_KEY, { money: 50000, autoEncounter: true });
-        this.userDao = { money: 50000, autoEncounter: true };
+        await this.performTransaction(() => {
+            return { money: 50000, autoEncounter: true };
+        });
     }
 }
