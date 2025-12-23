@@ -210,11 +210,9 @@ export class GitActivityHandler {
         // 根據 linesChanged 決定給予道具的機率
         // 這裡我們簡單設定：每 50 行程式碼，有 10% 機率獲得一個小道具
 
-        // const chance = Math.min(0.5, (linesChanged / 50) * 0.1); // 最多 50% 機率
+        const chance = Math.min(0.2, (linesChanged / 50) * 0.1); // 最多 20% 機率
 
-
-        // MARK: test chance = 1.0;
-        const chance = 1.0;
+        let givenItem: ItemDao | null = null;
         if (Math.random() < chance) {
             // 隨機選擇一個道具給玩家
             const TMPrefix = "tm";
@@ -228,6 +226,7 @@ export class GitActivityHandler {
                 const num = (i + 1).toString().padStart(2, '0');
                 return `${HMPrefix}${num}`;
             })];
+
             
             const myBagItems = this.bagManager?.getAll() || [];
             const ownedTMSet = new Set(
@@ -253,14 +252,35 @@ export class GitActivityHandler {
             const givenItem = itemDataMap[selectedItemName];
             if(!givenItem){
                 console.warn(`[GitActivityHandler] Item data not found for ${selectedItemName}`);
-                return;
             }
+        }else{
+            const balls = ['poke_ball', 'great_ball', 'ultra_ball'];
+            const medicalItems = ['potion', 'super_potion', 'hyper_potion', 'full_restore', 'revive'];
 
+            // poke_ball * 3, great_ball *2, ultra_ball *1
+            // potion *3, super_potion *2, hyper_potion *1, full_restore *1, revive *1
+            const rarityWeightedList = [
+                ...balls.flatMap((ball, idx) => {
+                    if (ball === 'poke_ball') return [ball, ball, ball];
+                    if (ball === 'great_ball') return [ball, ball];
+                    return [ball];
+                }),
+                ...medicalItems.flatMap((item, idx) => {
+                    if (item === 'potion') return [item, item, item];
+                    if (item === 'super_potion') return [item, item];
+                    return [item];
+                })
+            ];
+            const randomIndex = Math.floor(Math.random() * rarityWeightedList.length);
+            const selectedBallName = rarityWeightedList[randomIndex];
+            givenItem = itemDataMap[selectedBallName];
+        }
+
+        if (givenItem){
             // 將道具加入玩家背包
             this.bagManager?.add(givenItem, 1);
             console.log(`[GitActivityHandler] Given item ${givenItem.name} to player for coding effort.`);
             vscode.window.showInformationMessage(`You received a ${givenItem.name} for your coding effort!`);
-
         }
     }
 
