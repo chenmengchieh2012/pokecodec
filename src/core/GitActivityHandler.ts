@@ -249,7 +249,7 @@ export class GitActivityHandler {
 
             const randomIndex = Math.floor(Math.random() * rarityWeightedList.length);
             const selectedItemName = rarityWeightedList[randomIndex];
-            const givenItem = itemDataMap[selectedItemName];
+            givenItem = itemDataMap[selectedItemName];
             if(!givenItem){
                 console.warn(`[GitActivityHandler] Item data not found for ${selectedItemName}`);
             }
