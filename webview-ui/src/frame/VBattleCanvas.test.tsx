@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, act, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { VBattleCanvas, BattleCanvasHandle } from './VBattleCanvas';
-import { PokemonDao, PokemonState, PokemonStateAction } from '../../../src/dataAccessObj/pokemon';
+import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
 import { BiomeType } from '../../../src/dataAccessObj/BiomeData';
 
 // Mock dependencies
@@ -69,9 +69,6 @@ describe('VBattleCanvas', () => {
         isShiny: false,
     } as unknown as PokemonDao;
 
-    const mockState: PokemonState = {
-        action: PokemonStateAction.None,
-    };
 
     beforeEach(() => {
         vi.useFakeTimers();
@@ -85,9 +82,7 @@ describe('VBattleCanvas', () => {
         render(
             <VBattleCanvas
                 myPokemon={mockMyPokemon}
-                myPokemonState={mockState}
                 opponentPokemon={mockOpponentPokemon}
-                opponentPokemonState={mockState}
             />
         );
 
@@ -107,9 +102,7 @@ describe('VBattleCanvas', () => {
         const { container } = render(
             <VBattleCanvas
                 myPokemon={mockMyPokemon}
-                myPokemonState={mockState}
                 opponentPokemon={shinyOpponent}
-                opponentPokemonState={mockState}
             />
         );
 
@@ -132,9 +125,7 @@ describe('VBattleCanvas', () => {
             <VBattleCanvas
                 ref={ref}
                 myPokemon={mockMyPokemon}
-                myPokemonState={mockState}
                 opponentPokemon={mockOpponentPokemon}
-                opponentPokemonState={mockState}
             />
         );
 
@@ -174,9 +165,7 @@ describe('VBattleCanvas', () => {
         render(
             <VBattleCanvas
                 myPokemon={mockMyPokemon}
-                myPokemonState={mockState}
                 opponentPokemon={mockOpponentPokemon}
-                opponentPokemonState={mockState}
             />
         );
 
