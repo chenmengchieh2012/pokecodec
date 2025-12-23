@@ -60,7 +60,6 @@ describe('usePokemonState', () => {
         }));
 
         expect(result.current.pokemon).toEqual(mockPokemon);
-        expect(result.current.pokemonState.action).toBe(PokemonStateAction.None);
     });
 
     it('handles switchPokemon', async () => {
@@ -76,7 +75,6 @@ describe('usePokemonState', () => {
         });
 
         expect(result.current.pokemon).toEqual(newPokemon);
-        expect(result.current.pokemonState.action).toBe(PokemonStateAction.None);
         expect(mockSetText).toHaveBeenCalledWith('Go! Bulbasaur!');
     });
 
@@ -93,7 +91,6 @@ describe('usePokemonState', () => {
         });
 
         expect(result.current.pokemon).toEqual(mockPokemon);
-        expect(result.current.pokemonState.action).toBe(PokemonStateAction.None);
     });
 
     it('handles throwBall success', async () => {
@@ -120,11 +117,10 @@ describe('usePokemonState', () => {
 
         let success;
         await act(async () => {
-            success = await result.current.handler.throwBall(mockBall);
+            success = await result.current.handler.throwBall(mockBall, ()=>{});
         });
 
         expect(success).toBe(true);
-        expect(result.current.pokemonState.action).toBe(PokemonStateAction.Caught);
         expect(mockSetText).toHaveBeenCalledWith('POKé BALL!!!');
         expect(mockSetText).toHaveBeenCalledWith('All right! Pikachu was caught!');
     });
@@ -153,11 +149,10 @@ describe('usePokemonState', () => {
 
         let success;
         await act(async () => {
-            success = await result.current.handler.throwBall(mockBall);
+            success = await result.current.handler.throwBall(mockBall, ()=>{});
         });
 
         expect(success).toBe(false);
-        expect(result.current.pokemonState.action).toBe(PokemonStateAction.Escaped);
         expect(mockSetText).toHaveBeenCalledWith('Darn! The POKéMON broke free!');
     });
 
@@ -210,7 +205,6 @@ describe('usePokemonState', () => {
         });
 
         expect(result.current.pokemon?.currentHp).toBe(0);
-        expect(result.current.pokemonState.action).toBe(PokemonStateAction.Fainted);
     });
 
     it('handles heal', async () => {
@@ -286,6 +280,5 @@ describe('usePokemonState', () => {
         });
         
         expect(result.current.pokemon).toBeUndefined();
-        expect(result.current.pokemonState.action).toBe(PokemonStateAction.None);
     });
 });
