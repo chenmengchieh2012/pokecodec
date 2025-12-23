@@ -190,6 +190,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                     const gen = getGenById(finishedOpponent.id)
                     if(gen != undefined) {
                         const isHaveBall = finishedOpponent.caughtBall !== undefined && finishedOpponent.caughtBall !== "";
+                        console.log("[BattleManager] Updating PokeDex for:", finishedOpponent.name, "Caught:", isHaveBall, finishedOpponent.caughtBall);
                         vscode.postMessage({
                             command: MessageType.UpdatePokeDex,
                             pokemonId: finishedOpponent.id,

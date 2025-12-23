@@ -243,7 +243,7 @@ export const PokemonFactory = {
 
             originalTrainer: 'Wild',
             caughtDate: Date.now(),
-            caughtBall: 'None',
+            caughtBall: '',
             level: level,
 
             pokemonMoves: myMoves, // 只選前四招

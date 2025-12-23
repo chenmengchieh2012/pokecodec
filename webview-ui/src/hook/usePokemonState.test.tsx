@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { usePokemonState } from './usePokemonState';
 import { PokemonStateAction, PokemonDao } from '../../../src/dataAccessObj/pokemon';
 import { EncounterResult } from '../../../src/core/EncounterHandler';
@@ -53,6 +53,10 @@ describe('usePokemonState', () => {
         vi.clearAllMocks();
     });
 
+    afterEach(() => {
+        vi.restoreAllMocks();
+    });
+
     it('initializes with default pokemon and state', () => {
         const { result } = renderHook(() => usePokemonState(mockDialogRef, {
             defaultPokemon: mockPokemon,
@@ -75,7 +79,7 @@ describe('usePokemonState', () => {
         });
 
         expect(result.current.pokemon).toEqual(newPokemon);
-        expect(mockSetText).toHaveBeenCalledWith('Go! Bulbasaur!');
+        expect(mockSetText).toHaveBeenCalledWith('Go! BULBASAUR!');
     });
 
     it('handles newEncounter', () => {
@@ -112,8 +116,8 @@ describe('usePokemonState', () => {
             isConsumable: true
         } as unknown as PokeBallDao;
 
-        // Mock Math.random to return > 0.4 (success)
-        vi.spyOn(Math, 'random').mockReturnValue(0.5);
+        // Mock Math.random to return small value (success)
+        vi.spyOn(Math, 'random').mockReturnValue(0.1);
 
         let success;
         await act(async () => {
@@ -122,7 +126,7 @@ describe('usePokemonState', () => {
 
         expect(success).toBe(true);
         expect(mockSetText).toHaveBeenCalledWith('POKé BALL!!!');
-        expect(mockSetText).toHaveBeenCalledWith('All right! Pikachu was caught!');
+        expect(mockSetText).toHaveBeenCalledWith('All right! PIKACHU was caught!');
     });
 
     it('handles throwBall failure', async () => {

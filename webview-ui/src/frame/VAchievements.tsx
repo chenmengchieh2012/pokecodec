@@ -33,11 +33,11 @@ const achievementDataMap: Record<string, Achievement> = achievementDataSource.re
 export const VAchievements = () => {
     const messageStore = useMessageStore();
     const [selectedId, setSelectedId] = useState<string | null>(null);
-    const selectedAchievement = useMemo(()=>{
-        const achv = selectedId ? achievementDataMap[selectedId] : null;
-        return achv
-    }, [selectedId]);
     const [achievements, setAchievements] = useState<Achievement[]>([]);
+    const selectedAchievement = useMemo(()=>{
+        const achv = selectedId ? achievements.find(a => a.id === selectedId) : null;
+        return achv
+    }, [selectedId, achievements]);
     const achievementContextRef = useRef<AchievementContext>({
         statistics: messageStore.getRefs().achievements || AchievementAnalyzer.getDefaultStatistics(),
         pokedex: messageStore.getRefs().pokeDex?.entries || [],

@@ -47,9 +47,12 @@ export class UserDaoManager {
         return { ...this.userDao }; // 回傳複製品以防外部修改
     }
 
-    public setStarter(starter: 'pikachu' | 'eevee'): void {
+    public async setStarter(starter: 'pikachu' | 'eevee'): Promise<void> {
         this.userDao.starter = starter;
-        this.context.globalState.update(this.STORAGE_KEY, this.userDao);
+        await this.performTransaction((data) => {
+            data.starter = starter;
+            return data;
+        });
     }
 
     /**

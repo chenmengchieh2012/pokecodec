@@ -55,7 +55,7 @@ describe('VHPBlock', () => {
     it('renders basic pokemon info correctly', () => {
         render(<VHPBlock pokemonData={mockPokemon} />);
         
-        expect(screen.getByText("Pikachu")).toBeDefined();
+        expect(screen.getByText("PIKACHU")).toBeDefined();
         expect(screen.getByText("Lv5")).toBeDefined();
         expect(screen.getByText("♂")).toBeDefined();
     });

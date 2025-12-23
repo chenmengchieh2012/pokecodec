@@ -65,7 +65,7 @@ describe('VBagBox', () => {
         vi.clearAllMocks();
     });
 
-    it('renders tabs and defaults to BALLS pocket', () => {
+    it('renders tabs and defaults to MEDICINE pocket', () => {
         render(<VBagBox />);
         
         const medicineTab = screen.getByText('MEDICINE');
@@ -74,12 +74,10 @@ describe('VBagBox', () => {
         expect(medicineTab).toBeDefined();
         expect(ballsTab).toBeDefined();
         
-        // Check active class (assuming CSS module works or we check class name)
-        // Since we can't easily check CSS module class names without setup, we check behavior.
-        // Default is 'balls', so Poke Ball should be visible, Potion should not.
+        // Default is 'medicine', so Potion should be visible, Poke Ball should not.
         
-        expect(screen.getByText('x10')).toBeDefined(); // Poke Ball count
-        expect(screen.queryByText('x5')).toBeNull(); // Potion count
+        expect(screen.getByText('x5')).toBeDefined(); // Potion count
+        expect(screen.queryByText('x10')).toBeNull(); // Poke Ball count
     });
 
     it('switches pockets when tabs are clicked', () => {
