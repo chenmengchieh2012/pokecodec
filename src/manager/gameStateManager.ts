@@ -48,7 +48,7 @@ export class GameStateManager{
     }
 
 
-    public async updateEncounteredPokemon(pokemon: PokemonDao | undefined): Promise<void> {
+    public async updateEncounteredPokemon(pokemon: PokemonDao): Promise<void> {
         await this.performTransaction((data) => {
             if (data.encounterResult) {
                 data.encounterResult.pokemon = pokemon;

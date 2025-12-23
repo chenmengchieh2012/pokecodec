@@ -11,7 +11,6 @@ import { UserDao } from '../../../src/dataAccessObj/userData';
 interface SearchSceneProps {
     myPokemon?: PokemonDao;
     biomeType?: number; // 新增：接收外部傳入的生態系 index (0-4)
-    isEncountering?: boolean;
 }
 
 // 0:地板, 1:樹, 2:草, 3:岩, 4:水, 5:花, 6:磚, 7:果樹, 8:球
@@ -41,7 +40,7 @@ const INITIAL_MAP = [
 const OBSTACLES = [1, 3, 4, 6]; 
 const EMOTES = ["♥", "♪", "!", "...", "?"];
 
-export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon, isEncountering = false }) => {
+export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon}) => {
     const messageStore = useMessageStore(); // 確保訂閱生效
     const defaultBiome = messageStore.getRefs().biome
     
@@ -56,6 +55,15 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon, isEncounte
     const [transitionStage, setTransitionStage] = useState<'idle' | 'fading-in' | 'fading-out'>('idle');
     const [isAutoWalking, setIsAutoWalking] = useState(true);
     const [enableAutoEncounter, setEnableAutoEncounter] = useState(true);
+    const [isEncountering, setIsEncountering] = useState(false);
+
+  
+    useMessageSubscription<void>(MessageType.TriggerEncounter, () => {
+        setIsEncountering(true);
+        setTimeout(() => {
+            setIsEncountering(false);
+        }, 1500);
+    });
 
 
     useMessageSubscription<UserDao>(MessageType.UserData, (message) => {
@@ -115,12 +123,15 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon, isEncounte
     }, []);
 
     const handlePokeInteract = () => {
+        if (isEncountering ) return;
+
+        // 顯示表情
         setEmote(EMOTES[Math.floor(Math.random() * EMOTES.length)]);
         setTimeout(() => setEmote(null), 1500);
 
         const randomChance = Math.random();
         if ( randomChance < 0.3) { // 30% 機率觸發遭遇
-            vscode.postMessage({ command: MessageType.TriggerEncounter });
+            vscode.postMessage({ command: MessageType.GoTriggerEncounter });
         }
     };
 
@@ -180,10 +191,6 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon, isEncounte
             default: return styles.tileGround;
         }
     };
-
-    // const testEncouter = () => {
-    //     vscode.postMessage({ command: MessageType.TriggerEncounter });
-    // }
 
     return (
         <div 

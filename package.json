@@ -10,7 +10,9 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "workspaceContains:.git/config"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [

@@ -212,7 +212,7 @@ export class GitActivityHandler {
 
         const chance = Math.min(0.2, (linesChanged / 50) * 0.1); // 最多 20% 機率
 
-        let givenItem: ItemDao | null = null;
+        let givenItem: ItemDao | undefined = undefined;
         if (Math.random() < chance) {
             // 隨機選擇一個道具給玩家
             const TMPrefix = "tm";
@@ -271,12 +271,14 @@ export class GitActivityHandler {
                     return [item];
                 })
             ];
-            const randomIndex = Math.floor(Math.random() * rarityWeightedList.length);
-            const selectedBallName = rarityWeightedList[randomIndex];
+            const flatList = rarityWeightedList.flat();
+            const randomIndex = Math.floor(Math.random() * flatList.length);
+            const selectedBallName = flatList[randomIndex];
             givenItem = itemDataMap[selectedBallName];
+            console.log(`[GitActivityHandler] Given common item ${givenItem.name} to player for coding effort.`);
         }
 
-        if (givenItem){
+        if (givenItem != undefined){
             // 將道具加入玩家背包
             this.bagManager?.add(givenItem, 1);
             console.log(`[GitActivityHandler] Given item ${givenItem.name} to player for coding effort.`);

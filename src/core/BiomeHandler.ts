@@ -74,7 +74,7 @@ export class BiomeDataHandler {
         return biomeData;
     }
 
-    public async getEncountered(): Promise<EncounterResult> {
+    public async getEncountered(): Promise<EncounterResult|undefined> {
         const playingTime = this.userDaoManager?.getUserInfo().playtime || 0;
         return await this.encounterHandler.calculateEncounter(this.currentFilePath, playingTime);
     }

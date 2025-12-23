@@ -7,11 +7,11 @@ import { PokemonFactory } from "./CreatePokemonHandler";
 export interface EncounterResult {
     biomeType: BiomeType;
     depth: number;
-    pokemon: PokemonDao | undefined
+    pokemon: PokemonDao
 }
 
 export interface EncounterHandlerMethods {
-    calculateEncounter: (filePath: string, playingTime:number) => Promise<EncounterResult>;
+    calculateEncounter: (filePath: string, playingTime:number) => Promise<EncounterResult|undefined>;
     getBiome: (filePath: string) => BiomeData;
 }
 
@@ -94,7 +94,7 @@ export const EncounterHandler = (pathResolver?: (path: string) => string): Encou
         };
     }
 
-    async function calculateEncounter(filePath: string,playingTime: number): Promise<EncounterResult> {
+    async function calculateEncounter(filePath: string,playingTime: number): Promise<EncounterResult|undefined> {
         // 1. 解析路徑與深度
         // 去除 workspace root 等前綴，確保路徑相對乾淨
         // 深度計算 (假設 src/index.ts 深度為 2)
@@ -131,11 +131,7 @@ export const EncounterHandler = (pathResolver?: (path: string) => string): Encou
         // 3. 進行加權抽取
         const encounterResult = pickWeightedPokemon(candidatePool,playingTime);
         if(encounterResult === null){
-            return {
-                biomeType: biomeType,
-                pokemon: undefined,
-                depth: depth
-            };
+            return undefined;
         }
 
 

@@ -186,19 +186,17 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
             case 'finish':{
                 console.log("[BattleManager] Battle Finished Event:", event.state);
                 const finishedOpponent = opponentPokemonRef.current;
-                if(finishedOpponent == undefined) {
-                    console.warn("No opponent Pokemon found on battle end.", event.state);
-                    return
-                }
-                const gen = getGenById(finishedOpponent.id)
-                if(gen != undefined) {
-                    const isHaveBall = finishedOpponent.caughtBall !== undefined && finishedOpponent.caughtBall !== "";
-                    vscode.postMessage({
-                        command: MessageType.UpdatePokeDex,
-                        pokemonId: finishedOpponent.id,
-                        status: isHaveBall ? PokeDexEntryStatus.Caught : PokeDexEntryStatus.Seen,
-                        gen: gen,
-                    })
+                if(finishedOpponent !== undefined) {
+                    const gen = getGenById(finishedOpponent.id)
+                    if(gen != undefined) {
+                        const isHaveBall = finishedOpponent.caughtBall !== undefined && finishedOpponent.caughtBall !== "";
+                        vscode.postMessage({
+                            command: MessageType.UpdatePokeDex,
+                            pokemonId: finishedOpponent.id,
+                            status: isHaveBall ? PokeDexEntryStatus.Caught : PokeDexEntryStatus.Seen,
+                            gen: gen,
+                        })
+                    }
                 }
 
                 const gameStateData: SetGameStateDataPayload = {   

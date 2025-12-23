@@ -172,7 +172,8 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             updateAllViews: () => PokemonViewProvider.providers.forEach(p => p.updateViews()),
             updateAchievementsView: () => {
                 this.commandHandler.handleGetAchievements();
-            }
+            },
+            isViewVisible: () => this._view?.visible ?? false
         };
         this.commandHandler.setHandlerContext(handlerContext);
         
@@ -197,7 +198,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                 this.partyManager.getAll().some(p => p.currentHp > 0)) {
                 const randomEncounterChance = Math.random();
                 if(randomEncounterChance < 0.2) { // 20% 機率觸發隨機遭遇
-                    this.commandHandler.handleTriggerEncounter();
+                    this.commandHandler.handleGoTriggerEncounter();
                 }
             }
         });
@@ -363,9 +364,9 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                 await this.commandHandler.handleSelectStarter(message as any);
             }
 
-            if (message.command === MessageType.TriggerEncounter) {
+            if (message.command === MessageType.GoTriggerEncounter) {
                 if (this.gameStateManager.getGameStateData()?.state === GameState.Searching) {
-                    await this.commandHandler.handleTriggerEncounter();
+                    await this.commandHandler.handleGoTriggerEncounter();
                 }
             }
 

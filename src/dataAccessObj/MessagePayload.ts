@@ -93,11 +93,11 @@ export interface SetGameStateDataPayload {
 }
 
 export interface UpdateEncounteredPokemonPayload {
-    pokemon: PokemonDao | undefined;
+    pokemon: PokemonDao;
 }
 
 export interface UpdateDefenderPokemonPayload {
-    pokemon: PokemonDao | undefined;
+    pokemon: PokemonDao;
 }
 
 export interface EvolvePokemonPayload {
@@ -111,6 +111,7 @@ export interface HandlerContext {
     postMessage: (message: unknown) => void;
     updateAllViews: () => void;
     updateAchievementsView: () => void;
+    isViewVisible?: () => boolean;
 }
 
 export interface SetAutoEncounterPayload {

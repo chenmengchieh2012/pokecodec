@@ -40,6 +40,7 @@ import moveData from '../data/pokemonMoves.json';
 import { RawPokemonData } from '../dataAccessObj/pokemon';
 import { pokemonMoveInit } from '../dataAccessObj/pokeMove';
 import { ExperienceCalculator } from '../utils/ExperienceCalculator';
+import { GameState } from '../dataAccessObj/GameState';
 
 const pokemonDataMap = pokemonGen1Data as unknown as Record<string, RawPokemonData>;
 const pokemonMoveDataMap = moveData as unknown as Record<string, any>;
@@ -654,10 +655,44 @@ export class CommandHandler {
     }   
 
     // ==================== Trigger Encounter ====================
-    public async handleTriggerEncounter() {
+    public async handleGoTriggerEncounter() {
         const encounterEvent = await this.biomeHandler.getEncountered();
-        this.handlerContext.postMessage({ type: MessageType.TriggerEncounter, data: encounterEvent });
-        
+        if (!encounterEvent) {
+            console.log('[Extension] No encounter event generated.');
+            return;
+        }
+        // Notify User if a Pokemon is encountered AND the view is NOT visible
+        const isVisible = this.handlerContext.isViewVisible ? this.handlerContext.isViewVisible() : false;
+        if (isVisible) {
+            // If view is visible, do not notify
+            // Send Encounter Event Directly
+            this.handlerContext.postMessage({ type: MessageType.TriggerEncounter});
+            
+            // Wait for animation (1.5s)
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            // Update GameState on backend
+            const myFirstPartyPokemon = this.partyManager.getAll().filter(p => p.currentHp > 0);
+            if (myFirstPartyPokemon.length > 0) {
+                await this.gameStateManager.updateGameState(GameState.WildAppear, encounterEvent, myFirstPartyPokemon[0]);
+                this.handleGetGameStateData();
+            }
+            return;
+        }else {
+            console.log('[Extension] View not visible, will notify user on encounter.');
+            const myFirstPartyPokemon = this.partyManager.getAll().filter(p => p.currentHp > 0);
+            if (myFirstPartyPokemon.length >= 0) {
+                console.log('[Extension] Healthy Pokemon found in party, proceeding with encounter.');
+                await this.gameStateManager.updateGameState(GameState.WildAppear, encounterEvent, myFirstPartyPokemon[0]);
+                const selection = await vscode.window.showInformationMessage(
+                    `A wild ${encounterEvent.pokemon.name} appeared!`,
+                    'Open Game'
+                );
+                if (selection === 'Open Game') {
+                    vscode.commands.executeCommand('pokemonReact.focus');
+                }
+            }
+        }
     }
 
 }

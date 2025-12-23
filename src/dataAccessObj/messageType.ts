@@ -12,6 +12,7 @@ export const MessageType = {
     GameStateData: 'gameStateData',
     EncounteredPokemon: 'encounteredPokemon',
     AchievementsData: 'achievementsData',
+    TriggerEncounter: 'triggerEncounter',
     
     // Request types (from webview to extension)
     GetUserInfo: 'getUserInfo',
@@ -43,7 +44,7 @@ export const MessageType = {
     DeletePokemon: 'deletePokemon',
     BatchMoveToBox: 'batchMoveToBox',
     Catch: 'catch',
-    TriggerEncounter: 'triggerEncounter',
+    GoTriggerEncounter: 'goTriggerEncounter',
     EvolvePokemon: 'evolvePokemon',
     ResetStorage: 'resetStorage',
     Error: 'error',
