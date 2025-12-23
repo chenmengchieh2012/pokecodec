@@ -23,7 +23,6 @@ const formatPlaytime = (ms: number) => {
 export const VUserInfo = () => {
     const messageStore = useMessageStore();
     const defaultUser = messageStore.getRefs().userInfo;
-    const pokeDex = messageStore.getRefs().pokeDex;
     const [user, setUser] = useState<UserDao | undefined>(defaultUser);
 
     useMessageSubscription<UserDao>(MessageType.UserData, (message) => {
@@ -89,10 +88,6 @@ export const VUserInfo = () => {
                         <div className={styles.row}>
                             <span className={styles.label}>MONEY</span>
                             <span className={styles.value}>${user.money.toFixed(2)}</span>
-                        </div>
-                        <div className={styles.row}>
-                            <span className={styles.label}>POKEDEX</span>
-                            <span className={styles.value}>{pokeDex ? Object.keys(pokeDex).length : 0}</span>
                         </div>
                         <div className={styles.row}>
                             <span className={styles.label}>TIME</span>

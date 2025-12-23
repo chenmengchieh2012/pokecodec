@@ -39,7 +39,7 @@ export const DialogBox = forwardRef<DialogBoxHandle, unknown>((_ , ref) => {
         setDisplayedText(""); 
         
         const startTime = Date.now();
-        const msPerChar = 30; // 設定每個字的顯示時間 (毫秒)，越小越快
+        const msPerChar = 40; // 設定每個字的顯示時間 (毫秒)，越小越快
 
         while (true) {
             if (!isMounted.current) return;
@@ -63,7 +63,7 @@ export const DialogBox = forwardRef<DialogBoxHandle, unknown>((_ , ref) => {
 
         // 3. (選擇性) 打完字後，給予一點「閱讀時間」再結束這個 Task
         // 這樣下一段文字才不會瞬間接上來
-        await new Promise(r => setTimeout(r, 50));
+        await new Promise(r => setTimeout(r, 80));
     };
 
     useImperativeHandle(ref, () => ({

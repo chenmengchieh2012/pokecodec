@@ -22,11 +22,9 @@ export const VBattlePage = () => {
         battleCanvasRef: battleCanvasRef
     })
     const gameState = battleManagerState.gameState
-    const myPokemonState = battleManagerState.myPokemonState
     const myPokemon = battleManagerState.myPokemon
     const myParty = battleManagerState.myParty
     const opponentPokemon = battleManagerState.opponentPokemon
-    const opponentPokemonState = battleManagerState.opponentPokemonState
     const mutex = battleManagerState.mutex
     
     const [isEncountering, setIsEncountering] = useState(false);
@@ -77,9 +75,7 @@ export const VBattlePage = () => {
             <VBattleCanvas  
                 ref={battleCanvasRef}
                 myPokemon={myPokemon} 
-                myPokemonState={myPokemonState}
                 opponentPokemon={opponentPokemon}
-                opponentPokemonState={opponentPokemonState}
             />
             <BattleControl
                 myPokemon={myPokemon}

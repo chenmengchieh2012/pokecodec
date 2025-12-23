@@ -80,15 +80,16 @@ export interface CodingStats {
     coffeeConsumed: number;
 }
 
+
 export interface PokemonState {
     action: PokemonStateAction;
+    caughtBallApiName?: string;
 }
 
 export const PokemonStateAction = {
     None: 'None',
     Catching: 'Catching',
     Caught: 'Caught',
-    Fainted: 'Fainted',
     Escaped: 'Escaped'
 } as const
 

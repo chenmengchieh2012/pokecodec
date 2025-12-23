@@ -78,4 +78,5 @@ This project is for educational and personal use.
 - [x]: catch rate
 - [x]: game page reload need to check last encounter 
 - [x]: leval up restore hp
+- [ ]: pokemonState remove
 

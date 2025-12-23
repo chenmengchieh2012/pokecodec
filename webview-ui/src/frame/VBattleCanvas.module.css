@@ -401,3 +401,139 @@
 .anim-shiny .shiny-sparkle:nth-child(3) { bottom: 30%; left: -10%; animation: sparkle 0.6s ease-out 0.4s forwards; }
 .anim-shiny .shiny-sparkle:nth-child(4) { bottom: 20%; right: -10%; animation: sparkle 0.6s ease-out 0.1s forwards; }
 .anim-shiny .shiny-sparkle:nth-child(5) { top: 50%; left: 50%; animation: sparkle 0.8s ease-out 0.3s forwards; }
+
+/* --- Catching Animation --- */
+
+/* 1. 丟球拋物線動畫 */
+@keyframes throwBallArc {
+  0% { 
+    transform: translate(-200px, 100px) scale(0.5) rotate(0deg); 
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  50% { 
+    transform: translate(-50px, -150px) scale(0.8) rotate(360deg); 
+  }
+  100% { 
+    transform: translate(0, 0) scale(1) rotate(720deg); 
+    opacity: 1;
+  }
+}
+
+/* 2. 寶可夢被吸入球中 (變小 + 變紅) */
+@keyframes suckIn {
+  0% { 
+    transform: scale(1); 
+    filter: brightness(1) sepia(0) saturate(1) hue-rotate(0deg);
+    opacity: 1;
+  }
+  100% { 
+    transform: scale(0.1); 
+    filter: brightness(0.5) sepia(1) saturate(5) hue-rotate(-50deg); /* 紅光效果 */
+    opacity: 0;
+  }
+}
+
+/* 3. 球落地彈跳 */
+@keyframes ballBounce {
+  0% { transform: translateY(0); }
+  20% { transform: translateY(-40px); }
+  40% { transform: translateY(0); }
+  60% { transform: translateY(-20px); }
+  80% { transform: translateY(0); }
+  100% { transform: translateY(0); }
+}
+
+/* 4. 球搖晃 (更自然的物理感) */
+@keyframes ballShake {
+  0% { transform: rotate(0deg) translateX(0); }
+  20% { transform: rotate(-15deg) translateX(-2px); }
+  40% { transform: rotate(15deg) translateX(2px); }
+  60% { transform: rotate(-10deg) translateX(-1px); }
+  80% { transform: rotate(5deg) translateX(1px); }
+  100% { transform: rotate(0deg) translateX(0); }
+}
+
+/* 5. 捕捉成功 (閃光) */
+@keyframes catchSuccess {
+  0% { filter: brightness(1); }
+  50% { filter: brightness(2) drop-shadow(0 0 10px gold); }
+  100% { filter: brightness(1); }
+}
+
+/* 6. 捕捉失敗 (球炸開) */
+@keyframes ballBreak {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: 0.5; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+/* 7. 寶可夢重新出現 (從球裡出來) */
+@keyframes appearFromBall {
+  0% { 
+    transform: scale(0.1); 
+    filter: brightness(0.5) sepia(1) saturate(5) hue-rotate(-50deg);
+    opacity: 0;
+  }
+  100% { 
+    transform: scale(1); 
+    filter: brightness(1) sepia(0) saturate(1) hue-rotate(0deg);
+    opacity: 1;
+  }
+}
+
+.pokeball-sprite {
+  position: absolute;
+  bottom: 10%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  margin-left: -20px; /* Center */
+  z-index: 20;
+  display: none; /* Default hidden */
+}
+
+/* States */
+.state-throwing .pokeball-sprite {
+  display: block;
+  animation: throwBallArc 0.8s ease-out forwards;
+}
+
+.state-throwing .pokemon-sprite {
+  animation: suckIn 0.5s ease-in forwards;
+  animation-delay: 0.6s; /* 等球飛到 */
+}
+
+.state-bouncing .pokemon-sprite,
+.state-shaking .pokemon-sprite,
+.state-caught .pokemon-sprite {
+  opacity: 0;
+}
+
+.state-bouncing .pokeball-sprite {
+  display: block;
+  animation: ballBounce 1s ease-out forwards;
+}
+
+.state-shaking .pokeball-sprite {
+  display: block;
+  animation: ballShake 1s ease-in-out infinite;
+}
+
+.state-caught .pokeball-sprite {
+  display: block;
+  filter: grayscale(1); /* 變暗代表鎖定 */
+  animation: catchSuccess 0.5s ease-out forwards;
+}
+
+.state-escaped .pokeball-sprite {
+  display: block;
+  animation: ballBreak 0.3s ease-out forwards;
+}
+
+.state-escaped .pokemon-sprite {
+  opacity: 1 !important;
+  animation: appearFromBall 0.5s ease-out forwards; /* 重新出現 */
+}

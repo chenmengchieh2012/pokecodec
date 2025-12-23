@@ -102,11 +102,11 @@ export const PokemonFactory = {
         const baseLevel =  depth * 2;
 
         // 根據遊玩時間增加等級
-        const timeBasedMaxLevel = Math.min(100, Math.floor(playingTime / (24 * 60 * 60 * 1000)) + 5); // 每24小時增加一等級，最高100級
+        const timeBasedMaxLevel = Math.min(100, Math.floor(playingTime / (7 * 24 * 60 * 60 * 1000)) + 5); // 每7天增加一等級，最高100級
         const adjustedBaseLevel = Math.min(60, (baseLevel + timeBasedMaxLevel)); // 最高60級
 
         // Standard deviation of 3 gives some variety
-        const randomLevel = Math.round(gaussianRandom(adjustedBaseLevel, Math.max(3, baseLevel / 6)));
+        const randomLevel = Math.round(gaussianRandom(adjustedBaseLevel, Math.max(2, baseLevel / 6)));
         // Clamp between 1 and 100
         let level = Math.min(100, Math.max(1, randomLevel));
 

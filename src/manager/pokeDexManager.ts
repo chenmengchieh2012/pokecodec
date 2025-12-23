@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import GlobalStateKey from '../utils/GlobalStateKey';
 import { PokeDex__GEN1, PokeDexEntry, PokeDexEntryStatus } from '../dataAccessObj/PokeDex';
 import { SequentialExecutor } from '../utils/SequentialExecutor';
+import { GlobalMutex } from '../utils/GlobalMutex';
 
 
 const VaildGens: string[] = [ PokeDex__GEN1 ]
@@ -13,10 +14,11 @@ export class PokeDexManager {
     private currentGen: string = 'GEN 1';
     private readonly STORAGE_KEY_BASE = GlobalStateKey.POKEDEX_DATA_BASE;
     private readonly CURRENT_GEN_KEY = GlobalStateKey.POKEDEX_CURRENT_GEN;
-    private saveQueue = new SequentialExecutor();
+    private saveQueue: SequentialExecutor;
 
     private constructor(context: vscode.ExtensionContext) {
         this.context = context;
+        this.saveQueue = new SequentialExecutor(new GlobalMutex(context, 'pokedex.lock'));
         this.reload();
     }
 

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { EncounterResult } from "../../../src/core/EncounterHandler";
 import { PokeBallDao } from "../../../src/dataAccessObj/pokeBall";
 import { PokemonMove } from "../../../src/dataAccessObj/pokeMove";
-import { getEmptyPokemonStats, initialPokemonState, PokemonAilment, PokemonDao, PokemonState, PokemonStateAction, PokemonStats, RawPokemonData } from "../../../src/dataAccessObj/pokemon";
+import { getEmptyPokemonStats, PokemonAilment, PokemonDao, PokemonState, PokemonStateAction, PokemonStats, RawPokemonData } from "../../../src/dataAccessObj/pokemon";
 import { BattleControlHandle } from "../frame/BattleControl";
 
 import { MoveEffectResult, MoveEffectCalculator, BattlePokemonState } from "../../../src/utils/MoveEffectCalculator";
@@ -21,7 +21,7 @@ export interface PokemonStateHandler {
     getBattleState: () => BattlePokemonState;
     resetFlinch: () => void;
     newEncounter: (encounterResult: EncounterResult) => void;
-    throwBall: (ballDao: PokeBallDao) => Promise<boolean>;
+    throwBall: (ballDao: PokeBallDao,onAction: (action: PokemonStateAction) => void) => Promise<boolean>;
     hited: (pokemon: PokemonDao, attackerBuffs: BattlePokemonState, move: PokemonMove) => Promise<{newHp: number; moveEffectResult: MoveEffectResult;}>;
     randomMove: () => PokemonMove;
     useMoveEffect: (moveEffectResult: MoveEffectResult) => void;
@@ -43,7 +43,6 @@ export interface UsePokemonStateProps{
 
 export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|null>, props: UsePokemonStateProps) => {
     const [ pokemon, setPokemon ] = useState<PokemonDao | undefined>(props.defaultPokemon ? props.defaultPokemon : undefined);
-    const [ pokemonState, setPokemonState ] = useState<PokemonState>(props.defaultPokemonState ? props.defaultPokemonState : initialPokemonState())
     const battlePokemonStateRef = useRef<BattlePokemonState>({
         effectStats: getEmptyPokemonStats(),
         flinched: false,
@@ -63,11 +62,10 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
 
     const handleSwitchPokemon = useCallback(async (pokemon: PokemonDao) => {
         setPokemon(pokemon);
-        setPokemonState({action: PokemonStateAction.None});
         await dialogRef.current?.setText(`Go! ${pokemon.name.toUpperCase()}!`);
     }, [dialogRef]);
 
-    const handleThrowBall = useCallback(async (ballDao: PokeBallDao) => {
+    const handleThrowBall = useCallback(async (ballDao: PokeBallDao, onAction: (action: PokemonStateAction) => void) => {
         const currentPokemon = pokemonRef.current;
         if (!currentPokemon) {
             throw new Error("No pokemon available for random move selection.");
@@ -76,7 +74,7 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
     
         // Implement the logic for throwing a ball here
         console.log(`Throwing a ${ballDao.apiName} with catch rate modifier of ${ballDao.catchRateModifier}`);
-        setPokemonState(prev => ({ ...prev, action: PokemonStateAction.Catching }));
+        onAction(PokemonStateAction.Catching);
         await dialogRef.current?.setText(`POKé BALL!!!`);
         await dialogRef.current?.setText("...");
         await sleep(500);
@@ -94,9 +92,7 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
 
         const isSuccess = Math.random() < catchRate; //
         if (isSuccess) {
-            setPokemonState(prev => ({ ...prev, 
-                action: PokemonStateAction.Caught,
-            }));
+            onAction(PokemonStateAction.Caught);
             setPokemon(prev=>{
                 if(!prev){
                     return prev;
@@ -105,7 +101,7 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
             })
             await dialogRef.current?.setText(`All right! ${currentPokemon.name.toUpperCase()} was caught!`);
         } else {
-            setPokemonState(prev => ({ ...prev, action: PokemonStateAction.Escaped }));
+            onAction(PokemonStateAction.Escaped);
             await dialogRef.current?.setText(`Darn! The POKéMON broke free!`);
         }
         return isSuccess;
@@ -174,10 +170,7 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
                     ...prev,
                     currentHp: newHp
                 }
-            })
-            if (newHp === 0) {
-                setPokemonState(prev => ({ ...prev, action: PokemonStateAction.Fainted }));
-            }
+            });
         }
         return {newHp, moveEffectResult};
     }, [dialogRef]);
@@ -189,10 +182,6 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
         // 先設定新的寶可夢
         setPokemon(encounterResult.pokemon);
 
-        // 重置狀態
-        setPokemonState({
-            action: PokemonStateAction.None
-        });
     }, []);
 
     const handleRandomMove = useCallback(() => {
@@ -206,9 +195,6 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
 
     const handleResetPokemon = useCallback(() => {
         setPokemon(undefined);
-        setPokemonState({
-            action: PokemonStateAction.None
-        });
     }, []);
 
     const handleHeal = useCallback(async (amount: number) => {
@@ -424,7 +410,6 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
     }), [handleNewEncounter, handleThrowBall, handleHited, handleRandomMove, handleSwitchPokemon, handleResetPokemon, handleHeal, handleUpdateAilment, handleDecrementPP, handleRestorePP, handleIncreaseExperience, handleUseMoveEffect, handleGetBattleState, handleResetFlinch, handleOnRoundFinish]);
     return {
         pokemon,
-        pokemonState,
         handler: handler
     }
 }

@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import styles from './VShop.module.css';
-import { vscode } from '../utilities/vscode';
+import { vscode, resolveAssetUrl } from '../utilities/vscode';
 import { ItemUITag, ItemUiTagItemsMap, SHOP_ITEM_EVOLUTION_NAMES, SHOP_ITEM_FULL_MEDICINE_NAMES, SHOP_ITEMS_BALL_NAMES, SHOP_ITEMS_HP_MEDICINE_NAMES, SHOP_ITEMS_PP_MEDICINE_NAMES, SHOP_ITEMS_REVIVE_NAMES, SHOP_ITEMS_STATUS_MEDICINE_NAMES } from '../utilities/ItemName';
 import { useMessageSubscription, messageStore } from '../store/messageStore';
 import { UserDao } from '../../../src/dataAccessObj/userData';
@@ -197,7 +197,7 @@ export const VShop = () => {
                                     title={item.name}
                                 >
                                     {mode === 'sell' && <div className={styles.itemCount}>{item.totalSize}</div>}
-                                    <img src={item.spriteUrl} alt={item.name} className={styles.itemIcon} />
+                                    <img src={resolveAssetUrl(`./sprites/items/${item.apiName}.png`)} alt={item.name} className={styles.itemIcon} />
                                     <div className={styles.itemInfo}>
                                         <div className={styles.itemName}>{CapitalizeFirstLetter(item.name)}</div>
                                         <div className={styles.itemPrice}>
@@ -228,7 +228,7 @@ export const VShop = () => {
                                 <button className={styles.closeBtn} onClick={() => setIsDialogOpen(false)}>×</button>
                             </div>
                             <div className={styles.headerContent}>
-                                <img src={selectedItem.spriteUrl} alt={selectedItem.name} className={styles.dialogIcon} />
+                                <img src={resolveAssetUrl(`./sprites/items/${selectedItem.apiName}.png`)} alt={selectedItem.name} className={styles.dialogIcon} />
                                 <div className={styles.headerInfo}>
                                     <div className={styles.priceRow}>
                                         <span className={`${styles.dialogType} ${mode === 'buy' ? styles.typeBuy : styles.typeSell}`}>

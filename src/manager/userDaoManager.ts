@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { SequentialExecutor } from '../utils/SequentialExecutor'; 
 import { UserDao } from '../dataAccessObj/userData';
 import GlobalStateKey from '../utils/GlobalStateKey';
+import { GlobalMutex } from '../utils/GlobalMutex';
 
 export class UserDaoManager {
     private static instance: UserDaoManager;
@@ -15,10 +16,11 @@ export class UserDaoManager {
     private _onDidAddingPlayingTime = new vscode.EventEmitter<void>();
     public readonly onDidAddingPlayingTime = this._onDidAddingPlayingTime.event;
     
-    private saveQueue = new SequentialExecutor();
+    private saveQueue: SequentialExecutor;
 
     private constructor(context: vscode.ExtensionContext) {
         this.context = context;
+        this.saveQueue = new SequentialExecutor(new GlobalMutex(context, 'user.lock'));
         this.reload();
     }
 

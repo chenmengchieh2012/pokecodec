@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 import { SequentialExecutor } from '../utils/SequentialExecutor';
 import { ItemDao } from '../dataAccessObj/item';
 import GlobalStateKey from '../utils/GlobalStateKey';
+import { GlobalMutex } from '../utils/GlobalMutex';
 
 
 export class BagManager {
@@ -12,10 +13,11 @@ export class BagManager {
     private context: vscode.ExtensionContext;
     private readonly STORAGE_KEY = GlobalStateKey.BAG_DATA;
     
-    private saveQueue = new SequentialExecutor();
+    private saveQueue: SequentialExecutor;
 
     private constructor(context: vscode.ExtensionContext) {
         this.context = context;
+        this.saveQueue = new SequentialExecutor(new GlobalMutex(context, 'bag.lock'));
         this.reload(); // 初始化快取
     }
 

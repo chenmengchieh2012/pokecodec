@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { PokemonDao } from '../dataAccessObj/pokemon';
 import { SequentialExecutor } from '../utils/SequentialExecutor';
 import GlobalStateKey from '../utils/GlobalStateKey';
+import { GlobalMutex } from '../utils/GlobalMutex';
 
 export class JoinPokemonManager {
     private static instance: JoinPokemonManager;
@@ -11,10 +12,11 @@ export class JoinPokemonManager {
     private readonly STORAGE_KEY = GlobalStateKey.PARTY_DATA;
     private readonly MAX_PARTY_SIZE = 6;
 
-    private saveQueue = new SequentialExecutor();
+    private saveQueue: SequentialExecutor;
 
     private constructor(context: vscode.ExtensionContext) {
         this.context = context;
+        this.saveQueue = new SequentialExecutor(new GlobalMutex(context, 'party.lock'));
         this.reload();
     }
 

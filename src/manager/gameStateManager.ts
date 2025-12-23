@@ -5,6 +5,7 @@ import GlobalStateKey from '../utils/GlobalStateKey';
 import { PokemonDao } from '../dataAccessObj/pokemon';
 import { GameStateData } from '../dataAccessObj/gameStateData';
 import { EncounterResult } from '../core/EncounterHandler';
+import { GlobalMutex } from '../utils/GlobalMutex';
 
 export class GameStateManager{
     private static instance: GameStateManager;
@@ -13,10 +14,11 @@ export class GameStateManager{
     private context: vscode.ExtensionContext;
     private readonly STORAGE_KEY = GlobalStateKey.GAME_STATE;
     
-    private saveQueue = new SequentialExecutor();
+    private saveQueue: SequentialExecutor;
 
     private constructor(context: vscode.ExtensionContext) {
         this.context = context;
+        this.saveQueue = new SequentialExecutor(new GlobalMutex(context, 'gamestate.lock'));
         this.reload();
     }
 

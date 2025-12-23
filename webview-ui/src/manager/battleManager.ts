@@ -9,7 +9,7 @@ import { EncounterResult } from "../../../src/core/EncounterHandler";
 import { ItemDao } from "../../../src/dataAccessObj/item";
 import { MessageType } from "../../../src/dataAccessObj/messageType";
 import { PokeBallDao } from "../../../src/dataAccessObj/pokeBall";
-import { getGenById, PokemonDao, PokemonState } from "../../../src/dataAccessObj/pokemon";
+import { getGenById, PokemonDao, PokemonStateAction } from "../../../src/dataAccessObj/pokemon";
 import { PokemonMove } from "../../../src/dataAccessObj/pokeMove";
 import { BattleEvent, BattleEventType, GameState } from "../../../src/dataAccessObj/GameState";
 import { ExperienceCalculator } from "../utilities/ExperienceCalculator";
@@ -39,9 +39,7 @@ export interface BattleManagerProps {
 
 export interface BattleManagerState {
     myPokemon?: PokemonDao,
-    myPokemonState: PokemonState,
     opponentPokemon?: PokemonDao,
-    opponentPokemonState: PokemonState,
     myParty: PokemonDao[],
     gameState: GameState,
     mutex: boolean,
@@ -51,8 +49,8 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
     const [myParty, setParty] = React.useState<PokemonDao[]>([]);
     const [ mutex, setMutex ] = React.useState<boolean>(false);
 
-    const { pokemonState: myPokemonState, pokemon: myPokemon, handler: myPokemonHandler } = usePokemonState(dialogBoxRef, { defaultPokemon: undefined});
-    const { pokemonState: opponentPokemonState, pokemon: opponentPokemon, handler: opponentPokemonHandler } = usePokemonState(dialogBoxRef, { defaultPokemon: undefined });
+    const { pokemon: myPokemon, handler: myPokemonHandler } = usePokemonState(dialogBoxRef, { defaultPokemon: undefined});
+    const { pokemon: opponentPokemon, handler: opponentPokemonHandler } = usePokemonState(dialogBoxRef, { defaultPokemon: undefined });
     // const previousGameStateRef = useRef<GameState>(GameState.Searching);
     const [gameState, setGameState] = React.useState<GameState>(GameState.Searching);
 
@@ -119,21 +117,6 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                     await dialogBoxRef.current?.setText(`${myPokemonRef.current?.name.toUpperCase()} fainted!`);
                     battleCanvasRef.current?.handleMyPokemonFaint()
                 }
-
-                vscode.postMessage({
-                    command: MessageType.UpdatePartyPokemon,
-                    pokemon: myPokemonRef.current,
-                });
-
-                vscode.postMessage({
-                    command: MessageType.UpdateEncounteredPokemon,
-                    pokemon: opponentPokemonRef.current,
-                });
-
-                vscode.postMessage({
-                    command: MessageType.UpdateDefenderPokemon,
-                    pokemon: myPokemonRef.current,
-                });
                 break; 
             }
             case BattleEventType.MyPokemonFaint:
@@ -154,6 +137,11 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                     battleRecorderRef.onCatch()
                 }
                 battleBiomeRecorderRef.current = BiomeType.None;
+                const expGain = ExperienceCalculator.calculateExpGain(opponentPokemonRef.current!);
+                myPokemonHandler.increaseExp(expGain);
+
+                await dialogBoxRef.current?.setText(`${opponentPokemonRef.current?.name.toUpperCase()} fainted!`);
+                await dialogBoxRef.current?.setText(`Gained ${expGain} EXP!`);
                 break; 
             }
             case BattleEventType.WildPokemonFaint:
@@ -164,6 +152,12 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
             }
         }
         
+
+        vscode.postMessage({
+            command: MessageType.UpdatePartyPokemon,
+            pokemon: myPokemonRef.current,
+        });
+
         
         if (myPokemonRef.current && myPokemonRef.current.currentHp === 0) {
             const filterMyParty = myPartyRef.current.filter(p => p.uid !== myPokemonRef.current?.uid && p.currentHp > 0);
@@ -179,7 +173,15 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
 
         switch (event.state) {
             case 'ongoing':
-                // setGameState(GameState.Battle);
+                vscode.postMessage({
+                    command: MessageType.UpdateEncounteredPokemon,
+                    pokemon: opponentPokemonRef.current,
+                });
+
+                vscode.postMessage({
+                    command: MessageType.UpdateDefenderPokemon,
+                    pokemon: myPokemonRef.current,
+                });
                 break;
             case 'finish':{
                 console.log("[BattleManager] Battle Finished Event:", event.state);
@@ -437,7 +439,13 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
             });
 
             // 執行丟球邏輯
-            const caught = await opponentPokemonHandler.throwBall(ballDao);
+            const caught = await opponentPokemonHandler.throwBall(ballDao, (action: PokemonStateAction) => {
+                // Handle state changes if needed
+                battleCanvasRef.current?.handleThrowBallPhase({
+                    action: action,
+                    caughtBallApiName: ballDao.apiName,
+                });
+            });
 
             if (caught) {
                 // Wait for "Caught" animation
@@ -757,9 +765,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
     return [
         {
             myPokemon: myPokemon,
-            myPokemonState: myPokemonState,
             opponentPokemon: opponentPokemon,
-            opponentPokemonState: opponentPokemonState,
             myParty: myParty,
             gameState: gameState,
             mutex: mutex,

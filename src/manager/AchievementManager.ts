@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { AchievementAnalyzer, AchievementStatistics, RecordBattleActionPayload, RecordBattleCatchPayload, RecordBattleFinishedPayload, RecordItemActionPayload } from '../utils/AchievementCritiria';
 import GlobalStateKey from '../utils/GlobalStateKey';
 import { SequentialExecutor } from '../utils/SequentialExecutor';
+import { GlobalMutex } from '../utils/GlobalMutex';
 
 
 export class AchievementManager {
@@ -10,10 +11,11 @@ export class AchievementManager {
     // Map<GenID, PokeDexData>
     private achievementStatistics: AchievementStatistics = AchievementAnalyzer.getDefaultStatistics();
     private readonly STORAGE_KEY = GlobalStateKey.ACHIEVEMENT;
-    private saveQueue = new SequentialExecutor();
+    private saveQueue: SequentialExecutor;
 
     private constructor(context: vscode.ExtensionContext) {
         this.context = context;
+        this.saveQueue = new SequentialExecutor(new GlobalMutex(context, 'achievement.lock'));
         this.reload();
     }
 

@@ -2,6 +2,8 @@ import * as vscode from 'vscode';
 import { PokemonDao } from '../dataAccessObj/pokemon';
 import { SequentialExecutor } from '../utils/SequentialExecutor';
 import GlobalStateKey from '../utils/GlobalStateKey';
+import { GlobalMutex } from '../utils/GlobalMutex';
+
 export class PokemonBoxManager {
     private static instance: PokemonBoxManager;
 
@@ -15,10 +17,11 @@ export class PokemonBoxManager {
     private static readonly BOX_CAPACITY = 30;
     private static readonly MAX_BOXES = 30; // 假設最大箱子數量為 100
 
-    private saveQueue = new SequentialExecutor();
+    private saveQueue: SequentialExecutor;
 
     private constructor(context: vscode.ExtensionContext) {
         this.context = context;
+        this.saveQueue = new SequentialExecutor(new GlobalMutex(context, 'box.lock'));
         this.reload();
     }
 
@@ -105,23 +108,24 @@ export class PokemonBoxManager {
     */
     private async performBoxIncreaseTransaction(): Promise<void> {
         await this.saveQueue.execute(async () => {
-            // 1. Read (from memory or disk, but memory is sync)
-            // 為了確保一致性，我們信任記憶體中的 boxes 是最新的 (因為所有寫入都經過這裡)
-            // 但為了保險，也可以從 disk 讀。這裡我們直接用 memory，因為 reload 已經做過了。
+            // 1. Sync all boxes to ensure we know the true length
+            await this.reload();
+
+            // 2. Read (from memory or disk, but memory is sync)
             let currentList = this.boxes[this.boxes.length -1] || [];
             
-            // 2. 確認最後一個箱子是不是空的
+            // 3. 確認最後一個箱子是不是空的
             if (currentList.length !== 0 && this.boxes.length < PokemonBoxManager.MAX_BOXES) {
                 // 需要新增一個箱子
                 this.boxes.push([]);
                 currentList = [];
             }
 
-            // 3. Write to Disk
+            // 4. Write to Disk
             const newBoxIndex = this.boxes.length -1;
             await this.context.globalState.update(`${this.STORAGE_KEY}_${newBoxIndex}`, currentList);
 
-            // 4. Update Memory
+            // 5. Update Memory
             if (!this.boxes[newBoxIndex]) {
                 this.boxes[newBoxIndex] = [];
             }
@@ -136,16 +140,15 @@ export class PokemonBoxManager {
      */
     private async performBoxTransaction(boxIndex: number, modifier: (list: PokemonDao[]) => PokemonDao[]): Promise<void> {
         await this.saveQueue.execute(async () => {
-            // 1. Read (from memory or disk, but memory is sync)
-            // 為了確保一致性，我們信任記憶體中的 boxes 是最新的 (因為所有寫入都經過這裡)
-            // 但為了保險，也可以從 disk 讀。這裡我們直接用 memory，因為 reload 已經做過了。
-            let currentList = this.boxes[boxIndex] || [];
+            // 1. Read from disk
+            const key = `${this.STORAGE_KEY}_${boxIndex}`;
+            let currentList = this.context.globalState.get<PokemonDao[]>(key) || [];
             
             // 2. Modify
             const newList = modifier(currentList);
 
             // 3. Write to Disk
-            await this.context.globalState.update(`${this.STORAGE_KEY}_${boxIndex}`, newList);
+            await this.context.globalState.update(key, newList);
             await this.context.globalState.update(this.CURRENT_BOX_INDEX_KEY, boxIndex);
 
             // 4. Update Memory
@@ -175,6 +178,7 @@ export class PokemonBoxManager {
     }
 
     public async add(pokemon: PokemonDao): Promise<void> {
+        await this.reload();
         
         // 尋找第一個有空位的箱子
         let targetBoxIndex = -1;
@@ -194,6 +198,7 @@ export class PokemonBoxManager {
     }
 
     public async remove(uid: string): Promise<boolean> {
+        await this.reload();
         // 尋找寶可夢在哪個箱子
         let targetBoxIndex = -1;
         for (let i = 0; i < this.boxes.length; i++) {
@@ -218,6 +223,7 @@ export class PokemonBoxManager {
     // 假設前端傳來的 UIDs 都是同一個箱子的。
     public async reorder(uids: string[]): Promise<void> {
         if (uids.length === 0) return;
+        await this.reload();
 
         // 找出這些 UIDs 屬於哪個箱子 (假設都在同一個)
         const firstUid = uids[0];
@@ -251,6 +257,7 @@ export class PokemonBoxManager {
     }
 
     public async batchRemove(uids: string[]): Promise<void> {
+        await this.reload();
         // 這比較麻煩，可能跨箱。
         // 簡單作法：對每個 UID 呼叫 remove
         // 優化作法：先分組，再批次處理
@@ -284,7 +291,10 @@ export class PokemonBoxManager {
         }
 
         await this.saveQueue.execute(async () => {
-            // 1. Find and Remove from source boxes
+            // 1. Sync all boxes first
+            await this.reload();
+
+            // 2. Find and Remove from source boxes
             const movedPokemons: PokemonDao[] = [];
             const modifiedBoxIndices = new Set<number>();
             modifiedBoxIndices.add(targetBoxIndex);
@@ -301,10 +311,10 @@ export class PokemonBoxManager {
                 }
             }
 
-            // 2. Add to target box
+            // 3. Add to target box
             this.boxes[targetBoxIndex].push(...movedPokemons);
 
-            // 3. Persist all modified boxes
+            // 4. Persist all modified boxes
             for (const i of modifiedBoxIndices) {
                 await this.context.globalState.update(`${this.STORAGE_KEY}_${i}`, this.boxes[i]);
             }
