@@ -217,7 +217,7 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon}) => {
                                             {emote && !isEncountering && (
                                                 <div className={styles.emoteBubble} style={{ transform: direction === 'left' ? 'scaleX(-1)' : 'scaleX(1)' }}>{emote}</div>
                                             )}
-                                            { myPokemon?.id && <img src={spriteUrl} alt="Player" className={styles.spriteImg} /> }  
+                                            { myPokemon?.id && myPokemon?.ailment !== 'fainted' && <img src={spriteUrl} alt="Player" className={styles.spriteImg} /> }  
                                         </div>
                                     )}
                                 </div>

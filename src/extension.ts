@@ -1,50 +1,45 @@
 import * as vscode from 'vscode';
-import { PokemonBoxManager } from './manager/pokeBoxManager';
-import { PokeDexManager } from './manager/pokeDexManager';
-import { JoinPokemonManager } from './manager/joinPokemonManager';
-import { BagManager } from './manager/bagsManager';
-import { UserDaoManager } from './manager/userDaoManager';
-import { PokemonDao } from './dataAccessObj/pokemon';
-import { EncounterHandler } from './core/EncounterHandler';
-import { GameStateManager } from './manager/gameStateManager';
+import { BiomeDataHandler } from './core/BiomeHandler';
+import { PokemonFactory } from './core/CreatePokemonHandler';
+import { GitActivityHandler } from './core/GitActivityHandler';
+import { SessionHandler } from './core/SessionHandler';
+import itemData from './data/items.json';
+import { GameState } from './dataAccessObj/GameState';
+import { ItemDao } from './dataAccessObj/item';
 import { MessageType } from './dataAccessObj/messageType';
+import { PokemonDao } from './dataAccessObj/pokemon';
 import {
-    HandlerContext,
-    CommandHandler,
+    AddItemPayload,
+    AddToPartyPayload,
+    BatchMoveToBoxPayload,
     CatchPayload,
+    CommandHandler,
     DeletePokemonPayload,
+    EvolvePokemonPayload,
+    GetPokeDexPayload,
+    HandlerContext,
+    RemoveFromPartyPayload,
+    RemoveItemPayload,
     ReorderBoxPayload,
     ReorderPartyPayload,
-    BatchMoveToBoxPayload,
-    AddToPartyPayload,
-    RemoveFromPartyPayload,
-    UpdatePartyPokemonPayload,
-    UseItemPayload,
-    AddItemPayload,
-    RemoveItemPayload,
-    UpdateMoneyPayload,
-    SetGameStateDataPayload,
-    UseMedicineInBagPayload,
-    GetPokeDexPayload,
-    UpdatePokeDexPayload,
-    EvolvePokemonPayload,
     SetAutoEncounterPayload,
+    SetGameStateDataPayload,
+    UpdateDefenderPokemonPayload,
     UpdateEncounteredPokemonPayload,
-    UpdateDefenderPokemonPayload
+    UpdateMoneyPayload,
+    UpdatePartyPokemonPayload,
+    UpdatePokeDexPayload,
+    UseItemPayload,
+    UseMedicineInBagPayload
 } from './handler';
-import GlobalStateKey from './utils/GlobalStateKey';
-import { GameState } from './dataAccessObj/GameState';
-import { BiomeDataHandler } from './core/BiomeHandler';
-import { BiomeData } from './dataAccessObj/BiomeData';
-import { GitActivityHandler } from './core/GitActivityHandler';
-import { ExperienceCalculator } from './utils/ExperienceCalculator';
-import { randomUUID } from 'crypto';
-import { PokemonFactory } from './core/CreatePokemonHandler';
 import { AchievementManager } from './manager/AchievementManager';
-import { RecordBattleActionPayload, RecordItemActionPayload, RecordBattleCatchPayload, RecordBattleFinishedPayload } from './utils/AchievementCritiria';
-import itemData from './data/items.json';
-import { ItemDao } from './dataAccessObj/item';
-import { SessionHandler } from './core/SessionHandler';
+import { BagManager } from './manager/bagsManager';
+import { GameStateManager } from './manager/gameStateManager';
+import { JoinPokemonManager } from './manager/joinPokemonManager';
+import { PokemonBoxManager } from './manager/pokeBoxManager';
+import { PokeDexManager } from './manager/pokeDexManager';
+import { UserDaoManager } from './manager/userDaoManager';
+import { RecordBattleActionPayload, RecordBattleCatchPayload, RecordBattleFinishedPayload, RecordItemActionPayload } from './utils/AchievementCritiria';
 
 const itemDataMap = itemData as unknown as Record<string, ItemDao>;
 
@@ -68,29 +63,29 @@ export function activate(context: vscode.ExtensionContext) {
     const gameStateManager = GameStateManager.initialize(context);
     const achievementManager = AchievementManager.initialize(context);
 
-    if(gameStateManager.getGameStateData()?.state !== GameState.Searching){
+    if (gameStateManager.getGameStateData()?.state !== GameState.Searching) {
         gameStateManager.updateGameState(GameState.Searching);
     }
-    
+
     // Initialize Biome Data Handler
-    const biomeHandler = BiomeDataHandler.initialize(context,userDaoManager);
+    const biomeHandler = BiomeDataHandler.initialize(context, userDaoManager);
     context.subscriptions.push({ dispose: () => biomeHandler.dispose() });
-    
+
     // Initialize Session Handler
     const sessionHandler = SessionHandler.initialize(context);
     context.subscriptions.push({ dispose: () => sessionHandler.dispose() });
-    
+
     // Initialize Git Activity Handler
     const gitHandler = GitActivityHandler.getInstance();
     gitHandler.initialize();
     context.subscriptions.push({ dispose: () => gitHandler.dispose() });
 
-    const gameProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'game', context});
-    const backpackProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'backpack', context});
-    const computerProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'computer', context});
-    const shopProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'shop', context});
-    
-    
+    const gameProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'game', context });
+    const backpackProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'backpack', context });
+    const computerProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'computer', context });
+    const shopProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'shop', context });
+
+
     var BiomeIndex = -1;
 
     context.subscriptions.push(
@@ -98,7 +93,7 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.window.registerWebviewViewProvider('pokemonBackpack', backpackProvider),
         vscode.window.registerWebviewViewProvider('pokemonComputer', computerProvider),
         vscode.window.registerWebviewViewProvider('pokemonShop', shopProvider),
-        
+
     );
 
     // 🔥 新增指令：重置儲存
@@ -140,7 +135,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
 
     constructor(
         private readonly options: PokemonViewProviderOptions,
-    ) { 
+    ) {
         const { extensionUri, viewType, context: _context } = options;
         this.pokemonBoxManager = PokemonBoxManager.getInstance();
         this.partyManager = JoinPokemonManager.getInstance();
@@ -178,16 +173,20 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             isViewVisible: () => this._view?.visible ?? false
         };
         this.commandHandler.setHandlerContext(handlerContext);
-        
+
         // 使用新的事件監聽方式
         this.gitHandler.onDidProcessCommit(() => {
-            if(this.gameStateManager.getGameStateData()?.state === GameState.Searching){
+            // 只有當 View 可見時才更新，避免不必要的資源浪費
+            if (this._view?.visible && this.gameStateManager.getGameStateData()?.state === GameState.Searching) {
                 this.updateViews();
             }
         });
 
         this.biomeHandler.onDidChangeBiome(() => {
-            if(this.gameStateManager.getGameStateData()?.state === GameState.Searching ){
+            if (this._viewType !== 'game') {
+                return;
+            }
+            if (this.gameStateManager.getGameStateData()?.state === GameState.Searching) {
                 this.commandHandler.handleGetBiomeData();
             }
         });
@@ -195,17 +194,16 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         this.userDaoManager.onDidAddingPlayingTime(() => {
             this.commandHandler.handleGetUserInfo();
 
-            
             if (this._viewType !== 'game') {
                 return;
             }
 
-            if(this.userDaoManager.getUserInfo().autoEncounter === true  &&
-               this.gameStateManager.getGameStateData().state === GameState.Searching &&
-               this.partyManager.getAll().length > 0 &&
+            if (this.userDaoManager.getUserInfo().autoEncounter === true &&
+                this.gameStateManager.getGameStateData().state === GameState.Searching &&
+                this.partyManager.getAll().length > 0 &&
                 this.partyManager.getAll().some(p => p.currentHp > 0)) {
                 const randomEncounterChance = Math.random();
-                if(randomEncounterChance < 0.2) { // 20% 機率觸發隨機遭遇
+                if (randomEncounterChance < 0.2) { // 20% 機率觸發隨機遭遇
                     this.commandHandler.handleGoTriggerEncounter();
                 }
             }
@@ -236,7 +234,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         await this.achievementManager.clear();
         const isProduction = this._context.extensionMode === vscode.ExtensionMode.Production;
         if (!isProduction) {
-            
+
             // full two box starter to party
             for (let i = 0; i < PokemonBoxManager.getMaxBoxCapacity() * 2; i++) {
                 let debugPokemon = await PokemonFactory.createWildPokemonInstance({
@@ -246,7 +244,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                     type: [],
                     catchRate: 0,
                     minDepth: 0
-                },0,'test/file/path');
+                }, 0, 'test/file/path');
                 await this.pokemonBoxManager.add(debugPokemon);
             }
 
@@ -254,7 +252,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             const allTMItems = Object.values(itemDataMap).filter(item => item.apiName.startsWith('tm'));
             console.log('[ResetStorage] Adding all TM items:', allTMItems.map(i => i.apiName));
             allTMItems.map(async (tmItem) => {
-                await this.bagManager.add(tmItem,1);
+                await this.bagManager.add(tmItem, 1);
             });
         }
 
@@ -268,9 +266,16 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         _token: vscode.CancellationToken,
     ) {
         this._view = webviewView;
-        
+
         // 畫面開啟時，檢查當前編輯器的 Biome
         this.biomeHandler.checkActiveEditor();
+
+        // 當 View 變為可見時，立即更新資料
+        webviewView.onDidChangeVisibility(() => {
+            if (webviewView.visible) {
+                this.updateViews();
+            }
+        });
 
         // 設定 Webview 選項
         webviewView.webview.options = {
@@ -389,21 +394,21 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             }
 
             if (message.command === MessageType.RecordBattleAction) {
-                await this.commandHandler.handleRecordBattleAction(message as  RecordBattleActionPayload);
+                await this.commandHandler.handleRecordBattleAction(message as RecordBattleActionPayload);
             }
 
             if (message.command === MessageType.RecordItemAction) {
-                await this.commandHandler.handleRecordItemAction(message as  RecordItemActionPayload);
+                await this.commandHandler.handleRecordItemAction(message as RecordItemActionPayload);
             }
 
             if (message.command === MessageType.RecordBattleCatch) {
-                await this.commandHandler.handleRecordCatchInBattle(message as  RecordBattleCatchPayload);
+                await this.commandHandler.handleRecordCatchInBattle(message as RecordBattleCatchPayload);
             }
 
             if (message.command === MessageType.RecordBattleFinished) {
-                await this.commandHandler.handleRecordBattleFinished(message as  RecordBattleFinishedPayload);
+                await this.commandHandler.handleRecordBattleFinished(message as RecordBattleFinishedPayload);
             }
-            
+
 
         });
 

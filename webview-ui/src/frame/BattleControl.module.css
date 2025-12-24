@@ -230,6 +230,20 @@
   cursor: pointer;
 }
 
+/* Disabled state for menu buttons */
+.menu-btn-outer.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+  filter: grayscale(100%);
+}
+
+.menu-btn-outer.disabled .menu-btn-inner {
+  background-color: #e0e0e0;
+  color: #888;
+  border-color: #aaa;
+}
+
 /* 特別處理：Cancel 按鈕也可以用同樣架構，只是內層換個顏色 */
 .cancel-btn-outer {
   grid-column: 1 / -1; /* 從第 1 條線跨到最後一條線 (佔滿整寬) */

@@ -16,7 +16,7 @@ const pokemonDataMap = pokemonGen1Data as unknown as Record<string, RawPokemonDa
 
 const moveDataMap = pokemonMovesData as unknown as Record<string, PokemonMove>;
 
-const EXTENSION_TO_LANG_MAP: {[key: string]: string} = {
+const EXTENSION_TO_LANG_MAP: { [key: string]: string } = {
     '.ts': 'TypeScript',
     '.js': 'JavaScript',
     '.py': 'Python',
@@ -81,7 +81,7 @@ function determineCodingContext(filePath?: string) {
 function gaussianRandom(mean: number, stdev: number): number {
     const u = 1 - Math.random(); // Converting [0,1) to (0,1]
     const v = Math.random();
-    const z = Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
+    const z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
     return z * stdev + mean;
 }
 
@@ -93,13 +93,13 @@ export const PokemonFactory = {
 
         // Use local data instead of fetch
         const pokemonData = pokemonDataMap[String(finalPokemonId)];
-        
+
         if (!pokemonData) {
             throw new Error(`Pokemon data not found for ID: ${finalPokemonId}`);
         }
 
         // 根據深度調整等級 (Gaussian distribution)
-        const baseLevel =  depth * 2;
+        const baseLevel = depth * 2;
 
         // 根據遊玩時間增加等級
         const timeBasedMaxLevel = Math.min(100, Math.floor(playingTime / (7 * 24 * 60 * 60 * 1000)) + 5); // 每7天增加一等級，最高100級
@@ -110,10 +110,10 @@ export const PokemonFactory = {
         // Clamp between 1 and 100
         let level = Math.min(100, Math.max(1, randomLevel));
 
-        if(fixLevel){
+        if (fixLevel) {
             level = fixLevel;
         }
-        
+
         // Nature
         const natures = ['Hardy', 'Lonely', 'Brave', 'Adamant', 'Naughty', 'Bold', 'Docile', 'Relaxed', 'Impish', 'Lax', 'Timid', 'Hasty', 'Serious', 'Jolly', 'Naive', 'Modest', 'Mild', 'Quiet', 'Bashful', 'Rash', 'Calm', 'Gentle', 'Sassy', 'Careful', 'Quirky'];
         const nature = natures[Math.floor(Math.random() * natures.length)];
@@ -121,12 +121,12 @@ export const PokemonFactory = {
 
         // Ability
         const abilities = pokemonData.abilities;
-        const randomAbilityObj = abilities.length > 0 
+        const randomAbilityObj = abilities.length > 0
             ? abilities[Math.floor(Math.random() * abilities.length)]
             : { name: 'Unknown', isHidden: false };
-        
+
         const abilityName = randomAbilityObj.name;
-        
+
         const iv: PokemonStats = {
             hp: Math.floor(Math.random() * 32),
             attack: Math.floor(Math.random() * 32),
@@ -136,7 +136,7 @@ export const PokemonFactory = {
             speed: Math.floor(Math.random() * 32),
         };
 
-        const ev : PokemonStats = {
+        const ev: PokemonStats = {
             hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0
         };
 
@@ -148,11 +148,11 @@ export const PokemonFactory = {
             specialDefense: 0,
             speed: 0,
         };
-        
+
         // Basic IVs
         // Map local stats object to baseState
         const statMap: Record<string, number> = pokemonData.stats;
-        
+
         const baseStats: PokemonStats = {
             hp: statMap['hp'] || 0,
             attack: statMap['attack'] || 0,
@@ -165,7 +165,7 @@ export const PokemonFactory = {
         // Standard Stat Formula
         // HP = floor( ( (2 * Base + IV + EV/4) * Level ) / 100 ) + Level + 10
         // Other = floor( ( (2 * Base + IV + EV/4) * Level ) / 100 ) + 5
-        
+
         if (statMap['hp']) {
             baseState.hp = ExperienceCalculator.calculateHp(baseStats.hp, iv.hp, ev.hp, level);
         }
@@ -200,20 +200,20 @@ export const PokemonFactory = {
         const height = Math.round(gaussianRandom(pokemonData.height, 3)); // 以 dm 為單位
         const weight = Math.round(gaussianRandom(pokemonData.weight, 3)); // 以 hg 為單位
 
-        const isShiny = Math.random() < (1 / 4096);
+        const isShiny = Math.random() < (1 / 512);
 
         const { caughtRepo, favoriteLanguage } = determineCodingContext(filePath);
-        
+
         const ailment = 'healthy';
 
         // 隨機選四個技能
-        const moveIndicator = allMoves.length <=4 ? allMoves.length : 4;
+        const moveIndicator = allMoves.length <= 4 ? allMoves.length : 4;
         const ramdomFourMoveIndex = new Set<number>();
         while (ramdomFourMoveIndex.size < moveIndicator) {
             const randIndex = Math.floor(Math.random() * allMoves.length);
             ramdomFourMoveIndex.add(randIndex);
         }
-        
+
         const myMoves = Array.from(ramdomFourMoveIndex).map(index => pokemonMoveInit(allMoves[index]));
 
         // 建立寶可夢實例
@@ -221,7 +221,7 @@ export const PokemonFactory = {
             uid: randomUUID(),
             id: finalPokemonId,
             name: pokemonData.name,
-            currentHp: baseState.hp, 
+            currentHp: baseState.hp,
             maxHp: baseState.hp,
 
             stats: baseState,
@@ -248,7 +248,7 @@ export const PokemonFactory = {
 
             pokemonMoves: myMoves, // 只選前四招
             ailment: ailment,
-            
+
             codingStats: {
                 caughtRepo: caughtRepo,
                 favoriteLanguage: favoriteLanguage,
@@ -272,16 +272,16 @@ export const PokemonFactory = {
         }
 
         // Find level-up evolution
-        const levelUpEvo = pokemonData.evolutions.find(evo => 
-            evo.trigger === 'level-up' && 
-            evo.min_level !== null && 
+        const levelUpEvo = pokemonData.evolutions.find(evo =>
+            evo.trigger === 'level-up' &&
+            evo.min_level !== null &&
             pokemon.level >= evo.min_level
         );
 
         if (levelUpEvo) {
             return { canEvolve: true, newId: levelUpEvo.id };
         }
-        
+
         return { canEvolve: false };
     },
 
@@ -289,6 +289,10 @@ export const PokemonFactory = {
         const targetData = pokemonDataMap[String(targetId)];
         if (!targetData) {
             throw new Error(`Target Pokemon data not found for ID: ${targetId}`);
+        }
+
+        if (pokemon.ailment === 'fainted') {
+            throw new Error(`Cannot evolve a fainted Pokemon.`);
         }
 
         // Update Base Stats
@@ -312,23 +316,19 @@ export const PokemonFactory = {
             speed: ExperienceCalculator.calculateStat(baseStats.speed, pokemon.iv.speed, pokemon.ev.speed, pokemon.level),
         };
 
-        // Update HP (maintain damage)
-        const hpDiff = newStats.hp - pokemon.maxHp;
-        const newCurrentHp = Math.min(newStats.hp, Math.max(0, pokemon.currentHp + hpDiff));
-
         // Update Ability (Preserve Hidden Ability status if possible)
         const isHidden = pokemon.isHiddenAbility || false;
         let newAbilityObj = targetData.abilities.find(a => a.isHidden === isHidden);
-        
+
         // Fallback: If target doesn't have matching hidden/normal type, pick the first one
         if (!newAbilityObj) {
-             newAbilityObj = targetData.abilities.length > 0 ? targetData.abilities[0] : { name: 'Unknown', isHidden: false };
+            newAbilityObj = targetData.abilities.length > 0 ? targetData.abilities[0] : { name: 'Unknown', isHidden: false };
         }
-        
+
         const newAbilityName = newAbilityObj.name;
 
         // Update other fields
-        const newPokemon: PokemonDao = {
+        let newPokemon: PokemonDao = {
             ...pokemon,
             id: targetId,
             name: targetData.name,
@@ -336,13 +336,16 @@ export const PokemonFactory = {
             baseStats: baseStats,
             stats: newStats,
             maxHp: newStats.hp,
-            currentHp: newCurrentHp,
+            currentHp: newStats.hp,
             height: targetData.height,
             weight: targetData.weight,
             baseExp: targetData.base_experience,
             ability: newAbilityName,
+            ailment: 'healthy',
             isHiddenAbility: newAbilityObj.isHidden,
         };
+
+        newPokemon = ExperienceCalculator.moveInsert(newPokemon);
 
         return newPokemon;
     }

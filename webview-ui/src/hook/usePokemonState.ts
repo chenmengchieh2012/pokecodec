@@ -6,7 +6,7 @@ import { getEmptyPokemonStats, PokemonAilment, PokemonDao, PokemonState, Pokemon
 import { BattleControlHandle } from "../frame/BattleControl";
 
 import { MoveEffectResult, MoveEffectCalculator, BattlePokemonState } from "../../../src/utils/MoveEffectCalculator";
-import { ExperienceCalculator } from "../utilities/ExperienceCalculator";
+import { ExperienceCalculator } from "../../../src/utils/ExperienceCalculator";
 import { CapitalizeFirstLetter } from "../utilities/util";
 import { CatchCalculator } from "../utilities/CatchCalculator";
 
@@ -21,28 +21,28 @@ export interface PokemonStateHandler {
     getBattleState: () => BattlePokemonState;
     resetFlinch: () => void;
     newEncounter: (encounterResult: EncounterResult) => void;
-    throwBall: (ballDao: PokeBallDao,onAction: (action: PokemonStateAction) => void) => Promise<boolean>;
-    hited: (pokemon: PokemonDao, attackerBuffs: BattlePokemonState, move: PokemonMove) => Promise<{newHp: number; moveEffectResult: MoveEffectResult;}>;
+    throwBall: (ballDao: PokeBallDao, onAction: (action: PokemonStateAction) => void) => Promise<boolean>;
+    hited: (pokemon: PokemonDao, attackerBuffs: BattlePokemonState, move: PokemonMove) => Promise<{ newHp: number; moveEffectResult: MoveEffectResult; }>;
     randomMove: () => PokemonMove;
     useMoveEffect: (moveEffectResult: MoveEffectResult) => void;
     resetPokemon: () => void;
+    refreshPokemon: (newPokemon: PokemonDao) => void;
     switchPokemon: (pokemon: PokemonDao) => Promise<void>;
     heal: (amount: number) => Promise<void>;
     updateAilment: (ailment: PokemonAilment) => Promise<void>;
-    restorePp: (move: PokemonMove, amount: number) => Promise<void>;
     decrementPP: (move: PokemonMove) => void;
     increaseExp: (expGain: number) => void;
     onRoundFinish: () => Promise<void>;
 }
 
-export interface UsePokemonStateProps{
+export interface UsePokemonStateProps {
     defaultPokemonState?: PokemonState;
-    defaultPokemon: PokemonDao|undefined;
+    defaultPokemon: PokemonDao | undefined;
 }
 
 
-export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|null>, props: UsePokemonStateProps) => {
-    const [ pokemon, setPokemon ] = useState<PokemonDao | undefined>(props.defaultPokemon ? props.defaultPokemon : undefined);
+export const usePokemonState = (dialogRef: React.RefObject<BattleControlHandle | null>, props: UsePokemonStateProps) => {
+    const [pokemon, setPokemon] = useState<PokemonDao | undefined>(props.defaultPokemon ? props.defaultPokemon : undefined);
     const battlePokemonStateRef = useRef<BattlePokemonState>({
         effectStats: getEmptyPokemonStats(),
         flinched: false,
@@ -71,7 +71,7 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
             throw new Error("No pokemon available for random move selection.");
         }
         const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
-    
+
         // Implement the logic for throwing a ball here
         console.log(`Throwing a ${ballDao.apiName} with catch rate modifier of ${ballDao.catchRateModifier}`);
         onAction(PokemonStateAction.Catching);
@@ -82,22 +82,22 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
         await sleep(500);
         await dialogRef.current?.setText("... ... ...");
         await sleep(500);
-        
+
         // 計算捕獲率
         const baseCatchRate = pokemonDataMap[currentPokemon.id]?.species.capture_rate || 45;
         const catchRate = CatchCalculator.calculateCatchRate(baseCatchRate, currentPokemon.currentHp / currentPokemon.stats.hp, ballDao.catchRateModifier, currentPokemon.ailment || 'healthy');
-        
+
         await dialogRef.current?.setText(`( catch rate: ${catchRate.toFixed(2)} )`);
 
 
         const isSuccess = Math.random() < catchRate; //
         if (isSuccess) {
             onAction(PokemonStateAction.Caught);
-            setPokemon(prev=>{
-                if(!prev){
+            setPokemon(prev => {
+                if (!prev) {
                     return prev;
                 }
-                return { ...prev, caughtBall: ballDao.apiName  };
+                return { ...prev, caughtBall: ballDao.apiName };
             })
             await dialogRef.current?.setText(`All right! ${currentPokemon.name.toUpperCase()} was caught!`);
         } else {
@@ -124,12 +124,12 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
         if (!myPokemon) {
             throw new Error("No pokemon available for random move selection.");
         }
-        
+
         // 傷害計算公式 (引入攻防數值)
         const moveEffectResult = MoveEffectCalculator.calculateEffect(
             attacker, attackerBuffs, myPokemon, battlePokemonStateRef.current, move);
         const damage = moveEffectResult.damage;
-        
+
         // 更新畏縮狀態
         if (moveEffectResult.flinched) {
             battlePokemonStateRef.current = {
@@ -147,7 +147,7 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
             };
             await dialogRef.current?.setText(`${myPokemon.name} became confused!`);
         }
-        
+
 
         // 處理異常狀態 (Ailment)
         if (moveEffectResult.ailment && (!myPokemon.ailment || myPokemon.ailment === 'healthy')) {
@@ -162,8 +162,8 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
         let newHp = currentHp;
         if (damage > 0) {
             newHp = Math.max(0, currentHp - damage);
-            setPokemon(prev=>{
-                if(!prev){
+            setPokemon(prev => {
+                if (!prev) {
                     return prev;
                 }
                 return {
@@ -172,7 +172,7 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
                 }
             });
         }
-        return {newHp, moveEffectResult};
+        return { newHp, moveEffectResult };
     }, [dialogRef]);
 
     const handleNewEncounter = useCallback(async (encounterResult: EncounterResult) => {
@@ -223,20 +223,6 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
         setPokemon(prev => prev ? { ...prev, pokemonMoves: updatedMoves } : undefined);
     }, []);
 
-    const handleRestorePP = useCallback(async (move: PokemonMove, restoreAmount: number) => {
-        const currentPokemon = pokemonRef.current;
-        if (!currentPokemon) return;
-        // Find the move and restore its PP
-        const restoredMoves = currentPokemon.pokemonMoves.map(m => {
-            if (m.name === move.name) {
-                const newPp = Math.min(m.maxPP, m.pp + restoreAmount);
-                return { ...m, pp: newPp };
-            }
-            return m;
-        });
-
-        setPokemon(prev => prev ? { ...prev, pokemonMoves: restoredMoves } : undefined);
-    }, []);
 
     const handleUpdateAilment = useCallback(async (ailment: PokemonAilment) => {
         setPokemon(prev => {
@@ -296,7 +282,7 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
     }, []);
 
     const handleOnRoundFinish = useCallback(async () => {
-        if(!pokemonRef.current || pokemonRef.current.currentHp === 0){
+        if (!pokemonRef.current || pokemonRef.current.currentHp === 0) {
             setPokemon(prev => {
                 if (!prev) return prev;
                 return { ...prev, ailment: 'fainted', currentHp: 0 };
@@ -305,40 +291,40 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
         }
         const nextStatePokemon = pokemonRef.current;
         // 處理睡眠狀態
-        if(pokemonRef.current.ailment === 'sleep'){
+        if (pokemonRef.current.ailment === 'sleep') {
             const randomWake = Math.random();
-            if(randomWake < 0.33) {
+            if (randomWake < 0.33) {
                 nextStatePokemon.ailment = 'healthy';
                 await dialogRef.current?.setText(`${CapitalizeFirstLetter(pokemonRef.current.name)} woke up!`);
-            }else{
+            } else {
                 await dialogRef.current?.setText(`${CapitalizeFirstLetter(pokemonRef.current.name)} is still sleeping!`);
-                nextStatePokemon.currentHp = Math.min(nextStatePokemon.maxHp, nextStatePokemon.currentHp  + Math.floor(nextStatePokemon.maxHp / 8));
+                nextStatePokemon.currentHp = Math.min(nextStatePokemon.maxHp, nextStatePokemon.currentHp + Math.floor(nextStatePokemon.maxHp / 8));
             }
         }
 
         // 處理中毒狀態
-        if(pokemonRef.current.ailment === 'poison'){
+        if (pokemonRef.current.ailment === 'poison') {
             const poisonDamage = Math.floor(pokemonRef.current.maxHp / 8);
             nextStatePokemon.currentHp = Math.max(0, nextStatePokemon.currentHp - poisonDamage);
             await dialogRef.current?.setText(`${CapitalizeFirstLetter(pokemonRef.current.name)} is hurt by poison!`);
         }
 
         // 處理灼傷狀態
-        if(pokemonRef.current.ailment === 'burn'){
+        if (pokemonRef.current.ailment === 'burn') {
             const burnDamage = Math.floor(pokemonRef.current.maxHp / 16);
             nextStatePokemon.currentHp = Math.max(0, nextStatePokemon.currentHp - burnDamage);
             await dialogRef.current?.setText(`${CapitalizeFirstLetter(pokemonRef.current.name)} is hurt by its burn!`);
         }
 
         // 處理混亂狀態
-        if(battlePokemonStateRef.current.confused){
+        if (battlePokemonStateRef.current.confused) {
             const randomConfused = Math.random();
-            if(randomConfused < 0.5){
+            if (randomConfused < 0.5) {
                 // 自傷
                 const selfDamage = Math.floor(pokemonRef.current.maxHp / 8);
                 nextStatePokemon.currentHp = Math.max(0, nextStatePokemon.currentHp - selfDamage);
                 await dialogRef.current?.setText(`${CapitalizeFirstLetter(pokemonRef.current.name)} hurt itself in its confusion!`);
-            }else{
+            } else {
                 await dialogRef.current?.setText(`${CapitalizeFirstLetter(pokemonRef.current.name)} snapped out of its confusion!`);
                 battlePokemonStateRef.current = {
                     ...battlePokemonStateRef.current,
@@ -347,36 +333,36 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
             }
         }
 
-        if(pokemonRef.current.ailment === 'freeze'){
+        if (pokemonRef.current.ailment === 'freeze') {
             const randomThaw = Math.random();
-            if(randomThaw < 0.2) {
+            if (randomThaw < 0.2) {
                 nextStatePokemon.ailment = 'healthy';
                 await dialogRef.current?.setText(`${CapitalizeFirstLetter(pokemonRef.current.name)} thawed out!`);
-            }else{
+            } else {
                 await dialogRef.current?.setText(`${CapitalizeFirstLetter(pokemonRef.current.name)} is still frozen solid!`);
             }
         }
 
-        if(pokemonRef.current.ailment === 'paralysis'){
+        if (pokemonRef.current.ailment === 'paralysis') {
             const randomParalysis = Math.random();
-            if(randomParalysis < 0.25) {
+            if (randomParalysis < 0.25) {
                 await dialogRef.current?.setText(`${CapitalizeFirstLetter(pokemonRef.current.name)} is paralyzed! It can't move!`);
-            }else{
+            } else {
                 await dialogRef.current?.setText(`${CapitalizeFirstLetter(pokemonRef.current.name)} is not paralyzed anymore!`);
                 nextStatePokemon.ailment = 'healthy';
             }
         }
 
-        if(battlePokemonStateRef.current.flinched){
+        if (battlePokemonStateRef.current.flinched) {
             battlePokemonStateRef.current = {
                 ...battlePokemonStateRef.current,
                 flinched: false
             };
-        }   
-        
-        if(battlePokemonStateRef.current.confused){
+        }
+
+        if (battlePokemonStateRef.current.confused) {
             const recoverRand = Math.random();
-            if(recoverRand < 0.2) {
+            if (recoverRand < 0.2) {
                 await dialogRef.current?.setText(`${CapitalizeFirstLetter(pokemonRef.current.name)} snapped out of its confusion!`);
                 battlePokemonStateRef.current = {
                     ...battlePokemonStateRef.current,
@@ -390,6 +376,15 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
         });
     }, [dialogRef]);
 
+    const handleRefreshPokemon = useCallback((newPokemon: PokemonDao) => {
+        if (pokemonRef.current && pokemonRef.current.uid !== newPokemon.uid) {
+            return;
+        } else {
+            setPokemon({ ...newPokemon });
+            return;
+        }
+    }, []);
+
     const handler: PokemonStateHandler = useMemo(() => ({
         newEncounter: handleNewEncounter,
         throwBall: handleThrowBall,
@@ -400,14 +395,14 @@ export const usePokemonState = (dialogRef : React.RefObject<BattleControlHandle|
         heal: handleHeal,
         updateAilment: handleUpdateAilment,
         decrementPP: handleDecrementPP,
-        restorePp: handleRestorePP,
         increaseExp: handleIncreaseExperience,
         useMoveEffect: handleUseMoveEffect,
         getBuffs: () => battlePokemonStateRef.current.effectStats,
         getBattleState: handleGetBattleState,
         resetFlinch: handleResetFlinch,
-        onRoundFinish: handleOnRoundFinish
-    }), [handleNewEncounter, handleThrowBall, handleHited, handleRandomMove, handleSwitchPokemon, handleResetPokemon, handleHeal, handleUpdateAilment, handleDecrementPP, handleRestorePP, handleIncreaseExperience, handleUseMoveEffect, handleGetBattleState, handleResetFlinch, handleOnRoundFinish]);
+        onRoundFinish: handleOnRoundFinish,
+        refreshPokemon: handleRefreshPokemon
+    }), [handleNewEncounter, handleThrowBall, handleHited, handleRandomMove, handleSwitchPokemon, handleResetPokemon, handleHeal, handleUpdateAilment, handleDecrementPP, handleIncreaseExperience, handleUseMoveEffect, handleGetBattleState, handleResetFlinch, handleOnRoundFinish, handleRefreshPokemon]);
     return {
         pokemon,
         handler: handler

@@ -1,11 +1,9 @@
 import { exec } from 'child_process';
-import * as fs from 'fs';
-import * as path from 'path';
 import { promisify } from 'util';
 import * as vscode from 'vscode';
+import { BagManager } from '../manager/bagsManager';
 import { JoinPokemonManager } from '../manager/joinPokemonManager';
 import { ExperienceCalculator } from '../utils/ExperienceCalculator';
-import { BagManager } from '../manager/bagsManager';
 
 import itemData from '../data/items.json';
 import { ItemDao } from '../dataAccessObj/item';
@@ -20,14 +18,14 @@ export class GitActivityHandler {
     private watchers: vscode.FileSystemWatcher[] = [];
     private lastHeadHashes: Map<string, string> = new Map(); // workspaceFolder -> commitHash
     private partyManager: JoinPokemonManager | undefined;
-    private bagManager: BagManager| undefined;
-    private userDaoManager: UserDaoManager| undefined;
-    
+    private bagManager: BagManager | undefined;
+    private userDaoManager: UserDaoManager | undefined;
+
     // 使用 EventEmitter 來支援多個監聽者
     private _onDidProcessCommit = new vscode.EventEmitter<void>();
     public readonly onDidProcessCommit = this._onDidProcessCommit.event;
 
-    private constructor() {}
+    private constructor() { }
 
     public static getInstance(): GitActivityHandler {
         if (!GitActivityHandler.instance) {
@@ -55,6 +53,15 @@ export class GitActivityHandler {
         this.watchers = [];
     }
 
+    private async findGitRoot(folderPath: string): Promise<string | null> {
+        try {
+            const { stdout } = await execAsync('git rev-parse --show-toplevel', { cwd: folderPath });
+            return stdout.trim();
+        } catch (error) {
+            return null;
+        }
+    }
+
     private async setupWatchers() {
         // 清除舊的 watchers
         this.dispose();
@@ -64,28 +71,31 @@ export class GitActivityHandler {
             return;
         }
 
+        const watchedRoots = new Set<string>();
+
         for (const folder of folders) {
-            const gitPath = path.join(folder.uri.fsPath, '.git');
-            
-            // 檢查 .git 是否存在
-            if (!fs.existsSync(gitPath)) {
+            const gitRoot = await this.findGitRoot(folder.uri.fsPath);
+
+            // 如果找不到 git root，或者已經監聽過這個 repo，就跳過
+            if (!gitRoot || watchedRoots.has(gitRoot)) {
                 continue;
             }
+            watchedRoots.add(gitRoot);
 
             // 紀錄初始 HEAD Hash
-            await this.updateLastHeadHash(folder.uri.fsPath);
+            await this.updateLastHeadHash(gitRoot);
 
             // 建立 Watcher 監聽 .git/HEAD 和 .git/refs/heads/**
-            // 這樣無論是切換分支還是 Commit，通常都會觸發
+            // 使用 gitRoot 作為 base
             const watcher = vscode.workspace.createFileSystemWatcher(
-                new vscode.RelativePattern(folder, '.git/{HEAD,refs/heads/**}')
+                new vscode.RelativePattern(gitRoot, '.git/{HEAD,refs/heads/**}')
             );
 
-            watcher.onDidChange(() => this.handleGitChange(folder.uri.fsPath));
-            watcher.onDidCreate(() => this.handleGitChange(folder.uri.fsPath));
-            
+            watcher.onDidChange(() => this.handleGitChange(gitRoot));
+            watcher.onDidCreate(() => this.handleGitChange(gitRoot));
+
             this.watchers.push(watcher);
-            console.log(`[GitActivityHandler] Watching .git in ${folder.uri.fsPath}`);
+            console.log(`[GitActivityHandler] Watching .git in ${gitRoot}`);
         }
     }
 
@@ -112,7 +122,7 @@ export class GitActivityHandler {
             // 為了更精確，我們可以檢查 git log -1 的時間是否很近
 
             console.log(`[GitActivityHandler] Git change detected in ${folderPath}. ${oldHash} -> ${newHash}`);
-            
+
             await this.processCommit(folderPath, newHash);
         }
     }
@@ -123,28 +133,28 @@ export class GitActivityHandler {
             // --numstat 格式: insertions deletions filename
             // 這裡我們只取總結
             const { stdout } = await execAsync(`git show --stat --format="%H|%an|%s" ${commitHash}`, { cwd: folderPath });
-            
+
             // 解析輸出 (git show --stat 的輸出比較雜，這裡簡化處理)
             // 更好的方式是用 git log -1 --shortstat
             // 使用 LC_ALL=C 強制輸出英文，避免語系問題導致解析失敗
-            const { stdout: statOutput } = await execAsync(`git log -1 --shortstat --format="%H|%an|%s" ${commitHash}`, { 
+            const { stdout: statOutput } = await execAsync(`git log -1 --shortstat --format="%H|%an|%s" ${commitHash}`, {
                 cwd: folderPath,
                 env: { ...process.env, LC_ALL: 'C' }
             });
-            
+
             // Output format example:
             // <hash>|<author>|<subject>
             // 
             //  1 file changed, 1 insertion(+), 1 deletion(-)
-            
+
             // 過濾掉空行，確保我們拿到的是有內容的行
             const lines = statOutput.trim().split('\n').filter(line => line.trim().length > 0);
             if (lines.length < 2) return;
 
             const metaInfo = lines[0];
             // 統計資訊通常在最後一行
-            const statsLine = lines[lines.length - 1]; 
-            
+            const statsLine = lines[lines.length - 1];
+
             const [hash, author, message] = metaInfo.split('|');
 
             // 解析 statsLine
@@ -216,25 +226,25 @@ export class GitActivityHandler {
         if (Math.random() < chance) {
             // 隨機選擇一個道具給玩家
             const TMPrefix = "tm";
-            const allTMApiName = [ ...Array.from({length: 50}, (_, i) => {
+            const allTMApiName = [...Array.from({ length: 50 }, (_, i) => {
                 const num = (i + 1).toString().padStart(2, '0');
                 return `${TMPrefix}${num}`;
             })]; // 假設有 50 個 TM 道具
 
             const HMPrefix = "hm";
-            const allHMApiName = [ ...Array.from({length: 8}, (_, i) => {
+            const allHMApiName = [...Array.from({ length: 8 }, (_, i) => {
                 const num = (i + 1).toString().padStart(2, '0');
                 return `${HMPrefix}${num}`;
             })];
 
-            
+
             const myBagItems = this.bagManager?.getAll() || [];
             const ownedTMSet = new Set(
                 myBagItems
                     .filter(item => item.apiName.startsWith(TMPrefix))
                     .map(item => item.apiName)
             );
-            const availableMachines = [...allTMApiName,...allHMApiName].filter(tmName => !ownedTMSet.has(tmName));
+            const availableMachines = [...allTMApiName, ...allHMApiName].filter(tmName => !ownedTMSet.has(tmName));
 
             if (availableMachines.length === 0) {
                 console.log("[GitActivityHandler] Player already owns all TMs. No item given.");
@@ -250,10 +260,10 @@ export class GitActivityHandler {
             const randomIndex = Math.floor(Math.random() * rarityWeightedList.length);
             const selectedItemName = rarityWeightedList[randomIndex];
             givenItem = itemDataMap[selectedItemName];
-            if(!givenItem){
+            if (!givenItem) {
                 console.warn(`[GitActivityHandler] Item data not found for ${selectedItemName}`);
             }
-        }else{
+        } else {
             const balls = ['poke_ball', 'great_ball', 'ultra_ball'];
             const medicalItems = ['potion', 'super_potion', 'hyper_potion', 'full_restore', 'revive'];
 
@@ -278,7 +288,7 @@ export class GitActivityHandler {
             console.log(`[GitActivityHandler] Given common item ${givenItem.name} to player for coding effort.`);
         }
 
-        if (givenItem != undefined){
+        if (givenItem != undefined) {
             // 將道具加入玩家背包
             this.bagManager?.add(givenItem, 1);
             console.log(`[GitActivityHandler] Given item ${givenItem.name} to player for coding effort.`);
@@ -288,13 +298,13 @@ export class GitActivityHandler {
 
     private updatePokemonStats(repoPath: string, data: { linesChanged: number, isBugFix: boolean, commitHash: string }) {
         if (!this.partyManager) return;
-        
+
         const newParty = JSON.parse(JSON.stringify(this.partyManager.getAll()));
 
         if (newParty.length === 0) return;
 
         // 紀錄codingStats在PokemonDao中
-        for(let modifyPokemon of newParty) {
+        for (let modifyPokemon of newParty) {
 
 
             /**
@@ -328,7 +338,7 @@ export class GitActivityHandler {
             // 儲存更新
             this.partyManager.update(modifyPokemon);
             console.log(`[GitActivityHandler] Updated Pokemon ${modifyPokemon.name} stats!`, modifyPokemon.codingStats);
-       
+
         }
 
     }

@@ -15,7 +15,7 @@ import { EvolutionModal } from '../model/EvolutionModal';
 
 
 const itemDaoDataMap = itemDaoData as unknown as Record<string, ItemDao>;
-const pokemonDataMap = pokemonGen1Data as unknown as Record<string, RawPokemonData>;    
+const pokemonDataMap = pokemonGen1Data as unknown as Record<string, RawPokemonData>;
 
 
 export const VBagBox: React.FC = () => {
@@ -40,14 +40,14 @@ export const VBagBox: React.FC = () => {
         if (ItemUseModalRef.current) {
             if (item.pocket === 'medicine') {
                 ItemUseModalRef.current.setSelectedItem(item);
-            } else if(item.pocket === 'items') {
+            } else if (item.pocket === 'items') {
                 ItemUseModalRef.current.setSelectedItem(item);
             } else {
                 ItemUseModalRef.current.setSelectedItem(null); // 取消使用模式
             }
         }
     }
-    
+
 
     return (
         <EmeraldTabPanel
@@ -77,21 +77,21 @@ export const VBagBox: React.FC = () => {
             {/* 2. 道具網格 */}
             <div className={styles.bagGrid}>
                 {filteredItems.map(item => (
-                    <div 
-                        key={item.id} 
+                    <div
+                        key={item.id}
                         className={`${styles.bagSlot}`}
                         onClick={() => handleSlotClick(item)}
                     >
-                        <img 
-                            src={getBagIconUrl(item.apiName)} 
+                        <img
+                            src={getBagIconUrl(item.apiName)}
                             alt={item.name}
                             className={styles.bagItemIcon}
                             onError={(e) => { (e.target as HTMLImageElement).src = resolveAssetUrl('./sprites/items/potion.png'); }}
                         />
-                        {(ItemUITag.Machine !== activeTag) && 
+                        {(ItemUITag.Machine !== activeTag) &&
                             <div className={styles.bagItemCount}>x{item.totalSize}</div>
                         }
-                        {ItemUITag.Machine === activeTag && 
+                        {ItemUITag.Machine === activeTag &&
                             <div className={styles.bagItemCount} title={item.effect?.teachMove}>{item.name}</div>
                         }
                     </div>
@@ -99,7 +99,7 @@ export const VBagBox: React.FC = () => {
             </div>
 
             {/* 4. 道具使用彈窗 (Modal) */}
-            <ItemUseModal ref={ItemUseModalRef}/>
+            <ItemUseModal ref={ItemUseModalRef} />
         </EmeraldTabPanel>
     );
 };
@@ -113,7 +113,7 @@ interface ItemUseModalProps {
 }
 
 
-const UsedItemExtendType = { 
+const UsedItemExtendType = {
     None: "none",
     PP: "pp",
     HP: "hp",
@@ -140,17 +140,17 @@ const ItemUseModalFlow = {
 
 
 const ItemUseModal = React.forwardRef<ItemUserModalHandler, ItemUseModalProps>((_props, ref) => {
-    
+
     const messageStore = useMessageStore(); // 確保訂閱生效
     const defaultParty = messageStore.getRefs().party || [];
-    
-    const [ usedItemType, setUsedItemType] = useState<UsedItemExtendType>(UsedItemExtendType.None);
-    const [ modalShow, setModalShow ] = useState<ExtendModalType>(ExtendModalType.SelectPokemon);
-    
-    const [ selectedItem, setSelectedItem ] = useState<ItemDao | null>(null);
-    const [ selectedPokemon, setSelectedPokemon] = useState<PokemonDao | null>(null);
-    const [ disabledPartyUids, setDisabledPartyUids ] = useState<string[]>([]);
-    const [ party, setParty ] = useState<PokemonDao[]>(defaultParty);
+
+    const [usedItemType, setUsedItemType] = useState<UsedItemExtendType>(UsedItemExtendType.None);
+    const [modalShow, setModalShow] = useState<ExtendModalType>(ExtendModalType.SelectPokemon);
+
+    const [selectedItem, setSelectedItem] = useState<ItemDao | null>(null);
+    const [selectedPokemon, setSelectedPokemon] = useState<PokemonDao | null>(null);
+    const [disabledPartyUids, setDisabledPartyUids] = useState<string[]>([]);
+    const [party, setParty] = useState<PokemonDao[]>(defaultParty);
 
 
     // Removed useEffect that synchronously sets state when selectedItem changes
@@ -163,38 +163,38 @@ const ItemUseModal = React.forwardRef<ItemUserModalHandler, ItemUseModalProps>((
                 setModalShow(ExtendModalType.SelectPokemon);
                 setDisabledPartyUids([]);
                 return;
-            } else if(item.pocket === 'medicine') {
-                if(
+            } else if (item.pocket === 'medicine') {
+                if (
                     SHOP_ITEMS_HP_MEDICINE_NAMES.includes(item.apiName) ||
                     SHOP_ITEM_FULL_MEDICINE_NAMES.includes(item.apiName) ||
                     SHOP_ITEMS_STATUS_MEDICINE_NAMES.includes(item.apiName) ||
                     SHOP_ITEMS_REVIVE_NAMES.includes(item.apiName)
-                ){
-                    if([...SHOP_ITEMS_HP_MEDICINE_NAMES, ...SHOP_ITEM_FULL_MEDICINE_NAMES].flat().includes(item.apiName)){
-                        setDisabledPartyUids(party.filter(p=>p.currentHp === 0 || p.ailment === 'fainted').map(p=>p.uid));
+                ) {
+                    if ([...SHOP_ITEMS_HP_MEDICINE_NAMES, ...SHOP_ITEM_FULL_MEDICINE_NAMES].flat().includes(item.apiName)) {
+                        setDisabledPartyUids(party.filter(p => p.currentHp === 0 || p.ailment === 'fainted').map(p => p.uid));
                     }
-                    if(SHOP_ITEMS_REVIVE_NAMES.includes(item.apiName)){
-                        setDisabledPartyUids(party.filter(p=>p.currentHp > 0 && p.ailment !== 'fainted').map(p=>p.uid));
+                    if (SHOP_ITEMS_REVIVE_NAMES.includes(item.apiName)) {
+                        setDisabledPartyUids(party.filter(p => p.currentHp > 0 && p.ailment !== 'fainted').map(p => p.uid));
                     }
                     setUsedItemType(UsedItemExtendType.HP);
                 }
 
-                if(SHOP_ITEMS_PP_MEDICINE_NAMES.includes(item.apiName)){
+                if (SHOP_ITEMS_PP_MEDICINE_NAMES.includes(item.apiName)) {
                     setUsedItemType(UsedItemExtendType.PP);
                 }
 
                 setModalShow(ExtendModalType.SelectPokemon);
                 setSelectedItem(item);
-            } else if(item.pocket === 'items'){
-                if(SHOP_ITEM_EVOLUTION_NAMES.includes(item.apiName)){
+            } else if (item.pocket === 'items') {
+                if (SHOP_ITEM_EVOLUTION_NAMES.includes(item.apiName)) {
                     setUsedItemType(UsedItemExtendType.Evolution);
-                    setDisabledPartyUids(party.filter(p=>{
+                    setDisabledPartyUids(party.filter(p => {
                         const rawItemInfo = itemDaoDataMap[item.apiName];
-                        if( rawItemInfo.effect?.evolutionCriteria !== undefined ) {
+                        if (rawItemInfo.effect?.evolutionCriteria !== undefined) {
                             const criteria = rawItemInfo.effect.evolutionCriteria;
                             // 檢查是否能進化
                             console.log("[VBagBox] Checking evolution for:", p.name, "with criteria:", criteria);
-                            if( criteria.targetPokemon?.includes(p.name) ) {
+                            if (criteria.targetPokemon?.includes(p.name)) {
                                 return false; // 可進化，啟用
                             } else {
                                 return true; // 無法進化，禁用
@@ -202,24 +202,24 @@ const ItemUseModal = React.forwardRef<ItemUserModalHandler, ItemUseModalProps>((
                         } else {
                             return true; // 無法進化，禁用
                         }
-                    }).map(p=>p.uid));
+                    }).map(p => p.uid));
                     setModalShow(ExtendModalType.SelectPokemon);
                     setSelectedItem(item);
                 }
 
-                if([...SHOP_ITEM_TM_NAMES, ...SHOP_ITEM_HM_NAMES].includes(item.apiName)){
+                if ([...SHOP_ITEM_TM_NAMES, ...SHOP_ITEM_HM_NAMES].includes(item.apiName)) {
                     // TM/HM 使用邏輯待實作
                     setUsedItemType(UsedItemExtendType.Machine);
                     setModalShow(ExtendModalType.SelectPokemon);
                     setDisabledPartyUids(
-                        party.filter(p=> {
+                        party.filter(p => {
                             const rawPokemonData = pokemonDataMap[p.id.toString()];
                             if (!rawPokemonData || !rawPokemonData.moves) {
                                 return true; // 無法學習招式，禁用
                             }
                             const canLearnMove = rawPokemonData.moves.some(m => m.name === item.effect?.teachMove);
                             return !canLearnMove; // 無法學習招式，禁用
-                        }).map(p=>p.uid)
+                        }).map(p => p.uid)
                     );
                     setSelectedItem(item);
                 }
@@ -234,8 +234,8 @@ const ItemUseModal = React.forwardRef<ItemUserModalHandler, ItemUseModalProps>((
 
     const usingMedicine = useCallback((pokemonUid: string, moveId?: number) => {
         if (!selectedItem) return;
-        vscode.postMessage({ 
-            command: MessageType.UseMedicineInBag, 
+        vscode.postMessage({
+            command: MessageType.UseMedicineInBag,
             item: selectedItem,
             pokemonUid: pokemonUid,
             moveId: moveId
@@ -244,7 +244,7 @@ const ItemUseModal = React.forwardRef<ItemUserModalHandler, ItemUseModalProps>((
 
     const handlePokemonSelect = useCallback((pokemonUid: string) => {
         if (!selectedItem) return;
-        
+
         const pokemon = party.find(p => p.uid === pokemonUid);
         if (!pokemon) return;
 
@@ -257,6 +257,14 @@ const ItemUseModal = React.forwardRef<ItemUserModalHandler, ItemUseModalProps>((
         }
 
         if (extendId === ExtendModalType.SelectMove) {
+            if (usedItemType === UsedItemExtendType.Machine) {
+                if (pokemon.pokemonMoves.length < 4) {
+                    // 直接學會招式
+                    usingMedicine(pokemonUid);
+                    setSelectedItem(null);
+                    return;
+                }
+            }
             setSelectedPokemon(pokemon);
             setModalShow(ExtendModalType.SelectMove);
             return;
@@ -265,11 +273,11 @@ const ItemUseModal = React.forwardRef<ItemUserModalHandler, ItemUseModalProps>((
 
         if (extendId === ExtendModalType.SelectEvolution) {
             const rawItemInfo = itemDaoDataMap[selectedItem.apiName];
-            if( rawItemInfo.effect?.evolutionCriteria !== undefined ) {
+            if (rawItemInfo.effect?.evolutionCriteria !== undefined) {
                 const criteria = rawItemInfo.effect.evolutionCriteria;
                 // 檢查是否能進化
                 console.log("[VBagBox] Proceeding to evolution for:", pokemon.name);
-                if( criteria.targetPokemon?.includes(pokemon.name) ) {
+                if (criteria.targetPokemon?.includes(pokemon.name)) {
                     setSelectedPokemon(pokemon);
                     setModalShow(ExtendModalType.SelectEvolution);
                     return;
@@ -285,7 +293,7 @@ const ItemUseModal = React.forwardRef<ItemUserModalHandler, ItemUseModalProps>((
             }
         }
 
-    },[selectedItem, party, usedItemType, usingMedicine]);
+    }, [selectedItem, party, usedItemType, usingMedicine]);
 
     const handleMoveSelect = (pokemon: PokemonDao, moveId: number) => {
         if (!selectedItem) return;
@@ -304,47 +312,47 @@ const ItemUseModal = React.forwardRef<ItemUserModalHandler, ItemUseModalProps>((
 
 
     return <>
-    {selectedItem && <div className={styles.modalOverlay} onClick={() => { setSelectedItem(null); }}>
-        <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-            <div className={styles.modalHeader}>
-                <div className={styles.modalTitle}>
-                    {`USE: ${selectedItem?.name}`}
-                </div>
-                <div className={styles.modalSubtitle}>
-                    {selectedItem?.effect?.teachMove && (
-                        <div className={styles.teachMove}>
-                            Teaches: <strong>{selectedItem.effect.teachMove.toUpperCase()}</strong>
-                        </div>
-                    )}
-                    <div className={styles.itemDescription}>
-                        {selectedItem?.description}
+        {selectedItem && <div className={styles.modalOverlay} onClick={() => { setSelectedItem(null); }}>
+            <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
+                <div className={styles.modalHeader}>
+                    <div className={styles.modalTitle}>
+                        {`USE: ${selectedItem?.name}`}
                     </div>
+                    <div className={styles.modalSubtitle}>
+                        {selectedItem?.effect?.teachMove && (
+                            <div className={styles.teachMove}>
+                                Teaches: <strong>{selectedItem.effect.teachMove.toUpperCase()}</strong>
+                            </div>
+                        )}
+                        <div className={styles.itemDescription}>
+                            {selectedItem?.description}
+                        </div>
+                    </div>
+                    <button className={styles.closeBtn} onClick={() => { setSelectedItem(null); }}>×</button>
                 </div>
-                <button className={styles.closeBtn} onClick={() => { setSelectedItem(null); }}>×</button>
-            </div>
-            <div className={styles.modalBody}>
-                {modalShow === ExtendModalType.SelectPokemon && 
-                <PartyGridInModal 
-                    party={party} 
-                    disabledPartyUids={disabledPartyUids}
-                    onPokemonClick={(pokemon) => handlePokemonSelect(pokemon.uid)} />
-                }
-                {modalShow === ExtendModalType.SelectMove && 
-                <PokemonMoveModal 
-                    selectedPokemon={selectedPokemon} 
-                    onMoveSelect={( pokemon,move) => handleMoveSelect(pokemon, move)} />
-                }
-                {modalShow === ExtendModalType.SelectEvolution && selectedPokemon &&
-                <EvolutionModal 
-                    trigger={EvolutionTrigger.UseItem}
-                    item={selectedItem}
-                    pokemon={selectedPokemon}
-                    onClose={()=>{ setSelectedItem(null)}}
-                />
-                }
+                <div className={styles.modalBody}>
+                    {modalShow === ExtendModalType.SelectPokemon &&
+                        <PartyGridInModal
+                            party={party}
+                            disabledPartyUids={disabledPartyUids}
+                            onPokemonClick={(pokemon) => handlePokemonSelect(pokemon.uid)} />
+                    }
+                    {modalShow === ExtendModalType.SelectMove &&
+                        <PokemonMoveModal
+                            selectedPokemon={selectedPokemon}
+                            onMoveSelect={(pokemon, move) => handleMoveSelect(pokemon, move)} />
+                    }
+                    {modalShow === ExtendModalType.SelectEvolution && selectedPokemon &&
+                        <EvolutionModal
+                            trigger={EvolutionTrigger.UseItem}
+                            item={selectedItem}
+                            pokemon={selectedPokemon}
+                            onClose={() => { setSelectedItem(null) }}
+                        />
+                    }
+                </div>
             </div>
         </div>
-    </div>
-    }
+        }
     </>
 })

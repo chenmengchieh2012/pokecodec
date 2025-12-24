@@ -35,22 +35,6 @@ export interface PokemonMove {
     target?: string;
 }
 
-export function MoveDecorator(localMoveData: PokemonMove){
-    return {
-        id: localMoveData.id,
-        name: localMoveData.name.toUpperCase(),
-        type: localMoveData.type.toLowerCase(),
-        power: localMoveData.power,
-        accuracy: localMoveData.accuracy,
-        pp: localMoveData.pp,
-        priority: localMoveData.priority,
-        maxPP: localMoveData.pp,
-        effect: localMoveData.effect,
-        meta: localMoveData.meta,
-        stat_changes: localMoveData.stat_changes,
-        target: localMoveData.target
-    };
-}
 
 export interface PokemonMoveDAO {
     move: {

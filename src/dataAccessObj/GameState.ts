@@ -7,7 +7,8 @@ export const BattleEventType = {
     MyPokemonFaint: 'MyPokemonFaint',
     WildPokemonFaint: 'WildPokemonFaint',
     WildPokemonCatched: 'WildPokemonCatched',
-    Escaped: 'Escaped'
+    Escaped: 'Escaped',
+    UnKnownError: 'UnKnownError'
 } as const;
 
 export type BattleEventType = typeof BattleEventType[keyof typeof BattleEventType];

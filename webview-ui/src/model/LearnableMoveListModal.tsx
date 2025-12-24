@@ -18,7 +18,7 @@ export const LearnableMoveListModal: React.FC<LearnableMoveListModalProps> = ({p
         if (!speciesData) return [];
 
         const currentMoveNames = new Set(focusPokemon.pokemonMoves.map(m => m.name));
-        
+        console.log("[LearnableMoveListModal] Current Move Names:", currentMoveNames);
         return speciesData.moves
             .filter((m) => m.learn_method === 'level-up' && m.level_learned_at <= pokemon.level)
             .filter((m) => !currentMoveNames.has(m.name))

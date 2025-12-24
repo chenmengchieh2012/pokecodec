@@ -3,7 +3,7 @@ import { resolveAssetUrl, vscode } from '../utilities/vscode';
 import { EvolutionTrigger, PokemonDao, RawPokemonData } from '../../../src/dataAccessObj/pokemon';
 import pokemonGen1Data from "../../../src/data/pokemonGen1.json";
 import { useMemo } from 'react';
-import { EvolvePokemonPayload } from '../../../src/dataAccessObj/MessagePayload';
+import { EvolvePokemonPayload, UseItemPayload } from '../../../src/dataAccessObj/MessagePayload';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
 import { ItemDao } from '../../../src/dataAccessObj/item';
 
@@ -45,6 +45,11 @@ export const EvolutionModal: React.FC<EvolutionModalProps> = ({ pokemon, onClose
     
     const handleEvolve = () => {
         if (!evolutionTarget) return;
+        if (item && item.apiName === '' && item.apiName === undefined) {
+            console.error('[EvolutionModal] Not enough item quantity to evolve:', item);
+            return;
+        }
+        // Send evolve message to backend
         const evolvePayload: EvolvePokemonPayload = {
             pokemonUid: pokemon.uid,
             toSpeciesId: evolutionTarget.id,
@@ -53,6 +58,18 @@ export const EvolutionModal: React.FC<EvolutionModalProps> = ({ pokemon, onClose
             command: MessageType.EvolvePokemon,
             ...evolvePayload,
         });
+
+        // If an item was used for evolution, send use item message
+        const itemUsedPayload: UseItemPayload = {
+            itemId: item?.apiName || '',
+            item: item,
+            count: 1,
+        };
+        vscode.postMessage({
+            command: MessageType.UseItem,
+            ...itemUsedPayload,
+        })
+
         onClose(); 
     };
 

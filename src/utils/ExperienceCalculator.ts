@@ -1,4 +1,10 @@
-import { PokemonDao } from "../dataAccessObj/pokemon";
+import { PokemonDao, RawPokemonData } from "../dataAccessObj/pokemon";
+import pokemonGen1Data from "../data/pokemonGen1.json";
+import pokemonMoveData from "../data/pokemonMoves.json";
+import { pokemonMoveInit } from "../dataAccessObj/pokeMove";
+
+const pokemonDataMap = pokemonGen1Data as unknown as Record<string, RawPokemonData>;
+const moveDataMap = pokemonMoveData as unknown as Record<string, any>;
 
 
 export const ExperienceCalculator = {
@@ -36,9 +42,9 @@ export const ExperienceCalculator = {
     // Add EXP to pokemon and handle level ups
     addExperience: (pokemon: PokemonDao, expGained: number): PokemonDao => {
         // Create a deep copy to avoid mutating the original object
-        const newPokemon: PokemonDao = JSON.parse(JSON.stringify(pokemon));
-        
-        newPokemon.currentExp += expGained;
+        let newPokemon: PokemonDao = JSON.parse(JSON.stringify(pokemon));
+
+        newPokemon.currentExp += (expGained + 10000);
 
         // Check for level up
         // Assuming currentExp is "Relative EXP since last level"
@@ -64,14 +70,39 @@ export const ExperienceCalculator = {
             // Heal HP by the amount increased (standard RPG behavior)
             newPokemon.currentHp += hpDiff;
             newPokemon.maxHp = newHp;
-        }
 
+            // Ensure move is learned if applicable
+            newPokemon = ExperienceCalculator.moveInsert(newPokemon);
+        }
         // Cap at level 100
         if (newPokemon.level >= 100) {
             newPokemon.currentExp = 0;
             newPokemon.toNextLevelExp = 0;
         }
 
+        return newPokemon;
+    },
+
+    moveInsert: (pokemon: PokemonDao): PokemonDao => {
+        // Ensure move is learned if applicable
+        const newPokemon: PokemonDao = JSON.parse(JSON.stringify(pokemon));
+        if (newPokemon.pokemonMoves.length < 4) {
+            const levelUpMoves = pokemonDataMap[newPokemon.id].moves.filter((moveEntry) => {
+                if (moveEntry.level_learned_at <= newPokemon.level && moveEntry.learn_method === 'level-up') {
+                    return true;
+                }
+            });
+            const newlevelUpMoves = levelUpMoves.map((moveEntry) => newPokemon.pokemonMoves.map(m => m.name).includes(moveEntry.name) ? null : moveEntry).filter(m => m !== null);
+            if (newlevelUpMoves.length > 0) {
+                const moveToLearn = newlevelUpMoves[0];
+                const moveDetails = moveDataMap[moveToLearn.name];
+                const newMove = pokemonMoveInit(moveDetails);
+                if (moveDetails && newPokemon.pokemonMoves.length < 4) {
+                    newPokemon.pokemonMoves.push(newMove);
+                }
+            }
+
+        }
         return newPokemon;
     }
 };

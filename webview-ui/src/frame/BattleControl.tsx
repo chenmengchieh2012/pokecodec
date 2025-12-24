@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
+import { forwardRef, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import styles from "./BattleControl.module.css";
 import { DialogBox, type DialogBoxHandle } from "./DialogBox";
 import { PartyGridInModal } from "../model/PartyGridInModal";
@@ -10,7 +10,7 @@ import { PokeBallDao } from '../../../src/dataAccessObj/pokeBall';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
 import { PokemonTypeIcon } from '../utilities/pokemonTypeIcon';
 import { CapitalizeFirstLetter } from '../utilities/util';
-import { SHOP_ITEMS_BALL_NAMES, SHOP_ITEMS_HP_MEDICINE_NAMES, SHOP_ITEMS_PP_MEDICINE_NAMES, SHOP_ITEMS_STATUS_MEDICINE_NAMES, SHOP_ITEM_FULL_MEDICINE_NAMES } from '../utilities/ItemName';
+import { SHOP_ITEMS_BALL_NAMES, SHOP_ITEMS_HP_MEDICINE_NAMES, SHOP_ITEMS_PP_MEDICINE_NAMES, SHOP_ITEMS_REVIVE_NAMES, SHOP_ITEMS_STATUS_MEDICINE_NAMES, SHOP_ITEM_FULL_MEDICINE_NAMES } from '../utilities/ItemName';
 export interface BattleControlHandle extends DialogBoxHandle {
     openPartyMenu: () => void;
 }
@@ -21,7 +21,7 @@ interface BattleControlProps {
     myParty: PokemonDao[];
     handleOnAttack: (move: PokemonMove) => void;
     handleThrowBall: (ball: PokeBallDao) => void;
-    handleUseItem: (item: ItemDao, targetMove?: PokemonMove) => void;
+    handleUseItem: (pokemon: PokemonDao, item: ItemDao, targetMove?: PokemonMove) => void;
     handleRunAway: () => void;
     handleSwitchMyPokemon: (pokemon: PokemonDao) => void;
 }
@@ -38,10 +38,32 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
 }, ref) => {
     const messageStore = useMessageStore(); // 確保訂閱生效
     const defaultBagItems = messageStore.getRefs().bag || [];
-    const [menuState, setMenuState] = useState<'main' | 'moves' | 'party' | 'bag' | 'pp-restore'>('main');
+    const [menuState, setMenuState] = useState<'main' | 'moves' | 'party' | 'bag'>('main');
     const [bagItems, setBagItems] = useState<ItemDao[]>(defaultBagItems);
-    const [selectedPPItem, setSelectedPPItem] = useState<ItemDao | null>(null);
+    const [selectedItem, setSelectedItem] = useState<ItemDao | null>(null);
+    const selectedPokemonRef = useRef<PokemonDao | null>(null);
     const dialogBoxRef = useRef<DialogBoxHandle>(null);
+    const disabledPartyUids = useMemo<string[]>(()=>{
+        let newDisabledPartyUids: string[] = [];
+        if (menuState === 'party') {
+            if (selectedItem !== undefined && selectedItem !== null) {
+                if (
+                    SHOP_ITEMS_HP_MEDICINE_NAMES.includes(selectedItem.apiName) ||
+                    SHOP_ITEMS_STATUS_MEDICINE_NAMES.includes(selectedItem.apiName) ||
+                    SHOP_ITEM_FULL_MEDICINE_NAMES.includes(selectedItem.apiName)
+                ) {
+                    newDisabledPartyUids = myParty.filter(p => p.ailment === 'fainted').map(p => p.uid);
+                } else if (SHOP_ITEMS_PP_MEDICINE_NAMES.includes(selectedItem.apiName)) {
+                    newDisabledPartyUids = myParty.filter(p => p.ailment === 'fainted').map(p => p.uid);
+                } else if (SHOP_ITEMS_REVIVE_NAMES.includes(selectedItem.apiName)) {
+                    newDisabledPartyUids = myParty.filter(p => p.currentHp > 0).map(p => p.uid);
+                }
+            } else {
+                newDisabledPartyUids = myParty.filter(p => p.ailment === 'fainted').map(p => p.uid);
+            }
+        }
+        return newDisabledPartyUids;
+    }, [menuState, myParty, selectedItem]);
 
     // 訂閱背包資料訊息
     useMessageSubscription<ItemDao[]>(MessageType.BagData, (message) => {
@@ -54,21 +76,53 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
         },
         openPartyMenu: () => {
             setMenuState('party');
+            console.log("openPartyMenu called",myParty);
         }
     }));
 
+
     const isExpanded = menuState !== 'main';
 
-    const onAttackClick = (move: PokemonMove) => {
-        setMenuState('main');
-        handleOnAttack(move);
+    const onMoveClick = (move: PokemonMove) => {
+        if( selectedPokemonRef.current && selectedItem ){
+            // Using PP medicine on selected move
+            handleUseItem(selectedPokemonRef.current, selectedItem, move);
+            reset();
+            return;
+        }else{
+            setMenuState('main');
+            handleOnAttack(move);
+            reset();
+            return;
+        }
     };
 
+    const reset = () => {
+        setMenuState('main');
+        setSelectedItem(null);
+        selectedPokemonRef.current = null;
+        // setDisabledPartyUids([]); // Removed because disabledPartyUids is now derived via useMemo
+    }
+
     const onPokemonClick = (pokemon: PokemonDao) => {
-        if(pokemon.currentHp <= 0) return; // 不能選擇已經昏厥的寶可夢
-        if (handleSwitchMyPokemon) {
+        if(selectedItem){
+            const effectedItems = [...SHOP_ITEMS_HP_MEDICINE_NAMES, ...SHOP_ITEMS_STATUS_MEDICINE_NAMES, ...SHOP_ITEM_FULL_MEDICINE_NAMES, ...SHOP_ITEMS_REVIVE_NAMES];
+            if(effectedItems.includes(selectedItem.apiName)){
+                handleUseItem(pokemon, selectedItem);
+                reset();
+                return;
+            }
+
+            if(SHOP_ITEMS_PP_MEDICINE_NAMES.includes(selectedItem.apiName)){
+                setMenuState('moves');
+                selectedPokemonRef.current = pokemon;
+                return;
+            }
+        }else if (handleSwitchMyPokemon) {
+            if(pokemon.currentHp <= 0) return; // 不能選擇已經昏厥的寶可夢
             setMenuState('main');
             handleSwitchMyPokemon(pokemon);
+            reset();
         }
     };
 
@@ -84,25 +138,25 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
                 catchRateModifier: catchRate
             });
         } else if (SHOP_ITEMS_HP_MEDICINE_NAMES.includes(item.apiName) || SHOP_ITEMS_STATUS_MEDICINE_NAMES.includes(item.apiName) || SHOP_ITEM_FULL_MEDICINE_NAMES.includes(item.apiName)) {
-            setMenuState('main');
-            handleUseItem(item);
+            setSelectedItem(item);
+            setMenuState('party')
         } else if (SHOP_ITEMS_PP_MEDICINE_NAMES.includes(item.apiName)) {
-            setSelectedPPItem(item);
-            setMenuState('pp-restore');
+            setSelectedItem(item);
+            setMenuState('party')
+        } else if (SHOP_ITEMS_REVIVE_NAMES.includes(item.apiName)) {
+            setSelectedItem(item);
+            setMenuState('party')
         } else {
             setMenuState('main');
             // Other items not supported yet in battle
             console.log("Item not supported in battle yet:", item.apiName);
+            reset();
         }
     };
 
-    const onPPRestoreMoveClick = (move: PokemonMove) => {
-        if (selectedPPItem) {
-            setMenuState('main');
-            handleUseItem(selectedPPItem, move);
-            setSelectedPPItem(null);
-        }
-    };
+    const isDisableFightButton = useMemo(()=>{
+        return mutex || myPokemon?.ailment === 'fainted';
+    }, [mutex, myPokemon]);
 
     return (
         <div className={styles['console-area']}>
@@ -119,30 +173,8 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
                             <button 
                                 key={"move-" + move.name} 
                                 className={styles['move-btn']}
-                                onClick={() => onAttackClick(move)}
+                                onClick={() => onMoveClick(move)}
                                 disabled={move.pp <= 0}
-                            >
-                                <div className={styles['move-name']}>
-                                    <PokemonTypeIcon type={move.type} size={10} className={styles['move-type-icon']} />
-                                    {move.name.toUpperCase()}
-                                </div>
-                                <div className={styles['move-info-row']}>
-                                    <span className={styles['move-pp']}>PP {move.pp}/{move.maxPP}</span>
-                                </div>
-                            </button>
-                        ))}
-                        </div>
-                    </div>
-                )}
-
-                {menuState === 'pp-restore' && (
-                    <div className={styles['move-select-overlay-container']}>
-                        <div className={styles['move-select-overlay-content']}>
-                        {myPokemon?.pokemonMoves.map((move) => (
-                            <button 
-                                key={"pp-move-" + move.name} 
-                                className={styles['move-btn']}
-                                onClick={() => onPPRestoreMoveClick(move)}
                             >
                                 <div className={styles['move-name']}>
                                     <PokemonTypeIcon type={move.type} size={10} className={styles['move-type-icon']} />
@@ -162,7 +194,7 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
                     <div className={styles['move-select-overlay-container']}>
                         <PartyGridInModal 
                             party={myParty} 
-                            disabledPartyUids={myParty.filter(p=>p.currentHp == 0 || p.ailment === 'fainted').map(p=>p.uid) }
+                            disabledPartyUids={disabledPartyUids}
                             onPokemonClick={onPokemonClick} 
                         />
                     </div>
@@ -238,9 +270,9 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
                     <>
                         {/* FIGHT */}
                         <button 
-                            className={styles['menu-btn-outer']} 
+                            className={`${styles['menu-btn-outer']} ${isDisableFightButton ? styles['disabled'] : ''}`} 
                             onClick={() => setMenuState('moves')}
-                            disabled={mutex}
+                            disabled={isDisableFightButton}
                         >
                             <div className={styles['menu-btn-inner']}>
                                 FIGHT
@@ -249,7 +281,7 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
 
                         {/* BAG */}
                         <button 
-                            className={styles['menu-btn-outer']} 
+                            className={`${styles['menu-btn-outer']} ${mutex ? styles['disabled'] : ''}`} 
                             onClick={() => setMenuState('bag')}
                             disabled={mutex}
                         >
@@ -260,7 +292,7 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
 
                         {/* POKÉMON */}
                         <button 
-                            className={styles['menu-btn-outer']} 
+                            className={`${styles['menu-btn-outer']} ${mutex ? styles['disabled'] : ''}`} 
                             onClick={() => setMenuState('party')}
                             disabled={mutex}
                         >
@@ -271,7 +303,7 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
 
                         {/* RUN */}
                         <button 
-                            className={styles['menu-btn-outer']} 
+                            className={`${styles['menu-btn-outer']} ${mutex ? styles['disabled'] : ''}`} 
                             onClick={handleRunAway}
                             disabled={mutex}
                         >

@@ -1,46 +1,45 @@
 import * as vscode from 'vscode';
-import { PokemonBoxManager } from '../manager/pokeBoxManager';
-import { JoinPokemonManager } from '../manager/joinPokemonManager';
-import { BagManager } from '../manager/bagsManager';
-import { UserDaoManager } from '../manager/userDaoManager';
+import { BiomeDataHandler } from '../core/BiomeHandler';
+import { PokemonFactory } from '../core/CreatePokemonHandler';
 import {
+    AddItemPayload,
+    AddToPartyPayload,
+    BatchMoveToBoxPayload,
+    BoxPayload,
     CatchPayload,
     DeletePokemonPayload,
+    EvolvePokemonPayload,
+    GetPokeDexPayload,
+    HandlerContext,
+    PokeDexPayload,
+    RemoveFromPartyPayload,
+    RemoveItemPayload,
     ReorderBoxPayload,
     ReorderPartyPayload,
-    BatchMoveToBoxPayload,
-    AddToPartyPayload,
-    RemoveFromPartyPayload,
-    UpdatePartyPokemonPayload,
-    UseMedicineInBagPayload,
-    UseItemPayload,
-    AddItemPayload,
-    RemoveItemPayload,
-    UpdateMoneyPayload,
-    GetPokeDexPayload,
-    UpdatePokeDexPayload,
-    HandlerContext,
-    BoxPayload,
-    PokeDexPayload,
-    EvolvePokemonPayload,
-    UpdateEncounteredPokemonPayload,
-    UpdateDefenderPokemonPayload,
     SetGameStateDataPayload,
+    UpdateDefenderPokemonPayload,
+    UpdateEncounteredPokemonPayload,
+    UpdateMoneyPayload,
+    UpdatePartyPokemonPayload,
+    UpdatePokeDexPayload,
+    UseItemPayload,
+    UseMedicineInBagPayload,
 } from '../dataAccessObj/MessagePayload';
-import { GameStateManager } from '../manager/gameStateManager';
 import { MessageType } from '../dataAccessObj/messageType';
-import { BiomeDataHandler } from '../core/BiomeHandler';
-import { PokeDexManager } from '../manager/pokeDexManager';
-import { PokemonFactory } from '../core/CreatePokemonHandler';
 import { AchievementManager } from '../manager/AchievementManager';
+import { BagManager } from '../manager/bagsManager';
+import { GameStateManager } from '../manager/gameStateManager';
+import { JoinPokemonManager } from '../manager/joinPokemonManager';
+import { PokemonBoxManager } from '../manager/pokeBoxManager';
+import { PokeDexManager } from '../manager/pokeDexManager';
+import { UserDaoManager } from '../manager/userDaoManager';
 import { RecordBattleActionPayload, RecordBattleCatchPayload, RecordBattleFinishedPayload, RecordItemActionPayload } from '../utils/AchievementCritiria';
 
 import pokemonGen1Data from '../data/pokemonGen1.json';
 import moveData from '../data/pokemonMoves.json';
+import { GameState } from '../dataAccessObj/GameState';
 import { RawPokemonData } from '../dataAccessObj/pokemon';
 import { pokemonMoveInit } from '../dataAccessObj/pokeMove';
-import { ExperienceCalculator } from '../utils/ExperienceCalculator';
-import { GameState } from '../dataAccessObj/GameState';
 
 const pokemonDataMap = pokemonGen1Data as unknown as Record<string, RawPokemonData>;
 const pokemonMoveDataMap = moveData as unknown as Record<string, any>;
@@ -92,7 +91,7 @@ export class CommandHandler {
     // ==================== Select Starter ====================
     public async handleSelectStarter(payload: { starter: 'pikachu' | 'eevee' }): Promise<void> {
         const { starter } = payload;
-        
+
         // 1. Update User Dao
         const user = this.userDaoManager.getUserInfo();
         user.starter = starter;
@@ -107,12 +106,13 @@ export class CommandHandler {
             type: [],
             catchRate: 0,
             minDepth: 0 // Level 5
-        }, playingTime , undefined, 5);
-        
+        }, playingTime, undefined, 5);
+
         starterPokemon.originalTrainer = user.name || 'GOLD';
         starterPokemon.caughtDate = Date.now();
         starterPokemon.caughtBall = 'poke-ball';
-        
+
+
         await this.userDaoManager.setStarter(starterPokemon.name as 'pikachu' | 'eevee');
 
         // 3. Add to Party
@@ -126,11 +126,11 @@ export class CommandHandler {
     // ==================== Evolve Pokemon ====================
     public async handleEvolvePokemon(payload: EvolvePokemonPayload): Promise<void> {
         const { pokemonUid, toSpeciesId } = payload;
-        
+
         // Check Party
         const party = this.partyManager.getAll();
         const partyIndex = party.findIndex(p => p.uid === pokemonUid);
-        
+
         if (partyIndex !== -1) {
             const pokemon = party[partyIndex];
             try {
@@ -147,7 +147,7 @@ export class CommandHandler {
         // Check Box
         const boxPokemon = this.pokemonBoxManager.get(pokemonUid);
         if (boxPokemon) {
-             try {
+            try {
                 const evolvedPokemon = PokemonFactory.evolvePokemon(boxPokemon, toSpeciesId);
                 await this.pokemonBoxManager.update(evolvedPokemon);
                 this.handlerContext.updateAllViews();
@@ -184,8 +184,8 @@ export class CommandHandler {
             currentBox: boxIndex,
             totalBoxLength: totalBoxLength
         };
-        this.handlerContext.postMessage({ 
-            type: MessageType.BoxData, 
+        this.handlerContext.postMessage({
+            type: MessageType.BoxData,
             data: boxPayload
         });
     }
@@ -200,8 +200,8 @@ export class CommandHandler {
             currentBox: this.pokemonBoxManager.getCurrentBoxIndex(),
             totalBoxLength: totalBoxLength
         };
-        this.handlerContext.postMessage({ 
-            type: MessageType.BoxData, 
+        this.handlerContext.postMessage({
+            type: MessageType.BoxData,
             data: boxPayload
         });
     }
@@ -304,7 +304,7 @@ export class CommandHandler {
         if (payload.pokemonUid) {
             const partyData = this.partyManager.getAll();
             const pokemon = partyData.find(p => p.uid === payload.pokemonUid);
-            
+
             if (!pokemon) {
                 console.error('[Extension] Pokemon not found');
                 return;
@@ -324,7 +324,7 @@ export class CommandHandler {
 
             if (effect) {
                 const oldHp = pokemon.currentHp;
-                
+
                 // 1. Heal HP (Fixed)
                 if (effect.healHp) {
                     if (pokemon.currentHp < pokemon.maxHp) {
@@ -398,8 +398,8 @@ export class CommandHandler {
                 }
                 // 5. Status Heal (Placeholder)
                 else if (effect.healStatus) {
-                    if(pokemon.ailment && pokemon.ailment !== 'healthy' && pokemon.ailment !== 'fainted') {
-                        if(effect.healStatus.includes(pokemon.ailment) || effect.healStatus.includes('all')) {
+                    if (pokemon.ailment && pokemon.ailment !== 'healthy' && pokemon.ailment !== 'fainted') {
+                        if (effect.healStatus.includes(pokemon.ailment) || effect.healStatus.includes('all')) {
                             pokemon.ailment = 'healthy';
                             itemUsed = true;
                             usedMessage = `Cured status condition.`;
@@ -409,8 +409,8 @@ export class CommandHandler {
                     } else {
                         vscode.window.showInformationMessage('No status condition to heal!');
                     }
-                    
-                }                        
+
+                }
                 // 5. Restore PP
                 else if (effect.restorePp) {
                     if (effect.restorePpAll) {
@@ -437,41 +437,47 @@ export class CommandHandler {
                             console.warn('[Extension] Move ID missing for PP restore item');
                         }
                     }
+                }
                 // 6. Teach Move
-                } else if (effect.teachMove) {
-                    if(payload.moveId !== undefined){
-                        // Teach Move Logic Here
-                        const moveIdToTeach = effect.teachMove;
-                        const canLearnMove = pokemonDataMap[pokemon.id].moves.filter(m => m.name === moveIdToTeach);
-                        if(canLearnMove.length > 0){
-                            const learnMoveName = canLearnMove[0].name;
-                            const learnMoveData = pokemonMoveDataMap[learnMoveName];
-                            // Check if already knows the move
-                            const alreadyKnows = pokemon.pokemonMoves.some(m => m.name === moveIdToTeach);
-                            if(!alreadyKnows){
-                                // Teach the move
-                                let newMoves = pokemon.pokemonMoves.filter(m=>m.id !== payload.moveId);
+                else if (effect.teachMove) {
+                    // Teach Move Logic Here
+                    const moveIdToTeach = effect.teachMove;
+                    const canLearnMove = pokemonDataMap[pokemon.id].moves.filter(m => m.name === moveIdToTeach);
+                    if (canLearnMove.length > 0) {
+                        const learnMoveName = canLearnMove[0].name;
+                        const learnMoveData = pokemonMoveDataMap[learnMoveName];
+                        // Check if already knows the move
+                        const alreadyKnows = pokemon.pokemonMoves.some(m => m.name === moveIdToTeach);
+                        if (!alreadyKnows) {
+                            // Teach the move
+                            if (payload.moveId !== undefined) {
+                                let newMoves = pokemon.pokemonMoves.filter(m => m.id !== payload.moveId);
                                 newMoves.push(pokemonMoveInit(learnMoveData));
                                 pokemon.pokemonMoves = newMoves;
                                 itemUsed = true;
                                 usedMessage = `Taught ${pokemon.name} the move ${moveIdToTeach}.`;
+                            } else if (pokemon.pokemonMoves.length < 4) {
+                                // 直接學會招式
+                                pokemon.pokemonMoves.push(pokemonMoveInit(learnMoveData));
+                                itemUsed = true;
+                                usedMessage = `Taught ${pokemon.name} the move ${moveIdToTeach}.`;
                             } else {
-                                vscode.window.showInformationMessage(`${pokemon.name} already knows the move ${moveIdToTeach}.`);
+                                console.warn('[Extension] Move slot full, cannot learn new move.');
                             }
                         } else {
-                            vscode.window.showInformationMessage(`${pokemon.name} cannot learn the move ${moveIdToTeach}.`);
+                            vscode.window.showInformationMessage(`${pokemon.name} already knows the move ${moveIdToTeach}.`);
                         }
                     } else {
-                        console.warn('[Extension] Move ID missing for teach move item');
+                        vscode.window.showInformationMessage(`${pokemon.name} cannot learn the move ${moveIdToTeach}.`);
                     }
-                }                
+                }
             } else {
                 console.warn('[Extension] Item has no effect defined.');
                 vscode.window.showWarningMessage('This item has no effect defined.');
             }
             let isTreasure = false;
-            if(itemId){
-                const itemActionPayload : RecordItemActionPayload = {
+            if (itemId) {
+                const itemActionPayload: RecordItemActionPayload = {
                     action: 'use',
                     item: {
                         name: payload.item.name,
@@ -488,17 +494,17 @@ export class CommandHandler {
             if (itemUsed && itemId) {
                 // 更新寶可夢狀態
                 await this.partyManager.update(pokemon);
-                
+
                 // 不是寶藏道具才扣除
-                if(!isTreasure){
+                if (!isTreasure) {
                     // 扣除道具
                     await this.bagManager.useItem(itemId, 1);
                 }
-                
+
                 vscode.window.showInformationMessage(`Used ${payload.item.name} on ${pokemon.name}. ${usedMessage}`);
-                
+
                 this.handlerContext.updateAllViews();
-            }else{
+            } else {
                 vscode.window.showInformationMessage('No changes made to Pokemon.');
             }
 
@@ -561,7 +567,7 @@ export class CommandHandler {
 
     // ==================== Set Game State ====================
     public async handleSetGameStateData(payload: SetGameStateDataPayload): Promise<void> {
-        await this.gameStateManager.updateGameState( payload.gameStateData.state, payload.gameStateData.encounterResult, payload.gameStateData.defendPokemon );
+        await this.gameStateManager.updateGameState(payload.gameStateData.state, payload.gameStateData.encounterResult, payload.gameStateData.defendPokemon);
         this.handlerContext.updateAllViews();
     }
 
@@ -578,8 +584,8 @@ export class CommandHandler {
             gen: payload.gen,
             entries: dexData
         };
-        this.handlerContext.postMessage({ 
-            type: MessageType.PokeDexData, 
+        this.handlerContext.postMessage({
+            type: MessageType.PokeDexData,
             data: ret
         });
     }
@@ -591,8 +597,8 @@ export class CommandHandler {
             gen: this.pokeDexManager.getCurrentGen(),
             entries: dexData
         };
-        this.handlerContext.postMessage({ 
-            type: MessageType.PokeDexData, 
+        this.handlerContext.postMessage({
+            type: MessageType.PokeDexData,
             data: ret
         });
     }
@@ -652,7 +658,7 @@ export class CommandHandler {
             type: MessageType.BiomeData,
             data: biomeData
         });
-    }   
+    }
 
     // ==================== Trigger Encounter ====================
     public async handleGoTriggerEncounter() {
@@ -666,8 +672,8 @@ export class CommandHandler {
         if (isVisible) {
             // If view is visible, do not notify
             // Send Encounter Event Directly
-            this.handlerContext.postMessage({ type: MessageType.TriggerEncounter});
-            
+            this.handlerContext.postMessage({ type: MessageType.TriggerEncounter });
+
             // Wait for animation (1.5s)
             await new Promise(resolve => setTimeout(resolve, 1500));
 
@@ -678,7 +684,7 @@ export class CommandHandler {
                 this.handleGetGameStateData();
             }
             return;
-        }else {
+        } else {
             console.log('[Extension] View not visible, will notify user on encounter.');
             const myFirstPartyPokemon = this.partyManager.getAll().filter(p => p.currentHp > 0);
             if (myFirstPartyPokemon.length >= 0) {
