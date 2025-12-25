@@ -293,12 +293,6 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
             await dialogBoxRef.current?.setText("A critical hit!");
         }
 
-        // 6. 檢查是否昏厥
-        // if (remainingHp === 0) {
-        //     await dialogBoxRef.current?.setText(`${myPokemonRef.current?.name.toUpperCase()} fainted!`);
-        //     handleMyPokemonFaint();
-        // }
-
         // 7. 攻擊狀態調整
         myPokemonHandler.useMoveEffect(moveEffectResult);
         opponentPokemonHandler.useMoveEffect(moveEffectResult);

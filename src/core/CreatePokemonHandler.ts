@@ -98,12 +98,12 @@ export const PokemonFactory = {
             throw new Error(`Pokemon data not found for ID: ${finalPokemonId}`);
         }
 
-        // 根據深度調整等級 (Gaussian distribution)
-        const baseLevel = depth * 2;
+        // 根據深度調整等級 (降低權重 2 -> 1.5)
+        const baseLevel = depth * 1.5;
 
-        // 根據遊玩時間增加等級
-        const timeBasedMaxLevel = Math.min(100, Math.floor(playingTime / (7 * 24 * 60 * 60 * 1000)) + 5); // 每7天增加一等級，最高100級
-        const adjustedBaseLevel = Math.min(60, (baseLevel + timeBasedMaxLevel)); // 最高60級
+        // 根據遊玩時間增加等級 (調整模型：降低初始 +5 -> +2，但加快成長 7天1等 -> 2天1等)
+        const timeBonus = Math.floor(playingTime / (2 * 24 * 60 * 60 * 1000)); // 每2天增加一等級
+        const adjustedBaseLevel = Math.min(60, Math.max(2, baseLevel + timeBonus + 2)); // 最高60級，最低2級
 
         // Standard deviation of 3 gives some variety
         const randomLevel = Math.round(gaussianRandom(adjustedBaseLevel, Math.max(2, baseLevel / 6)));
