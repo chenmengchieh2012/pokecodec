@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { EncounterResult } from "../../../src/core/EncounterHandler";
 import { PokeBallDao } from "../../../src/dataAccessObj/pokeBall";
 import { PokemonMove } from "../../../src/dataAccessObj/pokeMove";
 import { getEmptyPokemonStats, PokemonAilment, PokemonDao, PokemonState, PokemonStateAction, PokemonStats, RawPokemonData } from "../../../src/dataAccessObj/pokemon";
@@ -20,7 +19,6 @@ export interface PokemonStateHandler {
     getBuffs: () => PokemonStats;
     getBattleState: () => BattlePokemonState;
     resetFlinch: () => void;
-    newEncounter: (encounterResult: EncounterResult) => void;
     throwBall: (ballDao: PokeBallDao, onAction: (action: PokemonStateAction) => void) => Promise<boolean>;
     hited: (pokemon: PokemonDao, attackerBuffs: BattlePokemonState, move: PokemonMove) => Promise<{ newHp: number; moveEffectResult: MoveEffectResult; }>;
     randomMove: () => PokemonMove;
@@ -174,15 +172,6 @@ export const usePokemonState = (dialogRef: React.RefObject<BattleControlHandle |
         }
         return { newHp, moveEffectResult };
     }, [dialogRef]);
-
-    const handleNewEncounter = useCallback(async (encounterResult: EncounterResult) => {
-        if (!encounterResult.pokemon) {
-            throw new Error("No pokemon found in encounter result.");
-        }
-        // 先設定新的寶可夢
-        setPokemon(encounterResult.pokemon);
-
-    }, []);
 
     const handleRandomMove = useCallback(() => {
         if (!pokemonRef.current) {
@@ -386,7 +375,6 @@ export const usePokemonState = (dialogRef: React.RefObject<BattleControlHandle |
     }, []);
 
     const handler: PokemonStateHandler = useMemo(() => ({
-        newEncounter: handleNewEncounter,
         throwBall: handleThrowBall,
         hited: handleHited,
         randomMove: handleRandomMove,
@@ -402,7 +390,7 @@ export const usePokemonState = (dialogRef: React.RefObject<BattleControlHandle |
         resetFlinch: handleResetFlinch,
         onRoundFinish: handleOnRoundFinish,
         refreshPokemon: handleRefreshPokemon
-    }), [handleNewEncounter, handleThrowBall, handleHited, handleRandomMove, handleSwitchPokemon, handleResetPokemon, handleHeal, handleUpdateAilment, handleDecrementPP, handleIncreaseExperience, handleUseMoveEffect, handleGetBattleState, handleResetFlinch, handleOnRoundFinish, handleRefreshPokemon]);
+    }), [handleThrowBall, handleHited, handleRandomMove, handleSwitchPokemon, handleResetPokemon, handleHeal, handleUpdateAilment, handleDecrementPP, handleIncreaseExperience, handleUseMoveEffect, handleGetBattleState, handleResetFlinch, handleOnRoundFinish, handleRefreshPokemon]);
     return {
         pokemon,
         handler: handler

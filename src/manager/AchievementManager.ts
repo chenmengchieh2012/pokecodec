@@ -28,6 +28,12 @@ export class AchievementManager {
 
     public static initialize(context: vscode.ExtensionContext): AchievementManager {
         AchievementManager.instance = new AchievementManager(context);
+        const statistics = AchievementManager.instance.getStatistics();
+
+        // 如果是第一次安裝 (undefined) 或是讀取到空陣列 (預設值)，則初始化資料
+        if (!statistics) {
+            AchievementManager.instance.clear();
+        }
         return AchievementManager.instance;
     }
 
@@ -45,7 +51,7 @@ export class AchievementManager {
             // 1. Read
             const key = this.STORAGE_KEY;
             const storedData = this.context.globalState.get<AchievementStatistics>(key, AchievementAnalyzer.getDefaultStatistics());
-            
+
             // 2. Modify
             const newData = modifier(storedData);
             // 3. Write
@@ -101,6 +107,6 @@ export class AchievementManager {
         await this.context.globalState.update(this.STORAGE_KEY, AchievementAnalyzer.getDefaultStatistics());
         this.achievementStatistics = AchievementAnalyzer.getDefaultStatistics();
     }
-    
+
 
 }

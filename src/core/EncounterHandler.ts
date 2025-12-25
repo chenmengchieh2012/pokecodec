@@ -7,7 +7,7 @@ import { PokemonFactory } from "./CreatePokemonHandler";
 export interface EncounterResult {
     biomeType: BiomeType;
     depth: number;
-    pokemon: PokemonDao
+    pokemon?: PokemonDao
 }
 
 export interface EncounterHandlerMethods {

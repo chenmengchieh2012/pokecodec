@@ -24,13 +24,15 @@ import {
     ReorderPartyPayload,
     SetAutoEncounterPayload,
     SetGameStateDataPayload,
-    UpdateDefenderPokemonPayload,
-    UpdateEncounteredPokemonPayload,
+    UpdateDefenderPokemonUidPayload,
+    UpdateOpponentInPartyPayload,
     UpdateMoneyPayload,
     UpdatePartyPokemonPayload,
     UpdatePokeDexPayload,
     UseItemPayload,
-    UseMedicineInBagPayload
+    UseMedicineInBagPayload,
+    GoTriggerEncounterPayload,
+    UpdateOpponentPokemonUidPayload
 } from './handler';
 import { AchievementManager } from './manager/AchievementManager';
 import { BagManager } from './manager/bagsManager';
@@ -64,7 +66,7 @@ export function activate(context: vscode.ExtensionContext) {
     const achievementManager = AchievementManager.initialize(context);
 
     if (gameStateManager.getGameStateData()?.state !== GameState.Searching) {
-        gameStateManager.updateGameState(GameState.Searching);
+        gameStateManager.updateGameState(GameState.Searching, {});
     }
 
     // Initialize Biome Data Handler
@@ -102,6 +104,7 @@ export function activate(context: vscode.ExtensionContext) {
             gameProvider.resetStorage();
         })
     );
+
 }
 
 
@@ -204,7 +207,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                 this.partyManager.getAll().some(p => p.currentHp > 0)) {
                 const randomEncounterChance = Math.random();
                 if (randomEncounterChance < 0.2) { // 20% 機率觸發隨機遭遇
-                    this.commandHandler.handleGoTriggerEncounter();
+                    this.commandHandler.handleWildTriggerEncounter();
                 }
             }
         });
@@ -243,7 +246,8 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                     nameEn: '',
                     type: [],
                     catchRate: 0,
-                    minDepth: 0
+                    minDepth: 0,
+                    encounterRate: 0
                 }, 0, 'test/file/path');
                 await this.pokemonBoxManager.add(debugPokemon);
             }
@@ -356,12 +360,17 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             if (message.command === MessageType.GetGameStateData) {
                 this.commandHandler.handleGetGameStateData();
             }
-            if (message.command === MessageType.UpdateEncounteredPokemon) {
-                await this.commandHandler.handleUpdateEncounteredPokemon(message as UpdateEncounteredPokemonPayload);
+            if (message.command === MessageType.UpdateOpponentInParty) {
+                await this.commandHandler.handleUpdateOpponentInParty(message as UpdateOpponentInPartyPayload);
             }
-            if (message.command === MessageType.UpdateDefenderPokemon) {
-                await this.commandHandler.handleUpdateDefenderPokemon(message as UpdateDefenderPokemonPayload);
+            if (message.command === MessageType.UpdateDefenderPokemonUid) {
+                await this.commandHandler.handleUpdateDefenderPokemonUid(message as UpdateDefenderPokemonUidPayload);
             }
+
+            if (message.command === MessageType.UpdateOpponentPokemonUid) {
+                await this.commandHandler.handleUpdateOpponentPokemonUid(message as UpdateOpponentPokemonUidPayload);
+            }
+
             if (message.command === MessageType.GetPokeDex) {
                 this.commandHandler.handleGetPokeDex(message as GetPokeDexPayload);
             }
@@ -380,7 +389,11 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
 
             if (message.command === MessageType.GoTriggerEncounter) {
                 if (this.gameStateManager.getGameStateData()?.state === GameState.Searching) {
-                    await this.commandHandler.handleGoTriggerEncounter();
+                    if (message.triggerType === 'wild') {
+                        await this.commandHandler.handleWildTriggerEncounter();
+                    } else if (message.triggerType === 'npc') {
+                        await this.commandHandler.handleNPCTriggerEncounter();
+                    }
                 }
             }
 

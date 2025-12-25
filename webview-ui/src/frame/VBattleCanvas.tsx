@@ -1,13 +1,17 @@
-import React, { useCallback, useEffect, useImperativeHandle, useState } from "react";
+import React, { useCallback, useEffect, useImperativeHandle, useMemo, useState } from "react";
 import { VHPBlock } from "./HPBlock";
 import styles from "./VBattleCanvas.module.css";
 import { BiomeType } from "../../../src/dataAccessObj/BiomeData";
 import { PokemonDao, PokemonState, PokemonStateAction } from "../../../src/dataAccessObj/pokemon";
 import { resolveAssetUrl } from "../utilities/vscode";
+import { BattleMode } from "../../../src/dataAccessObj/gameStateData";
 
 export interface VBattleProps {
+    myParty?: PokemonDao[];
+    opponentParty?: PokemonDao[];
     myPokemon?: PokemonDao;
     opponentPokemon?: PokemonDao;
+    battleMode: BattleMode | undefined;
 }
 
 
@@ -18,29 +22,33 @@ export const CatchPhase = {
     Shaking: 'shaking',
     Caught: 'caught',
     Escaped: 'escaped'
-} as const 
+} as const
 
 export type CatchPhase = typeof CatchPhase[keyof typeof CatchPhase];
 
 
 export interface BattleCanvasHandle {
-    handleThrowBallPhase: (state: PokemonState)=>void,
-    handleMyPokemonFaint: ()=>void,
-    handleOpponentPokemonFaint: ()=>void,
-    handleAttackFromOpponent: ()=>Promise<void>,
-    handleAttackToOpponent: ()=>Promise<void>,
-    handleRunAway: ()=>Promise<void>,
-    handleSwitchPokemon: ()=>Promise<void>,
-    handleStart: (biomeType: BiomeType)=>void
+    handleThrowBallPhase: (state: PokemonState) => void,
+    handleMyPokemonFaint: () => void,
+    handleOpponentPokemonFaint: () => void,
+    handleOpponentSwitchPokemon: () => Promise<void>,
+    handleAttackFromOpponent: () => Promise<void>,
+    handleAttackToOpponent: () => Promise<void>,
+    handleRunAway: () => Promise<void>,
+    handleSwitchPokemon: () => Promise<void>,
+    handleStart: (biomeType: BiomeType) => void
 }
 
 // 
-export const VBattleCanvas = React.forwardRef<BattleCanvasHandle, VBattleProps>((props, ref)=>{
+export const VBattleCanvas = React.forwardRef<BattleCanvasHandle, VBattleProps>((props, ref) => {
     const opponentPokemon = props.opponentPokemon
     const myPokemon = props.myPokemon
+    const opponentParty = props.opponentParty || []
+    const myParty = props.myParty || []
+    const battleMode = props.battleMode
     const [opponentPokemonState, setOpponentPokemonState] = useState<PokemonState>({
-      action: PokemonStateAction.None,
-      caughtBallApiName: undefined
+        action: PokemonStateAction.None,
+        caughtBallApiName: undefined
     });
     const [playerAnim, setPlayerAnim] = useState('anim-enter-player');
     const [opponentAnim, setOpponentAnim] = useState('anim-enter-enemy');
@@ -83,78 +91,86 @@ export const VBattleCanvas = React.forwardRef<BattleCanvasHandle, VBattleProps>(
     }, [opponentPokemon]);
 
     useImperativeHandle(ref, () => ({
-        handleThrowBallPhase:(state: PokemonState)=>{
-          setOpponentPokemonState(state);
-          if (state.action === PokemonStateAction.Catching) {
-              setCatchAnimPhase('throwing');
-          } else if (state.action === PokemonStateAction.Caught) {
-              setCatchAnimPhase('caught');
-          } else if (state.action === PokemonStateAction.Escaped) {
-              setCatchAnimPhase('escaped');
-          } else {
-              setCatchAnimPhase('none');
-          }
+        handleThrowBallPhase: (state: PokemonState) => {
+            setOpponentPokemonState(state);
+            if (state.action === PokemonStateAction.Catching) {
+                setCatchAnimPhase('throwing');
+            } else if (state.action === PokemonStateAction.Caught) {
+                setCatchAnimPhase('caught');
+            } else if (state.action === PokemonStateAction.Escaped) {
+                setCatchAnimPhase('escaped');
+            } else {
+                setCatchAnimPhase('none');
+            }
         },
-        handleMyPokemonFaint:()=>{
-          // 我方昏厥動畫 (Flash)
-          setPlayerAnim('anim-faint');
+        handleMyPokemonFaint: () => {
+            // 我方昏厥動畫 (Flash)
+            setPlayerAnim('anim-faint');
         },
-        handleOpponentPokemonFaint:()=>{
-          // 敵方昏厥動畫 (Flash)
-          setOpponentAnim('anim-faint');
+        handleOpponentPokemonFaint: () => {
+            // 敵方昏厥動畫 (Flash)
+            setOpponentAnim('anim-faint');
         },
-        handleAttackFromOpponent: async ()=>{
-          // 敵方攻擊動畫 (Shake)
-          triggerAnim(setOpponentAnim, 'shake');
-          await sleep(500);
+        handleOpponentSwitchPokemon: async () => {
+            // 清除昏厥動畫狀態
+            setOpponentAnim('');
 
-          // 我方受傷動畫 (Flash)
-          triggerAnim(setPlayerAnim, 'flash-sprite');
+            // 觸發敵方出場動畫
+            triggerAnim(setOpponentAnim, 'anim-enter-enemy');
+            await sleep(1000);
         },
-        handleAttackToOpponent: async ()=>{
-          // 我方攻擊動畫 (Shake)
-          triggerAnim(setPlayerAnim, 'shake');
-          await sleep(500);
-          
-          // 敵方受傷動畫 (Flash)
-          triggerAnim(setOpponentAnim, 'flash-sprite');
-        },
-        handleRunAway: async ()=>{
-          setPlayerAnim('anim-run'); // 觸發逃跑動畫
-          await sleep(1000); // Wait for animation
-        },
-        handleSwitchPokemon: async ()=>{
-          // 清除昏厥動畫狀態
-          setPlayerAnim('');
+        handleAttackFromOpponent: async () => {
+            // 敵方攻擊動畫 (Shake)
+            triggerAnim(setOpponentAnim, 'shake');
+            await sleep(500);
 
-          // 2. 觸發出場動畫
-          triggerAnim(setPlayerAnim, 'anim-enter-player');
-          await sleep(1000);
+            // 我方受傷動畫 (Flash)
+            triggerAnim(setPlayerAnim, 'flash-sprite');
         },
-        handleStart: (_fixBiomeType: BiomeType)=>{
-          setFixBiomeType(_fixBiomeType);
-          setFlash(false);
-          setTimeout(() => setSceneOpacity(1), 50);
+        handleAttackToOpponent: async () => {
+            // 我方攻擊動畫 (Shake)
+            triggerAnim(setPlayerAnim, 'shake');
+            await sleep(500);
+
+            // 敵方受傷動畫 (Flash)
+            triggerAnim(setOpponentAnim, 'flash-sprite');
+        },
+        handleRunAway: async () => {
+            setPlayerAnim('anim-run'); // 觸發逃跑動畫
+            await sleep(1000); // Wait for animation
+        },
+        handleSwitchPokemon: async () => {
+            // 清除昏厥動畫狀態
+            setPlayerAnim('');
+
+            // 2. 觸發出場動畫
+            triggerAnim(setPlayerAnim, 'anim-enter-player');
+            await sleep(1000);
+        },
+        handleStart: (_fixBiomeType: BiomeType) => {
+            setFixBiomeType(_fixBiomeType);
+            setFlash(false);
+            setTimeout(() => setSceneOpacity(1), 50);
         }
-      })
+    })
     )
 
-    
+
 
     const spriteUrl = useCallback((id: string, isShiny?: boolean) =>
-    id ? resolveAssetUrl(`./sprites/pokemon/${isShiny ? 'shiny' : 'normal'}/${id}.gif`)
-    : '', []);
+        id ? resolveAssetUrl(`./sprites/pokemon/${isShiny ? 'shiny' : 'normal'}/${id}.gif`)
+            : '', []);
 
     const spriteBackUrl = useCallback((id: string, isShiny?: boolean) =>
-    id ? resolveAssetUrl(`./sprites/pokemon/${isShiny ? 'back-shiny' : 'back'}/${id}.gif`)
-    : '', []);
+        id ? resolveAssetUrl(`./sprites/pokemon/${isShiny ? 'back-shiny' : 'back'}/${id}.gif`)
+            : '', []);
 
 
     const pokeBallUrl = useCallback((ballName: string) => {
         const ballApiName = ballName || 'poke-ball';
         return resolveAssetUrl(`./sprites/items/${ballApiName}.png`);
     }, []);
-    
+
 
     const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>, id: number) => {
         const target = e.target as HTMLImageElement;
@@ -167,6 +183,7 @@ export const VBattleCanvas = React.forwardRef<BattleCanvasHandle, VBattleProps>(
 
     const getBiomeClass = (type: BiomeType) => {
         switch (type) {
+            case BiomeType.BattleArena: return styles['battle-arena'];
             case BiomeType.Grassland: return styles['grassland'];
             case BiomeType.WaterBeach: return styles['water-beach'];
             case BiomeType.UrbanPowerPlant: return styles['urban-power-plant'];
@@ -188,85 +205,89 @@ export const VBattleCanvas = React.forwardRef<BattleCanvasHandle, VBattleProps>(
         }
     };
 
+    const isShowOpponentParty = useMemo(() => {
+        return battleMode === BattleMode.Trainer;
+    }, [battleMode])
+
     return <>
-      <div className={`${styles['flash-effect']} ${flash ? styles['flash-active'] : ''}`}></div>
+        <div className={`${styles['flash-effect']} ${flash ? styles['flash-active'] : ''}`}></div>
 
-      <div className={styles['battle-scene']}>
-          <div 
-            className={`${styles['battle-background']} ${getBiomeClass(fixBiomeType)}`}
-            style={{ opacity: sceneOpacity, transition: 'opacity 0.5s ease-in-out' }}
-          />
-          <>
-            {/* 敵方 HUD */}
-            <div className={styles['opponent-hud']}>
-                <VHPBlock pokemonData={opponentPokemon} isPlayer={false} />
-            </div>
-
-            {/* 敵方區域容器 (包含草地與寶可夢) */}
-            <div 
-                className={`${styles['opponent-container']} ${opponentAnim ? styles[opponentAnim] : ''} ${getCatchAnimClass()}`}
-                onAnimationEnd={handleAnimationEnd}
-            >
-                <div className={`${styles['pokemon-wrapper']} ${shinyAnim ? styles[shinyAnim] : ''}`}>
-                    {/* Shiny Sparkles */}
-                    {opponentPokemon?.isShiny && shinyAnim === 'anim-shiny' && (
-                        <>
-                            <div className={styles['shiny-sparkle']}></div>
-                            <div className={styles['shiny-sparkle']}></div>
-                            <div className={styles['shiny-sparkle']}></div>
-                            <div className={styles['shiny-sparkle']}></div>
-                            <div className={styles['shiny-sparkle']}></div>
-                        </>
-                    )}
-                    <div className={styles['grass-base']}></div>
-                    <img 
-                        src={pokeBallUrl(opponentPokemonState.caughtBallApiName || '')} 
-                        className={styles['pokeball-sprite']} 
-                        alt="pokeball" 
-                        data-role="pokeball"
-                    />
-                    <img 
-                      src={spriteUrl(opponentPokemon ? opponentPokemon.id.toString() : '', opponentPokemon?.isShiny)} 
-                      alt="opponent pokemon" 
-                      className={styles['pokemon-sprite']}
-                      data-role="pokemon"
-                      style={{ 
-                        transition: 'opacity 0.5s' 
-                      }}
-                      onError={(e) => handleImageError(e, opponentPokemon ? opponentPokemon.id : 0)}
-                    />
+        <div className={styles['battle-scene']}>
+            <div
+                className={`${styles['battle-background']} ${getBiomeClass(fixBiomeType)}`}
+                style={{ opacity: sceneOpacity, transition: 'opacity 0.5s ease-in-out' }}
+            />
+            <>
+                {/* 敵方 HUD */}
+                <div className={styles['opponent-hud']}>
+                    <VHPBlock pokemonData={opponentPokemon} isPlayer={false} party={opponentParty} showParty={isShowOpponentParty} />
                 </div>
-            </div>
 
-            {/* 我方區域容器 (包含草地與寶可夢) */}
-            <div className={`${styles['player-container']} ${playerAnim ? styles[playerAnim] : ''}`}>
-                <div className={styles['my-pokemon-wrapper']}>
-                    {/* Shiny Sparkles */}
-                    {myPokemon?.isShiny && shinyAnim === 'anim-shiny' && (
-                        <>
-                            <div className={styles['shiny-sparkle']}></div>
-                            <div className={styles['shiny-sparkle']}></div>
-                            <div className={styles['shiny-sparkle']}></div>
-                            <div className={styles['shiny-sparkle']}></div>
-                            <div className={styles['shiny-sparkle']}></div>
-                        </>
-                    )}
-                    <div className={styles['my-grass-base']}></div>
-                    <img 
-                      src={spriteBackUrl(myPokemon? myPokemon.id.toString() : '', myPokemon?.isShiny)} 
-                      alt="my pokemon" 
-                      className={styles['my-pokemon-sprite']}
-                      onError={(e) => handleImageError(e, myPokemon ? myPokemon.id : 0)}
-                    />
+                {/* 敵方區域容器 (包含草地與寶可夢) */}
+                <div
+                    className={`${styles['opponent-container']} ${opponentAnim ? styles[opponentAnim] : ''} ${getCatchAnimClass()}`}
+                    onAnimationEnd={handleAnimationEnd}
+                >
+                    <div className={`${styles['pokemon-wrapper']} ${shinyAnim ? styles[shinyAnim] : ''}`}>
+                        {/* Shiny Sparkles */}
+                        {opponentPokemon?.isShiny && shinyAnim === 'anim-shiny' && (
+                            <>
+                                <div className={styles['shiny-sparkle']}></div>
+                                <div className={styles['shiny-sparkle']}></div>
+                                <div className={styles['shiny-sparkle']}></div>
+                                <div className={styles['shiny-sparkle']}></div>
+                                <div className={styles['shiny-sparkle']}></div>
+                            </>
+                        )}
+                        <div className={styles['grass-base']}></div>
+                        <img
+                            src={pokeBallUrl(opponentPokemonState.caughtBallApiName || '')}
+                            className={styles['pokeball-sprite']}
+                            alt="pokeball"
+                            data-role="pokeball"
+                        />
+                        <img
+                            src={spriteUrl(opponentPokemon ? opponentPokemon.id.toString() : '', opponentPokemon?.isShiny)}
+                            alt="opponent pokemon"
+                            className={styles['pokemon-sprite']}
+                            data-role="pokemon"
+                            style={{
+                                transition: 'opacity 0.5s'
+                            }}
+                            onError={(e) => handleImageError(e, opponentPokemon ? opponentPokemon.id : 0)}
+                        />
+                    </div>
                 </div>
-            </div>
-            
-            {/* 我方 HUD */}
-            <div className={styles['my-hud']}>
-                <VHPBlock pokemonData={myPokemon} isPlayer={true} />
-            </div>
-          </>
-      </div>
+
+                {/* 我方區域容器 (包含草地與寶可夢) */}
+                <div className={`${styles['player-container']} ${playerAnim ? styles[playerAnim] : ''}`}>
+                    <div className={styles['my-pokemon-wrapper']}>
+                        {/* Shiny Sparkles */}
+                        {myPokemon?.isShiny && shinyAnim === 'anim-shiny' && (
+                            <>
+                                <div className={styles['shiny-sparkle']}></div>
+                                <div className={styles['shiny-sparkle']}></div>
+                                <div className={styles['shiny-sparkle']}></div>
+                                <div className={styles['shiny-sparkle']}></div>
+                                <div className={styles['shiny-sparkle']}></div>
+                            </>
+                        )}
+                        <div className={styles['my-grass-base']}></div>
+                        <img
+                            src={spriteBackUrl(myPokemon ? myPokemon.id.toString() : '', myPokemon?.isShiny)}
+                            alt="my pokemon"
+                            className={styles['my-pokemon-sprite']}
+                            onError={(e) => handleImageError(e, myPokemon ? myPokemon.id : 0)}
+                        />
+                    </div>
+                </div>
+
+                {/* 我方 HUD */}
+                <div className={styles['my-hud']}>
+                    <VHPBlock pokemonData={myPokemon} isPlayer={true} party={myParty} showParty={true} />
+                </div>
+            </>
+        </div>
 
     </>
 

@@ -1,14 +1,16 @@
-
 /* --- Gen 2 Retro HUD (Polished) --- */
 .hud {
   position: relative;
-  background-color: #f8f8f0; /* Slightly warmer white */
+  background-color: #f8f8f0;
+  /* Slightly warmer white */
   border: 3px solid #303030;
-  border-radius: 8px; /* Rounded corners */
-  border-bottom-right-radius: 20px; /* Distinctive shape */
+  border-radius: 8px;
+  /* Rounded corners */
+  border-bottom-right-radius: 20px;
+  /* Distinctive shape */
   padding: 6px 10px 8px 10px;
   min-width: 120px;
-  box-shadow: 4px 4px 0px rgba(0,0,0,0.25);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.25);
   font-family: 'VT323', monospace;
   color: #202020;
   image-rendering: pixelated;
@@ -39,8 +41,8 @@
   padding: 1px 4px;
   border-radius: 4px;
   margin-right: 6px;
-  text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
-  box-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+  text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
   vertical-align: middle;
 }
 
@@ -60,14 +62,16 @@
 .hp-container {
   display: flex;
   align-items: center;
-  background: #303030; /* Dark background for the bar container */
+  background: #303030;
+  /* Dark background for the bar container */
   padding: 2px 3px;
   border-radius: 10px;
   margin-bottom: 4px;
 }
 
 .hp-label {
-  color: #f8d030; /* Gold HP text */
+  color: #f8d030;
+  /* Gold HP text */
   font-size: 12px;
   font-weight: 900;
   font-style: italic;
@@ -91,8 +95,8 @@
   background-color: var(--hp-green);
   transition: width 0.5s cubic-bezier(0.4, 0.0, 0.2, 1), background-color 0.3s;
   /* Glossy effect */
-  background-image: linear-gradient(to bottom, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 100%);
-  border-right: 1px solid rgba(0,0,0,0.3);
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.1) 100%);
+  border-right: 1px solid rgba(0, 0, 0, 0.3);
 }
 
 /* Bottom Row: HP Numbers (Player only) */
@@ -128,7 +132,156 @@
 }
 
 @keyframes hud-shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px) rotate(-2deg); }
-  75% { transform: translateX(5px) rotate(2deg); }
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-5px) rotate(-2deg);
+  }
+
+  75% {
+    transform: translateX(5px) rotate(2deg);
+  }
+}
+
+/* Party Balls - 隊伍精靈球圖示 */
+.party-balls {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 3px;
+  margin-bottom: 4px;
+  padding-right: 2px;
+  position: relative;
+}
+
+/* Decoration: Arrow/Underline next to balls */
+.party-balls::before {
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 4px 0 4px 6px;
+  border-color: transparent transparent transparent #e04040;
+  margin-right: 4px;
+}
+
+.party-balls::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  right: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(to left, #e04040 0%, transparent 100%);
+  opacity: 0.6;
+}
+
+.party-ball {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid #303030;
+  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+
+/* 存活狀態 - 紅白精靈球 (Poke Ball) */
+.ball-poke {
+  background: linear-gradient(to bottom,
+      #E03030 0%,
+      #E03030 45%,
+      #303030 45%,
+      #303030 55%,
+      #F8F8F8 55%,
+      #F8F8F8 100%);
+}
+
+/* 超級球 (Great Ball) - 藍色 */
+.ball-great {
+  background: linear-gradient(to bottom,
+      #3060E0 0%,
+      #3060E0 45%,
+      #303030 45%,
+      #303030 55%,
+      #F8F8F8 55%,
+      #F8F8F8 100%);
+}
+
+/* 高級球 (Ultra Ball) - 黑黃色 */
+.ball-ultra {
+  background: linear-gradient(to bottom,
+      #303030 0%,
+      #303030 30%,
+      #F8D030 30%,
+      #F8D030 45%,
+      #303030 45%,
+      #303030 55%,
+      #F8F8F8 55%,
+      #F8F8F8 100%);
+}
+
+/* Master Ball - Purple/Pink (Optional, just in case) */
+.ball-master {
+  background: linear-gradient(to bottom,
+      #603090 0%,
+      #603090 45%,
+      #303030 45%,
+      #303030 55%,
+      #F8F8F8 55%,
+      #F8F8F8 100%);
+}
+
+.ball-poke::after,
+.ball-great::after,
+.ball-ultra::after,
+.ball-master::after {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #F8F8F8;
+  border: 1px solid #303030;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* 昏厥狀態 - 灰色 */
+.ball-fainted {
+  background: linear-gradient(to bottom,
+      #808080 0%,
+      #808080 45%,
+      #303030 45%,
+      #303030 55%,
+      #A0A0A0 55%,
+      #A0A0A0 100%);
+  opacity: 0.6;
+}
+
+.ball-fainted::after {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #A0A0A0;
+  border: 1px solid #303030;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* 空位 - 透明虛線 */
+.ball-empty {
+  background: transparent;
+  border: 1px dashed #909090;
+  opacity: 0.4;
 }

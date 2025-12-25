@@ -7,7 +7,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #202020; /* Fallback color */
+  background-color: #202020;
+  /* Fallback color */
 }
 
 .battle-background {
@@ -19,14 +20,17 @@
   z-index: 0;
   pointer-events: none;
 
-  background-size: 
-    100% 4px,        /* 掃描線 */
-    100% 100%,       /* 樹林 */
-    100% 100%;       /* 漸層 */
+  background-size:
+    100% 4px,
+    /* 掃描線 */
+    100% 100%,
+    /* 樹林 */
+    100% 100%;
+  /* 漸層 */
 
-  background-repeat: 
-    repeat, 
-    no-repeat, 
+  background-repeat:
+    repeat,
+    no-repeat,
     no-repeat;
 
   /* 混合模式 */
@@ -40,7 +44,7 @@
 
 /* Grassland (Default-like) */
 .grassland {
-   /* 基礎背景色 */
+  /* 基礎背景色 */
   background-color: #a0e0f8;
 
   /* 
@@ -49,91 +53,142 @@
     2. 遠景樹林 (Horizon)
     3. 地面漸層 (Ground Color)
   */
-  background-image: 
+  background-image:
     /* 1. 掃描線 */
-    linear-gradient(rgba(0,0,0,0) 50%, rgba(0,0,0,0.1) 50%),
-    
+    linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.1) 50%),
+
     /* 2. 遠景樹林 (深綠色帶) */
     linear-gradient(to bottom, transparent 42%, #408050 42%, #2a5a3a 45%, transparent 45%),
 
     /* 3. 場景主體漸層 */
-    linear-gradient(
-      to bottom,
-      #80d0f0 0%,    #b0e8f8 42%,   /* 天空 */
-      transparent 42%, transparent 45%, /* 留給樹林 */
-      #60b070 45%,   #409050 100%   /* 地面 */
-  );
+    linear-gradient(to bottom,
+      #80d0f0 0%, #b0e8f8 42%,
+      /* 天空 */
+      transparent 42%, transparent 45%,
+      /* 留給樹林 */
+      #60b070 45%, #409050 100%
+      /* 地面 */
+    );
 
 }
 
 /* Water/Beach */
 .water-beach {
   background-color: #60b0ff;
-  background-image: 
-    linear-gradient(rgba(0,0,0,0) 50%, rgba(0,0,0,0.1) 50%),
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.1) 50%),
     linear-gradient(to bottom, transparent 42%, #205080 42%, #1a4070 45%, transparent 45%),
-    linear-gradient(
-      to bottom,
-      #60b0ff 0%,    #a0d8ff 42%,   /* Sky */
+    linear-gradient(to bottom,
+      #60b0ff 0%, #a0d8ff 42%,
+      /* Sky */
       transparent 42%, transparent 45%,
-      #f0e090 45%,   #e0c060 100%   /* Sand */
+      #f0e090 45%, #e0c060 100%
+      /* Sand */
     );
 }
 
 /* Urban/Power Plant */
 .urban-power-plant {
   background-color: #8090a0;
-  background-image: 
-    linear-gradient(rgba(0,0,0,0) 50%, rgba(0,0,0,0.1) 50%),
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.1) 50%),
     linear-gradient(to bottom, transparent 42%, #404040 42%, #303030 45%, transparent 45%),
-    linear-gradient(
-      to bottom,
-      #708090 0%,    #a0b0c0 42%,   /* Smoggy Sky */
+    linear-gradient(to bottom,
+      #708090 0%, #a0b0c0 42%,
+      /* Smoggy Sky */
       transparent 42%, transparent 45%,
-      #808080 45%,   #606060 100%   /* Concrete */
+      #808080 45%, #606060 100%
+      /* Concrete */
     );
 }
 
 /* Mountain/Cave */
 .mountain-cave {
   background-color: #a0b0c0;
-  background-image: 
-    linear-gradient(rgba(0,0,0,0) 50%, rgba(0,0,0,0.1) 50%),
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.1) 50%),
     linear-gradient(to bottom, transparent 42%, #504030 42%, #403020 45%, transparent 45%),
-    linear-gradient(
-      to bottom,
-      #a0b0c0 0%,    #d0e0f0 42%,   /* Pale Sky */
+    linear-gradient(to bottom,
+      #a0b0c0 0%, #d0e0f0 42%,
+      /* Pale Sky */
       transparent 42%, transparent 45%,
-      #908070 45%,   #706050 100%   /* Rocky Ground */
+      #908070 45%, #706050 100%
+      /* Rocky Ground */
     );
 }
 
 /* Ghost/Mystic */
 .ghost-mystic {
   background-color: #302050;
-  background-image: 
-    linear-gradient(rgba(0,0,0,0) 50%, rgba(0,0,0,0.1) 50%),
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.1) 50%),
     linear-gradient(to bottom, transparent 42%, #100020 42%, #000000 45%, transparent 45%),
-    linear-gradient(
-      to bottom,
-      #302050 0%,    #504070 42%,   /* Dark Purple Sky */
+    linear-gradient(to bottom,
+      #302050 0%, #504070 42%,
+      /* Dark Purple Sky */
       transparent 42%, transparent 45%,
-      #403060 45%,   #201030 100%   /* Dark Ground */
+      #403060 45%, #201030 100%
+      /* Dark Ground */
     );
 }
 
 /* Toxic Waste */
 .toxic-waste {
   background-color: #c0d080;
-  background-image: 
-    linear-gradient(rgba(0,0,0,0) 50%, rgba(0,0,0,0.1) 50%),
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.1) 50%),
     linear-gradient(to bottom, transparent 42%, #406020 42%, #305010 45%, transparent 45%),
-    linear-gradient(
-      to bottom,
-      #c0d080 0%,    #e0f0a0 42%,   /* Sickly Sky */
+    linear-gradient(to bottom,
+      #c0d080 0%, #e0f0a0 42%,
+      /* Sickly Sky */
       transparent 42%, transparent 45%,
-      #705080 45%,   #503060 100%   /* Polluted Ground */
+      #705080 45%, #503060 100%
+      /* Polluted Ground */
     );
+}
+
+/* Battle Arena */
+.battle-arena {
+  background-color: #304050;
+  background-image:
+    /* 1. Scanlines */
+    linear-gradient(rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.05) 50%),
+
+    /* 2. Spotlights (Top) */
+    radial-gradient(circle at 50% -20%, rgba(255, 255, 255, 0.4) 0%, transparent 60%),
+
+    /* 3. Wall / Audience Area (Opaque to hide floor texture behind it) */
+    linear-gradient(to bottom,
+      #1a2a3a 0%,
+      #3a4a5a 40%,
+      #101010 42%,
+      /* Barrier */
+      #101010 45%,
+      transparent 45%),
+
+    /* 4. Floor Texture (Base64 Grid Pattern) */
+    url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iMzAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTSA2MCAwIEwgMCAwIDAgMzAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjE1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9zdmc+'),
+
+    /* 5. Floor Depth Gradient */
+    linear-gradient(to bottom,
+      transparent 45%,
+      rgba(40, 60, 80, 0.6) 45%,
+      rgba(20, 30, 40, 0.9) 100%);
+
+  background-size:
+    100% 4px,
+    100% 100%,
+    100% 100%,
+    60px 30px,
+    /* Grid Size */
+    100% 100%;
+
+  background-repeat:
+    repeat,
+    no-repeat,
+    no-repeat,
+    repeat,
+    no-repeat;
 }
 
 /* --- 3. HUD (固定在左上角) --- */
@@ -196,7 +251,8 @@
 /* 新增：寶可夢包裝器 (確保陰影跟隨寶可夢) */
 .pokemon-wrapper {
   position: relative;
-  width: 100%; /* 恢復敵方大小 */
+  width: 100%;
+  /* 恢復敵方大小 */
   display: flex;
   justify-content: center;
   align-items: flex-end;
@@ -217,26 +273,26 @@
   width: 140%;
   height: 45%;
   left: -20%;
-  
+
   /* 1. 底色：亮草綠色 */
   background-color: #88d860;
-  
+
   /* 2. 紋理：中間亮，四周暗 */
-  background-image: 
-    radial-gradient(ellipse at center, rgba(255,255,255,0.4) 0%, rgba(0,0,0,0) 70%),
-    repeating-linear-gradient(90deg, rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 2px, transparent 2px, transparent 4px);
-  
+  background-image:
+    radial-gradient(ellipse at center, rgba(255, 255, 255, 0.4) 0%, rgba(0, 0, 0, 0) 70%),
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.05) 0px, rgba(0, 0, 0, 0.05) 2px, transparent 2px, transparent 4px);
+
   background-size: 100% 100%, 100% 100%;
-  
+
   /* 3. 邊框與立體感 */
   border: 3px solid #509040;
   border-radius: 50%;
-  
+
   /* 4. 陰影：立體厚度 + 投影 */
-  box-shadow: 
+  box-shadow:
     0 6px 0 #407030,
-    0 15px 20px rgba(0,0,0,0.3);
-    
+    0 15px 20px rgba(0, 0, 0, 0.3);
+
   transform: scaleY(0.6);
   z-index: 1;
 }
@@ -247,22 +303,22 @@
   width: 160%;
   height: 60%;
   left: -30%;
-  
+
   background-color: #88d860;
-  
-  background-image: 
-    radial-gradient(ellipse at center, rgba(255,255,255,0.4) 0%, rgba(0,0,0,0) 70%),
-    repeating-linear-gradient(90deg, rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 2px, transparent 2px, transparent 4px);
-    
+
+  background-image:
+    radial-gradient(ellipse at center, rgba(255, 255, 255, 0.4) 0%, rgba(0, 0, 0, 0) 70%),
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.05) 0px, rgba(0, 0, 0, 0.05) 2px, transparent 2px, transparent 4px);
+
   background-size: 100% 100%, 100% 100%;
-  
+
   border: 4px solid #509040;
   border-radius: 50%;
-  
-  box-shadow: 
+
+  box-shadow:
     0 8px 0 #407030,
-    0 20px 30px rgba(0,0,0,0.3);
-    
+    0 20px 30px rgba(0, 0, 0, 0.3);
+
   transform: scaleY(0.6);
   z-index: 1;
 }
@@ -276,7 +332,7 @@
   object-fit: contain;
   image-rendering: pixelated;
   z-index: 2;
-  filter: drop-shadow(5px 5px 0px rgba(0,0,0,0.25));
+  filter: drop-shadow(5px 5px 0px rgba(0, 0, 0, 0.25));
 }
 
 .my-pokemon-sprite {
@@ -287,24 +343,43 @@
   object-fit: contain;
   image-rendering: pixelated;
   z-index: 2;
-  filter: drop-shadow(5px 5px 0px rgba(0,0,0,0.25));
+  filter: drop-shadow(5px 5px 0px rgba(0, 0, 0, 0.25));
 }
 
 /* --- 5. 下方控制區 --- */
 /* Moved to BattleControl.module.css */
 
 /* --- 6. 動畫特效 --- */
-.anim-enter { animation: slideInRight 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
-.anim-catch { animation: ballThrow 1s forwards; }
+.anim-enter {
+  animation: slideInRight 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.anim-catch {
+  animation: ballThrow 1s forwards;
+}
 
 @keyframes slideInRight {
-  from { transform: translateX(300px); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+  from {
+    transform: translateX(300px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 @keyframes slideInLeft {
-  from { transform: translateX(-300px); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+  from {
+    transform: translateX(-300px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
 
 .anim-enter-player {
@@ -316,17 +391,49 @@
 }
 
 @keyframes shake {
-  0% { transform: translate(1px, 1px) rotate(0deg); }
-  10% { transform: translate(-1px, -2px) rotate(-1deg); }
-  20% { transform: translate(-3px, 0px) rotate(1deg); }
-  30% { transform: translate(3px, 2px) rotate(0deg); }
-  40% { transform: translate(1px, -1px) rotate(1deg); }
-  50% { transform: translate(-1px, 2px) rotate(-1deg); }
-  60% { transform: translate(-3px, 1px) rotate(0deg); }
-  70% { transform: translate(3px, 1px) rotate(-1deg); }
-  80% { transform: translate(-1px, -1px) rotate(1deg); }
-  90% { transform: translate(1px, 2px) rotate(0deg); }
-  100% { transform: translate(1px, -2px) rotate(-1deg); }
+  0% {
+    transform: translate(1px, 1px) rotate(0deg);
+  }
+
+  10% {
+    transform: translate(-1px, -2px) rotate(-1deg);
+  }
+
+  20% {
+    transform: translate(-3px, 0px) rotate(1deg);
+  }
+
+  30% {
+    transform: translate(3px, 2px) rotate(0deg);
+  }
+
+  40% {
+    transform: translate(1px, -1px) rotate(1deg);
+  }
+
+  50% {
+    transform: translate(-1px, 2px) rotate(-1deg);
+  }
+
+  60% {
+    transform: translate(-3px, 1px) rotate(0deg);
+  }
+
+  70% {
+    transform: translate(3px, 1px) rotate(-1deg);
+  }
+
+  80% {
+    transform: translate(-1px, -1px) rotate(1deg);
+  }
+
+  90% {
+    transform: translate(1px, 2px) rotate(0deg);
+  }
+
+  100% {
+    transform: translate(1px, -2px) rotate(-1deg);
+  }
 }
 
 .shake {
@@ -335,9 +442,17 @@
 }
 
 @keyframes flash-sprite {
-  0% { opacity: 1; }
-  50% { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }
 
 .flash-sprite {
@@ -346,44 +461,102 @@
 }
 
 @keyframes ballThrow {
-  0% { transform: scale(1) rotate(0); }
-  50% { transform: scale(0.5) translateY(-50px) rotate(180deg); }
-  100% { transform: scale(0) translateY(20px); opacity: 0; }
+  0% {
+    transform: scale(1) rotate(0);
+  }
+
+  50% {
+    transform: scale(0.5) translateY(-50px) rotate(180deg);
+  }
+
+  100% {
+    transform: scale(0) translateY(20px);
+    opacity: 0;
+  }
 }
 
-.anim-run { animation: runAway 1s forwards; }
+.anim-run {
+  animation: runAway 1s forwards;
+}
 
 @keyframes runAway {
-  0% { transform: translateX(0); opacity: 1; }
-  30% { transform: translateX(-20px); opacity: 1; } /* 先往後退一點 */
-  100% { transform: translateX(400px); opacity: 0; } /* 再快速往右跑掉 */
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  30% {
+    transform: translateX(-20px);
+    opacity: 1;
+  }
+
+  /* 先往後退一點 */
+  100% {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+
+  /* 再快速往右跑掉 */
 }
 
 .flash-effect {
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: white;
   opacity: 0;
   pointer-events: none;
   z-index: 100;
 }
-.flash-active { animation: flash 0.3s ease-out; }
-@keyframes flash { 0% { opacity: 1; } 100% { opacity: 0; } }
+
+.flash-active {
+  animation: flash 0.3s ease-out;
+}
+
+@keyframes flash {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
 
 @keyframes slideDown {
-    0% { transform: translateY(0); opacity: 1; }
-    100% { transform: translateY(100%); opacity: 0; }
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(100%);
+    opacity: 0;
+  }
 }
 
 .anim-faint {
-    animation: slideDown 1s forwards;
+  animation: slideDown 1s forwards;
 }
 
 /* Shiny Animation */
 @keyframes sparkle {
-  0% { transform: scale(0) rotate(0deg); opacity: 0; }
-  50% { transform: scale(1) rotate(180deg); opacity: 1; }
-  100% { transform: scale(0) rotate(360deg); opacity: 0; }
+  0% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(1) rotate(180deg);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(0) rotate(360deg);
+    opacity: 0;
+  }
 }
 
 .shiny-sparkle {
@@ -396,89 +569,172 @@
   pointer-events: none;
 }
 
-.anim-shiny .shiny-sparkle:nth-child(1) { top: -20%; left: -20%; animation: sparkle 0.6s ease-out 0s forwards; }
-.anim-shiny .shiny-sparkle:nth-child(2) { top: -10%; right: -30%; animation: sparkle 0.6s ease-out 0.2s forwards; }
-.anim-shiny .shiny-sparkle:nth-child(3) { bottom: 30%; left: -10%; animation: sparkle 0.6s ease-out 0.4s forwards; }
-.anim-shiny .shiny-sparkle:nth-child(4) { bottom: 20%; right: -10%; animation: sparkle 0.6s ease-out 0.1s forwards; }
-.anim-shiny .shiny-sparkle:nth-child(5) { top: 50%; left: 50%; animation: sparkle 0.8s ease-out 0.3s forwards; }
+.anim-shiny .shiny-sparkle:nth-child(1) {
+  top: -20%;
+  left: -20%;
+  animation: sparkle 0.6s ease-out 0s forwards;
+}
+
+.anim-shiny .shiny-sparkle:nth-child(2) {
+  top: -10%;
+  right: -30%;
+  animation: sparkle 0.6s ease-out 0.2s forwards;
+}
+
+.anim-shiny .shiny-sparkle:nth-child(3) {
+  bottom: 30%;
+  left: -10%;
+  animation: sparkle 0.6s ease-out 0.4s forwards;
+}
+
+.anim-shiny .shiny-sparkle:nth-child(4) {
+  bottom: 20%;
+  right: -10%;
+  animation: sparkle 0.6s ease-out 0.1s forwards;
+}
+
+.anim-shiny .shiny-sparkle:nth-child(5) {
+  top: 50%;
+  left: 50%;
+  animation: sparkle 0.8s ease-out 0.3s forwards;
+}
 
 /* --- Catching Animation --- */
 
 /* 1. 丟球拋物線動畫 */
 @keyframes throwBallArc {
-  0% { 
-    transform: translate(-200px, 100px) scale(0.5) rotate(0deg); 
+  0% {
+    transform: translate(-200px, 100px) scale(0.5) rotate(0deg);
     opacity: 0;
   }
+
   20% {
     opacity: 1;
   }
-  50% { 
-    transform: translate(-50px, -150px) scale(0.8) rotate(360deg); 
+
+  50% {
+    transform: translate(-50px, -150px) scale(0.8) rotate(360deg);
   }
-  100% { 
-    transform: translate(0, 0) scale(1) rotate(720deg); 
+
+  100% {
+    transform: translate(0, 0) scale(1) rotate(720deg);
     opacity: 1;
   }
 }
 
 /* 2. 寶可夢被吸入球中 (變小 + 變紅) */
 @keyframes suckIn {
-  0% { 
-    transform: scale(1); 
+  0% {
+    transform: scale(1);
     filter: brightness(1) sepia(0) saturate(1) hue-rotate(0deg);
     opacity: 1;
   }
-  100% { 
-    transform: scale(0.1); 
-    filter: brightness(0.5) sepia(1) saturate(5) hue-rotate(-50deg); /* 紅光效果 */
+
+  100% {
+    transform: scale(0.1);
+    filter: brightness(0.5) sepia(1) saturate(5) hue-rotate(-50deg);
+    /* 紅光效果 */
     opacity: 0;
   }
 }
 
 /* 3. 球落地彈跳 */
 @keyframes ballBounce {
-  0% { transform: translateY(0); }
-  20% { transform: translateY(-40px); }
-  40% { transform: translateY(0); }
-  60% { transform: translateY(-20px); }
-  80% { transform: translateY(0); }
-  100% { transform: translateY(0); }
+  0% {
+    transform: translateY(0);
+  }
+
+  20% {
+    transform: translateY(-40px);
+  }
+
+  40% {
+    transform: translateY(0);
+  }
+
+  60% {
+    transform: translateY(-20px);
+  }
+
+  80% {
+    transform: translateY(0);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
 }
 
 /* 4. 球搖晃 (更自然的物理感) */
 @keyframes ballShake {
-  0% { transform: rotate(0deg) translateX(0); }
-  20% { transform: rotate(-15deg) translateX(-2px); }
-  40% { transform: rotate(15deg) translateX(2px); }
-  60% { transform: rotate(-10deg) translateX(-1px); }
-  80% { transform: rotate(5deg) translateX(1px); }
-  100% { transform: rotate(0deg) translateX(0); }
+  0% {
+    transform: rotate(0deg) translateX(0);
+  }
+
+  20% {
+    transform: rotate(-15deg) translateX(-2px);
+  }
+
+  40% {
+    transform: rotate(15deg) translateX(2px);
+  }
+
+  60% {
+    transform: rotate(-10deg) translateX(-1px);
+  }
+
+  80% {
+    transform: rotate(5deg) translateX(1px);
+  }
+
+  100% {
+    transform: rotate(0deg) translateX(0);
+  }
 }
 
 /* 5. 捕捉成功 (閃光) */
 @keyframes catchSuccess {
-  0% { filter: brightness(1); }
-  50% { filter: brightness(2) drop-shadow(0 0 10px gold); }
-  100% { filter: brightness(1); }
+  0% {
+    filter: brightness(1);
+  }
+
+  50% {
+    filter: brightness(2) drop-shadow(0 0 10px gold);
+  }
+
+  100% {
+    filter: brightness(1);
+  }
 }
 
 /* 6. 捕捉失敗 (球炸開) */
 @keyframes ballBreak {
-  0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.5); opacity: 0.5; }
-  100% { transform: scale(2); opacity: 0; }
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
 }
 
 /* 7. 寶可夢重新出現 (從球裡出來) */
 @keyframes appearFromBall {
-  0% { 
-    transform: scale(0.1); 
+  0% {
+    transform: scale(0.1);
     filter: brightness(0.5) sepia(1) saturate(5) hue-rotate(-50deg);
     opacity: 0;
   }
-  100% { 
-    transform: scale(1); 
+
+  100% {
+    transform: scale(1);
     filter: brightness(1) sepia(0) saturate(1) hue-rotate(0deg);
     opacity: 1;
   }
@@ -490,9 +746,11 @@
   left: 50%;
   width: 40px;
   height: 40px;
-  margin-left: -20px; /* Center */
+  margin-left: -20px;
+  /* Center */
   z-index: 20;
-  display: none; /* Default hidden */
+  display: none;
+  /* Default hidden */
 }
 
 /* States */
@@ -503,7 +761,8 @@
 
 .state-throwing .pokemon-sprite {
   animation: suckIn 0.5s ease-in forwards;
-  animation-delay: 0.6s; /* 等球飛到 */
+  animation-delay: 0.6s;
+  /* 等球飛到 */
 }
 
 .state-bouncing .pokemon-sprite,
@@ -524,7 +783,8 @@
 
 .state-caught .pokeball-sprite {
   display: block;
-  filter: grayscale(1); /* 變暗代表鎖定 */
+  filter: grayscale(1);
+  /* 變暗代表鎖定 */
   animation: catchSuccess 0.5s ease-out forwards;
 }
 
@@ -535,5 +795,6 @@
 
 .state-escaped .pokemon-sprite {
   opacity: 1 !important;
-  animation: appearFromBall 0.5s ease-out forwards; /* 重新出現 */
+  animation: appearFromBall 0.5s ease-out forwards;
+  /* 重新出現 */
 }

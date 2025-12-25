@@ -5,7 +5,7 @@ import { SequentialExecutor } from '../utils/SequentialExecutor';
 import { GlobalMutex } from '../utils/GlobalMutex';
 
 
-const VaildGens: string[] = [ PokeDex__GEN1 ]
+const VaildGens: string[] = [PokeDex__GEN1]
 export class PokeDexManager {
     private static instance: PokeDexManager;
     private context: vscode.ExtensionContext;
@@ -31,6 +31,13 @@ export class PokeDexManager {
 
     public static initialize(context: vscode.ExtensionContext): PokeDexManager {
         PokeDexManager.instance = new PokeDexManager(context);
+        const currentGen = PokeDexManager.instance.getCurrentGen();
+        const currentData = PokeDexManager.instance.dexDataMap.get(currentGen);
+
+        // 如果是第一次安裝 (undefined) 或是讀取到空陣列 (預設值)，則初始化資料
+        if (!currentData || currentData.length === 0) {
+            PokeDexManager.instance.clear();
+        }
         return PokeDexManager.instance;
     }
 
@@ -42,13 +49,13 @@ export class PokeDexManager {
 
     public reload() {
         this.currentGen = this.context.globalState.get<string>(this.CURRENT_GEN_KEY, 'GEN 1');
-        
+
         // Load currently supported generations
         // For now, we can just load the current one, or a fixed list.
         // To be dynamic like boxes, we could iterate, but Gens are usually fixed.
         // Let's load "GEN 1" by default, and the current one if different.
         const gensToLoad = new Set([PokeDex__GEN1, this.currentGen]);
-        
+
         gensToLoad.forEach(gen => {
             const key = this.getStorageKey(gen);
             const data = this.context.globalState.get<PokeDexEntry[]>(key, []);
@@ -122,14 +129,19 @@ export class PokeDexManager {
         VaildGens.forEach(async (gen) => {
             await this.performTransaction((_oldEntrys: PokeDexEntry[], currentGen: string) => {
                 var dexData: PokeDexEntry[] = [];
-                if( currentGen === PokeDex__GEN1 ){
-                    for( let i=1; i<=151; i++ ){
-                        // Reset to Unknown
-                        dexData.push({ id: i, status: PokeDexEntryStatus.Unknown });
-                    }
+                if (currentGen === PokeDex__GEN1) {
+                    dexData = this.generateEmptyGen1Dex();
                 }
                 return dexData;
             }, gen);
         });
+    }
+
+    public generateEmptyGen1Dex(): PokeDexEntry[] {
+        const dexData: PokeDexEntry[] = [];
+        for (let i = 1; i <= 151; i++) {
+            dexData.push({ id: i, status: PokeDexEntryStatus.Unknown });
+        }
+        return dexData;
     }
 }

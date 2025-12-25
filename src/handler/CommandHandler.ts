@@ -17,13 +17,15 @@ import {
     ReorderBoxPayload,
     ReorderPartyPayload,
     SetGameStateDataPayload,
-    UpdateDefenderPokemonPayload,
-    UpdateEncounteredPokemonPayload,
+    UpdateDefenderPokemonUidPayload,
+    UpdateOpponentPokemonUidPayload,
+    UpdateOpponentInPartyPayload,
     UpdateMoneyPayload,
     UpdatePartyPokemonPayload,
     UpdatePokeDexPayload,
     UseItemPayload,
     UseMedicineInBagPayload,
+    GoTriggerEncounterPayload,
 } from '../dataAccessObj/MessagePayload';
 import { MessageType } from '../dataAccessObj/messageType';
 import { AchievementManager } from '../manager/AchievementManager';
@@ -38,8 +40,10 @@ import { RecordBattleActionPayload, RecordBattleCatchPayload, RecordBattleFinish
 import pokemonGen1Data from '../data/pokemonGen1.json';
 import moveData from '../data/pokemonMoves.json';
 import { GameState } from '../dataAccessObj/GameState';
-import { RawPokemonData } from '../dataAccessObj/pokemon';
+import { PokemonDao, RawPokemonData } from '../dataAccessObj/pokemon';
 import { pokemonMoveInit } from '../dataAccessObj/pokeMove';
+import { BiomeType } from '../dataAccessObj/BiomeData';
+import { BattleMode } from '../dataAccessObj/gameStateData';
 
 const pokemonDataMap = pokemonGen1Data as unknown as Record<string, RawPokemonData>;
 const pokemonMoveDataMap = moveData as unknown as Record<string, any>;
@@ -105,7 +109,8 @@ export class CommandHandler {
             nameEn: '',
             type: [],
             catchRate: 0,
-            minDepth: 0 // Level 5
+            minDepth: 0, // Level 5,
+            encounterRate: 0
         }, playingTime, undefined, 5);
 
         starterPokemon.originalTrainer = user.name || 'GOLD';
@@ -567,7 +572,16 @@ export class CommandHandler {
 
     // ==================== Set Game State ====================
     public async handleSetGameStateData(payload: SetGameStateDataPayload): Promise<void> {
-        await this.gameStateManager.updateGameState(payload.gameStateData.state, payload.gameStateData.encounterResult, payload.gameStateData.defendPokemon);
+        await this.gameStateManager.updateGameState(
+            payload.gameStateData.state,
+            {
+                battleMode: payload.gameStateData.battleMode,
+                opponentParty: payload.gameStateData.opponentParty,
+                encounterResult: payload.gameStateData.encounterResult,
+                opponentPokemonUid: payload.gameStateData.opponentPokemonUid,
+                defenderPokemonUid: payload.gameStateData.defenderPokemonUid
+            }
+        );
         this.handlerContext.updateAllViews();
     }
 
@@ -611,14 +625,20 @@ export class CommandHandler {
         this.handleGetPokeDex({ gen: payload.gen });
     }
 
-    // ==================== Update Encountered Pokemon ====================
-    public async handleUpdateEncounteredPokemon(payload: UpdateEncounteredPokemonPayload): Promise<void> {
-        await this.gameStateManager.updateEncounteredPokemon(payload.pokemon);
+    // ==================== Update Opponent Party ====================
+    public async handleUpdateOpponentInParty(payload: UpdateOpponentInPartyPayload): Promise<void> {
+        await this.gameStateManager.updateOpponentInParty(payload.opponentPokemon);
     }
 
     // ==================== Update Defender Pokemon UId ====================
-    public async handleUpdateDefenderPokemon(payload: UpdateDefenderPokemonPayload): Promise<void> {
-        await this.gameStateManager.updateDefenderPokemon(payload.pokemon);
+    public async handleUpdateDefenderPokemonUid(payload: UpdateDefenderPokemonUidPayload): Promise<void> {
+        await this.gameStateManager.updateDefenderPokemonUid(payload.pokemonUid);
+    }
+
+
+    // ==================== Update Opponent Pokemon UId ====================
+    public async handleUpdateOpponentPokemonUid(payload: UpdateOpponentPokemonUidPayload): Promise<void> {
+        await this.gameStateManager.updateOpponentPokemonUid(payload.pokemonUid);
     }
 
     // ==================== Get Achievements Data ====================
@@ -661,9 +681,9 @@ export class CommandHandler {
     }
 
     // ==================== Trigger Encounter ====================
-    public async handleGoTriggerEncounter() {
+    public async handleWildTriggerEncounter() {
         const encounterEvent = await this.biomeHandler.getEncountered();
-        if (!encounterEvent) {
+        if (!encounterEvent || !encounterEvent.pokemon) {
             console.log('[Extension] No encounter event generated.');
             return;
         }
@@ -676,12 +696,19 @@ export class CommandHandler {
 
             // Wait for animation (1.5s)
             await new Promise(resolve => setTimeout(resolve, 1500));
-
             // Update GameState on backend
             const myFirstPartyPokemon = this.partyManager.getAll().filter(p => p.currentHp > 0);
             if (myFirstPartyPokemon.length > 0) {
-                await this.gameStateManager.updateGameState(GameState.WildAppear, encounterEvent, myFirstPartyPokemon[0]);
-                this.handleGetGameStateData();
+                await this.gameStateManager.updateGameState(GameState.WildAppear,
+                    {
+                        battleMode: BattleMode.Wild,
+                        opponentParty: [encounterEvent.pokemon],
+                        encounterResult: encounterEvent,
+                        defenderPokemonUid: myFirstPartyPokemon[0].uid,
+                        opponentPokemonUid: encounterEvent.pokemon.uid
+                    }
+                );
+                await this.handleGetGameStateData();
             }
             return;
         } else {
@@ -689,7 +716,17 @@ export class CommandHandler {
             const myFirstPartyPokemon = this.partyManager.getAll().filter(p => p.currentHp > 0);
             if (myFirstPartyPokemon.length >= 0) {
                 console.log('[Extension] Healthy Pokemon found in party, proceeding with encounter.');
-                await this.gameStateManager.updateGameState(GameState.WildAppear, encounterEvent, myFirstPartyPokemon[0]);
+                await this.gameStateManager.updateGameState(
+                    GameState.WildAppear,
+                    {
+                        battleMode: BattleMode.Wild,
+                        opponentParty: [encounterEvent.pokemon],
+                        encounterResult: encounterEvent,
+                        defenderPokemonUid: myFirstPartyPokemon[0].uid,
+                        opponentPokemonUid: encounterEvent.pokemon.uid
+                    }
+                );
+                await this.handleGetGameStateData();
                 const selection = await vscode.window.showInformationMessage(
                     `A wild ${encounterEvent.pokemon.name} appeared!`,
                     'Open Game'
@@ -701,4 +738,48 @@ export class CommandHandler {
         }
     }
 
+    public async handleNPCTriggerEncounter() {
+        // MARK: [TODO] Generate NPC Encounter Event
+        let debugPokemons: PokemonDao[] = [];
+        for (let i = 1; i <= 6; i++) {
+            const pokemon = await PokemonFactory.createWildPokemonInstance({
+                pokemonId: Math.floor(Math.random() * 150) + 1,
+                nameZh: '',
+                nameEn: '',
+                type: [],
+                catchRate: 0,
+                minDepth: 0,
+                encounterRate: 0
+            }, 0, 'test/file/path');
+            debugPokemons.push(pokemon);
+        };
+        // Notify User if a Pokemon is encountered AND the view is NOT visible
+        const isVisible = this.handlerContext.isViewVisible ? this.handlerContext.isViewVisible() : false;
+        if (isVisible) {
+            // If view is visible, do not notify
+            // Send Encounter Event Directly
+            this.handlerContext.postMessage({ type: MessageType.TriggerEncounter });
+
+            // Wait for animation (1.5s)
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            // Update GameState on backend
+            const myFirstPartyPokemon = this.partyManager.getAll().filter(p => p.currentHp > 0);
+            if (myFirstPartyPokemon.length > 0) {
+                await this.gameStateManager.updateGameState(GameState.TrainerAppear,
+                    {
+                        battleMode: BattleMode.Trainer,
+                        opponentParty: debugPokemons,
+                        encounterResult: {
+                            biomeType: BiomeType.BattleArena,
+                            depth: 1
+                        },
+                        defenderPokemonUid: myFirstPartyPokemon[0].uid,
+                        opponentPokemonUid: debugPokemons[0].uid
+                    }
+                );
+                await this.handleGetGameStateData();
+            }
+            return;
+        }
+    }
 }

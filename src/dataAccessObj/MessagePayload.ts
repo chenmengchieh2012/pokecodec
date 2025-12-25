@@ -2,6 +2,7 @@ import { ItemDao } from './item';
 import { PokemonDao } from './pokemon';
 import { PokeDexEntry, PokeDexEntryStatus } from './PokeDex';
 import { GameStateData } from './gameStateData';
+import { GameState } from './GameState';
 
 export interface BoxPayload {
     pokemons: PokemonDao[];
@@ -9,7 +10,7 @@ export interface BoxPayload {
     totalBoxLength: number;
 }
 
-export interface PokeDexPayload{
+export interface PokeDexPayload {
     gen: string;
     entries: PokeDexEntry[];
 }
@@ -92,17 +93,25 @@ export interface SetGameStateDataPayload {
     gameStateData: GameStateData;
 }
 
-export interface UpdateEncounteredPokemonPayload {
-    pokemon: PokemonDao;
+export interface UpdateOpponentInPartyPayload {
+    opponentPokemon: PokemonDao;
 }
 
-export interface UpdateDefenderPokemonPayload {
-    pokemon: PokemonDao;
+export interface UpdateDefenderPokemonUidPayload {
+    pokemonUid: string;
+}
+export interface UpdateOpponentPokemonUidPayload {
+    pokemonUid: string;
 }
 
 export interface EvolvePokemonPayload {
     pokemonUid: string;
     toSpeciesId: number;
+}
+
+export interface GoTriggerEncounterPayload {
+    triggerType: 'wild' | 'npc';
+    ncpName?: string;   // only for npc
 }
 
 // ==================== Handler Context ====================

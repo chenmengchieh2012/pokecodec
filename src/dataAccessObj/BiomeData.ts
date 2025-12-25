@@ -2,6 +2,7 @@ import { PokemonType } from "./pokemon";
 
 export const BiomeType = {
     None: 'None',
+    BattleArena: 'Battle Arena',
     Grassland: 'Grassland',
     WaterBeach: 'Water/Beach',
     UrbanPowerPlant: 'Urban/Power Plant',

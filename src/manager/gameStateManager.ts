@@ -3,17 +3,24 @@ import { SequentialExecutor } from '../utils/SequentialExecutor';
 import { GameState } from '../dataAccessObj/GameState';
 import GlobalStateKey from '../utils/GlobalStateKey';
 import { PokemonDao } from '../dataAccessObj/pokemon';
-import { GameStateData } from '../dataAccessObj/gameStateData';
+import { BattleMode, GameStateData } from '../dataAccessObj/gameStateData';
 import { EncounterResult } from '../core/EncounterHandler';
 import { GlobalMutex } from '../utils/GlobalMutex';
 
-export class GameStateManager{
+export class GameStateManager {
     private static instance: GameStateManager;
     // 記憶體快取 (只供讀取與 UI 顯示)
-    private gameStateData: GameStateData = { state: GameState.Searching, encounterResult: undefined, defendPokemon: undefined };
+    private gameStateData: GameStateData = {
+        battleMode: undefined,
+        state: GameState.Searching,
+        encounterResult: undefined,
+        opponentParty: [],
+        defenderPokemonUid: undefined,
+        opponentPokemonUid: undefined
+    };
     private context: vscode.ExtensionContext;
     private readonly STORAGE_KEY = GlobalStateKey.GAME_STATE;
-    
+
     private saveQueue: SequentialExecutor;
 
     private constructor(context: vscode.ExtensionContext) {
@@ -48,10 +55,16 @@ export class GameStateManager{
     }
 
 
-    public async updateEncounteredPokemon(pokemon: PokemonDao): Promise<void> {
+    public async updateOpponentInParty(opponentParty: PokemonDao): Promise<void> {
         await this.performTransaction((data) => {
-            if (data.encounterResult) {
-                data.encounterResult.pokemon = pokemon;
+            if (data.opponentParty) {
+                data.opponentParty.map((p, index) => {
+                    if (p.uid === opponentParty.uid) {
+                        data.opponentParty![index] = opponentParty;
+                    }
+                });
+            } else {
+                data.opponentParty = [opponentParty];
             }
             return data;
         });
@@ -59,9 +72,18 @@ export class GameStateManager{
 
 
 
-    public async updateDefenderPokemon(pokemon: PokemonDao | undefined): Promise<void> {
+    public async updateDefenderPokemonUid(pokemonUid: string | undefined): Promise<void> {
         await this.performTransaction((data) => {
-            data.defendPokemon = pokemon;
+            data.defenderPokemonUid = pokemonUid;
+            return data;
+        });
+    }
+
+
+
+    public async updateOpponentPokemonUid(pokemonUid: string | undefined): Promise<void> {
+        await this.performTransaction((data) => {
+            data.opponentPokemonUid = pokemonUid;
             return data;
         });
     }
@@ -74,7 +96,14 @@ export class GameStateManager{
             // 1. 從硬碟讀取最新資料
             const storedData = this.context.globalState.get<GameStateData>(this.STORAGE_KEY);
             // 合併預設值 (防止資料欄位缺失)
-            const currentData: GameStateData = storedData ?? { state: GameState.Searching, encounterResult: undefined, defendPokemon: undefined };
+            const currentData: GameStateData = storedData ?? {
+                battleMode: undefined,
+                state: GameState.Searching,
+                encounterResult: undefined,
+                opponentParty: [],
+                opponentPokemonUid: undefined,
+                defenderPokemonUid: undefined,
+            };
 
             // 2. 執行修改
             const newData = modifier(currentData);
@@ -91,16 +120,32 @@ export class GameStateManager{
      * 更新金錢
      * @returns true 成功, false 失敗
      */
-    public async updateGameState(state: GameState, encounterResult?: EncounterResult, defendPokemon?: PokemonDao): Promise<boolean> {
+    public async updateGameState(state: GameState, props: {
+        battleMode?: BattleMode,
+        opponentParty?: PokemonDao[],
+        encounterResult?: EncounterResult,
+        defenderPokemonUid?: string,
+        opponentPokemonUid?: string
+    }): Promise<boolean> {
         let success = false;
-
+        const { battleMode, opponentParty, encounterResult, defenderPokemonUid, opponentPokemonUid } = props;
         await this.performTransaction((data) => {
-            if(state === GameState.Searching || state === GameState.Caught){
+            if (state === GameState.Searching || state === GameState.Caught) {
+                data.battleMode = undefined;
                 data.encounterResult = undefined!;
-            } else if (state === GameState.Battle || state === GameState.WildAppear) {
+            } else if (state === GameState.Battle || state === GameState.WildAppear || state === GameState.TrainerAppear) {
+                //if (encounterResult !== undefined) {
                 data.encounterResult = encounterResult;
+                //}
+                //if (battleMode !== undefined) {
+                data.battleMode = battleMode;
+                //}
             }
-            data.defendPokemon = defendPokemon;
+            if (opponentParty) {
+                data.opponentParty = opponentParty;
+            }
+            data.defenderPokemonUid = defenderPokemonUid;
+            data.opponentPokemonUid = opponentPokemonUid;
             data.state = state;
             return data;
         });
@@ -111,7 +156,14 @@ export class GameStateManager{
 
     public async clear(): Promise<void> {
         await this.performTransaction(() => {
-            return { state: GameState.Searching, encounterResult: undefined, defendPokemon: undefined };
+            return {
+                battleMode: undefined,
+                state: GameState.Searching,
+                encounterResult: undefined,
+                defenderPokemonUid: undefined,
+                opponentParty: [],
+                opponentPokemonUid: undefined
+            };
         });
     }
 }

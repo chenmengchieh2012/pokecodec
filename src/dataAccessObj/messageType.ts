@@ -4,6 +4,7 @@ export const MessageType = {
     // Data response types
     BagData: 'bagData',
     PartyData: 'partyData',
+    OpponentPartyData: 'opponentPartyData',
     BoxData: 'boxData',
     UserData: 'userData',
     PokemonData: 'pokemonData',
@@ -13,7 +14,7 @@ export const MessageType = {
     EncounteredPokemon: 'encounteredPokemon',
     AchievementsData: 'achievementsData',
     TriggerEncounter: 'triggerEncounter',
-    
+
     // Request types (from webview to extension)
     GetUserInfo: 'getUserInfo',
     GetBag: 'getBag',
@@ -24,11 +25,12 @@ export const MessageType = {
     GetBiome: 'getBiome',
     GetPokeDex: 'getPokeDex',
     GetAchievements: 'getAchievements',
-    
+
     // Action types
     SetGameStateData: 'setGameStateData',
-    UpdateEncounteredPokemon: 'updateEncounteredPokemon',
-    UpdateDefenderPokemon: 'updateDefenderPokemon',
+    UpdateOpponentInParty: 'updateOpponentInParty',
+    UpdateDefenderPokemonUid: 'updateDefenderPokemonUid',
+    UpdateOpponentPokemonUid: 'updateOpponentPokemonUid',
     SetAutoEncounter: 'setAutoEncounter',
     UpdateMoney: 'updateMoney',
     UpdatePokeDex: 'updatePokeDex',
