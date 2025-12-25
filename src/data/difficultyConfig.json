@@ -1,6 +1,6 @@
 {
     "settings": {
-        "defaultSampleSize": 20
+        "defaultSampleSize": 30
     },
     "thresholds": {
         "anxietyZone": 30,
