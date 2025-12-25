@@ -17,12 +17,11 @@ import { CapitalizeFirstLetter } from "../utilities/util";
 import { BattleRecorder } from "./battleRecorder";
 import { BiomeType } from "../../../src/dataAccessObj/BiomeData";
 import { GetEmptyMoveEffectResult, MoveEffectResult } from "../../../src/utils/MoveEffectCalculator";
-// import { SetGameStateDataPayload } from "../../../src/dataAccessObj/MessagePayload";
 import { BattleMode, GameStateData } from "../../../src/dataAccessObj/gameStateData";
-import { SetGameStateDataPayload, UpdateDefenderPokemonUidPayload, UpdateOpponentInPartyPayload, UpdateOpponentPokemonUidPayload, UpdatePartyPokemonPayload, UseMedicineInBagPayload } from "../../../src/dataAccessObj/MessagePayload";
+import { RecordEncounterPayload, SetGameStateDataPayload, UpdateDefenderPokemonUidPayload, UpdateOpponentInPartyPayload, UpdateOpponentPokemonUidPayload, UpdatePartyPokemonPayload, UseMedicineInBagPayload } from "../../../src/dataAccessObj/MessagePayload";
 import { SHOP_ITEMS_HP_MEDICINE_NAMES, SHOP_ITEMS_PP_MEDICINE_NAMES, SHOP_ITEMS_REVIVE_NAMES, SHOP_ITEMS_STATUS_MEDICINE_NAMES } from "../utilities/ItemName";
 import { ExperienceCalculator } from "../../../src/utils/ExperienceCalculator";
-
+import { DifficultyModifiers } from "../../../src/manager/DifficultyManager";
 export interface BattleManagerMethod {
     handleOnAttack: (myPokemonMove: PokemonMove) => Promise<void>,
     handleThrowBall: (ballDao: PokeBallDao) => Promise<void>,
@@ -68,6 +67,8 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
     const battleBiomeRecorderRef = React.useRef<BiomeType>(BiomeType.None);
     // const encounterResultRef = React.useRef<EncounterResult | undefined>(undefined);
     const runAttemptsRef = useRef<number>(0);
+    const catchAttemptsRef = useRef<number>(0);
+    const difficultyModifiersRef = useRef<DifficultyModifiers | undefined>(undefined);
 
     // Update refs when state changes
     useEffect(() => {
@@ -118,7 +119,8 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                 const opponentPokemonFainted = opponentPokemonRef.current?.currentHp === 0;
                 if (opponentPokemonFainted) {
                     battleCanvasRef.current?.handleOpponentPokemonFaint()
-                    const expGain = ExperienceCalculator.calculateExpGain(opponentPokemonRef.current!);
+                    const expMultiplier = difficultyModifiersRef.current?.expMultiplier || 1.0;
+                    const expGain = ExperienceCalculator.calculateExpGain(opponentPokemonRef.current!, expMultiplier);
                     myPokemonHandler.increaseExp(expGain);
                     await dialogBoxRef.current?.setText(`${opponentPokemonRef.current?.name.toUpperCase()} fainted!`);
                     await dialogBoxRef.current?.setText(`Gained ${expGain} EXP!`);
@@ -165,8 +167,8 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
 
                     battleRecorderRef.onCatch()
                 }
-                battleBiomeRecorderRef.current = BiomeType.None;
-                const expGain = ExperienceCalculator.calculateExpGain(opponentPokemonRef.current!);
+                const expMultiplier = difficultyModifiersRef.current?.expMultiplier || 1.0;
+                const expGain = ExperienceCalculator.calculateExpGain(opponentPokemonRef.current!, expMultiplier);
                 myPokemonHandler.increaseExp(expGain);
 
                 await dialogBoxRef.current?.setText(`${opponentPokemonRef.current?.name.toUpperCase()} fainted!`);
@@ -260,6 +262,38 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                 break;
             }
             case 'finish': {
+                // 進行戰鬥結束處理
+                // 1. 近行 encounter record
+                if (battleMode == 'wild' && opponentPokemonRef.current != undefined) {
+                    let battleResult: 'win' | 'lose' | 'flee' = opponentPokemonRef.current.ailment === 'fainted' ? 'win' : 'lose';
+                    if (event.type === BattleEventType.WildPokemonCatched) {
+                        battleResult = 'win';
+                    } else if (event.type === BattleEventType.Escaped) {
+                        battleResult = 'flee';
+                    } else if (event.type === BattleEventType.AllMyPokemonFainted) {
+                        battleResult = 'lose';
+                    }
+                    const payload: RecordEncounterPayload = {
+                        record: {
+                            pokemonId: opponentPokemonRef.current.id,
+                            pokemonName: opponentPokemonRef.current.name,
+                            pokemonCatchRate: 0, // 後台填寫
+                            pokemonEncounterRate: 0, // 後台填寫
+                            wasAttempted: catchAttemptsRef.current > 0,
+                            wasCaught: event.type === BattleEventType.WildPokemonCatched,
+                            catchAttempts: catchAttemptsRef.current,
+                            battleResult: battleResult,
+                            remainingHpPercent: myPokemonRef.current ? myPokemonRef.current.currentHp / myPokemonRef.current.stats.hp : 0,
+                            playerFainted: myPokemonRef.current ? myPokemonRef.current.ailment === 'fainted' : false,
+                            isShiny: opponentPokemonRef.current?.isShiny || false,
+                        }
+                    }
+                    vscode.postMessage({
+                        command: MessageType.RecordEncounter,
+                        ...payload,
+                    });
+                }
+
                 console.log("[BattleManager] Battle Finished Event:", event.state);
                 const finishedOpponent = opponentPokemonRef.current;
                 if (finishedOpponent !== undefined) {
@@ -299,7 +333,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                 break;
             }
         }
-    }, [battleCanvasRef, battleRecorderRef, dialogBoxRef, myPokemonHandler, opponentPokemon?.name, opponentPokemonHandler])
+    }, [battleCanvasRef, battleMode, battleRecorderRef, dialogBoxRef, myPokemonHandler, opponentPokemon?.name, opponentPokemonHandler])
 
 
     const checkAilmentBeforeAttack = useCallback(async (attacker: PokemonDao, attackerHandler: PokemonStateHandler, attackerMove: PokemonMove): Promise<boolean> => {
@@ -506,6 +540,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
 
     const handleThrowBall = useCallback(async (ballDao: PokeBallDao) => {
         return doAction(async () => {
+            catchAttemptsRef.current += 1;
             if (opponentPokemonRef.current == undefined) {
                 // 如果在排隊過程中戰鬥已經結束 (例如對方已經因為其他原因消失)，做個保護
                 console.warn("Opponent is missing, throw ball aborted.");
@@ -523,7 +558,8 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
             });
 
             // 執行丟球邏輯
-            const caught = await opponentPokemonHandler.throwBall(ballDao, (action: PokemonStateAction) => {
+            const catchBonusPercent = difficultyModifiersRef.current?.catchBonusPercent || 1.0;
+            const caught = await opponentPokemonHandler.throwBall(ballDao, catchBonusPercent, (action: PokemonStateAction) => {
                 // Handle state changes if needed
                 battleCanvasRef.current?.handleThrowBallPhase({
                     action: action,
@@ -616,6 +652,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
 
     const handleRunAway = useCallback(async () => {
         doAction(async () => {
+            runAttemptsRef.current += 1;
             // 1. 嘗試逃跑成功率計算
             if (myPokemonRef.current == undefined || opponentPokemonRef.current == undefined) {
                 // 如果在排隊過程中戰鬥已經結束 (例如對方已經因為其他原因消失)，做個保護
@@ -628,7 +665,6 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
             const mySpeed = myPokemonRef.current.stats.speed;
             const opponentSpeed = opponentPokemonRef.current.stats.speed;
 
-            runAttemptsRef.current += 1;
             const attempts = runAttemptsRef.current;
 
             // Formula: F = (A * 128 / B) + 30 * C
@@ -874,6 +910,11 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                 }
             }
         }
+    });
+
+    useMessageSubscription<DifficultyModifiers>(MessageType.DifficultyModifiersData, (message) => {
+        console.log("[BattleManager] Received DifficultyModifiersData:", message.data);
+        difficultyModifiersRef.current = message.data;
     });
 
     return [

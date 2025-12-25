@@ -31,12 +31,13 @@ export const ExperienceCalculator = {
     },
     // Calculate EXP gained from defeating a pokemon
     // Formula: (BaseExp * Level) / 7 * (1.5 if Trainer) * (1 if Wild)
-    calculateExpGain: (loser: PokemonDao, isWild: boolean = true): number => {
+    // expMultiplier range 0.85 to 1.3
+    calculateExpGain: (loser: PokemonDao, expMultiplier: number, isWild: boolean = true): number => {
         const a = isWild ? 1 : 1.5;
         const b = loser.baseExp;
         const L = loser.level;
         // Gen 1-4 simplified formula
-        return Math.floor((a * b * L) / 7);
+        return Math.floor(((a * b * L) / 7) * expMultiplier);
     },
 
     // Add EXP to pokemon and handle level ups
@@ -44,6 +45,7 @@ export const ExperienceCalculator = {
         // Create a deep copy to avoid mutating the original object
         let newPokemon: PokemonDao = JSON.parse(JSON.stringify(pokemon));
 
+        // MARK: Temporary fix for EXP gain bug
         newPokemon.currentExp += (expGained + 10000);
 
         // Check for level up

@@ -19,7 +19,7 @@ export interface PokemonStateHandler {
     getBuffs: () => PokemonStats;
     getBattleState: () => BattlePokemonState;
     resetFlinch: () => void;
-    throwBall: (ballDao: PokeBallDao, onAction: (action: PokemonStateAction) => void) => Promise<boolean>;
+    throwBall: (ballDao: PokeBallDao, catchBonusPercent: number, onAction: (action: PokemonStateAction) => void) => Promise<boolean>;
     hited: (pokemon: PokemonDao, attackerBuffs: BattlePokemonState, move: PokemonMove) => Promise<{ newHp: number; moveEffectResult: MoveEffectResult; }>;
     randomMove: () => PokemonMove;
     useMoveEffect: (moveEffectResult: MoveEffectResult) => void;
@@ -63,7 +63,7 @@ export const usePokemonState = (dialogRef: React.RefObject<BattleControlHandle |
         await dialogRef.current?.setText(`Go! ${pokemon.name.toUpperCase()}!`);
     }, [dialogRef]);
 
-    const handleThrowBall = useCallback(async (ballDao: PokeBallDao, onAction: (action: PokemonStateAction) => void) => {
+    const handleThrowBall = useCallback(async (ballDao: PokeBallDao, catchBonusPercent: number, onAction: (action: PokemonStateAction) => void) => {
         const currentPokemon = pokemonRef.current;
         if (!currentPokemon) {
             throw new Error("No pokemon available for random move selection.");
@@ -83,9 +83,14 @@ export const usePokemonState = (dialogRef: React.RefObject<BattleControlHandle |
 
         // 計算捕獲率
         const baseCatchRate = pokemonDataMap[currentPokemon.id]?.species.capture_rate || 45;
-        const catchRate = CatchCalculator.calculateCatchRate(baseCatchRate, currentPokemon.currentHp / currentPokemon.stats.hp, ballDao.catchRateModifier, currentPokemon.ailment || 'healthy');
+        let catchRate = CatchCalculator.calculateCatchRate(baseCatchRate, currentPokemon.currentHp / currentPokemon.stats.hp, ballDao.catchRateModifier, currentPokemon.ailment || 'healthy');
 
-        await dialogRef.current?.setText(`( catch rate: ${catchRate.toFixed(2)} )`);
+        // 增加 catchRateBonus 邏輯
+        if (catchBonusPercent !== 0) {
+            catchRate = Math.min(Math.max(catchRate + (catchBonusPercent / 100), 0), 1);
+        }
+
+        await dialogRef.current?.setText(`( catch rate: ${catchRate.toFixed(2)} (${(catchBonusPercent).toFixed(2)}%) )`);
 
 
         const isSuccess = Math.random() < catchRate; //

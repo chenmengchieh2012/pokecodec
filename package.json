@@ -27,6 +27,10 @@
       {
         "command": "pokemon.resetStorage",
         "title": "Pokemon: Reset Storage"
+      },
+      {
+        "command": "pokemon.printDifficultyHistory",
+        "title": "Pokemon: Print Difficulty History"
       }
     ],
     "viewsContainers": {

@@ -8,6 +8,7 @@ import { UserDao } from '../../../src/dataAccessObj/userData';
 import { BoxPayload, PokeDexPayload } from '../../../src/dataAccessObj/MessagePayload';
 import { AchievementStatistics } from '../../../src/utils/AchievementCritiria';
 import { GameStateData } from '../../../src/dataAccessObj/gameStateData';
+import { DifficultyModifiers } from '../../../src/manager/DifficultyManager';
 
 // ============================================================
 // Type Definitions
@@ -34,6 +35,7 @@ export interface StoreRefs {
     biome: BiomeData | undefined;
     pokeDex: PokeDexPayload | undefined;
     achievements: AchievementStatistics | undefined;
+    difficultyModifiers?: DifficultyModifiers | undefined;
 }
 
 /** MessageStore Context 的值類型 */
@@ -99,7 +101,7 @@ class MessageStore {
             this.subscribers.set(type, new Set());
         }
         this.subscribers.get(type)!.add(callback as MessageSubscriber);
-        
+
         // 返回取消訂閱函數
         return () => {
             this.subscribers.get(type)?.delete(callback as MessageSubscriber);
@@ -124,10 +126,10 @@ class MessageStore {
      */
     notify<T = unknown>(message: VSCodeMessage<T>): void {
         const type = message.type;
-        
+
         // 更新內部資料參考
         this.updateRefs(message);
-        
+
         // 通知特定類型的訂閱者
         if (this.subscribers.has(type)) {
             this.subscribers.get(type)!.forEach(callback => {
@@ -138,7 +140,7 @@ class MessageStore {
                 }
             });
         }
-        
+
         // 通知訂閱所有訊息的訂閱者
         this.allSubscribers.forEach(callback => {
             try {
@@ -178,6 +180,9 @@ class MessageStore {
             case MessageType.AchievementsData:
                 this.refs.achievements = (message.data as AchievementStatistics) ?? undefined;
                 break;
+            case MessageType.DifficultyModifiersData:
+                this.refs.difficultyModifiers = (message.data as DifficultyModifiers) ?? undefined;
+                break;
             default:
                 // 非資料更新類型，無需更新 refs
                 break;
@@ -200,37 +205,38 @@ class MessageStore {
             // console.log('[MessageStore] Current Initialized State:', this.initialized);
             const message = event.data as VSCodeMessage;
             if (message && message.type) {
-                if( this.initialized === InitializedState.Initializing ){
+                if (this.initialized === InitializedState.Initializing) {
                     this.updateRefs(message);
-                }else{
+                } else {
                     this.notify(message);
                 }
-                
-                if( this.refs.bag !== undefined &&
+
+                if (this.refs.bag !== undefined &&
                     this.refs.party !== undefined &&
                     this.refs.box !== undefined &&
                     this.refs.userInfo !== undefined &&
-                    this.refs.gameStateData !== undefined && 
+                    this.refs.gameStateData !== undefined &&
                     this.refs.biome !== undefined &&
                     this.refs.pokeDex !== undefined &&
                     this.refs.achievements !== undefined &&
-                    this.initialized === InitializedState.Initializing ){
-                        this.initialized = InitializedState.finished;
-                        console.log('[MessageStore] Initialization finished');
-                        if (this.initTimerRef) {
-                            console.log('[MessageStore] InitTimer cleared');
-                            clearInterval(this.initTimerRef);
-                        }
-                        this.initTimerRef = null;
-                        // 初始化完成後，通知所有訂閱者當前資料
-                        this.notifyAllCurrentData();
+                    this.refs.difficultyModifiers !== undefined &&
+                    this.initialized === InitializedState.Initializing) {
+                    this.initialized = InitializedState.finished;
+                    console.log('[MessageStore] Initialization finished');
+                    if (this.initTimerRef) {
+                        console.log('[MessageStore] InitTimer cleared');
+                        clearInterval(this.initTimerRef);
+                    }
+                    this.initTimerRef = null;
+                    // 初始化完成後，通知所有訂閱者當前資料
+                    this.notifyAllCurrentData();
                 }
             }
         };
 
         window.addEventListener('message', this.messageHandler);
 
-        
+
         this.requestAllData();
         this.initTimerRef = setInterval(() => {
             console.log('[MessageStore] Periodic data request to VS Code');
@@ -242,7 +248,7 @@ class MessageStore {
 
 
     private requestAllData(): void {
-       // 1. 請求使用者資訊 (金錢)
+        // 1. 請求使用者資訊 (金錢)
         vscode.postMessage({ command: MessageType.GetUserInfo });
         // 2. 請求背包資訊
         vscode.postMessage({ command: MessageType.GetBag });
@@ -258,6 +264,8 @@ class MessageStore {
         vscode.postMessage({ command: MessageType.GetPokeDex });
         // 8. 請求成就資料
         vscode.postMessage({ command: MessageType.GetAchievements });
+        // 9. 請求難度修正值
+        vscode.postMessage({ command: MessageType.GetDifficultyModifiers });
     }
 
     /**
@@ -287,6 +295,9 @@ class MessageStore {
         }
         if (this.refs.achievements !== undefined) {
             this.notify({ type: MessageType.AchievementsData, data: this.refs.achievements });
+        }
+        if (this.refs.difficultyModifiers !== undefined) {
+            this.notify({ type: MessageType.DifficultyModifiersData, data: this.refs.difficultyModifiers });
         }
     }
 
@@ -350,16 +361,16 @@ export interface MessageStoreProviderProps {
  * MessageStore Provider 組件
  * 將 MessageStore 包裝成 React Context 供子組件使用
  */
-export const MessageStoreProvider: React.FC<MessageStoreProviderProps> = ({ 
-    children, 
-    autoInit = true 
+export const MessageStoreProvider: React.FC<MessageStoreProviderProps> = ({
+    children,
+    autoInit = true
 }) => {
     // 自動初始化
     useEffect(() => {
         if (autoInit && messageStore.isInitialized() === InitializedState.UnStart) {
             messageStore.init();
         }
-        
+
         return () => {
             // 組件卸載時不銷毀 store，因為是全域單例
             // 如果需要完全清理，可以調用 messageStore.destroy()
@@ -435,7 +446,7 @@ export const useMessageSubscription = <T = unknown>(
 ): void => {
     const { subscribe } = useMessageStore();
     const callbackRef = useRef(callback);
-    
+
     // 更新 callback ref
     useEffect(() => {
         callbackRef.current = callback;

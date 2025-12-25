@@ -1,8 +1,12 @@
 import { BIOME_GROUPS, KantoPokemonEncounterData, TOXIC_POOL_POKEMONIDS } from "../utils/KantoPokemonCatchRate";
 import { PokeEncounterData } from "../dataAccessObj/pokeEncounterData";
-import { PokemonDao } from "../dataAccessObj/pokemon";
+import { PokemonDao, RawPokemonData } from "../dataAccessObj/pokemon";
 import { BiomeData, BiomeType } from "../dataAccessObj/BiomeData";
 import { PokemonFactory } from "./CreatePokemonHandler";
+import { DifficultyManager } from "../manager/DifficultyManager";
+import * as pokemonGen1Data from "../data/pokemonGen1.json";
+
+const pokemonDataMap = pokemonGen1Data as unknown as Record<string, RawPokemonData>;
 
 export interface EncounterResult {
     biomeType: BiomeType;
@@ -11,7 +15,7 @@ export interface EncounterResult {
 }
 
 export interface EncounterHandlerMethods {
-    calculateEncounter: (filePath: string, playingTime: number) => Promise<EncounterResult | undefined>;
+    calculateEncounter: (filePath: string, playingTime: number, difficultyManager: DifficultyManager | undefined) => Promise<EncounterResult | undefined>;
     getBiome: (filePath: string) => BiomeData;
 }
 
@@ -29,34 +33,56 @@ export const EncounterHandler = (pathResolver?: (path: string) => string): Encou
 
     // 加權隨機抽取 (Weighted Random Selection)
     // 核心邏輯：EncounterRate 越高，被選中的區間越大
-    function pickWeightedPokemon(candidates: PokeEncounterData[], playingTime: number): PokeEncounterData | null {
+    function pickWeightedPokemon(candidates: PokeEncounterData[], playingTime: number, difficultyManager?: DifficultyManager): PokeEncounterData | null {
         if (candidates.length === 0) return null;
+
+        let pool = candidates;
+
+        // DDA: Filter by recommended range
+        // 使用 DifficultyManager 推薦的遭遇率區間來篩選寶可夢
+        // 這會根據玩家近期的表現 (勝率、捕獲率等) 動態調整遇到的寶可夢稀有度
+        if (difficultyManager) {
+            const { min, max } = difficultyManager.recommendNextEncounterRange();
+            const filtered = candidates.filter(p => p.encounterRate >= min && p.encounterRate <= max);
+            console.log(`[EncounterHandler] DDA Filter: Range=[${min}, ${max}], Before=${candidates.length}, After=${filtered.length}`);
+            if (filtered.length > 0) {
+                pool = filtered;
+            }
+        }
 
         // 1. 計算總權重 (Total Weight)
         // 遊玩時間越久，增加遇到稀有寶可夢的機率
         // 透過加入一個固定的「幸運權重」，對於原本權重低 (稀有) 的寶可夢來說，相對提升幅度會比常見寶可夢大
-        // 例如：加 10 點權重。稀有 (10->20, 翻倍)，常見 (100->110, 僅增 10%)
+        // 
+        // [數學原理]
+        // 假設 Bonus = 10
+        // - 稀有怪 (原本 10): 10 + 10 = 20 (數值翻倍，機率顯著提升)
+        // - 常見怪 (原本 90): 90 + 10 = 100 (僅增加 11%，機率相對下降)
+        // 
+        // 結論：加固定數值會「拉平」機率分佈，讓稀有怪相對更容易被選中。
         const maxBonusWeight = 10;
         const progress = Math.min(1, playingTime / (90 * 24 * 60 * 60 * 1000)); // 90天滿
         const bonusWeight = maxBonusWeight * progress;
 
-        const boostedCandidates = candidates.map(p => ({
+        const boostedCandidates = pool.map(p => ({
             ...p,
             encounterRate: p.encounterRate + bonusWeight
         }));
         const boostedTotalWeight = boostedCandidates.reduce((sum, p) => sum + p.encounterRate, 0);
 
+        console.log(`[EncounterHandler] Weighted Pick: PoolSize=${pool.length}, BonusWeight=${bonusWeight.toFixed(2)}, TotalWeight=${boostedTotalWeight.toFixed(2)}`);
+
         // 2. 取隨機數
         let random = Math.random() * boostedTotalWeight;
 
         // 3. 找出落在區間內的寶可夢
-        for (const pokemon of candidates) {
+        for (const pokemon of boostedCandidates) {
             if (random < pokemon.encounterRate) {
                 return pokemon;
             }
             random -= pokemon.encounterRate;
         }
-        return candidates[0]; // Fallback
+        return boostedCandidates[0]; // Fallback
     }
 
 
@@ -94,7 +120,7 @@ export const EncounterHandler = (pathResolver?: (path: string) => string): Encou
         };
     }
 
-    async function calculateEncounter(filePath: string, playingTime: number): Promise<EncounterResult | undefined> {
+    async function calculateEncounter(filePath: string, playingTime: number, difficultyManager?: DifficultyManager): Promise<EncounterResult | undefined> {
         // 1. 解析路徑與深度
         // 去除 workspace root 等前綴，確保路徑相對乾淨
         // 深度計算 (假設 src/index.ts 深度為 2)
@@ -103,7 +129,7 @@ export const EncounterHandler = (pathResolver?: (path: string) => string): Encou
         console.log(`[探索] 路徑: ${folderPath} | 檔名: ${fileName} | 深度: ${depth}`);
 
         let candidatePool: PokeEncounterData[] = [];
-        const { pokemonTypes: pokemonTypes, biomeType } = getBiome(filePath);
+        const { pokemonTypes: biomePokemonTypes, biomeType } = getBiome(filePath);
 
         // 2. 判斷深度區域 (黃金區間邏輯)
         if (depth >= 6) {
@@ -115,7 +141,9 @@ export const EncounterHandler = (pathResolver?: (path: string) => string): Encou
             // B. 篩選候選名單
             candidatePool = KantoPokemonEncounterData.filter(p => {
                 // 規則 1: 屬性必須符合當前生態系
-                const typeMatch = p.type.some(t => pokemonTypes.includes(t));
+                const pokemonData = pokemonDataMap[String(p.pokemonId)];
+                const pTypes = pokemonData ? pokemonData.types : [];
+                const typeMatch = pTypes.some(t => biomePokemonTypes.includes(t as any));
 
                 // 規則 2: 寶可夢的最小深度 <= 當前深度
                 // (防止在深度 1 遇到噴火龍，但深度 5 可以遇到綠毛蟲)
@@ -129,13 +157,13 @@ export const EncounterHandler = (pathResolver?: (path: string) => string): Encou
         }
 
         // 3. 進行加權抽取
-        const encounterResult = pickWeightedPokemon(candidatePool, playingTime);
+        const encounterResult = pickWeightedPokemon(candidatePool, playingTime, difficultyManager);
         if (encounterResult === null) {
             return undefined;
         }
 
 
-        const newPokemon = await PokemonFactory.createWildPokemonInstance(encounterResult as PokeEncounterData, playingTime, filePath);
+        const newPokemon = await PokemonFactory.createWildPokemonInstance(encounterResult as PokeEncounterData, filePath, undefined);
 
         console.log(`[Encounter] Depth: ${depth} | Biome: ${biomeType} | Candidates: ${candidatePool.length}`);
 

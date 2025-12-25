@@ -14,6 +14,9 @@ export const MessageType = {
     EncounteredPokemon: 'encounteredPokemon',
     AchievementsData: 'achievementsData',
     TriggerEncounter: 'triggerEncounter',
+    DifficultyModifiersData: 'difficultyModifiersData',
+    DifficultyLevelData: 'difficultyLevelData',
+    EncounterHistoryData: 'encounterHistoryData',
 
     // Request types (from webview to extension)
     GetUserInfo: 'getUserInfo',
@@ -57,6 +60,12 @@ export const MessageType = {
 
     RecordItemAction: 'recordItemAction',
     SelectStarter: 'selectStarter',
+
+    // Difficulty
+    GetDifficultyModifiers: 'getDifficultyModifiers',
+    RecordEncounter: 'recordEncounter',
+    GetDifficultyLevel: 'getDifficultyLevel',
+    SetDifficultyLevel: 'setDifficultyLevel',
 } as const;
 
 

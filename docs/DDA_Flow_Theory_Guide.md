@@ -3,11 +3,12 @@
 ## 📋 目錄
 
 1. [理論基礎](#理論基礎)
-2. [專案現況分析](#專案現況分析)
-3. [DDA 實作建議](#dda-實作建議)
-4. [Flow Theory 設計方針](#flow-theory-設計方針)
-5. [具體實作方案](#具體實作方案)
-6. [監控與調整機制](#監控與調整機制)
+2. [DDA 與 Flow Theory 的關係](#dda-與-flow-theory-的關係)
+3. [專案現況分析](#專案現況分析)
+4. [DDA 實作建議](#dda-實作建議)
+5. [Flow Theory 設計方針](#flow-theory-設計方針)
+6. [具體實作方案](#具體實作方案)
+7. [監控與調整機制](#監控與調整機制)
 
 ---
 
@@ -46,6 +47,34 @@ Dynamic Difficulty Adjustment 是一種遊戲設計技術，透過即時監控�
 | 焦慮 (太難) | 連續失敗、HP 經常低迷 | 降低難度 |
 | 心流 (剛好) | 勝率適中、有挑戰感 | 維持現狀 |
 | 無聊 (太簡單) | 連勝、無傷擊敗 | 提升難度 |
+
+---
+
+## DDA 與 Flow Theory 的關係
+
+在 PokeCodec 的系統架構中，這兩者的關係可以理解為：
+
+1.  **DDA (Dynamic Difficulty Adjustment)** 是 **機制 (Mechanism)** 或 **控制器 (Controller)**。
+    *   它負責觀察玩家的狀態，並實際去調整遊戲參數（環境）。
+    *   就像是冷氣機的「自動溫控系統」。
+
+2.  **Flow Theory (心流理論)** 是 **目標 (Goal)** 或 **指導原則 (Policy)**。
+    *   它定義了「什麼是好的狀態」。
+    *   它告訴 DDA：「玩家現在太無聊了，請增加難度」或「玩家現在太焦慮了，請降低難度」。
+    *   就像是冷氣機設定的「舒適溫度範圍 (24~26度)」。
+
+**如果用強化學習 (RL) 的術語來比喻：**
+
+*   **Environment (環境)**：遊戲本身 (野生怪等級、捕獲率、AI 強度)。
+*   **Agent (代理人)**：DDA 系統 (`DifficultyManager`)。
+*   **Observation (觀察)**：玩家的表現數據 (`metrics`: 勝率、血量、捕獲率)。
+*   **Action (行動)**：調整參數 (`modifiers`: `levelOffset`, `encounterRateMultiplier`)。
+*   **Reward Function (獎勵函數)**：**Flow Theory**。
+    *   DDA 的目標就是最大化玩家處於「心流通道 (Flow Channel)」的時間。
+
+所以：
+*   **Flow Theory** 提供了**判斷標準** (Anxiety vs Boredom)。
+*   **DDA** 根據這個標準去執行 **Action** (調整難度) 來改變 **Environment**。
 
 ---
 

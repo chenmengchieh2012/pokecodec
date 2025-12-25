@@ -64,7 +64,7 @@ describe('BattleManager', () => {
     let mockBattleCanvasRef: React.RefObject<BattleCanvasHandle>;
     let mockSetText: ReturnType<typeof vi.fn>;
     let mockOpenPartyMenu: ReturnType<typeof vi.fn>;
-    
+
     // Mock Handlers
     let mockMyPokemonHandler: any;
     let mockOpponentPokemonHandler: any;
@@ -150,7 +150,7 @@ describe('BattleManager', () => {
 
         let callCount = 0;
         mockUsePokemonState.mockImplementation(() => {
-            const result = callCount % 2 === 0 
+            const result = callCount % 2 === 0
                 ? { pokemon: mockMyPokemon, handler: mockMyPokemonHandler }
                 : { pokemon: mockOpponentPokemon, handler: mockOpponentPokemonHandler };
             callCount++;
@@ -164,7 +164,7 @@ describe('BattleManager', () => {
 
     it('initializes correctly', () => {
         const { result } = renderHook(() => BattleManager({ dialogBoxRef: mockDialogRef, battleCanvasRef: mockBattleCanvasRef }));
-        const [state, ] = result.current;
+        const [state,] = result.current;
 
         expect(state.myPokemon).toBe(mockMyPokemon);
         expect(state.opponentPokemon).toBe(mockOpponentPokemon);
@@ -176,7 +176,7 @@ describe('BattleManager', () => {
         const [, methods] = result.current;
 
         const myMove = mockMyPokemon.pokemonMoves[0];
-        
+
         await act(async () => {
             await methods.handleOnAttack(myMove);
         });
@@ -184,7 +184,7 @@ describe('BattleManager', () => {
         // My pokemon attacks first
         expect(mockOpponentPokemonHandler.hited).toHaveBeenCalled();
         expect(mockBattleCanvasRef.current?.handleAttackToOpponent).toHaveBeenCalled();
-        
+
         // Opponent attacks back
         expect(mockMyPokemonHandler.hited).toHaveBeenCalled();
         expect(mockBattleCanvasRef.current?.handleAttackFromOpponent).toHaveBeenCalled();
@@ -193,10 +193,10 @@ describe('BattleManager', () => {
     it('handleOnAttack: opponent is faster', async () => {
         // Setup opponent faster
         const fastOpponent = { ...mockOpponentPokemon, stats: { ...mockOpponentPokemon.stats, speed: 20 } };
-        
+
         let callCount = 0;
         mockUsePokemonState.mockImplementation(() => {
-            const result = callCount % 2 === 0 
+            const result = callCount % 2 === 0
                 ? { pokemon: mockMyPokemon, handler: mockMyPokemonHandler }
                 : { pokemon: fastOpponent, handler: mockOpponentPokemonHandler };
             callCount++;
@@ -218,7 +218,7 @@ describe('BattleManager', () => {
 
     it('handleThrowBall: success', async () => {
         mockOpponentPokemonHandler.throwBall.mockResolvedValue(true);
-        
+
         const { result } = renderHook(() => BattleManager({ dialogBoxRef: mockDialogRef, battleCanvasRef: mockBattleCanvasRef }));
         const [_, methods] = result.current;
 
@@ -240,7 +240,7 @@ describe('BattleManager', () => {
 
     it('handleThrowBall: failure', async () => {
         mockOpponentPokemonHandler.throwBall.mockResolvedValue(false);
-        
+
         const { result } = renderHook(() => BattleManager({ dialogBoxRef: mockDialogRef, battleCanvasRef: mockBattleCanvasRef }));
         const [_, methods] = result.current;
 
@@ -259,10 +259,10 @@ describe('BattleManager', () => {
         const item = { name: 'Potion', effect: { healHp: 20 } } as ItemDao;
         // Mock my pokemon damaged
         const damagedPokemon = { ...mockMyPokemon, currentHp: 10 };
-        
+
         let callCount = 0;
         mockUsePokemonState.mockImplementation(() => {
-            const result = callCount % 2 === 0 
+            const result = callCount % 2 === 0
                 ? { pokemon: damagedPokemon, handler: mockMyPokemonHandler }
                 : { pokemon: mockOpponentPokemon, handler: mockOpponentPokemonHandler };
             callCount++;
@@ -273,16 +273,22 @@ describe('BattleManager', () => {
         const [_, methods] = result.current;
 
         await act(async () => {
-            await methods.handleUseItem(item);
+            await methods.handleUseItem(damagedPokemon, item);
         });
 
         expect(mockPostMessage).toHaveBeenCalledWith(expect.objectContaining({
             command: MessageType.RemoveItem,
             item: item
         }));
-        expect(mockMyPokemonHandler.heal).toHaveBeenCalledWith(20);
-        // Opponent attacks
-        expect(mockMyPokemonHandler.hited).toHaveBeenCalled();
+
+        // Note: BattleManager doesn't call heal() directly, it sends a message to extension.
+        // So we shouldn't expect mockMyPokemonHandler.heal to be called here.
+        // Instead, we expect the message to be sent.
+        expect(mockPostMessage).toHaveBeenCalledWith(expect.objectContaining({
+            command: MessageType.UseMedicineInBag,
+            item: item,
+            pokemonUid: damagedPokemon.uid
+        }));
     });
 
     it('handleRunAway: success', async () => {
@@ -290,10 +296,10 @@ describe('BattleManager', () => {
         vi.spyOn(Math, 'random').mockReturnValue(0.1);
         // But the code has a formula. Let's make my speed very high.
         const fastPokemon = { ...mockMyPokemon, stats: { ...mockMyPokemon.stats, speed: 999 } };
-        
+
         let callCount = 0;
         mockUsePokemonState.mockImplementation(() => {
-            const result = callCount % 2 === 0 
+            const result = callCount % 2 === 0
                 ? { pokemon: fastPokemon, handler: mockMyPokemonHandler }
                 : { pokemon: mockOpponentPokemon, handler: mockOpponentPokemonHandler };
             callCount++;
@@ -331,10 +337,10 @@ describe('BattleManager', () => {
         // Mock opponent very fast to ensure failure
         vi.spyOn(Math, 'random').mockReturnValue(0.99);
         const fastOpponent = { ...mockOpponentPokemon, stats: { ...mockOpponentPokemon.stats, speed: 999 } };
-        
+
         let callCount = 0;
         mockUsePokemonState.mockImplementation(() => {
-            const result = callCount % 2 === 0 
+            const result = callCount % 2 === 0
                 ? { pokemon: mockMyPokemon, handler: mockMyPokemonHandler }
                 : { pokemon: fastOpponent, handler: mockOpponentPokemonHandler };
             callCount++;

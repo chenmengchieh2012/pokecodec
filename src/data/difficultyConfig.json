@@ -1,0 +1,53 @@
+{
+    "settings": {
+        "defaultSampleSize": 20
+    },
+    "thresholds": {
+        "anxietyZone": 30,
+        "flowLower": 45,
+        "flowUpper": 55,
+        "boredomZone": 70
+    },
+    "modifiers": {
+        "anxiety": {
+            "levelOffset": -2,
+            "catchBonusPercent": 20,
+            "expMultiplier": 1.2,
+            "minEncounterRate": 80,
+            "maxEncounterRate": 255,
+            "shinyRateMultiplier": 4.0
+        },
+        "approachingAnxiety": {
+            "levelOffset": -1,
+            "catchBonusPercent": 10,
+            "expMultiplier": 1.1,
+            "minEncounterRate": 40,
+            "maxEncounterRate": 255,
+            "shinyRateMultiplier": 2.0
+        },
+        "flow": {
+            "levelOffset": 0,
+            "catchBonusPercent": 0,
+            "expMultiplier": 1.0,
+            "minEncounterRate": 1,
+            "maxEncounterRate": 255,
+            "shinyRateMultiplier": 1.5
+        },
+        "approachingBoredom": {
+            "levelOffset": 1,
+            "catchBonusPercent": -5,
+            "expMultiplier": 0.95,
+            "minEncounterRate": 1,
+            "maxEncounterRate": 200,
+            "shinyRateMultiplier": 1.0
+        },
+        "boredom": {
+            "levelOffset": 2,
+            "catchBonusPercent": -15,
+            "expMultiplier": 0.9,
+            "minEncounterRate": 1,
+            "maxEncounterRate": 150,
+            "shinyRateMultiplier": 1.0
+        }
+    }
+}

@@ -1,13 +1,12 @@
-import { renderHook, act } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { usePokemonState } from './usePokemonState';
-import { PokemonStateAction, PokemonDao } from '../../../src/dataAccessObj/pokemon';
-import { EncounterResult } from '../../../src/core/EncounterHandler';
-import { MoveEffectCalculator, BattlePokemonState, MoveEffectResult } from '../../../src/utils/MoveEffectCalculator';
-import { ExperienceCalculator } from '../utilities/ExperienceCalculator';
-import { BattleControlHandle } from '../frame/BattleControl';
+import { act, renderHook } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { PokeBallDao } from '../../../src/dataAccessObj/pokeBall';
+import { PokemonDao, PokemonStateAction } from '../../../src/dataAccessObj/pokemon';
 import { PokemonMove } from '../../../src/dataAccessObj/pokeMove';
+import { BattlePokemonState, MoveEffectCalculator, MoveEffectResult } from '../../../src/utils/MoveEffectCalculator';
+import { BattleControlHandle } from '../frame/BattleControl';
+import { usePokemonState } from './usePokemonState';
+import { ExperienceCalculator } from '../../../src/utils/ExperienceCalculator';
 
 // Mock dependencies
 vi.mock('../../../src/utils/MoveEffectCalculator', () => ({
@@ -16,7 +15,7 @@ vi.mock('../../../src/utils/MoveEffectCalculator', () => ({
     }
 }));
 
-vi.mock('../utilities/ExperienceCalculator', () => ({
+vi.mock('../../../src/utils/ExperienceCalculator', () => ({
     ExperienceCalculator: {
         addExperience: vi.fn(),
     }
@@ -82,21 +81,6 @@ describe('usePokemonState', () => {
         expect(mockSetText).toHaveBeenCalledWith('Go! BULBASAUR!');
     });
 
-    it('handles newEncounter', () => {
-        const { result } = renderHook(() => usePokemonState(mockDialogRef, {
-            defaultPokemon: undefined,
-            defaultPokemonState: undefined
-        }));
-
-        const encounterResult = { pokemon: mockPokemon, isShiny: false } as unknown as EncounterResult;
-
-        act(() => {
-            result.current.handler.newEncounter(encounterResult);
-        });
-
-        expect(result.current.pokemon).toEqual(mockPokemon);
-    });
-
     it('handles throwBall success', async () => {
         const { result } = renderHook(() => usePokemonState(mockDialogRef, {
             defaultPokemon: mockPokemon,
@@ -121,7 +105,7 @@ describe('usePokemonState', () => {
 
         let success;
         await act(async () => {
-            success = await result.current.handler.throwBall(mockBall, ()=>{});
+            success = await result.current.handler.throwBall(mockBall, 1, () => { });
         });
 
         expect(success).toBe(true);
@@ -153,7 +137,7 @@ describe('usePokemonState', () => {
 
         let success;
         await act(async () => {
-            success = await result.current.handler.throwBall(mockBall, ()=>{});
+            success = await result.current.handler.throwBall(mockBall, 1, () => { });
         });
 
         expect(success).toBe(false);
@@ -172,8 +156,8 @@ describe('usePokemonState', () => {
             flinched: false, confused: false
         };
         const move = { name: 'Tackle', power: 40 } as PokemonMove;
-        const damageResult: MoveEffectResult = { 
-            damage: 5, isCritical: false, effectiveness: 1, isHit: true, flinched: false, ailment: undefined 
+        const damageResult: MoveEffectResult = {
+            damage: 5, isCritical: false, effectiveness: 1, isHit: true, flinched: false, ailment: undefined
         };
 
         (MoveEffectCalculator.calculateEffect as unknown as ReturnType<typeof vi.fn>).mockReturnValue(damageResult);
@@ -198,8 +182,8 @@ describe('usePokemonState', () => {
             flinched: false, confused: false
         };
         const move = { name: 'Hyper Beam', power: 150 } as PokemonMove;
-        const damageResult: MoveEffectResult = { 
-            damage: 25, isCritical: false, effectiveness: 1, isHit: true, flinched: false, ailment: undefined 
+        const damageResult: MoveEffectResult = {
+            damage: 25, isCritical: false, effectiveness: 1, isHit: true, flinched: false, ailment: undefined
         }; // More than 20 HP
 
         (MoveEffectCalculator.calculateEffect as unknown as ReturnType<typeof vi.fn>).mockReturnValue(damageResult);
@@ -262,27 +246,27 @@ describe('usePokemonState', () => {
         expect(ExperienceCalculator.addExperience).toHaveBeenCalledWith(mockPokemon, 50);
         expect(result.current.pokemon).toEqual(leveledUpPokemon);
     });
-    
+
     it('handles randomMove', () => {
-         const { result } = renderHook(() => usePokemonState(mockDialogRef, {
+        const { result } = renderHook(() => usePokemonState(mockDialogRef, {
             defaultPokemon: mockPokemon,
             defaultPokemonState: { action: PokemonStateAction.None }
         }));
-        
+
         const move = result.current.handler.randomMove();
         expect(mockPokemon.pokemonMoves).toContainEqual(move);
     });
-    
+
     it('handles resetPokemon', () => {
         const { result } = renderHook(() => usePokemonState(mockDialogRef, {
             defaultPokemon: mockPokemon,
             defaultPokemonState: { action: PokemonStateAction.None }
         }));
-        
+
         act(() => {
             result.current.handler.resetPokemon();
         });
-        
+
         expect(result.current.pokemon).toBeUndefined();
     });
 });

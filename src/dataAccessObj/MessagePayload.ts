@@ -3,6 +3,7 @@ import { PokemonDao } from './pokemon';
 import { PokeDexEntry, PokeDexEntryStatus } from './PokeDex';
 import { GameStateData } from './gameStateData';
 import { GameState } from './GameState';
+import { DifficultyLevelConfig, EncounterRecord } from '../manager/DifficultyManager';
 
 export interface BoxPayload {
     pokemons: PokemonDao[];
@@ -13,6 +14,12 @@ export interface BoxPayload {
 export interface PokeDexPayload {
     gen: string;
     entries: PokeDexEntry[];
+}
+
+export interface DifficultyLevelPayload {
+    level: number;
+    config: DifficultyLevelConfig;
+    maxUnlocked: number;
 }
 
 // ==================== Payload Types ====================
@@ -112,6 +119,14 @@ export interface EvolvePokemonPayload {
 export interface GoTriggerEncounterPayload {
     triggerType: 'wild' | 'npc';
     ncpName?: string;   // only for npc
+}
+
+export interface SetDifficultyLevelPayload {
+    level: number;
+}
+
+export interface RecordEncounterPayload {
+    record: EncounterRecord;
 }
 
 // ==================== Handler Context ====================

@@ -26,6 +26,9 @@ import {
     UseItemPayload,
     UseMedicineInBagPayload,
     GoTriggerEncounterPayload,
+    SetDifficultyLevelPayload,
+    RecordEncounterPayload,
+    DifficultyLevelPayload
 } from '../dataAccessObj/MessagePayload';
 import { MessageType } from '../dataAccessObj/messageType';
 import { AchievementManager } from '../manager/AchievementManager';
@@ -44,6 +47,7 @@ import { PokemonDao, RawPokemonData } from '../dataAccessObj/pokemon';
 import { pokemonMoveInit } from '../dataAccessObj/pokeMove';
 import { BiomeType } from '../dataAccessObj/BiomeData';
 import { BattleMode } from '../dataAccessObj/gameStateData';
+import { DifficultyManager } from '../manager/DifficultyManager';
 
 const pokemonDataMap = pokemonGen1Data as unknown as Record<string, RawPokemonData>;
 const pokemonMoveDataMap = moveData as unknown as Record<string, any>;
@@ -55,6 +59,7 @@ export class CommandHandler {
     private readonly gameStateManager: GameStateManager;
     private readonly pokeDexManager: PokeDexManager;
     private readonly achievementManager: AchievementManager;
+    private readonly difficultyManager: DifficultyManager;
 
     private readonly biomeHandler: BiomeDataHandler;
 
@@ -69,6 +74,7 @@ export class CommandHandler {
         biomeHandler: BiomeDataHandler,
         pokeDexManager: PokeDexManager,
         achievementManager: AchievementManager,
+        difficultyManager: DifficultyManager,
         context: vscode.ExtensionContext,
     ) {
         this.pokemonBoxManager = pokemonBoxManager;
@@ -79,6 +85,7 @@ export class CommandHandler {
         this.biomeHandler = biomeHandler;
         this.pokeDexManager = pokeDexManager;
         this.achievementManager = achievementManager;
+        this.difficultyManager = difficultyManager;
     }
 
     public setHandlerContext(handlerContext: HandlerContext): void {
@@ -92,6 +99,43 @@ export class CommandHandler {
         return this._handlerContext;
     }
 
+    // ==================== Difficulty ====================
+    public async handleGetDifficultyModifiers(): Promise<void> {
+        const modifiers = this.difficultyManager.getModifiers();
+        this.handlerContext.postMessage({
+            type: MessageType.DifficultyModifiersData,
+            data: modifiers
+        });
+    }
+
+    public async handleRecordEncounter(payload: RecordEncounterPayload): Promise<void> {
+        this.difficultyManager.recordEncounter(payload.record);
+    }
+
+    public async handleGetDifficultyLevel(): Promise<void> {
+        const level = this.difficultyManager.getCurrentLevel();
+        const config = this.difficultyManager.getLevelConfig(level);
+        const data: DifficultyLevelPayload = {
+            level,
+            config,
+            maxUnlocked: this.difficultyManager.getMaxUnlockedLevel()
+        };
+        this.handlerContext.postMessage({
+            type: MessageType.DifficultyLevelData,
+            data: data
+        });
+    }
+
+    public async handleSetDifficultyLevel(payload: SetDifficultyLevelPayload): Promise<void> {
+        const success = await this.difficultyManager.setDifficultyLevel(payload.level);
+        if (success) {
+            await this.handleGetDifficultyLevel(); // Refresh frontend
+            vscode.window.showInformationMessage(`Difficulty set to Level ${payload.level}`);
+        } else {
+            vscode.window.showErrorMessage(`Failed to set difficulty level ${payload.level}`);
+        }
+    }
+
     // ==================== Select Starter ====================
     public async handleSelectStarter(payload: { starter: 'pikachu' | 'eevee' }): Promise<void> {
         const { starter } = payload;
@@ -102,16 +146,13 @@ export class CommandHandler {
 
         // 2. Create Pokemon
         const pokemonId = starter === 'pikachu' ? 25 : 133;
-        const playingTime = this.userDaoManager.getUserInfo().playtime || 0;
         const starterPokemon = await PokemonFactory.createWildPokemonInstance({
             pokemonId: pokemonId,
             nameZh: '',
             nameEn: '',
-            type: [],
-            catchRate: 0,
             minDepth: 0, // Level 5,
             encounterRate: 0
-        }, playingTime, undefined, 5);
+        }, undefined, 5, this.difficultyManager);
 
         starterPokemon.originalTrainer = user.name || 'GOLD';
         starterPokemon.caughtDate = Date.now();
@@ -746,11 +787,9 @@ export class CommandHandler {
                 pokemonId: Math.floor(Math.random() * 150) + 1,
                 nameZh: '',
                 nameEn: '',
-                type: [],
-                catchRate: 0,
                 minDepth: 0,
                 encounterRate: 0
-            }, 0, 'test/file/path');
+            }, 'test/file/path', undefined, this.difficultyManager);
             debugPokemons.push(pokemon);
         };
         // Notify User if a Pokemon is encountered AND the view is NOT visible

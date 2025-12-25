@@ -42,6 +42,7 @@ import { PokemonBoxManager } from './manager/pokeBoxManager';
 import { PokeDexManager } from './manager/pokeDexManager';
 import { UserDaoManager } from './manager/userDaoManager';
 import { RecordBattleActionPayload, RecordBattleCatchPayload, RecordBattleFinishedPayload, RecordItemActionPayload } from './utils/AchievementCritiria';
+import { DifficultyManager } from './manager/DifficultyManager';
 
 const itemDataMap = itemData as unknown as Record<string, ItemDao>;
 
@@ -64,13 +65,15 @@ export function activate(context: vscode.ExtensionContext) {
     const userDaoManager = UserDaoManager.initialize(context);
     const gameStateManager = GameStateManager.initialize(context);
     const achievementManager = AchievementManager.initialize(context);
+    const difficultyManager = DifficultyManager.initialize(context);
+    context.subscriptions.push({ dispose: () => difficultyManager.dispose() });
 
     if (gameStateManager.getGameStateData()?.state !== GameState.Searching) {
         gameStateManager.updateGameState(GameState.Searching, {});
     }
 
     // Initialize Biome Data Handler
-    const biomeHandler = BiomeDataHandler.initialize(context, userDaoManager);
+    const biomeHandler = BiomeDataHandler.initialize(context, userDaoManager, difficultyManager);
     context.subscriptions.push({ dispose: () => biomeHandler.dispose() });
 
     // Initialize Session Handler
@@ -105,6 +108,17 @@ export function activate(context: vscode.ExtensionContext) {
         })
     );
 
+    // 🔥 新增指令：列印難度歷史
+    context.subscriptions.push(
+        vscode.commands.registerCommand('pokemon.printDifficultyHistory', () => {
+            const history = DifficultyManager.getInstance().getHistory();
+            const channel = vscode.window.createOutputChannel("Pokemon Difficulty History");
+            channel.clear();
+            channel.appendLine(JSON.stringify(history, null, 2));
+            channel.show();
+        })
+    );
+
 }
 
 
@@ -127,6 +141,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
     private commandHandler: CommandHandler;
     private gameStateManager: GameStateManager;
     private achievementManager: AchievementManager;
+    private difficultyManager: DifficultyManager;
 
     private biomeHandler: BiomeDataHandler;
     private gitHandler: GitActivityHandler;
@@ -150,6 +165,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         this.biomeHandler = BiomeDataHandler.getInstance();
         this.gitHandler = GitActivityHandler.getInstance();
         this.sessionHandler = SessionHandler.getInstance();
+        this.difficultyManager = DifficultyManager.getInstance();
         this._extensionUri = extensionUri;
         this._viewType = viewType;
         this._context = _context;
@@ -162,6 +178,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             this.biomeHandler,
             this.pokeDexManager,
             this.achievementManager,
+            this.difficultyManager,
             _context
         );
         PokemonViewProvider.providers.push(this);
@@ -211,6 +228,12 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                 }
             }
         });
+
+        this.difficultyManager.onDidRecordEncounter(() => {
+            if (this._view?.visible) {
+                this.commandHandler.handleGetDifficultyModifiers();
+            }
+        });
     }
 
     public updateViews() {
@@ -235,6 +258,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         await this.gameStateManager.clear();
         await this.pokeDexManager.clear();
         await this.achievementManager.clear();
+        await this.difficultyManager.clear();
         const isProduction = this._context.extensionMode === vscode.ExtensionMode.Production;
         if (!isProduction) {
 
@@ -244,11 +268,9 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                     pokemonId: Math.floor(Math.random() * 150) + 1,
                     nameZh: '',
                     nameEn: '',
-                    type: [],
-                    catchRate: 0,
                     minDepth: 0,
                     encounterRate: 0
-                }, 0, 'test/file/path');
+                }, 'test/file/path', undefined, this.difficultyManager);
                 await this.pokemonBoxManager.add(debugPokemon);
             }
 
@@ -395,6 +417,20 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                         await this.commandHandler.handleNPCTriggerEncounter();
                     }
                 }
+            }
+
+            // Difficulty
+            if (message.command === MessageType.GetDifficultyModifiers) {
+                await this.commandHandler.handleGetDifficultyModifiers();
+            }
+            if (message.command === MessageType.RecordEncounter) {
+                await this.commandHandler.handleRecordEncounter(message as any);
+            }
+            if (message.command === MessageType.GetDifficultyLevel) {
+                await this.commandHandler.handleGetDifficultyLevel();
+            }
+            if (message.command === MessageType.SetDifficultyLevel) {
+                await this.commandHandler.handleSetDifficultyLevel(message as any);
             }
 
             if (message.command === MessageType.GetBiome) {

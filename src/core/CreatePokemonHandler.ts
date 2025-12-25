@@ -7,6 +7,7 @@ import { PokemonMove, pokemonMoveInit } from "../dataAccessObj/pokeMove";
 import { ExperienceCalculator } from "../utils/ExperienceCalculator";
 import * as pokemonGen1Data from "../data/pokemonGen1.json";
 import * as pokemonMovesData from "../data/pokemonMoves.json";
+import { DifficultyManager } from "../manager/DifficultyManager";
 
 // Define the type for our local data structure
 
@@ -86,7 +87,7 @@ function gaussianRandom(mean: number, stdev: number): number {
 }
 
 export const PokemonFactory = {
-    createWildPokemonInstance: async (pokemonEncounterData: PokeEncounterData, playingTime: number, filePath?: string, fixLevel?: number): Promise<PokemonDao> => {
+    createWildPokemonInstance: async (pokemonEncounterData: PokeEncounterData, filePath?: string, fixLevel?: number, difficultyManager?: DifficultyManager): Promise<PokemonDao> => {
         // 從資料庫取得寶可夢基本資料
         const finalPokemonId = pokemonEncounterData.pokemonId;
         const depth = pokemonEncounterData.minDepth;
@@ -98,20 +99,34 @@ export const PokemonFactory = {
             throw new Error(`Pokemon data not found for ID: ${finalPokemonId}`);
         }
 
-        // 根據深度調整等級 (降低權重 2 -> 1.5)
-        const baseLevel = depth * 1.5;
-
-        // 根據遊玩時間增加等級 (調整模型：降低初始 +5 -> +2，但加快成長 7天1等 -> 2天1等)
-        const timeBonus = Math.floor(playingTime / (2 * 24 * 60 * 60 * 1000)); // 每2天增加一等級
-        const adjustedBaseLevel = Math.min(60, Math.max(2, baseLevel + timeBonus + 2)); // 最高60級，最低2級
-
-        // Standard deviation of 3 gives some variety
-        const randomLevel = Math.round(gaussianRandom(adjustedBaseLevel, Math.max(2, baseLevel / 6)));
-        // Clamp between 1 and 100
-        let level = Math.min(100, Math.max(1, randomLevel));
+        // Level Scaling Logic
+        let level = 5; // Default fallback
 
         if (fixLevel) {
             level = fixLevel;
+        } else {
+            // 1. Get Difficulty Manager
+
+
+            // 2. Get Base Level from Difficulty Level (1-9)
+            // Level 1 -> 5, Level 9 -> 85
+            const difficultyLevel = difficultyManager?.getCurrentLevel() ?? 1;
+            const baseDifficultyLevel = (difficultyLevel - 1) * 10 + 1;
+
+            // 3. Get DDA Offset
+            const modifiers = difficultyManager?.getModifiers() ?? { levelOffset: 0 };
+            const levelOffset = modifiers.levelOffset;
+
+            // 4. Calculate Base Level (Difficulty Base + Offset)
+            const baseLevel = baseDifficultyLevel + levelOffset;
+
+            // 5. Add Variance (Gaussian with stdev 3)
+            const randomLevel = Math.round(gaussianRandom(baseLevel, 3));
+
+            // 6. Clamp between 1 and 100
+            level = Math.min(100, Math.max(1, randomLevel));
+
+            console.log(`[CreatePokemonHandler] Level Calc: DiffLv=${difficultyLevel}, BaseDiffLv=${baseDifficultyLevel}, Offset=${levelOffset}, BaseLv=${baseLevel}, RandLv=${randomLevel}, Final=${level}`);
         }
 
         // Nature
@@ -200,7 +215,15 @@ export const PokemonFactory = {
         const height = Math.round(gaussianRandom(pokemonData.height, 3)); // 以 dm 為單位
         const weight = Math.round(gaussianRandom(pokemonData.weight, 3)); // 以 hg 為單位
 
-        const isShiny = Math.random() < (1 / 512);
+        // Shiny Calculation with DDA
+        const baseShinyRate = 1 / 512; // 不使用標準，因為遭遇太久了
+        const shinyMultiplier = difficultyManager?.getModifiers().shinyRateMultiplier || 1.0;
+        const finalShinyRate = baseShinyRate * shinyMultiplier;
+        const isShiny = Math.random() < finalShinyRate;
+
+        if (isShiny) {
+            console.log(`[CreatePokemonHandler] ✨ SHINY POKEMON GENERATED! Rate: 1/${Math.round(1 / finalShinyRate)} (Base: 1/4096, Mult: x${shinyMultiplier})`);
+        }
 
         const { caughtRepo, favoriteLanguage } = determineCodingContext(filePath);
 
