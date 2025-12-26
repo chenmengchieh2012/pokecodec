@@ -226,14 +226,14 @@ const VSetting = (props: { isFlipped: boolean, setIsFlipped: React.Dispatch<Reac
     }
 
     const getDDAStateEmoji = () => {
-        if (difficultyLevel && !difficultyLevel.ddaEnabled) return <></>;
-        if (!difficultyModifier) return <></>;
+        if (difficultyLevel && !difficultyLevel.ddaEnabled) return <>?</>;
+        if (!difficultyModifier) return <>...</>;
         if (difficultyModifier.modifierType === ModifierType.APPROACHING_ANXIETY) return '🔺';
         if (difficultyModifier.modifierType === ModifierType.APPROACHING_BOREDOM) return '🔻';
         if (difficultyModifier.modifierType === ModifierType.BOREDOM) return '😰';
         if (difficultyModifier.modifierType === ModifierType.ANXIETY) return '😴';
         if (difficultyModifier.modifierType === ModifierType.FLOW) return '😎';
-        return <></>;
+        return <>:(</>;
     };
 
     return <>
