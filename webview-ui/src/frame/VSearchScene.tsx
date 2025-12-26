@@ -7,8 +7,7 @@ import { BiomeType, BiomeData } from '../../../src/dataAccessObj/BiomeData';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
 import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
 import { UserDao } from '../../../src/dataAccessObj/userData';
-import { GoTriggerEncounterPayload } from '../../../src/dataAccessObj/MessagePayload';
-
+import { DifficultyLevelPayload, GoTriggerEncounterPayload, SetDifficultyLevelPayload } from '../../../src/dataAccessObj/MessagePayload';
 interface SearchSceneProps {
     myPokemon?: PokemonDao;
     biomeType?: number; // 新增：接收外部傳入的生態系 index (0-4)
@@ -44,6 +43,7 @@ const EMOTES = ["♥", "♪", "!", "...", "?"];
 export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
     const messageStore = useMessageStore(); // 確保訂閱生效
     const defaultBiome = messageStore.getRefs().biome
+    const defaultDifficultyLevel = messageStore.getRefs().difficultyLevel;
 
     const [pos, setPos] = useState({ x: 5, y: 3 });
     const [direction, setDirection] = useState<'left' | 'right'>('right');
@@ -56,13 +56,19 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
     const [transitionStage, setTransitionStage] = useState<'idle' | 'fading-in' | 'fading-out'>('idle');
     const [enableAutoEncounter, setEnableAutoEncounter] = useState(true);
     const [isEncountering, setIsEncountering] = useState(false);
-
+    const [difficultyLevelPayload, setDifficultyLevelPayload] = useState<DifficultyLevelPayload| undefined>(defaultDifficultyLevel);
 
     useMessageSubscription<void>(MessageType.TriggerEncounter, () => {
         setIsEncountering(true);
         setTimeout(() => {
             setIsEncountering(false);
         }, 1500);
+    });
+
+    
+    useMessageSubscription<DifficultyLevelPayload>(MessageType.DifficultyLevelData, (message) => {
+        console.log("[VSearchScene] Received DifficultyLevelData:", message.data);
+        setDifficultyLevelPayload(message.data);
     });
 
 
@@ -167,6 +173,9 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
     const spriteUrl = resolveAssetUrl(`./sprites/pokemon/icon/${myPokemon?.id}.png`);
     const berryUrl = resolveAssetUrl("./sprites/items/oran-berry.png");
     const ballUrl = resolveAssetUrl("./sprites/items/poke-ball.png");
+    const pokeBallUrl = resolveAssetUrl("./sprites/items/poke-ball.png");
+    const greatBallUrl = resolveAssetUrl("./sprites/items/great-ball.png");
+    const ultraBallUrl = resolveAssetUrl("./sprites/items/ultra-ball.png");
 
     const getTileClass = (type: number) => {
         switch (type) {
@@ -179,6 +188,23 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
             case 6: return styles.tileBrick;
             default: return styles.tileGround;
         }
+    };
+
+
+
+    const handleDifficultySelect = (level: number) => {
+        const payload: SetDifficultyLevelPayload = { level: level };
+        vscode.postMessage({
+            command: MessageType.SetDifficultyLevel,
+            ...payload
+        });
+    };
+
+    const getDifficultyIcon = (level: number) => {
+        const ballIndex = Math.ceil(level / 3) - 1;
+        if (ballIndex === 0) return pokeBallUrl;
+        if (ballIndex === 1) return greatBallUrl;
+        return ultraBallUrl;
     };
 
     return (
@@ -233,7 +259,7 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
                     ))}
                 </div>
             </div>
-            <div className={styles.controls}>
+            <div className={styles["controls-top-right"]}>
                 <button
                     className={`${styles.pauseButton} ${enableAutoEncounter ? styles.paused : ''}`}
                     onClick={() => {
@@ -246,6 +272,35 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
                 >
                     {enableAutoEncounter ? "▶" : "⏸"}
                 </button>
+            </div>
+            <div className={styles["controls-bottom-right"]}>
+
+                <div className={styles.difficultyControl}>
+                    <button
+                        className={styles.arrowButton}
+                        onClick={() => {
+                            const newLevel = (difficultyLevelPayload?.level || 1) - 1;
+                            if (newLevel >= 1) handleDifficultySelect(newLevel);
+                        }}
+                        disabled={(difficultyLevelPayload?.level || 1) <= 1}
+                    >
+                        ◀
+                    </button>
+                    <div className={styles.difficultyDisplay}>
+                        <img src={getDifficultyIcon(difficultyLevelPayload?.level || 1)} className={styles.ballIcon} alt="ball" />
+                        <span className={styles.stars}>{'★'.repeat((((difficultyLevelPayload?.level || 1) - 1) % 3) + 1)}</span>
+                    </div>
+                    <button
+                        className={styles.arrowButton}
+                        onClick={() => {
+                            const newLevel = (difficultyLevelPayload?.level || 1) + 1;
+                            if (newLevel <= 9 && newLevel <= (difficultyLevelPayload?.maxUnlocked || 1)) handleDifficultySelect(newLevel);
+                        }}
+                        disabled={(difficultyLevelPayload?.level || 1) >= 9 || (difficultyLevelPayload?.level || 1) >= (difficultyLevelPayload?.maxUnlocked || 1)}
+                    >
+                        ▶
+                    </button>
+                </div>
             </div>
             <button onClick={() => {
                 const payload: GoTriggerEncounterPayload = {

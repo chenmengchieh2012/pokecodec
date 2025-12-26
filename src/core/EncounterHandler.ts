@@ -15,7 +15,7 @@ export interface EncounterResult {
 }
 
 export interface EncounterHandlerMethods {
-    calculateEncounter: (filePath: string, playingTime: number, difficultyManager: DifficultyManager | undefined) => Promise<EncounterResult | undefined>;
+    calculateEncounter: (difficultyManager: DifficultyManager, filePath: string, playingTime: number) => Promise<EncounterResult | undefined>;
     getBiome: (filePath: string) => BiomeData;
 }
 
@@ -33,7 +33,7 @@ export const EncounterHandler = (pathResolver?: (path: string) => string): Encou
 
     // 加權隨機抽取 (Weighted Random Selection)
     // 核心邏輯：EncounterRate 越高，被選中的區間越大
-    function pickWeightedPokemon(candidates: PokeEncounterData[], playingTime: number, difficultyManager?: DifficultyManager): PokeEncounterData | null {
+    function pickWeightedPokemon(candidates: PokeEncounterData[], playingTime: number, difficultyManager: DifficultyManager): PokeEncounterData | null {
         if (candidates.length === 0) return null;
 
         let pool = candidates;
@@ -120,7 +120,7 @@ export const EncounterHandler = (pathResolver?: (path: string) => string): Encou
         };
     }
 
-    async function calculateEncounter(filePath: string, playingTime: number, difficultyManager?: DifficultyManager): Promise<EncounterResult | undefined> {
+    async function calculateEncounter(difficultyManager: DifficultyManager,filePath: string, playingTime: number): Promise<EncounterResult | undefined> {
         // 1. 解析路徑與深度
         // 去除 workspace root 等前綴，確保路徑相對乾淨
         // 深度計算 (假設 src/index.ts 深度為 2)
@@ -163,7 +163,7 @@ export const EncounterHandler = (pathResolver?: (path: string) => string): Encou
         }
 
 
-        const newPokemon = await PokemonFactory.createWildPokemonInstance(encounterResult as PokeEncounterData, filePath, undefined);
+        const newPokemon = await PokemonFactory.createWildPokemonInstance(encounterResult as PokeEncounterData,difficultyManager, filePath, undefined);
 
         console.log(`[Encounter] Depth: ${depth} | Biome: ${biomeType} | Candidates: ${candidatePool.length}`);
 

@@ -36,18 +36,18 @@ suite('CreatePokemonHandler Test Suite', () => {
         const easyManager = new MockDifficultyManager(1, { levelOffset: -2 });
         const easyPokemon = await PokemonFactory.createWildPokemonInstance(
             mockEncounterData,
+            easyManager as unknown as DifficultyManager,
             undefined,
             undefined,
-            easyManager as unknown as DifficultyManager
         );
 
         // Level 9 Difficulty (Base Level ~85)
         const hardManager = new MockDifficultyManager(9, { levelOffset: 5 });
         const hardPokemon = await PokemonFactory.createWildPokemonInstance(
             mockEncounterData,
+            hardManager as unknown as DifficultyManager,
             undefined,
             undefined,
-            hardManager as unknown as DifficultyManager
         );
 
         console.log(`Easy Level: ${easyPokemon.level}, Hard Level: ${hardPokemon.level}`);
@@ -68,8 +68,8 @@ suite('CreatePokemonHandler Test Suite', () => {
         const samples = 10;
 
         for (let i = 0; i < samples; i++) {
-            const p1 = await PokemonFactory.createWildPokemonInstance(mockEncounterData, undefined, undefined, baseManager as unknown as DifficultyManager);
-            const p2 = await PokemonFactory.createWildPokemonInstance(mockEncounterData, undefined, undefined, buffedManager as unknown as DifficultyManager);
+            const p1 = await PokemonFactory.createWildPokemonInstance(mockEncounterData, baseManager as unknown as DifficultyManager, undefined, undefined);
+            const p2 = await PokemonFactory.createWildPokemonInstance(mockEncounterData, buffedManager as unknown as DifficultyManager, undefined, undefined);
             baseSum += p1.level;
             buffedSum += p2.level;
         }

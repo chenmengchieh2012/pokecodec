@@ -21,7 +21,7 @@ import { BattleMode, GameStateData } from "../../../src/dataAccessObj/gameStateD
 import { RecordEncounterPayload, SetGameStateDataPayload, UpdateDefenderPokemonUidPayload, UpdateOpponentInPartyPayload, UpdateOpponentPokemonUidPayload, UpdatePartyPokemonPayload, UseMedicineInBagPayload } from "../../../src/dataAccessObj/MessagePayload";
 import { SHOP_ITEMS_HP_MEDICINE_NAMES, SHOP_ITEMS_PP_MEDICINE_NAMES, SHOP_ITEMS_REVIVE_NAMES, SHOP_ITEMS_STATUS_MEDICINE_NAMES } from "../utilities/ItemName";
 import { ExperienceCalculator } from "../../../src/utils/ExperienceCalculator";
-import { DifficultyModifiers } from "../../../src/manager/DifficultyManager";
+import { DifficultyModifiers } from "../../../src/dataAccessObj/DifficultyData";
 export interface BattleManagerMethod {
     handleOnAttack: (myPokemonMove: PokemonMove) => Promise<void>,
     handleThrowBall: (ballDao: PokeBallDao) => Promise<void>,

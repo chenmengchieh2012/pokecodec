@@ -87,7 +87,7 @@ function gaussianRandom(mean: number, stdev: number): number {
 }
 
 export const PokemonFactory = {
-    createWildPokemonInstance: async (pokemonEncounterData: PokeEncounterData, filePath?: string, fixLevel?: number, difficultyManager?: DifficultyManager): Promise<PokemonDao> => {
+    createWildPokemonInstance: async (pokemonEncounterData: PokeEncounterData,difficultyManager: DifficultyManager, filePath?: string, fixLevel?: number): Promise<PokemonDao> => {
         // 從資料庫取得寶可夢基本資料
         const finalPokemonId = pokemonEncounterData.pokemonId;
         const depth = pokemonEncounterData.minDepth;

@@ -78,7 +78,10 @@ export class BiomeDataHandler {
 
     public async getEncountered(): Promise<EncounterResult | undefined> {
         const playingTime = this.userDaoManager?.getUserInfo().playtime || 0;
-        return await this.encounterHandler.calculateEncounter(this.currentFilePath, playingTime, this.difficultyManager);
+        if (!this.difficultyManager) {
+            throw new Error("DifficultyManager not initialized in BiomeDataHandler.");
+        }
+        return await this.encounterHandler.calculateEncounter(this.difficultyManager,this.currentFilePath, playingTime);
     }
 
     /**

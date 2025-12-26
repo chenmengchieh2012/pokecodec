@@ -36,7 +36,7 @@ suite('EncounterHandler Test Suite', () => {
         const anxietySettings = difficultyConfig.modifiers.anxiety;
         const anxietyManager = new MockDifficultyManager(anxietySettings.minEncounterRate, anxietySettings.maxEncounterRate);
 
-        const anxietyResult = await handler.calculateEncounter(filePath, 0, anxietyManager as unknown as DifficultyManager);
+        const anxietyResult = await handler.calculateEncounter(anxietyManager as unknown as DifficultyManager,filePath, 0);
 
         if (anxietyResult && anxietyResult.pokemon) {
             console.log(`[Anxiety/Easy] Config Range: [${anxietySettings.minEncounterRate}, ${anxietySettings.maxEncounterRate}]`);
@@ -59,7 +59,7 @@ suite('EncounterHandler Test Suite', () => {
         const boredomSettings = difficultyConfig.modifiers.boredom;
         const boredomManager = new MockDifficultyManager(boredomSettings.minEncounterRate, boredomSettings.maxEncounterRate);
 
-        const boredomResult = await handler.calculateEncounter(filePath, 0, boredomManager as unknown as DifficultyManager);
+        const boredomResult = await handler.calculateEncounter(boredomManager as unknown as DifficultyManager,filePath, 0 );
 
         if (boredomResult && boredomResult.pokemon) {
             console.log(`[Boredom/Hard] Config Range: [${boredomSettings.minEncounterRate}, ${boredomSettings.maxEncounterRate}]`);

@@ -5,11 +5,10 @@ import { ItemDao } from '../../../src/dataAccessObj/item';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
 import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
 import { UserDao } from '../../../src/dataAccessObj/userData';
-import { BoxPayload, PokeDexPayload } from '../../../src/dataAccessObj/MessagePayload';
+import { BoxPayload, PokeDexPayload, DifficultyLevelPayload } from '../../../src/dataAccessObj/MessagePayload';
 import { AchievementStatistics } from '../../../src/utils/AchievementCritiria';
 import { GameStateData } from '../../../src/dataAccessObj/gameStateData';
-import { DifficultyModifiers } from '../../../src/manager/DifficultyManager';
-
+import { DifficultyModifiers } from '../../../src/dataAccessObj/DifficultyData';
 // ============================================================
 // Type Definitions
 // ============================================================
@@ -35,7 +34,8 @@ export interface StoreRefs {
     biome: BiomeData | undefined;
     pokeDex: PokeDexPayload | undefined;
     achievements: AchievementStatistics | undefined;
-    difficultyModifiers?: DifficultyModifiers | undefined;
+    difficultyModifiers: DifficultyModifiers | undefined;
+    difficultyLevel: DifficultyLevelPayload | undefined;
 }
 
 /** MessageStore Context 的值類型 */
@@ -84,6 +84,8 @@ class MessageStore {
         biome: undefined,
         pokeDex: undefined,
         achievements: undefined,
+        difficultyLevel: undefined,
+        difficultyModifiers: undefined,
     };
     /** 是否已初始化 */
     private initialized: InitializedStateType = InitializedState.UnStart;
@@ -183,6 +185,9 @@ class MessageStore {
             case MessageType.DifficultyModifiersData:
                 this.refs.difficultyModifiers = (message.data as DifficultyModifiers) ?? undefined;
                 break;
+            case MessageType.DifficultyLevelData:
+                this.refs.difficultyLevel = (message.data as DifficultyLevelPayload) ?? undefined;
+                break;
             default:
                 // 非資料更新類型，無需更新 refs
                 break;
@@ -220,6 +225,7 @@ class MessageStore {
                     this.refs.pokeDex !== undefined &&
                     this.refs.achievements !== undefined &&
                     this.refs.difficultyModifiers !== undefined &&
+                    this.refs.difficultyLevel !== undefined &&
                     this.initialized === InitializedState.Initializing) {
                     this.initialized = InitializedState.finished;
                     console.log('[MessageStore] Initialization finished');
@@ -266,6 +272,8 @@ class MessageStore {
         vscode.postMessage({ command: MessageType.GetAchievements });
         // 9. 請求難度修正值
         vscode.postMessage({ command: MessageType.GetDifficultyModifiers });
+        // 10. 請求難度等級資料
+        vscode.postMessage({ command: MessageType.GetDifficultyLevel });
     }
 
     /**
@@ -298,6 +306,9 @@ class MessageStore {
         }
         if (this.refs.difficultyModifiers !== undefined) {
             this.notify({ type: MessageType.DifficultyModifiersData, data: this.refs.difficultyModifiers });
+        }
+        if (this.refs.difficultyLevel !== undefined) {
+            this.notify({ type: MessageType.DifficultyLevelData, data: this.refs.difficultyLevel });
         }
     }
 

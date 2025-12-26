@@ -32,7 +32,10 @@ import {
     UseItemPayload,
     UseMedicineInBagPayload,
     GoTriggerEncounterPayload,
-    UpdateOpponentPokemonUidPayload
+    UpdateOpponentPokemonUidPayload,
+    SetDDAEnabledPayload,
+    SetDifficultyLevelPayload,
+    RecordEncounterPayload
 } from './handler';
 import { AchievementManager } from './manager/AchievementManager';
 import { BagManager } from './manager/bagsManager';
@@ -246,6 +249,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             this.commandHandler.handleGetCurrentPokeDex();
             this.commandHandler.handleGetAchievements();
             this.commandHandler.handleGetBiomeData();
+            this.commandHandler.handleGetDifficultyLevel();
         }
     }
 
@@ -270,7 +274,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                     nameEn: '',
                     minDepth: 0,
                     encounterRate: 0
-                }, 'test/file/path', undefined, this.difficultyManager);
+                }, this.difficultyManager, 'test/file/path', undefined);
                 await this.pokemonBoxManager.add(debugPokemon);
             }
 
@@ -280,6 +284,12 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             allTMItems.map(async (tmItem) => {
                 await this.bagManager.add(tmItem, 1);
             });
+
+            // MARK: TEST difficult
+            const maxLevel = 8;
+            for (let level = 1; level <= maxLevel; level++) {
+                await this.difficultyManager.unlockNextLevel();
+            }
         }
 
         vscode.window.showInformationMessage('Global storage 已重置！');
@@ -424,13 +434,16 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                 await this.commandHandler.handleGetDifficultyModifiers();
             }
             if (message.command === MessageType.RecordEncounter) {
-                await this.commandHandler.handleRecordEncounter(message as any);
+                await this.commandHandler.handleRecordEncounter(message as RecordEncounterPayload);
             }
             if (message.command === MessageType.GetDifficultyLevel) {
                 await this.commandHandler.handleGetDifficultyLevel();
             }
             if (message.command === MessageType.SetDifficultyLevel) {
-                await this.commandHandler.handleSetDifficultyLevel(message as any);
+                await this.commandHandler.handleSetDifficultyLevel(message as SetDifficultyLevelPayload);
+            }
+            if (message.command === MessageType.SetDDAEnabled) {
+                await this.commandHandler.handleSetDDAEnabled(message as SetDDAEnabledPayload);
             }
 
             if (message.command === MessageType.GetBiome) {

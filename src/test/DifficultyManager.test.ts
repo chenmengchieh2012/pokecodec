@@ -1,6 +1,7 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import { DifficultyManager, EncounterRecord, DifficultyModifiers } from '../manager/DifficultyManager';
+import { DifficultyManager } from '../manager/DifficultyManager';
+import { EncounterRecord } from '../dataAccessObj/DifficultyData';
 
 // Mock Memento for GlobalState
 class MockMemento implements vscode.Memento {

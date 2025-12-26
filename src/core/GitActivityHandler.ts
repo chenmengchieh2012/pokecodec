@@ -1,6 +1,7 @@
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import * as vscode from 'vscode';
+import * as path from 'path';
 import { BagManager } from '../manager/bagsManager';
 import { JoinPokemonManager } from '../manager/joinPokemonManager';
 import { ExperienceCalculator } from '../utils/ExperienceCalculator';
@@ -54,6 +55,19 @@ export class GitActivityHandler {
     }
 
     private async findGitRoot(folderPath: string): Promise<string | null> {
+        // Check configuration first
+        const config = vscode.workspace.getConfiguration('pokecodec', vscode.Uri.file(folderPath));
+        const manualRoot = config.get<string>('gitRootPath');
+
+        if (manualRoot && manualRoot.trim() !== '') {
+            // If it's an absolute path, return it
+            if (path.isAbsolute(manualRoot)) {
+                return manualRoot;
+            }
+            // If relative, resolve against folderPath
+            return path.resolve(folderPath, manualRoot);
+        }
+
         try {
             const { stdout } = await execAsync('git rev-parse --show-toplevel', { cwd: folderPath });
             return stdout.trim();
@@ -177,7 +191,7 @@ export class GitActivityHandler {
              * 根據 commit 資訊來更新寶可夢的經驗值或其他屬性
             */
             // 這裡我們需要存取 GameStateManager 來更新隊伍中的寶可夢
-            this.updatePokemonStats(folderPath, {
+            this.updatePokemonStats({
                 linesChanged,
                 isBugFix,
                 commitHash: hash
@@ -296,7 +310,7 @@ export class GitActivityHandler {
         }
     }
 
-    private updatePokemonStats(repoPath: string, data: { linesChanged: number, isBugFix: boolean, commitHash: string }) {
+    private updatePokemonStats(data: { linesChanged: number, isBugFix: boolean, commitHash: string }) {
         if (!this.partyManager) return;
 
         const newParty = JSON.parse(JSON.stringify(this.partyManager.getAll()));

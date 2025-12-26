@@ -1,0 +1,265 @@
+[
+  {
+    "id": "gym_1",
+    "title": "Intern",
+    "name": "Newbie Neil",
+    "description": "A fresh intern who just learned console.log().",
+    "specialty": "Normal",
+    "badge": "Console Badge",
+    "level": 15,
+    "party": [
+      {
+        "id": 19,
+        "level": 12,
+        "name": "rattata"
+      },
+      {
+        "id": 16,
+        "level": 15,
+        "name": "pidgey"
+      }
+    ],
+    "dialog": {
+      "intro": "I... I just pushed to production on Friday. Is that bad?",
+      "win": "Wait, I need to check StackOverflow...",
+      "lose": "Maybe I should switch to management."
+    }
+  },
+  {
+    "id": "gym_2",
+    "title": "Junior Dev",
+    "name": "Green Gary",
+    "description": "Still learning the ropes, but eager to prove himself.",
+    "specialty": "Grass",
+    "badge": "Git Badge",
+    "level": 25,
+    "party": [
+      {
+        "id": 43,
+        "level": 22,
+        "name": "oddish"
+      },
+      {
+        "id": 1,
+        "level": 25,
+        "name": "bulbasaur"
+      }
+    ],
+    "dialog": {
+      "intro": "I finally understood how Git rebase works!",
+      "win": "Merge conflict! Merge conflict!",
+      "lose": "Guess I'll just force push."
+    }
+  },
+  {
+    "id": "gym_3",
+    "title": "Senior Dev",
+    "name": "Sparky Steve",
+    "description": "Writes code faster than you can read it. Highly caffeinated.",
+    "specialty": "Electric",
+    "badge": "Refactor Badge",
+    "level": 35,
+    "party": [
+      {
+        "id": 25,
+        "level": 32,
+        "name": "pikachu"
+      },
+      {
+        "id": 100,
+        "level": 32,
+        "name": "voltorb"
+      },
+      {
+        "id": 26,
+        "level": 35,
+        "name": "raichu"
+      }
+    ],
+    "dialog": {
+      "intro": "Your code looks... interesting. Let me refactor that for you.",
+      "win": "Optimization complete. Execution time: 0.01ms.",
+      "lose": "Looks like I introduced a regression."
+    }
+  },
+  {
+    "id": "gym_4",
+    "title": "QA Lead",
+    "name": "Bug Hunter Betty",
+    "description": "She finds bugs you didn't even know existed.",
+    "specialty": "Bug",
+    "badge": "Debugger Badge",
+    "level": 45,
+    "party": [
+      {
+        "id": 11,
+        "level": 42,
+        "name": "metapod"
+      },
+      {
+        "id": 48,
+        "level": 42,
+        "name": "venonat"
+      },
+      {
+        "id": 123,
+        "level": 45,
+        "name": "scyther"
+      }
+    ],
+    "dialog": {
+      "intro": "It's not a feature, it's a BUG. And I'm going to squash it.",
+      "win": "Ticket closed. Won't fix.",
+      "lose": "Reopening ticket #404: Trainer defeated."
+    }
+  },
+  {
+    "id": "gym_5",
+    "title": "Database Admin",
+    "name": "Rocky Rex",
+    "description": "Protector of the production database. Do not run DROP TABLE.",
+    "specialty": "Rock",
+    "badge": "Schema Badge",
+    "level": 55,
+    "party": [
+      {
+        "id": 74,
+        "level": 52,
+        "name": "geodude"
+      },
+      {
+        "id": 111,
+        "level": 52,
+        "name": "rhyhorn"
+      },
+      {
+        "id": 95,
+        "level": 52,
+        "name": "onix"
+      },
+      {
+        "id": 76,
+        "level": 55,
+        "name": "golem"
+      }
+    ],
+    "dialog": {
+      "intro": "Did you sanitize your inputs? My tables are immutable!",
+      "win": "Transaction committed successfully.",
+      "lose": "Rollback! Rollback everything!"
+    }
+  },
+  {
+    "id": "gym_6",
+    "title": "Product Manager",
+    "name": "Deadline Dan",
+    "description": "Always asking for new features yesterday.",
+    "specialty": "Fire",
+    "badge": "Roadmap Badge",
+    "level": 65,
+    "party": [
+      {
+        "id": 38,
+        "level": 62,
+        "name": "ninetales"
+      },
+      {
+        "id": 78,
+        "level": 62,
+        "name": "rapidash"
+      },
+      {
+        "id": 126,
+        "level": 62,
+        "name": "magmar"
+      },
+      {
+        "id": 59,
+        "level": 65,
+        "name": "arcanine"
+      }
+    ],
+    "dialog": {
+      "intro": "We need to pivot. The deadline is now... 5 minutes ago.",
+      "win": "Let's circle back on this next quarter.",
+      "lose": "Okay, okay, we'll move that feature to the backlog."
+    }
+  },
+  {
+    "id": "gym_7",
+    "title": "System Architect",
+    "name": "Abstract Alice",
+    "description": "Sees the matrix. Speaks in design patterns.",
+    "specialty": "Psychic",
+    "badge": "Architecture Badge",
+    "level": 75,
+    "party": [
+      {
+        "id": 64,
+        "level": 72,
+        "name": "kadabra"
+      },
+      {
+        "id": 122,
+        "level": 72,
+        "name": "mr-mime"
+      },
+      {
+        "id": 103,
+        "level": 72,
+        "name": "exeggutor"
+      },
+      {
+        "id": 65,
+        "level": 75,
+        "name": "alakazam"
+      }
+    ],
+    "dialog": {
+      "intro": "Your implementation is too coupled. Observe the beauty of pure abstraction.",
+      "win": "As predicted by my UML diagrams.",
+      "lose": "Impossible... a flaw in the system design?"
+    }
+  },
+  {
+    "id": "gym_8",
+    "title": "CTO",
+    "name": "Boss Bill",
+    "description": "The legendary founder. Wrote the core engine in Assembly.",
+    "specialty": "Dragon",
+    "badge": "Legacy Badge",
+    "level": 85,
+    "party": [
+      {
+        "id": 130,
+        "level": 80,
+        "name": "gyarados"
+      },
+      {
+        "id": 148,
+        "level": 80,
+        "name": "dragonair"
+      },
+      {
+        "id": 142,
+        "level": 82,
+        "name": "aerodactyl"
+      },
+      {
+        "id": 6,
+        "level": 82,
+        "name": "charizard"
+      },
+      {
+        "id": 149,
+        "level": 85,
+        "name": "dragonite"
+      }
+    ],
+    "dialog": {
+      "intro": "I've seen technologies rise and fall. Show me your code!",
+      "win": "You're fired.",
+      "lose": "Here, take the keys to the server room. You're in charge now."
+    }
+  }
+]

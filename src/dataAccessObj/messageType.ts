@@ -66,6 +66,7 @@ export const MessageType = {
     RecordEncounter: 'recordEncounter',
     GetDifficultyLevel: 'getDifficultyLevel',
     SetDifficultyLevel: 'setDifficultyLevel',
+    SetDDAEnabled: 'setDDAEnabled',
 } as const;
 
 

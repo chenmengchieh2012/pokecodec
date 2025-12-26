@@ -28,7 +28,8 @@ import {
     GoTriggerEncounterPayload,
     SetDifficultyLevelPayload,
     RecordEncounterPayload,
-    DifficultyLevelPayload
+    DifficultyLevelPayload,
+    SetDDAEnabledPayload
 } from '../dataAccessObj/MessagePayload';
 import { MessageType } from '../dataAccessObj/messageType';
 import { AchievementManager } from '../manager/AchievementManager';
@@ -118,7 +119,8 @@ export class CommandHandler {
         const data: DifficultyLevelPayload = {
             level,
             config,
-            maxUnlocked: this.difficultyManager.getMaxUnlockedLevel()
+            maxUnlocked: this.difficultyManager.getMaxUnlockedLevel(),
+            ddaEnabled: this.difficultyManager.isDDAEnabled()
         };
         this.handlerContext.postMessage({
             type: MessageType.DifficultyLevelData,
@@ -129,11 +131,16 @@ export class CommandHandler {
     public async handleSetDifficultyLevel(payload: SetDifficultyLevelPayload): Promise<void> {
         const success = await this.difficultyManager.setDifficultyLevel(payload.level);
         if (success) {
-            await this.handleGetDifficultyLevel(); // Refresh frontend
-            vscode.window.showInformationMessage(`Difficulty set to Level ${payload.level}`);
+            this.handlerContext.updateAllViews();
         } else {
             vscode.window.showErrorMessage(`Failed to set difficulty level ${payload.level}`);
         }
+    }
+
+    public async handleSetDDAEnabled(payload: SetDDAEnabledPayload): Promise<void> {
+        await this.difficultyManager.setDDAEnabled(payload.enabled);
+        this.handlerContext.updateAllViews();
+        vscode.window.showInformationMessage(`Dynamic Difficulty Adjustment ${payload.enabled ? 'Enabled' : 'Disabled'}`);
     }
 
     // ==================== Select Starter ====================
@@ -152,7 +159,7 @@ export class CommandHandler {
             nameEn: '',
             minDepth: 0, // Level 5,
             encounterRate: 0
-        }, undefined, 5, this.difficultyManager);
+        }, this.difficultyManager, undefined, 5);
 
         starterPokemon.originalTrainer = user.name || 'GOLD';
         starterPokemon.caughtDate = Date.now();
@@ -789,7 +796,7 @@ export class CommandHandler {
                 nameEn: '',
                 minDepth: 0,
                 encounterRate: 0
-            }, 'test/file/path', undefined, this.difficultyManager);
+            }, this.difficultyManager, 'test/file/path', undefined);
             debugPokemons.push(pokemon);
         };
         // Notify User if a Pokemon is encountered AND the view is NOT visible

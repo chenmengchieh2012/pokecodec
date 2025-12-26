@@ -3,8 +3,7 @@ import { PokemonDao } from './pokemon';
 import { PokeDexEntry, PokeDexEntryStatus } from './PokeDex';
 import { GameStateData } from './gameStateData';
 import { GameState } from './GameState';
-import { DifficultyLevelConfig, EncounterRecord } from '../manager/DifficultyManager';
-
+import { DifficultyLevelConfig, EncounterRecord } from './DifficultyData';
 export interface BoxPayload {
     pokemons: PokemonDao[];
     currentBox: number;
@@ -20,6 +19,7 @@ export interface DifficultyLevelPayload {
     level: number;
     config: DifficultyLevelConfig;
     maxUnlocked: number;
+    ddaEnabled: boolean;
 }
 
 // ==================== Payload Types ====================
@@ -125,6 +125,10 @@ export interface SetDifficultyLevelPayload {
     level: number;
 }
 
+export interface SetDDAEnabledPayload {
+    enabled: boolean
+}
+
 export interface RecordEncounterPayload {
     record: EncounterRecord;
 }
@@ -139,5 +143,9 @@ export interface HandlerContext {
 }
 
 export interface SetAutoEncounterPayload {
+    enabled: boolean;
+}
+
+export interface SetDDAEnabledPayload {
     enabled: boolean;
 }

@@ -49,6 +49,16 @@
         }
       ]
     },
+    "configuration": {
+      "title": "PokeCodec",
+      "properties": {
+        "pokecodec.gitRootPath": {
+          "type": "string",
+          "default": "",
+          "description": "Manually specify the Git root path. If empty, it will be auto-detected."
+        }
+      }
+    },
     "views": {
       "pokemon-panel": [
         {
