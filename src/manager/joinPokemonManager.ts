@@ -138,13 +138,15 @@ export class JoinPokemonManager {
         return success;
     }
 
-    public async update(pokemon: PokemonDao): Promise<boolean> {
+    public async update(pokemons: PokemonDao[]): Promise<boolean> {
         let success = false;
         await this.performTransaction((party) => {
-            const index = party.findIndex(p => p.uid === pokemon.uid);
-            if (index !== -1) {
-                party[index] = pokemon;
-                success = true;
+            for (const pokemon of pokemons) {
+                const index = party.findIndex(p => p.uid === pokemon.uid);
+                if (index !== -1) {
+                    party[index] = pokemon;
+                    success = true;
+                }
             }
             return JSON.parse(JSON.stringify(party));
         });

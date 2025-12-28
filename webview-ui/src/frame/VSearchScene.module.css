@@ -1,10 +1,10 @@
 /* search.module.css */
 
 :root {
-  --tile-size: 28px;
+  --tile-x-size: 12px;
+  --tile-y-size: 9px;
   --gba-frame: #b0b0b0;
   --screen-border: #222;
-  --ground-base: #E0E0C8;
 }
 
 .emeraldContainer {
@@ -39,18 +39,25 @@
   overflow: hidden;
 }
 
-/* 新增：切換生態系時的過場遮罩 (類似寶可夢切換場景的黑屏) */
-.biomeTransitionOverlay {
+.globalBackgroundLayer {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #000;
-  opacity: 0;
-  pointer-events: none;
-  z-index: 1;
-  /* 在遊戲機之下，但在背景之上...*/
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.globalBackgroundImage {
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  width: calc(100% + 40px);
+  height: calc(100% + 40px);
+  background-size: cover;
+  background-position: center;
+  filter: blur(8px) brightness(0.4);
 }
 
 /* 轉場動畫：全黑 -> 透明 */
@@ -170,8 +177,8 @@
 /* 地圖顯示區域 */
 .mapGrid {
   display: grid;
-  grid-template-columns: repeat(15, var(--tile-size));
-  grid-template-rows: repeat(6, var(--tile-size));
+  grid-template-columns: repeat(32, var(--tile-x-size));
+  grid-template-rows: repeat(18, var(--tile-y-size));
   gap: 0;
   background-color: var(--ground-base);
   border: 2px solid var(--screen-border);
@@ -181,114 +188,27 @@
   image-rendering: pixelated;
 }
 
-/* --- Tile 基礎設定 --- */
+.mapBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  z-index: 0;
+  pointer-events: none;
+}
 
 .tile {
-  width: var(--tile-size);
-  height: var(--tile-size);
+  z-index: 1;
+  width: var(--tile-x-size);
+  height: var(--tile-y-size);
   position: relative;
   box-sizing: border-box;
-  background-color: var(--ground-base);
-  /* 預設地板：稍微把透明度調低一點，讓它跟上面的物件融合更好 */
-  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1wOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bXA6Q3JlYXRvclRvb2w9IkFkb2JlIFBob3Rvc2hvcCBDUzYgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjI3QUQ1NDQxQTdDNzExRTI5QzFGQTAyMzc5N0YwMDAwIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjI3QUQ1NDQyQTdDNzExRTI5QzFGQTAyMzc5N0YwMDAwIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6MjdBRDU0MzlBN0M3MTFFMjlDMUZBMDIzNzk3RjAwMDAiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6MjdBRDU0NDBBN0M3MTFFMjlDMUZBMDIzNzk3RjAwMDAiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz6E0j0FAAAACVBMVEUAAAD///+tra2qqqqnp6ejo6OdnZ2ZmZmTk5OQkJCLi4uHh4eDg4N/f397e3t3d3dzc3Nvb29ra2tkZGRgYGBcXFxYWFhUVFROTk5KSkpGRkZCQkI/Pz87Ozs3Nzc0NDQwMDAvLy8sLCwqKioHBwcAAAD///8ZGRkC//39/f329vbv7+/n5+fk5OTd3d3W1tbS0tLQ0NDMzMzJycnCwsK+vr66urq2traurq4+TfH2AAAAxklEQVR42mJgAAMmRkYgYIIiRkYIYAMiBiBmAmIWIgELAwMDIxMDIwMTAwMDEwMTA6O5uTkDEwMTIxMDIwMTAwMDEwMTAyMTk7m5OQMTIxMDIwMTAwMDEwMTAyMTIxMDIwMTAwMDEwMTAyMTIxMDIwMTAwMDEwMTAyMTIxMDIwMTAwMDEwMTAyMTIxMDIwMTAwMDEwMTAyMTIxMDIwMTAwMDEwMTAyMTAOYHICS/F2i3AAAAAElFTkSuQmCC');
   background-size: 100% 100%;
 }
 
-.tile *,
-.tile::after,
-.tile::before {
-  image-rendering: pixelated;
-}
-
-/* === 1. 樹木 (Tree) - 沒變，因為已經不錯了 === */
-.tileTree {
-  z-index: 10;
-}
-
-.tileTree::after {
-  content: '';
-  position: absolute;
-  left: -8px;
-  top: -16px;
-  width: 48px;
-  height: 48px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath fill='%231e3c28' d='M16 36h16v12H16z'/%3E%3Cpath fill='%232d5a42' d='M12 32h24v12H12z'/%3E%3Cpath fill='%233c7856' d='M8 24h32v16H8z'/%3E%3Cpath fill='%234b966a' d='M12 16h24v16H16z'/%3E%3Cpath fill='%235ab47e' d='M16 8h16v16H16z'/%3E%3Cpath fill='%2369d292' d='M20 4h8v12h-8z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: bottom center;
-  filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.5));
-}
-
-/* === 2. 【大幅升級】草叢 (Grass) === */
-.tileGrass {
-  /* 這是一個雙層 SVG，包含底色、雜色斑點(Dithering)和草葉 */
-  background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='32' height='32' fill='%23589c38'/%3E%3C!-- 雜色斑點模擬厚重感 --%3E%3Crect x='0' y='0' width='2' height='2' fill='%2342752b' opacity='0.5'/%3E%3Crect x='4' y='4' width='2' height='2' fill='%2342752b' opacity='0.5'/%3E%3Crect x='8' y='0' width='2' height='2' fill='%2342752b' opacity='0.5'/%3E%3Crect x='12' y='4' width='2' height='2' fill='%2342752b' opacity='0.5'/%3E%3Crect x='16' y='0' width='2' height='2' fill='%2342752b' opacity='0.5'/%3E%3Crect x='20' y='4' width='2' height='2' fill='%2342752b' opacity='0.5'/%3E%3Crect x='24' y='0' width='2' height='2' fill='%2342752b' opacity='0.5'/%3E%3Crect x='28' y='4' width='2' height='2' fill='%2342752b' opacity='0.5'/%3E%3Crect x='2' y='2' width='2' height='2' fill='%237bc454' opacity='0.4'/%3E%3Crect x='6' y='6' width='2' height='2' fill='%237bc454' opacity='0.4'/%3E%3Crect x='10' y='2' width='2' height='2' fill='%237bc454' opacity='0.4'/%3E%3Crect x='14' y='6' width='2' height='2' fill='%237bc454' opacity='0.4'/%3E%3C!-- 草葉紋理 --%3E%3Cpath d='M2 14 L4 10 L6 14' stroke='%23335522' stroke-width='1.5' fill='none'/%3E%3Cpath d='M10 24 L12 20 L14 24' stroke='%23335522' stroke-width='1.5' fill='none'/%3E%3Cpath d='M18 10 L20 6 L22 10' stroke='%23335522' stroke-width='1.5' fill='none'/%3E%3Cpath d='M26 22 L28 18 L30 22' stroke='%23335522' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
-  background-size: 32px 32px;
-  /* 讓草叢稍微暗一點，跟亮色的皮卡丘形成對比 */
-  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.15);
-  /* 底部厚度 */
-}
-
-/* === 3. 岩石 (Rock) === */
-.tileRock {
-  z-index: 5;
-}
-
-.tileRock::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath fill='%235e5246' d='M4 28h24v-8l-4-4H8l-4 4z'/%3E%3Cpath fill='%238a7865' d='M8 20h16v-8l-4-4H12l-4 4z'/%3E%3Cpath fill='%23b29e87' d='M12 12h8V8h-8z'/%3E%3C/svg%3E");
-  filter: drop-shadow(2px 2px 0 rgba(0, 0, 0, 0.3));
-}
-
-/* === 4. 水面 (Water) === */
-.tileWater {
-  background-color: #5abaff;
-  background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 8h8v2H0zm8 8h8v2H8zm8 8h8v2h-8zm8-16h8v2h-8z' fill='%23ffffff' fill-opacity='0.4'/%3E%3C/svg%3E");
-  animation: waterFlow 1.5s steps(4) infinite;
-  box-shadow: inset 0 0 10px rgba(0, 100, 200, 0.3);
-}
-
-@keyframes waterFlow {
-  0% {
-    background-position: 0 0;
-  }
-
-  100% {
-    background-position: 32px 32px;
-  }
-}
-
-/* === 5. 花朵 (Flower) === */
-.tileFlower {
-  /* 花底下用新的漂亮草地 */
-  background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='32' height='32' fill='%23589c38'/%3E%3Crect x='0' y='0' width='2' height='2' fill='%2342752b' opacity='0.5'/%3E%3Crect x='4' y='4' width='2' height='2' fill='%2342752b' opacity='0.5'/%3E%3Crect x='8' y='0' width='2' height='2' fill='%2342752b' opacity='0.5'/%3E%3Crect x='12' y='4' width='2' height='2' fill='%2342752b' opacity='0.5'/%3E%3C/svg%3E");
-}
-
-.tileFlower::after {
-  content: '';
-  position: absolute;
-  left: 8px;
-  top: 8px;
-  width: 16px;
-  height: 16px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Crect x='6' y='2' width='4' height='4' fill='%23ff5050'/%3E%3Crect x='2' y='6' width='4' height='4' fill='%23ff5050'/%3E%3Crect x='10' y='6' width='4' height='4' fill='%23ff5050'/%3E%3Crect x='6' y='10' width='4' height='4' fill='%23ff5050'/%3E%3Crect x='6' y='6' width='4' height='4' fill='%23ffffaa'/%3E%3C/svg%3E");
-}
-
-/* === 6. 【大幅升級】磚牆 (Brick) -> 改為石磚 (Stone Brick) === */
-.tileBrick {
-  background-color: #595652;
-  /* 深灰底 */
-  /* 立體石磚 SVG：包含高光(上/左) 和 陰影(下/右) */
-  background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3C!-- 磚塊1 --%3E%3Crect x='0' y='0' width='32' height='16' fill='%237a7672'/%3E%3Crect x='0' y='0' width='32' height='2' fill='%239e9a95'/%3E%3C!-- Highlight --%3E%3Crect x='0' y='0' width='2' height='16' fill='%239e9a95'/%3E%3Crect x='0' y='14' width='32' height='2' fill='%2345423f'/%3E%3C!-- Shadow --%3E%3Crect x='30' y='0' width='2' height='16' fill='%2345423f'/%3E%3C!-- 磚塊2 --%3E%3Crect x='0' y='16' width='16' height='16' fill='%237a7672'/%3E%3Crect x='0' y='16' width='16' height='2' fill='%239e9a95'/%3E%3Crect x='0' y='16' width='2' height='16' fill='%239e9a95'/%3E%3Crect x='0' y='30' width='16' height='2' fill='%2345423f'/%3E%3Crect x='14' y='16' width='2' height='16' fill='%2345423f'/%3E%3C!-- 磚塊3 --%3E%3Crect x='16' y='16' width='16' height='16' fill='%237a7672'/%3E%3Crect x='16' y='16' width='16' height='2' fill='%239e9a95'/%3E%3Crect x='16' y='16' width='2' height='16' fill='%239e9a95'/%3E%3Crect x='16' y='30' width='16' height='2' fill='%2345423f'/%3E%3Crect x='30' y='16' width='2' height='16' fill='%2345423f'/%3E%3C/svg%3E");
-  /* 縫隙 */
-  border: 1px solid #3d3a38;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
-  z-index: 5;
-}
 
 .controls-top-right {
   position: absolute;
@@ -297,16 +217,13 @@
   z-index: 100;
 }
 
-.controls-bottom-right {
-  position: absolute;
-  bottom: 8px;
-  right: 8px;
-  z-index: 100;
+.row {
+  display: flex;
 }
 
 .pauseButton {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
 
   /* Emerald Green Theme */
   background-color: #68d0a8;
@@ -372,6 +289,42 @@
   transform: translate(2px, 2px);
 }
 
+.npcButton {
+  width: 98px;
+  height: 32px;
+  background-color: #ff5555;
+  border: 2px solid #800000;
+  border-radius: 4px;
+  box-shadow:
+    inset 2px 2px 0px #ffaaaa,
+    inset -2px -2px 0px #aa0000,
+    2px 2px 0px #4d0000;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  image-rendering: pixelated;
+}
+
+.npcButton:hover {
+  background-color: #ff7777;
+  filter: brightness(1.1);
+}
+
+.npcButton:active {
+  background-color: #dd4444;
+  box-shadow:
+    inset 2px 2px 0px #aa0000,
+    inset -2px -2px 0px #ffaaaa;
+  transform: translate(2px, 2px);
+}
+
+.npcIcon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
 /* Custom Difficulty Selector */
 .difficultyControl {
   display: flex;
@@ -385,7 +338,7 @@
 
 .difficultyDisplay {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
   min-width: 40px;
@@ -450,21 +403,10 @@
 }
 
 /* --- Player & Items --- */
-.objSprite {
-  width: 24px;
-  height: 24px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  object-fit: contain;
-  z-index: 6;
-  filter: drop-shadow(1px 1px 0 rgba(0, 0, 0, 0.5));
-}
 
 .playerSprite {
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   position: absolute;
   top: -8px;
   left: 0;
@@ -573,4 +515,21 @@
   50% {
     transform: translateY(-10px);
   }
+}
+
+.mapItem {
+  width: 120%;
+  height: 120%;
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  object-fit: contain;
+  image-rendering: pixelated;
+  z-index: 5;
+  animation: floatItem 2s ease-in-out infinite;
+}
+
+@keyframes floatItem {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
 }

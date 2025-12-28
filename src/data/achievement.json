@@ -8,741 +8,566 @@
   },
   {
     "id": "2",
-    "title": "First Encounter",
-    "description": "Encounter a wild Pokemon while coding",
-    "icon": "\ud83d\udc40",
-    "category": "Exploration"
-  },
-  {
-    "id": "3",
     "title": "Gotcha!",
     "description": "Catch your first Pokemon",
     "icon": "\ud83d\udd34",
     "category": "Pokedex"
   },
   {
-    "id": "4",
+    "id": "3",
     "title": "Battle Ready",
     "description": "Win your first battle",
     "icon": "\u2694\ufe0f",
     "category": "Battle"
   },
   {
-    "id": "5",
-    "title": "Level Up!",
-    "description": "Level up a Pokemon for the first time",
-    "icon": "\u2b06\ufe0f",
-    "category": "Growth"
-  },
-  {
-    "id": "6",
+    "id": "4",
     "title": "Evolution Time",
     "description": "Evolve a Pokemon",
     "icon": "\u2728",
     "category": "Growth"
   },
   {
-    "id": "7",
+    "id": "5",
     "title": "Shopping Spree",
     "description": "Buy an item from the shop",
     "icon": "\ud83d\udecd\ufe0f",
     "category": "Economy"
   },
   {
-    "id": "8",
+    "id": "6",
     "title": "Healer",
     "description": "Heal a Pokemon using an item",
     "icon": "\ud83d\udc8a",
     "category": "Items"
   },
   {
-    "id": "9",
+    "id": "7",
     "title": "Full Party",
     "description": "Have 6 Pokemon in your party",
     "icon": "\ud83d\udc65",
     "category": "General"
   },
   {
-    "id": "10",
+    "id": "8",
     "title": "Night Owl",
     "description": "Catch a Pokemon between 00:00 and 04:00",
     "icon": "\ud83c\udf19",
     "category": "Exploration"
   },
   {
-    "id": "11",
+    "id": "9",
     "title": "Early Bird",
     "description": "Catch a Pokemon between 04:00 and 06:00",
     "icon": "\u2600\ufe0f",
     "category": "Exploration"
   },
   {
-    "id": "12",
+    "id": "10",
     "title": "Sniper",
     "description": "Catch a Pokemon with a Critical Capture",
     "icon": "\ud83c\udfaf",
     "category": "Pokedex"
   },
   {
-    "id": "13",
+    "id": "11",
     "title": "Pokedex Rookie",
     "description": "Register 10 Pokemon",
     "icon": "\ud83d\udcd6",
     "category": "Pokedex"
   },
   {
-    "id": "14",
+    "id": "12",
     "title": "Pokedex Explorer",
     "description": "Register 30 Pokemon",
     "icon": "\ud83d\udcd8",
     "category": "Pokedex"
   },
   {
-    "id": "15",
+    "id": "13",
     "title": "Pokedex Pro",
     "description": "Register 50 Pokemon",
     "icon": "\ud83d\udcd9",
     "category": "Pokedex"
   },
   {
-    "id": "16",
+    "id": "14",
     "title": "Pokedex Master",
     "description": "Register 100 Pokemon",
     "icon": "\ud83d\udcda",
     "category": "Pokedex"
   },
   {
-    "id": "17",
+    "id": "15",
     "title": "Kanto Champion",
     "description": "Register all 151 Kanto Pokemon",
     "icon": "\ud83d\udc51",
     "category": "Pokedex"
   },
   {
-    "id": "18",
+    "id": "16",
     "title": "Bird Watcher",
     "description": "Catch 10 Flying-type Pokemon",
     "icon": "\ud83e\udd85",
     "category": "Pokedex"
   },
   {
-    "id": "19",
+    "id": "17",
     "title": "Bug Catcher",
     "description": "Catch 10 Bug-type Pokemon",
     "icon": "\ud83d\udd78\ufe0f",
     "category": "Pokedex"
   },
   {
-    "id": "20",
+    "id": "18",
     "title": "Gardener",
     "description": "Catch 10 Grass-type Pokemon",
     "icon": "\ud83c\udf3f",
     "category": "Pokedex"
   },
   {
-    "id": "21",
+    "id": "19",
     "title": "Pyromaniac",
     "description": "Catch 10 Fire-type Pokemon",
     "icon": "\ud83d\udd25",
     "category": "Pokedex"
   },
   {
-    "id": "22",
+    "id": "20",
     "title": "Swimmer",
     "description": "Catch 10 Water-type Pokemon",
     "icon": "\ud83d\udca7",
     "category": "Pokedex"
   },
   {
-    "id": "23",
+    "id": "21",
     "title": "Electrician",
     "description": "Catch 10 Electric-type Pokemon",
     "icon": "\u26a1",
     "category": "Pokedex"
   },
   {
-    "id": "24",
+    "id": "22",
     "title": "Psychic",
     "description": "Catch 10 Psychic-type Pokemon",
     "icon": "\ud83d\udd2e",
     "category": "Pokedex"
   },
   {
-    "id": "25",
+    "id": "23",
     "title": "Black Belt",
     "description": "Catch 10 Fighting-type Pokemon",
     "icon": "\ud83e\udd4b",
     "category": "Pokedex"
   },
   {
-    "id": "26",
+    "id": "24",
     "title": "Rock Climber",
     "description": "Catch 10 Rock-type Pokemon",
     "icon": "\ud83e\udea8",
     "category": "Pokedex"
   },
   {
-    "id": "27",
+    "id": "25",
     "title": "Spooky",
     "description": "Catch 10 Ghost-type Pokemon",
     "icon": "\ud83d\udc7b",
     "category": "Pokedex"
   },
   {
-    "id": "28",
+    "id": "26",
     "title": "Dragon Tamer",
     "description": "Catch 5 Dragon-type Pokemon",
     "icon": "\ud83d\udc09",
     "category": "Pokedex"
   },
   {
-    "id": "29",
+    "id": "27",
     "title": "Legendary Hunter",
     "description": "Catch a Legendary Pokemon",
     "icon": "\ud83c\udf1f",
     "category": "Pokedex"
   },
   {
-    "id": "30",
+    "id": "28",
     "title": "Shiny Hunter",
     "description": "Catch a Shiny Pokemon",
     "icon": "\u2728",
     "category": "Pokedex"
   },
   {
-    "id": "31",
+    "id": "29",
     "title": "Battle Novice",
     "description": "Win 10 battles",
     "icon": "\ud83e\udd49",
     "category": "Battle"
   },
   {
-    "id": "32",
+    "id": "30",
     "title": "Battle Veteran",
     "description": "Win 50 battles",
     "icon": "\ud83e\udd48",
     "category": "Battle"
   },
   {
-    "id": "33",
+    "id": "31",
     "title": "Battle Legend",
     "description": "Win 100 battles",
     "icon": "\ud83e\udd47",
     "category": "Battle"
   },
   {
-    "id": "34",
+    "id": "32",
     "title": "Super Effective",
     "description": "Land a Super Effective hit",
     "icon": "\ud83d\udca5",
     "category": "Battle"
   },
   {
-    "id": "35",
+    "id": "33",
     "title": "Not Very Effective",
     "description": "Win a battle using only Not Very Effective moves",
     "icon": "\ud83d\udee1\ufe0f",
     "category": "Battle"
   },
   {
-    "id": "36",
+    "id": "34",
     "title": "Critical Hit",
     "description": "Land a Critical Hit",
     "icon": "\ud83c\udfaf",
     "category": "Battle"
   },
   {
-    "id": "37",
+    "id": "35",
     "title": "One Hit Wonder",
     "description": "Defeat an opponent in one hit",
     "icon": "\ud83e\udd4a",
     "category": "Battle"
   },
   {
-    "id": "38",
+    "id": "36",
     "title": "Close Call",
     "description": "Win a battle with 1 HP remaining",
     "icon": "\u2764\ufe0f",
     "category": "Battle"
   },
   {
-    "id": "39",
+    "id": "37",
     "title": "Flawless Victory",
     "description": "Win a battle without taking damage",
     "icon": "\ud83d\udee1\ufe0f",
     "category": "Battle"
   },
   {
-    "id": "40",
+    "id": "38",
     "title": "Type Expert",
     "description": "Win a battle using only one type of Pokemon",
     "icon": "\ud83c\udfa8",
     "category": "Battle"
   },
   {
-    "id": "41",
+    "id": "39",
     "title": "Underdog",
     "description": "Defeat a Pokemon 5 levels higher than yours",
     "icon": "\ud83d\udc15",
     "category": "Battle"
   },
   {
-    "id": "42",
+    "id": "40",
     "title": "Giant Slayer",
     "description": "Defeat a Pokemon 10 levels higher than yours",
     "icon": "\ud83d\udc79",
     "category": "Battle"
   },
   {
-    "id": "43",
+    "id": "41",
     "title": "Training Day",
     "description": "Reach Level 10 with a Pokemon",
     "icon": "\ud83c\udf31",
     "category": "Growth"
   },
   {
-    "id": "44",
+    "id": "42",
     "title": "Getting Stronger",
     "description": "Reach Level 30 with a Pokemon",
     "icon": "\ud83c\udf3f",
     "category": "Growth"
   },
   {
-    "id": "45",
+    "id": "43",
     "title": "Powerhouse",
     "description": "Reach Level 50 with a Pokemon",
     "icon": "\ud83c\udf33",
     "category": "Growth"
   },
   {
-    "id": "46",
+    "id": "44",
     "title": "Max Potential",
     "description": "Reach Level 100 with a Pokemon",
     "icon": "\ud83d\udcaf",
     "category": "Growth"
   },
   {
-    "id": "47",
+    "id": "45",
     "title": "Evolution Master",
     "description": "Evolve 10 different Pokemon",
     "icon": "\ud83e\uddec",
     "category": "Growth"
   },
   {
-    "id": "48",
+    "id": "46",
     "title": "Stone Age",
     "description": "Evolve a Pokemon using an Evolution Stone",
     "icon": "\ud83d\udc8e",
     "category": "Growth"
   },
   {
-    "id": "49",
+    "id": "47",
     "title": "Friendship Goals",
     "description": "Evolve a Pokemon via Friendship (if implemented)",
     "icon": "\u2764\ufe0f",
     "category": "Growth"
   },
   {
-    "id": "50",
-    "title": "Penny Pincher",
-    "description": "Save $5,000",
-    "icon": "\ud83d\udcb0",
-    "category": "Economy"
-  },
-  {
-    "id": "51",
+    "id": "48",
     "title": "Big Spender",
     "description": "Spend $10,000 in the shop",
     "icon": "\ud83d\udcb8",
     "category": "Economy"
   },
   {
-    "id": "52",
-    "title": "Millionaire",
-    "description": "Accumulate $1,000,000",
-    "icon": "\ud83c\udfe6",
-    "category": "Economy"
-  },
-  {
-    "id": "53",
+    "id": "49",
     "title": "Prepared",
     "description": "Buy 10 items at once",
     "icon": "\ud83c\udf92",
     "category": "Economy"
   },
   {
-    "id": "54",
-    "title": "Stocked Up",
-    "description": "Have 50 items in your bag",
-    "icon": "\ud83d\udce6",
-    "category": "Items"
-  },
-  {
-    "id": "55",
-    "title": "Code Reviewer",
-    "description": "Rename a Pokemon 5 times",
-    "icon": "\ud83d\udcdd",
-    "category": "General"
-  },
-  {
-    "id": "56",
+    "id": "50",
     "title": "Potion Master",
     "description": "Use 50 Potions",
     "icon": "\ud83e\uddea",
     "category": "Items"
   },
   {
-    "id": "57",
+    "id": "51",
     "title": "Revival",
     "description": "Revive a fainted Pokemon",
     "icon": "\u2728",
     "category": "Items"
   },
   {
-    "id": "58",
-    "title": "Ball Collector",
-    "description": "Obtain every type of Poke Ball",
-    "icon": "\ud83c\udfb1",
-    "category": "Items"
-  },
-  {
-    "id": "59",
+    "id": "52",
     "title": "Forest Ranger",
     "description": "Encounter 50 Pokemon in Forest Biome",
     "icon": "\ud83c\udf32",
     "category": "Exploration"
   },
   {
-    "id": "60",
+    "id": "53",
     "title": "Cave Explorer",
     "description": "Encounter 50 Pokemon in Cave Biome",
     "icon": "\ud83e\udd87",
     "category": "Exploration"
   },
   {
-    "id": "61",
+    "id": "54",
     "title": "Urban Legend",
     "description": "Encounter 50 Pokemon in Urban Biome",
     "icon": "\ud83c\udfd9\ufe0f",
     "category": "Exploration"
   },
   {
-    "id": "62",
+    "id": "55",
     "title": "Sea Captain",
     "description": "Encounter 50 Pokemon in Water Biome",
     "icon": "\u26f5",
     "category": "Exploration"
   },
   {
-    "id": "63",
-    "title": "Glitch in the Matrix",
-    "description": "Encounter a MissingNo (Error handling)",
-    "icon": "\ud83d\udc7e",
-    "category": "Exploration"
-  },
-  {
-    "id": "64",
-    "title": "Day Care",
-    "description": "Walk 10,000 steps (lines scrolled)",
-    "icon": "\ud83d\udc63",
-    "category": "General"
-  },
-  {
-    "id": "65",
-    "title": "Egg Hatcher",
-    "description": "Hatch an Egg (Create a new file)",
-    "icon": "\ud83e\udd5a",
-    "category": "General"
-  },
-  {
-    "id": "66",
-    "title": "Social Butterfly",
-    "description": "Trade a Pokemon",
-    "icon": "\ud83e\udd1d",
-    "category": "General"
-  },
-  {
-    "id": "67",
-    "title": "Gym Leader",
-    "description": "Defeat a Boss Pokemon",
-    "icon": "\ud83c\udfdf\ufe0f",
-    "category": "Battle"
-  },
-  {
-    "id": "68",
-    "title": "Elite Four",
-    "description": "Defeat 4 Boss Pokemon in a row",
-    "icon": "\ud83c\udfc6",
-    "category": "Battle"
-  },
-  {
-    "id": "69",
-    "title": "Champion",
-    "description": "Complete the game (Catch all or specific goal)",
-    "icon": "\ud83d\udc51",
-    "category": "General"
-  },
-  {
-    "id": "70",
-    "title": "Collector",
-    "description": "Collect 10 Rare Candies",
-    "icon": "\ud83c\udf6c",
-    "category": "Items"
-  },
-  {
-    "id": "71",
-    "title": "Photographer",
-    "description": "Take a screenshot of a Pokemon",
-    "icon": "\ud83d\udcf8",
-    "category": "General"
-  },
-  {
-    "id": "72",
-    "title": "Nickname Rater",
-    "description": "Give a nickname to a Pokemon",
-    "icon": "\ud83c\udff7\ufe0f",
-    "category": "General"
-  },
-  {
-    "id": "73",
+    "id": "56",
     "title": "Move Tutor",
     "description": "Teach a Pokemon a new move",
     "icon": "\ud83d\udcbf",
     "category": "Growth"
   },
   {
-    "id": "74",
-    "title": "Move Deleter",
-    "description": "Make a Pokemon forget a move",
-    "icon": "\ud83d\uddd1\ufe0f",
-    "category": "Growth"
-  },
-  {
-    "id": "75",
+    "id": "57",
     "title": "Strategist",
     "description": "Win a battle without using attacking moves",
     "icon": "\ud83e\udde0",
     "category": "Battle"
   },
   {
-    "id": "76",
+    "id": "58",
     "title": "Tank",
     "description": "Take 1000 damage in total without fainting",
     "icon": "\ud83d\udee1\ufe0f",
     "category": "Battle"
   },
   {
-    "id": "77",
+    "id": "59",
     "title": "Glass Cannon",
     "description": "Deal 1000 damage in total",
     "icon": "\u2694\ufe0f",
     "category": "Battle"
   },
   {
-    "id": "78",
+    "id": "60",
     "title": "Speedster",
     "description": "Always strike first in a battle",
     "icon": "\u26a1",
     "category": "Battle"
   },
   {
-    "id": "79",
-    "title": "Escape Artist",
-    "description": "Run away from 10 battles",
-    "icon": "\ud83c\udfc3",
-    "category": "Battle"
-  },
-  {
-    "id": "80",
+    "id": "61",
     "title": "Brave Heart",
     "description": "Challenge a Legendary Pokemon",
     "icon": "\ud83e\udd81",
     "category": "Battle"
   },
   {
-    "id": "81",
-    "title": "Completionist",
-    "description": "Unlock 50 Achievements",
-    "icon": "\ud83c\udf96\ufe0f",
-    "category": "General"
-  },
-  {
-    "id": "82",
-    "title": "Perfectionist",
-    "description": "Unlock all Achievements",
-    "icon": "\ud83d\udc8e",
-    "category": "General"
-  },
-  {
-    "id": "83",
+    "id": "62",
     "title": "Syntax Error",
     "description": "Use a move that has no effect (Type Immunity)",
     "icon": "\ud83d\ude35",
     "category": "Battle"
   },
   {
-    "id": "84",
+    "id": "63",
     "title": "Infinite Loop",
     "description": "Battle lasts more than 20 turns",
     "icon": "\ud83d\udd04",
     "category": "Battle"
   },
   {
-    "id": "85",
-    "title": "Refactoring",
-    "description": "Change a Pokemon's nature/stats",
-    "icon": "\ud83d\udd27",
-    "category": "Growth"
-  },
-  {
-    "id": "86",
+    "id": "64",
     "title": "Full Stack",
     "description": "Have a party with 6 different Pokemon types",
     "icon": "\ud83c\udf08",
     "category": "General"
   },
   {
-    "id": "87",
+    "id": "65",
     "title": "Merge Conflict",
     "description": "Switch Pokemon 5 times in a single battle",
     "icon": "\ud83d\udd00",
     "category": "Battle"
   },
   {
-    "id": "88",
-    "title": "Pull Request",
-    "description": "Receive a gift item",
-    "icon": "\ud83c\udf81",
-    "category": "General"
-  },
-  {
-    "id": "89",
-    "title": "Deploy to Prod",
-    "description": "Release a Pokemon",
-    "icon": "\ud83d\ude80",
-    "category": "General"
-  },
-  {
-    "id": "90",
+    "id": "66",
     "title": "It Works on My Machine",
     "description": "Win a battle using a move with low accuracy",
     "icon": "\ud83d\ude35\u200d\ud83d\udcab",
     "category": "Battle"
   },
   {
-    "id": "91",
+    "id": "67",
     "title": "Spaghetti Code",
     "description": "Catch a Tangela",
     "icon": "\ud83c\udf5d",
     "category": "Pokedex"
   },
   {
-    "id": "92",
+    "id": "68",
     "title": "Rubber Duck",
     "description": "Catch a Psyduck",
     "icon": "\ud83e\udd86",
     "category": "Pokedex"
   },
   {
-    "id": "93",
-    "title": "404 Not Found",
-    "description": "Fail to catch a Pokemon 10 times",
-    "icon": "\ud83d\udeab",
-    "category": "General"
-  },
-  {
-    "id": "94",
+    "id": "69",
     "title": "Blue Screen of Death",
     "description": "Faint against a Water-type Pokemon",
     "icon": "\ud83d\udcbb",
     "category": "Battle"
   },
   {
-    "id": "95",
+    "id": "70",
     "title": "Ctrl+C Ctrl+V",
     "description": "Use the move Transform or Mimic",
     "icon": "\ud83d\udccb",
     "category": "Battle"
   },
   {
-    "id": "96",
+    "id": "71",
     "title": "Legacy System",
     "description": "Win a battle using only Gen 1 Pokemon",
     "icon": "\ud83e\udd95",
     "category": "Battle"
   },
   {
-    "id": "97",
+    "id": "72",
     "title": "Technical Debt",
     "description": "Win a battle using Hyper Beam",
     "icon": "\ud83d\udcc9",
     "category": "Battle"
   },
   {
-    "id": "98",
+    "id": "73",
     "title": "Memory Leak",
     "description": "Run out of PP for a move during battle",
     "icon": "\ud83e\udde0",
     "category": "Battle"
   },
   {
-    "id": "99",
+    "id": "74",
     "title": "Garbage Collector",
     "description": "Catch a Grimer or Muk",
     "icon": "\ud83d\uddd1\ufe0f",
     "category": "Pokedex"
   },
   {
-    "id": "100",
+    "id": "75",
     "title": "Sudo Command",
     "description": "Use a One-Hit KO move successfully",
     "icon": "\ud83d\udd28",
     "category": "Battle"
   },
   {
-    "id": "102",
+    "id": "76",
     "title": "Git Blame",
     "description": "Use the move Leer or Glare",
     "icon": "\ud83d\udc40",
     "category": "Battle"
   },
   {
-    "id": "103",
+    "id": "77",
     "title": "Bug fix",
     "description": "Catch 100 Bug-type Pokemon",
     "icon": "\ud83e\ude79",
     "category": "Battle"
   },
   {
-    "id": "104",
+    "id": "78",
     "title": "Canary Deployment",
     "description": "Switch out your lead Pokemon on the first turn",
     "icon": "\ud83d\udc24",
     "category": "Battle"
   },
   {
-    "id": "105",
+    "id": "79",
     "title": "Top Percentage",
     "description": "Raise a Rattata to Level 100",
     "icon": "\ud83d\udc00",
     "category": "Growth"
   },
   {
-    "id": "106",
+    "id": "80",
     "title": "God Object",
     "description": "Win a battle using only one Pokemon while having a full party",
     "icon": "\ud83d\udc51",
     "category": "Battle"
   },
   {
-    "id": "107",
+    "id": "81",
     "title": "The Cake is a Lie",
     "description": "Use an item that has no effect",
     "icon": "\ud83c\udf70",
     "category": "Items"
   },
   {
-    "id": "108",
+    "id": "82",
     "title": "Race Condition",
     "description": "Using same move with opponent",
     "icon": "\ud83c\udfce\ufe0f",

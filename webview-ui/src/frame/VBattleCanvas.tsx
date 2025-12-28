@@ -1,6 +1,19 @@
 import React, { useCallback, useEffect, useImperativeHandle, useMemo, useState } from "react";
 import { VHPBlock } from "./HPBlock";
 import styles from "./VBattleCanvas.module.css";
+import grasslandImg from '../assets/grassland.png';
+import grasslandBaseImg from '../assets/grassland-base.png';
+import waterBeachImg from '../assets/water-beach.png';
+import waterBeachBaseImg from '../assets/water-beach-base.png';
+import urbanPowerPlantImg from '../assets/urban-power-plant.png';
+import urbanPowerPlantBaseImg from '../assets/urban-power-plant-base.png';
+import mountainCaveImg from '../assets/mountain-cave.png';
+import mountainCaveBaseImg from '../assets/mountain-cave-base.png';
+import ghostMysticImg from '../assets/ghost-mystic.png';
+import ghostMysticBaseImg from '../assets/ghost-mystic-base.png';
+import toxicWasteImg from '../assets/toxic-waste.png';
+import toxicWasteBaseImg from '../assets/toxic-waste-base.png';
+import battleArena from "../assets/battle-arena.png";
 import { BiomeType } from "../../../src/dataAccessObj/BiomeData";
 import { PokemonDao, PokemonState, PokemonStateAction } from "../../../src/dataAccessObj/pokemon";
 import { resolveAssetUrl } from "../utilities/vscode";
@@ -194,6 +207,31 @@ export const VBattleCanvas = React.forwardRef<BattleCanvasHandle, VBattleProps>(
         }
     };
 
+    const getBiomeGroundImg = (type: BiomeType) => {
+        switch (type) {
+            case BiomeType.BattleArena: return battleArena;
+            case BiomeType.Grassland: return grasslandBaseImg;
+            case BiomeType.WaterBeach: return waterBeachBaseImg;
+            case BiomeType.UrbanPowerPlant: return urbanPowerPlantBaseImg;
+            case BiomeType.MountainCave: return mountainCaveBaseImg;
+            case BiomeType.GhostMystic: return ghostMysticBaseImg;
+            case BiomeType.ToxicWaste: return toxicWasteBaseImg;
+            default: return undefined;
+        }
+    }
+
+    const getBiomeGroundClass = (type: BiomeType, isPlayer: boolean) => {
+        switch (type) {
+            case BiomeType.Grassland: return isPlayer ? styles['grassland-image-my'] : styles['grassland-image-opponent'];
+            case BiomeType.WaterBeach: return isPlayer ? styles['water-beach-image-my'] : styles['water-beach-image-opponent'];
+            case BiomeType.UrbanPowerPlant: return isPlayer ? styles['urban-power-plant-my'] : styles['urban-power-plant-opponent'];
+            case BiomeType.MountainCave: return isPlayer ? styles['mountain-cave-my'] : styles['mountain-cave-opponent'];
+            case BiomeType.GhostMystic: return isPlayer ? styles['ghost-mystic-my'] : styles['ghost-mystic-opponent'];
+            case BiomeType.ToxicWaste: return isPlayer ? styles['toxic-waste-my'] : styles['toxic-waste-opponent'];
+            default: return '';
+        }
+    }
+
     const getCatchAnimClass = () => {
         switch (catchAnimPhase) {
             case 'throwing': return styles['state-throwing'];
@@ -205,6 +243,26 @@ export const VBattleCanvas = React.forwardRef<BattleCanvasHandle, VBattleProps>(
         }
     };
 
+    const getBiomeBackgroundImg = (fixBiomeType: BiomeType) => {
+        switch (fixBiomeType) {
+            case BiomeType.BattleArena:
+                return `url(${battleArena})`;
+            case BiomeType.Grassland:
+                return `url(${grasslandImg})`;
+            case BiomeType.WaterBeach:
+                return `url(${waterBeachImg})`;
+            case BiomeType.UrbanPowerPlant:
+                return `url(${urbanPowerPlantImg})`;
+            case BiomeType.MountainCave:
+                return `url(${mountainCaveImg})`;
+            case BiomeType.GhostMystic:
+                return `url(${ghostMysticImg})`;
+            case BiomeType.ToxicWaste:
+                return `url(${toxicWasteImg})`;
+            default:
+        }
+    }
+
     const isShowOpponentParty = useMemo(() => {
         return battleMode === BattleMode.Trainer;
     }, [battleMode])
@@ -215,7 +273,11 @@ export const VBattleCanvas = React.forwardRef<BattleCanvasHandle, VBattleProps>(
         <div className={styles['battle-scene']}>
             <div
                 className={`${styles['battle-background']} ${getBiomeClass(fixBiomeType)}`}
-                style={{ opacity: sceneOpacity, transition: 'opacity 0.5s ease-in-out' }}
+                style={{ 
+                    opacity: sceneOpacity, 
+                    transition: 'opacity 0.5s ease-in-out',
+                    backgroundImage: getBiomeBackgroundImg(fixBiomeType)
+                }}
             />
             <>
                 {/* 敵方 HUD */}
@@ -228,6 +290,10 @@ export const VBattleCanvas = React.forwardRef<BattleCanvasHandle, VBattleProps>(
                     className={`${styles['opponent-container']} ${opponentAnim ? styles[opponentAnim] : ''} ${getCatchAnimClass()}`}
                     onAnimationEnd={handleAnimationEnd}
                 >
+                    <div 
+                        className={`${getBiomeGroundClass(fixBiomeType, false)}`}
+                        style={{ backgroundImage: getBiomeGroundImg(fixBiomeType) ? `url(${getBiomeGroundImg(fixBiomeType)})` : undefined }}
+                    ></div>
                     <div className={`${styles['pokemon-wrapper']} ${shinyAnim ? styles[shinyAnim] : ''}`}>
                         {/* Shiny Sparkles */}
                         {opponentPokemon?.isShiny && shinyAnim === 'anim-shiny' && (
@@ -239,7 +305,6 @@ export const VBattleCanvas = React.forwardRef<BattleCanvasHandle, VBattleProps>(
                                 <div className={styles['shiny-sparkle']}></div>
                             </>
                         )}
-                        <div className={styles['grass-base']}></div>
                         <img
                             src={pokeBallUrl(opponentPokemonState.caughtBallApiName || '')}
                             className={styles['pokeball-sprite']}
@@ -261,6 +326,10 @@ export const VBattleCanvas = React.forwardRef<BattleCanvasHandle, VBattleProps>(
 
                 {/* 我方區域容器 (包含草地與寶可夢) */}
                 <div className={`${styles['player-container']} ${playerAnim ? styles[playerAnim] : ''}`}>
+                    <div 
+                        className={`${getBiomeGroundClass(fixBiomeType, true)}`}
+                        style={{ backgroundImage: getBiomeGroundImg(fixBiomeType) ? `url(${getBiomeGroundImg(fixBiomeType)})` : undefined }}
+                    ></div>
                     <div className={styles['my-pokemon-wrapper']}>
                         {/* Shiny Sparkles */}
                         {myPokemon?.isShiny && shinyAnim === 'anim-shiny' && (
@@ -272,7 +341,6 @@ export const VBattleCanvas = React.forwardRef<BattleCanvasHandle, VBattleProps>(
                                 <div className={styles['shiny-sparkle']}></div>
                             </>
                         )}
-                        <div className={styles['my-grass-base']}></div>
                         <img
                             src={spriteBackUrl(myPokemon ? myPokemon.id.toString() : '', myPokemon?.isShiny)}
                             alt="my pokemon"

@@ -2,7 +2,7 @@ import React, { useCallback, useImperativeHandle, useState } from 'react';
 import { PartyGridInModal } from '../model/PartyGridInModal';
 import { PokemonMoveModal } from '../model/PokemonMoveModal';
 import { useMessageStore, useMessageSubscription } from '../store/messageStore';
-import { ItemUITag, ItemUiTagItemsMap, SHOP_ITEM_EVOLUTION_NAMES, SHOP_ITEM_FULL_MEDICINE_NAMES, SHOP_ITEM_HM_NAMES, SHOP_ITEM_TM_NAMES, SHOP_ITEMS_HP_MEDICINE_NAMES, SHOP_ITEMS_PP_MEDICINE_NAMES, SHOP_ITEMS_REVIVE_NAMES, SHOP_ITEMS_STATUS_MEDICINE_NAMES } from '../utilities/ItemName';
+import { ITEM_HP_TREE_BERRY_NAMES, ITEM_PP_TREE_BERRY_NAMES, ITEM_STATUS_TREE_BERRY_NAMES, ItemUITag, ItemUiTagItemsMap, SHOP_ITEM_EVOLUTION_NAMES, SHOP_ITEM_FULL_MEDICINE_NAMES, SHOP_ITEM_HM_NAMES, SHOP_ITEM_TM_NAMES, SHOP_ITEMS_HP_MEDICINE_NAMES, SHOP_ITEMS_PP_MEDICINE_NAMES, SHOP_ITEMS_REVIVE_NAMES, SHOP_ITEMS_STATUS_MEDICINE_NAMES } from '../utilities/ItemName';
 import { vscode, resolveAssetUrl } from '../utilities/vscode';
 import styles from './VBagBox.module.css';
 import { ItemDao } from '../../../src/dataAccessObj/item';
@@ -63,6 +63,11 @@ export const VBagBox: React.FC = () => {
                     isActive: activeTag === ItemUITag.Balls
                 },
                 {
+                    label: ItemUITag.Berry,
+                    onClick: () => setActiveTag(ItemUITag.Berry),
+                    isActive: activeTag === ItemUITag.Berry
+                },
+                {
                     label: ItemUITag.Evolution,
                     onClick: () => setActiveTag(ItemUITag.Evolution),
                     isActive: activeTag === ItemUITag.Evolution
@@ -117,6 +122,7 @@ const UsedItemExtendType = {
     None: "none",
     PP: "pp",
     HP: "hp",
+    State: "state",
     Evolution: "evolution",
     Machine: "machine"
 } as const;
@@ -133,6 +139,7 @@ type ExtendModalType = typeof ExtendModalType[keyof typeof ExtendModalType];
 const ItemUseModalFlow = {
     [UsedItemExtendType.None]: [],
     [UsedItemExtendType.HP]: [],
+    [UsedItemExtendType.State]: [],
     [UsedItemExtendType.PP]: [ExtendModalType.SelectMove],
     [UsedItemExtendType.Evolution]: [ExtendModalType.SelectEvolution],
     [UsedItemExtendType.Machine]: [ExtendModalType.SelectMove],
@@ -171,12 +178,17 @@ const ItemUseModal = React.forwardRef<ItemUserModalHandler, ItemUseModalProps>((
                     SHOP_ITEMS_REVIVE_NAMES.includes(item.apiName)
                 ) {
                     if ([...SHOP_ITEMS_HP_MEDICINE_NAMES, ...SHOP_ITEM_FULL_MEDICINE_NAMES].flat().includes(item.apiName)) {
-                        setDisabledPartyUids(party.filter(p => p.currentHp === 0 || p.ailment === 'fainted').map(p => p.uid));
+                        setDisabledPartyUids(party.filter(p => p.ailment === 'fainted').map(p => p.uid));
+                        setUsedItemType(UsedItemExtendType.HP);
                     }
                     if (SHOP_ITEMS_REVIVE_NAMES.includes(item.apiName)) {
-                        setDisabledPartyUids(party.filter(p => p.currentHp > 0 && p.ailment !== 'fainted').map(p => p.uid));
+                        setDisabledPartyUids(party.filter(p => p.ailment !== 'fainted').map(p => p.uid));
+                        setUsedItemType(UsedItemExtendType.HP);
                     }
-                    setUsedItemType(UsedItemExtendType.HP);
+                    if (SHOP_ITEMS_STATUS_MEDICINE_NAMES.includes(item.apiName)) {
+                        setDisabledPartyUids(party.filter(p => p.ailment === 'fainted').map(p => p.uid));
+                        setUsedItemType(UsedItemExtendType.State);
+                    }
                 }
 
                 if (SHOP_ITEMS_PP_MEDICINE_NAMES.includes(item.apiName)) {
@@ -186,6 +198,32 @@ const ItemUseModal = React.forwardRef<ItemUserModalHandler, ItemUseModalProps>((
                 setModalShow(ExtendModalType.SelectPokemon);
                 setSelectedItem(item);
             } else if (item.pocket === 'items') {
+                const ITEM_TREE_BERRY_NAMES = [
+                    ...ITEM_HP_TREE_BERRY_NAMES,
+                    ...ITEM_PP_TREE_BERRY_NAMES,
+                    ...ITEM_STATUS_TREE_BERRY_NAMES
+                ]
+                if(ITEM_TREE_BERRY_NAMES.includes(item.apiName)){
+                    setDisabledPartyUids(party.filter(p => p.currentHp === 0 || p.ailment === 'fainted').map(p => p.uid));
+                        
+                    if (ITEM_HP_TREE_BERRY_NAMES.includes(item.apiName)) {
+                        setUsedItemType(UsedItemExtendType.HP);
+                    }
+
+                    if( ITEM_PP_TREE_BERRY_NAMES.includes(item.apiName)) {
+                        setUsedItemType(UsedItemExtendType.PP);
+                    }
+
+                    if ( ITEM_STATUS_TREE_BERRY_NAMES.includes(item.apiName)) {
+                        setUsedItemType(UsedItemExtendType.State);
+                    }
+
+                    setModalShow(ExtendModalType.SelectPokemon);
+                    setSelectedItem(item);
+                }
+
+
+
                 if (SHOP_ITEM_EVOLUTION_NAMES.includes(item.apiName)) {
                     setUsedItemType(UsedItemExtendType.Evolution);
                     setDisabledPartyUids(party.filter(p => {

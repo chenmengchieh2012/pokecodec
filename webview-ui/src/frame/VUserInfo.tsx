@@ -139,10 +139,6 @@ const VUserInfo = (props: { setIsFlipped: React.Dispatch<React.SetStateAction<bo
                         <span className={styles.label}>STARTER</span>
                         <span className={styles.value}>{user.starter === 'pikachu' ? 'Pikachu' : 'Eevee'}</span>
                     </div>
-                    <div className={styles.row}>
-                        <span className={styles.label}>AUTO</span>
-                        <span className={styles.value}>{user.autoEncounter ? 'On' : 'Off'}</span>
-                    </div>
                 </div>
 
                 <div className={styles.spriteSection}>

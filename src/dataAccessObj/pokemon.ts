@@ -1,6 +1,7 @@
 import { PokeDex__GEN1 } from "./PokeDex";
 import { PokemonMove } from "./pokeMove";
 
+export const MAX_PARTY_SIZE = 6;
 export type PokemonType = 
     | 'normal' | 'fire' | 'water' | 'grass' | 'electric' | 'ice' 
     | 'fighting' | 'poison' | 'ground' | 'flying' | 'psychic' 

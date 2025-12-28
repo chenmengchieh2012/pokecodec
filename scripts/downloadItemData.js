@@ -24,6 +24,9 @@ const ITEM_NAMES = [
     // Evolution Stones
     'fire-stone', 'water-stone', 'thunder-stone', 'leaf-stone', 'moon-stone', 'sun-stone',
     'shiny-stone', 'dusk-stone', 'dawn-stone',
+    // Berries
+    'oran-berry', 'sitrus-berry', 'lum-berry', 'leppa-berry',
+    'cheri-berry', 'chesto-berry', 'pecha-berry', 'rawst-berry', 'aspear-berry',
     // TMs (Gen 1)
     'tm01', 'tm02', 'tm03', 'tm04', 'tm05', 'tm06', 'tm07', 'tm08', 'tm09', 'tm10',
     'tm11', 'tm12', 'tm13', 'tm14', 'tm15', 'tm16', 'tm17', 'tm18', 'tm19', 'tm20',
@@ -90,6 +93,17 @@ const HARDCODED_EFFECTS = {
     'zinc': { statBoosts: [{ stat: 'special-defense', evYield: 10 }] },
     'carbos': { statBoosts: [{ stat: 'speed', evYield: 10 }] },
     
+    // Berries
+    'oran-berry': { healHp: 30 },
+    'sitrus-berry': { healHpPercent: 25 },
+    'lum-berry': { healStatus: ['all'] },
+    'leppa-berry': { restorePp: 10 },
+    'cheri-berry': { healStatus: ['paralysis'] },
+    'chesto-berry': { healStatus: ['sleep'] },
+    'pecha-berry': { healStatus: ['poison'] },
+    'rawst-berry': { healStatus: ['burn'] },
+    'aspear-berry': { healStatus: ['freeze'] },
+
     // Evolution Stones
     'fire-stone': { evolutionCriteria: { type: 'stone', targetPokemon: ['vulpix', 'growlithe', 'eevee', 'pansear'] } },
     'water-stone': { evolutionCriteria: { type: 'stone', targetPokemon: ['poliwhirl', 'shellder', 'staryu', 'eevee', 'lombre', 'panpour'] } },
@@ -197,6 +211,7 @@ const RARITY_TABLE = {
 
     // Tier 2 (Uncommon)
     'great-ball': 2, 'super-potion': 2, 'fresh-water': 2, 'soda-pop': 2, 'lemonade': 2, 'moomoo-milk': 2,
+    'sitrus-berry': 2, 'lum-berry': 2, 'leppa-berry': 2,
     'ether': 2, 'elixir': 2,
     'tm08': 2, // Body Slam
     'tm10': 2, // Double-Edge

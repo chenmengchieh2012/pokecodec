@@ -1,3 +1,4 @@
+import { BiomeType } from "./BiomeData";
 
 
 export enum DifficultyBall {
@@ -17,6 +18,8 @@ export enum DifficultyStar {
     /** 高強度：數值較高，挑戰性強 */
     Three = 3
 }
+
+export const MAX_DIFFICULTY_LEVEL = 9;
 
 export interface DifficultyLevelConfig {
     /** 難度等級 (1-9) */
@@ -110,6 +113,8 @@ export interface EncounterRecord {
     playerFainted: boolean;
     /** 是否為異色寶可夢 */
     isShiny: boolean;
+    /** 遭遇地形類型 */
+    biomeType: BiomeType;
 }
 
 export interface CatchSkillAnalysis {

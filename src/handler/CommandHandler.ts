@@ -19,13 +19,12 @@ import {
     SetGameStateDataPayload,
     UpdateDefenderPokemonUidPayload,
     UpdateOpponentPokemonUidPayload,
-    UpdateOpponentInPartyPayload,
+    UpdateOpponentsInPartyPayload,
     UpdateMoneyPayload,
     UpdatePartyPokemonPayload,
     UpdatePokeDexPayload,
     UseItemPayload,
     UseMedicineInBagPayload,
-    GoTriggerEncounterPayload,
     SetDifficultyLevelPayload,
     RecordEncounterPayload,
     DifficultyLevelPayload,
@@ -35,7 +34,6 @@ import { MessageType } from '../dataAccessObj/messageType';
 import { AchievementManager } from '../manager/AchievementManager';
 import { BagManager } from '../manager/bagsManager';
 import { GameStateManager } from '../manager/gameStateManager';
-import { JoinPokemonManager } from '../manager/joinPokemonManager';
 import { PokemonBoxManager } from '../manager/pokeBoxManager';
 import { PokeDexManager } from '../manager/pokeDexManager';
 import { UserDaoManager } from '../manager/userDaoManager';
@@ -50,14 +48,21 @@ import { BiomeType } from '../dataAccessObj/BiomeData';
 import { BattleMode } from '../dataAccessObj/gameStateData';
 import { DifficultyManager } from '../manager/DifficultyManager';
 
+import rawTrainers from '../data/trainers.json';
+import { TrainerData } from '../dataAccessObj/trainerData';
+import { MAX_DIFFICULTY_LEVEL } from '../dataAccessObj/DifficultyData';
+import { ItemEffectStrategy } from '../utils/ItemEffectStrategy';
+import { JoinPokemonManager } from '../manager/joinPokemonManager';
+const trainerDatas = rawTrainers as TrainerData[];
+
 const pokemonDataMap = pokemonGen1Data as unknown as Record<string, RawPokemonData>;
 const pokemonMoveDataMap = moveData as unknown as Record<string, any>;
 export class CommandHandler {
     private readonly pokemonBoxManager: PokemonBoxManager;
-    private readonly partyManager: JoinPokemonManager;
     private readonly bagManager: BagManager;
     private readonly userDaoManager: UserDaoManager;
     private readonly gameStateManager: GameStateManager;
+    private readonly partyManager: JoinPokemonManager;
     private readonly pokeDexManager: PokeDexManager;
     private readonly achievementManager: AchievementManager;
     private readonly difficultyManager: DifficultyManager;
@@ -68,10 +73,10 @@ export class CommandHandler {
 
     constructor(
         pokemonBoxManager: PokemonBoxManager,
-        partyManager: JoinPokemonManager,
         bagManager: BagManager,
         userDaoManager: UserDaoManager,
         gameStateManager: GameStateManager,
+        partyManager: JoinPokemonManager,
         biomeHandler: BiomeDataHandler,
         pokeDexManager: PokeDexManager,
         achievementManager: AchievementManager,
@@ -79,10 +84,10 @@ export class CommandHandler {
         context: vscode.ExtensionContext,
     ) {
         this.pokemonBoxManager = pokemonBoxManager;
-        this.partyManager = partyManager;
         this.bagManager = bagManager;
         this.userDaoManager = userDaoManager;
         this.gameStateManager = gameStateManager;
+        this.partyManager = partyManager;
         this.biomeHandler = biomeHandler;
         this.pokeDexManager = pokeDexManager;
         this.achievementManager = achievementManager;
@@ -109,9 +114,6 @@ export class CommandHandler {
         });
     }
 
-    public async handleRecordEncounter(payload: RecordEncounterPayload): Promise<void> {
-        this.difficultyManager.recordEncounter(payload.record);
-    }
 
     public async handleGetDifficultyLevel(): Promise<void> {
         const level = this.difficultyManager.getCurrentLevel();
@@ -141,6 +143,12 @@ export class CommandHandler {
         await this.difficultyManager.setDDAEnabled(payload.enabled);
         this.handlerContext.updateAllViews();
         vscode.window.showInformationMessage(`Dynamic Difficulty Adjustment ${payload.enabled ? 'Enabled' : 'Disabled'}`);
+    }
+
+    public async handleUnlockNextLevel(): Promise<void> {
+        await this.difficultyManager.unlockNextLevel();
+        this.handlerContext.updateAllViews();
+        vscode.window.showInformationMessage(`Unlocked next difficulty level!`);
     }
 
     // ==================== Select Starter ====================
@@ -188,7 +196,15 @@ export class CommandHandler {
             const pokemon = party[partyIndex];
             try {
                 const evolvedPokemon = PokemonFactory.evolvePokemon(pokemon, toSpeciesId);
-                await this.partyManager.update(evolvedPokemon);
+                await this.partyManager.update([evolvedPokemon]);
+                
+                // Record Achievement
+                await this.achievementManager.onEvolve({
+                    pokemonId: evolvedPokemon.id,
+                    isFriendship: false // TODO: Implement friendship check
+                });
+                this.handlerContext.updateAchievementsView();
+
                 this.handlerContext.updateAllViews();
                 vscode.window.showInformationMessage(`Congratulations! Your ${pokemon.name} evolved into ${evolvedPokemon.name}!`);
             } catch (error) {
@@ -203,6 +219,14 @@ export class CommandHandler {
             try {
                 const evolvedPokemon = PokemonFactory.evolvePokemon(boxPokemon, toSpeciesId);
                 await this.pokemonBoxManager.update(evolvedPokemon);
+
+                // Record Achievement
+                await this.achievementManager.onEvolve({
+                    pokemonId: evolvedPokemon.id,
+                    isFriendship: false // TODO: Implement friendship check
+                });
+                this.handlerContext.updateAchievementsView();
+
                 this.handlerContext.updateAllViews();
                 vscode.window.showInformationMessage(`Congratulations! Your ${boxPokemon.name} evolved into ${evolvedPokemon.name}!`);
             } catch (error) {
@@ -335,10 +359,9 @@ export class CommandHandler {
 
     // ==================== Update Party Pokemon ====================
     public async handleUpdatePartyPokemon(payload: UpdatePartyPokemonPayload): Promise<void> {
-        if (payload.pokemon) {
-            console.log('Received updatePartyPokemon:', payload.pokemon.name, payload.pokemon.currentHp);
-            await this.partyManager.update(payload.pokemon);
-            // Update views to reflect HP changes etc.
+        if (payload.pokemons) {
+            console.log('Received batch updatePartyPokemon:', payload.pokemons.length);
+            await this.partyManager.update(payload.pokemons);
             this.handlerContext.updateAllViews();
         }
     }
@@ -351,217 +374,58 @@ export class CommandHandler {
 
     // ==================== Use Medicine In Bag ====================
     public async handleUseMedicineInBag(payload: UseMedicineInBagPayload): Promise<void> {
-        const itemId = payload.itemId || (payload.item && (payload.item.apiName || payload.item.id));
-        console.log(`[Extension] useMedicineInBag: itemId=${itemId}, pokemonUid=${payload.pokemonUid}`);
-
+        const moveId = payload.moveId;
+        console.log(`[Extension] useMedicineInBag: moveId=${moveId}`);
+        let unActivePokemon: PokemonDao | undefined = undefined;
         if (payload.pokemonUid) {
             const partyData = this.partyManager.getAll();
-            const pokemon = partyData.find(p => p.uid === payload.pokemonUid);
-
-            if (!pokemon) {
-                console.error('[Extension] Pokemon not found');
-                return;
-            }
-
-            if (!payload.item) {
-                console.error('[Extension] Item not provided');
-                return;
-            }
-
-            const effect = payload.item.effect;
-            console.log('[Extension] Using item:', payload.item);
-            console.log('[Extension] Item effect:', effect);
-
-            let itemUsed = false;
-            let usedMessage = '';
-
-            if (effect) {
-                const oldHp = pokemon.currentHp;
-
-                // 1. Heal HP (Fixed)
-                if (effect.healHp) {
-                    if (pokemon.currentHp < pokemon.maxHp) {
-                        const healAmount = effect.healHp;
-                        pokemon.currentHp = Math.min(pokemon.maxHp, pokemon.currentHp + healAmount);
-                        itemUsed = true;
-                        usedMessage = `Restored ${pokemon.currentHp - oldHp} HP.`;
-                    } else {
-                        vscode.window.showInformationMessage('HP is already full!');
-                    }
-                }
-                // 2. Heal HP (Percent)
-                else if (effect.healHpPercent) {
-                    if (pokemon.currentHp < pokemon.maxHp) {
-                        const healAmount = Math.floor(pokemon.maxHp * (effect.healHpPercent / 100));
-                        pokemon.currentHp = Math.min(pokemon.maxHp, pokemon.currentHp + healAmount);
-                        itemUsed = true;
-                        usedMessage = `Restored ${pokemon.currentHp - oldHp} HP.`;
-                        if (effect.healStatus && effect.healStatus.includes('all')) {
-                            pokemon.ailment = 'healthy';
-                        }
-                    } else {
-                        vscode.window.showInformationMessage('HP is already full!');
-                    }
-                }
-                // 3. Revive
-                else if (effect.revive) {
-                    if (pokemon.currentHp === 0 || pokemon.ailment === 'fainted') {
-                        const healPercent = effect.reviveHpPercent || 50;
-                        pokemon.currentHp = Math.floor(pokemon.maxHp * (healPercent / 100));
-                        pokemon.ailment = 'healthy';
-                        itemUsed = true;
-                        usedMessage = `Revived with ${pokemon.currentHp} HP.`;
-                    } else {
-                        vscode.window.showInformationMessage('Pokemon is not fainted!');
-                    }
-                }
-                // 4. PP Recovery
-                else if (effect.restorePp || effect.restorePpAll) {
-                    let ppRestored = false;
-                    const moveId = payload.moveId;
-                    if (effect.restorePpAll) {
-                        // Restore all PP for all moves
-                        pokemon.pokemonMoves = pokemon.pokemonMoves.map(move => ({
-                            ...move,
-                            pp: move.maxPP
-                        }));
-                        ppRestored = true;
-                        usedMessage = 'Restored all PP for all moves!';
-                    } else if (effect.restorePp) {
-                        // Restore PP for moves that are not at max
-                        const restoreAmount = effect.restorePp;
-                        pokemon.pokemonMoves = pokemon.pokemonMoves.map(move => {
-                            console.log("Checking move for PP restore:", move.name, "Current PP:", move.pp, "Max PP:", move.maxPP);
-                            if (move.pp < move.maxPP && move.id === moveId) {
-                                ppRestored = true;
-                                return {
-                                    ...move,
-                                    pp: Math.min(move.maxPP, move.pp + restoreAmount)
-                                };
-                            }
-                            return move;
-                        });
-                        if (ppRestored) {
-                            usedMessage = `Restored ${restoreAmount} PP!`;
-                        } else {
-                            vscode.window.showInformationMessage('All moves already have full PP!');
-                        }
-                    }
-                    itemUsed = ppRestored;
-                }
-                // 5. Status Heal (Placeholder)
-                else if (effect.healStatus) {
-                    if (pokemon.ailment && pokemon.ailment !== 'healthy' && pokemon.ailment !== 'fainted') {
-                        if (effect.healStatus.includes(pokemon.ailment) || effect.healStatus.includes('all')) {
-                            pokemon.ailment = 'healthy';
-                            itemUsed = true;
-                            usedMessage = `Cured status condition.`;
-                        } else {
-                            vscode.window.showInformationMessage('This item cannot cure the current status condition!');
-                        }
-                    } else {
-                        vscode.window.showInformationMessage('No status condition to heal!');
-                    }
-
-                }
-                // 5. Restore PP
-                else if (effect.restorePp) {
-                    if (effect.restorePpAll) {
-                        // Restore All Moves
-                        pokemon.pokemonMoves.forEach(move => {
-                            move.pp = Math.min(move.maxPP, move.pp + (effect.restorePp || 999));
-                        });
-                        itemUsed = true;
-                        usedMessage = `Restored PP for all moves.`;
-                    } else {
-                        // Restore Single Move
-                        if (payload.moveId !== undefined) {
-                            const move = pokemon.pokemonMoves.find(m => m.id === payload.moveId);
-                            if (move) {
-                                if (move.pp < move.maxPP) {
-                                    move.pp = Math.min(move.maxPP, move.pp + (effect.restorePp || 0));
-                                    itemUsed = true;
-                                    usedMessage = `Restored PP for ${move.name}.`;
-                                } else {
-                                    vscode.window.showInformationMessage('PP is already full!');
-                                }
-                            }
-                        } else {
-                            console.warn('[Extension] Move ID missing for PP restore item');
-                        }
-                    }
-                }
-                // 6. Teach Move
-                else if (effect.teachMove) {
-                    // Teach Move Logic Here
-                    const moveIdToTeach = effect.teachMove;
-                    const canLearnMove = pokemonDataMap[pokemon.id].moves.filter(m => m.name === moveIdToTeach);
-                    if (canLearnMove.length > 0) {
-                        const learnMoveName = canLearnMove[0].name;
-                        const learnMoveData = pokemonMoveDataMap[learnMoveName];
-                        // Check if already knows the move
-                        const alreadyKnows = pokemon.pokemonMoves.some(m => m.name === moveIdToTeach);
-                        if (!alreadyKnows) {
-                            // Teach the move
-                            if (payload.moveId !== undefined) {
-                                let newMoves = pokemon.pokemonMoves.filter(m => m.id !== payload.moveId);
-                                newMoves.push(pokemonMoveInit(learnMoveData));
-                                pokemon.pokemonMoves = newMoves;
-                                itemUsed = true;
-                                usedMessage = `Taught ${pokemon.name} the move ${moveIdToTeach}.`;
-                            } else if (pokemon.pokemonMoves.length < 4) {
-                                // 直接學會招式
-                                pokemon.pokemonMoves.push(pokemonMoveInit(learnMoveData));
-                                itemUsed = true;
-                                usedMessage = `Taught ${pokemon.name} the move ${moveIdToTeach}.`;
-                            } else {
-                                console.warn('[Extension] Move slot full, cannot learn new move.');
-                            }
-                        } else {
-                            vscode.window.showInformationMessage(`${pokemon.name} already knows the move ${moveIdToTeach}.`);
-                        }
-                    } else {
-                        vscode.window.showInformationMessage(`${pokemon.name} cannot learn the move ${moveIdToTeach}.`);
-                    }
-                }
-            } else {
-                console.warn('[Extension] Item has no effect defined.');
-                vscode.window.showWarningMessage('This item has no effect defined.');
-            }
-            let isTreasure = false;
-            if (itemId) {
-                const itemActionPayload: RecordItemActionPayload = {
-                    action: 'use',
-                    item: {
-                        name: payload.item.name,
-                        category: payload.item.category,
-                        price: payload.item.price,
-                    },
-                    quantity: 1,
-                    isUseless: itemUsed
-                };
-                isTreasure = payload.item.category === 'Treasures';
-                this.achievementManager.onItemAction(itemActionPayload);
-            }
-
-            if (itemUsed && itemId) {
-                // 更新寶可夢狀態
-                await this.partyManager.update(pokemon);
-
-                // 不是寶藏道具才扣除
-                if (!isTreasure) {
-                    // 扣除道具
-                    await this.bagManager.useItem(itemId, 1);
-                }
-
-                vscode.window.showInformationMessage(`Used ${payload.item.name} on ${pokemon.name}. ${usedMessage}`);
-
-                this.handlerContext.updateAllViews();
-            } else {
-                vscode.window.showInformationMessage('No changes made to Pokemon.');
-            }
-
+            unActivePokemon = partyData.find(p => p.uid === payload.pokemonUid);
+            
         }
+        if (unActivePokemon === undefined) {
+            vscode.window.showErrorMessage('Pokemon not found in party.');
+            return;
+        }
+        if (!payload.item) {
+            vscode.window.showErrorMessage('Item ID not provided for useMedicineInBag.');
+            return;
+        }
+        const strategy = new ItemEffectStrategy(unActivePokemon,payload.item);
+        if (moveId) {
+            strategy.setEffectingMoveId(moveId);
+        }
+
+        const { itemUsed, usedMessage, pokemon: updatedPokemon } = await strategy.getEffectResult();
+        
+        const itemActionPayload: RecordItemActionPayload = {
+            action: 'use',
+            item: {
+                name: payload.item.name,
+                category: payload.item.category,
+                price: payload.item.price,
+            },
+            quantity: 1,
+            isUseless: !itemUsed
+        };
+        this.achievementManager.onItemAction(itemActionPayload);
+
+        if (itemUsed) {
+            // 更新寶可夢狀態
+            await this.partyManager.update([updatedPokemon]);
+
+            // 不是招式學習器才扣除道具
+            if (payload.item.effect && !payload.item.effect.teachMove) {
+                // 扣除道具
+                await this.bagManager.useItem(payload.item.id, 1);
+            }
+
+            vscode.window.showInformationMessage(`Used ${payload.item.name} on ${updatedPokemon.name}. ${usedMessage}`);
+
+            this.handlerContext.updateAllViews();
+        } else {
+            vscode.window.showInformationMessage('No changes made to Pokemon.');
+        }
+
     }
 
     // ==================== Use Item ====================
@@ -624,6 +488,7 @@ export class CommandHandler {
             payload.gameStateData.state,
             {
                 battleMode: payload.gameStateData.battleMode,
+                trainerData: payload.gameStateData.trainerData,
                 opponentParty: payload.gameStateData.opponentParty,
                 encounterResult: payload.gameStateData.encounterResult,
                 opponentPokemonUid: payload.gameStateData.opponentPokemonUid,
@@ -674,8 +539,8 @@ export class CommandHandler {
     }
 
     // ==================== Update Opponent Party ====================
-    public async handleUpdateOpponentInParty(payload: UpdateOpponentInPartyPayload): Promise<void> {
-        await this.gameStateManager.updateOpponentInParty(payload.opponentPokemon);
+    public async handleUpdateOpponentsInParty(payload: UpdateOpponentsInPartyPayload): Promise<void> {
+        await this.gameStateManager.updateOpponentsInParty(payload.opponentPokemons);
     }
 
     // ==================== Update Defender Pokemon UId ====================
@@ -713,6 +578,11 @@ export class CommandHandler {
         this.handlerContext.updateAchievementsView();
     }
 
+    // ==================== Record Encounter ====================
+    public async handleRecordEncounter(payload: RecordEncounterPayload): Promise<void> {
+        this.difficultyManager.recordEncounter(payload.record);
+    }
+
     // ==================== Item Action ====================
     public async handleRecordItemAction(payload: RecordItemActionPayload): Promise<void> {
         await this.achievementManager.onItemAction(payload);
@@ -735,6 +605,7 @@ export class CommandHandler {
             console.log('[Extension] No encounter event generated.');
             return;
         }
+
         // Notify User if a Pokemon is encountered AND the view is NOT visible
         const isVisible = this.handlerContext.isViewVisible ? this.handlerContext.isViewVisible() : false;
         if (isVisible) {
@@ -750,6 +621,7 @@ export class CommandHandler {
                 await this.gameStateManager.updateGameState(GameState.WildAppear,
                     {
                         battleMode: BattleMode.Wild,
+                        trainerData: undefined,
                         opponentParty: [encounterEvent.pokemon],
                         encounterResult: encounterEvent,
                         defenderPokemonUid: myFirstPartyPokemon[0].uid,
@@ -768,6 +640,7 @@ export class CommandHandler {
                     GameState.WildAppear,
                     {
                         battleMode: BattleMode.Wild,
+                        trainerData: undefined,
                         opponentParty: [encounterEvent.pokemon],
                         encounterResult: encounterEvent,
                         defenderPokemonUid: myFirstPartyPokemon[0].uid,
@@ -788,17 +661,39 @@ export class CommandHandler {
 
     public async handleNPCTriggerEncounter() {
         // MARK: [TODO] Generate NPC Encounter Event
-        let debugPokemons: PokemonDao[] = [];
-        for (let i = 1; i <= 6; i++) {
-            const pokemon = await PokemonFactory.createWildPokemonInstance({
-                pokemonId: Math.floor(Math.random() * 150) + 1,
-                nameZh: '',
-                nameEn: '',
-                minDepth: 0,
-                encounterRate: 0
-            }, this.difficultyManager, 'test/file/path', undefined);
-            debugPokemons.push(pokemon);
-        };
+        let trainnerPokemons: PokemonDao[] = [];
+        let maxDifficultyLevel = this.difficultyManager.getMaxUnlockedLevel();
+        if (maxDifficultyLevel > MAX_DIFFICULTY_LEVEL || maxDifficultyLevel < 1) {
+            return;
+        }
+        const trainer = trainerDatas[maxDifficultyLevel - 1];
+        if (!trainer) {
+            console.error(`[Extension] Trainer data not found for difficulty level ${maxDifficultyLevel}`);
+            return;
+        }
+        const myFirstPartyPokemon = this.partyManager.getAll().filter(p => p.currentHp > 0);
+        if (myFirstPartyPokemon.length === 0) {
+            console.log('[Extension] No healthy Pokemon in party, cannot trigger trainer encounter.');
+            return;
+        }
+        trainer.party.forEach(async pokemonInfo => {
+            const pokemonData = pokemonDataMap[pokemonInfo.id];
+            if (pokemonData) {
+                const pokemonInstance = await PokemonFactory.createWildPokemonInstance(
+                    {
+                        pokemonId: pokemonInfo.id,
+                        nameZh: '',
+                        nameEn: '',
+                        minDepth: 0,
+                        encounterRate: 0
+                    }, this.difficultyManager, 
+                    undefined, 
+                    pokemonInfo.level
+                );
+                trainnerPokemons.push(pokemonInstance);
+            }
+        });
+        
         // Notify User if a Pokemon is encountered AND the view is NOT visible
         const isVisible = this.handlerContext.isViewVisible ? this.handlerContext.isViewVisible() : false;
         if (isVisible) {
@@ -814,13 +709,14 @@ export class CommandHandler {
                 await this.gameStateManager.updateGameState(GameState.TrainerAppear,
                     {
                         battleMode: BattleMode.Trainer,
-                        opponentParty: debugPokemons,
+                        trainerData: trainer,
+                        opponentParty: trainnerPokemons,
                         encounterResult: {
                             biomeType: BiomeType.BattleArena,
                             depth: 1
                         },
                         defenderPokemonUid: myFirstPartyPokemon[0].uid,
-                        opponentPokemonUid: debugPokemons[0].uid
+                        opponentPokemonUid: trainnerPokemons[0].uid
                     }
                 );
                 await this.handleGetGameStateData();

@@ -17,6 +17,8 @@ export const MessageType = {
     DifficultyModifiersData: 'difficultyModifiersData',
     DifficultyLevelData: 'difficultyLevelData',
     EncounterHistoryData: 'encounterHistoryData',
+    InitializationState: 'initializationState',
+    Reset: 'reset',
 
     // Request types (from webview to extension)
     GetUserInfo: 'getUserInfo',
@@ -31,7 +33,7 @@ export const MessageType = {
 
     // Action types
     SetGameStateData: 'setGameStateData',
-    UpdateOpponentInParty: 'updateOpponentInParty',
+    UpdateOpponentsInParty: 'updateOpponentInParty',
     UpdateDefenderPokemonUid: 'updateDefenderPokemonUid',
     UpdateOpponentPokemonUid: 'updateOpponentPokemonUid',
     SetAutoEncounter: 'setAutoEncounter',
@@ -64,6 +66,7 @@ export const MessageType = {
     // Difficulty
     GetDifficultyModifiers: 'getDifficultyModifiers',
     RecordEncounter: 'recordEncounter',
+    UnlockNextLevel: 'unlockNextLevel',
     GetDifficultyLevel: 'getDifficultyLevel',
     SetDifficultyLevel: 'setDifficultyLevel',
     SetDDAEnabled: 'setDDAEnabled',

@@ -7,7 +7,7 @@ import { DifficultyManager } from "../manager/DifficultyManager";
 import * as pokemonGen1Data from "../data/pokemonGen1.json";
 
 const pokemonDataMap = pokemonGen1Data as unknown as Record<string, RawPokemonData>;
-
+const MAX_DEPTH = 6;
 export interface EncounterResult {
     biomeType: BiomeType;
     depth: number;
@@ -115,8 +115,8 @@ export const EncounterHandler = (pathResolver?: (path: string) => string): Encou
 
         console.log(`[Biome Detection] Biome Type: ${biomeType}`);
         return {
-            biomeType: biomeType,
-            pokemonTypes: depth < 6 ? BIOME_GROUPS[biomeType] : []
+            biomeType: depth < MAX_DEPTH ? biomeType : BiomeType.ToxicWaste,
+            pokemonTypes: depth < MAX_DEPTH ? BIOME_GROUPS[biomeType] : []
         };
     }
 
@@ -132,7 +132,7 @@ export const EncounterHandler = (pathResolver?: (path: string) => string): Encou
         const { pokemonTypes: biomePokemonTypes, biomeType } = getBiome(filePath);
 
         // 2. 判斷深度區域 (黃金區間邏輯)
-        if (depth >= 6) {
+        if (depth >= MAX_DEPTH) {
             // === TOXIC ZONE (深淵) ===
             candidatePool = KantoPokemonEncounterData.filter(p => TOXIC_POOL_POKEMONIDS.includes(p.pokemonId));
 

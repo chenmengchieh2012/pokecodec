@@ -25,7 +25,7 @@ import {
     SetAutoEncounterPayload,
     SetGameStateDataPayload,
     UpdateDefenderPokemonUidPayload,
-    UpdateOpponentInPartyPayload,
+    UpdateOpponentsInPartyPayload,
     UpdateMoneyPayload,
     UpdatePartyPokemonPayload,
     UpdatePokeDexPayload,
@@ -96,6 +96,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     var BiomeIndex = -1;
 
+
     context.subscriptions.push(
         vscode.window.registerWebviewViewProvider('pokemonReact', gameProvider),
         vscode.window.registerWebviewViewProvider('pokemonBackpack', backpackProvider),
@@ -119,6 +120,16 @@ export function activate(context: vscode.ExtensionContext) {
             channel.clear();
             channel.appendLine(JSON.stringify(history, null, 2));
             channel.show();
+        })
+    );
+
+
+    // 🔥 新增指令：列印成就
+    context.subscriptions.push(
+        vscode.commands.registerCommand('pokecodec.printAchievementStats', () => {
+            const stats = achievementManager.getStatistics();
+            console.log('Achievement Statistics:', JSON.stringify(stats, null, 2));
+            vscode.window.showInformationMessage(`Achievement Stats printed to console.`);
         })
     );
 
@@ -174,10 +185,10 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         this._context = _context;
         this.commandHandler = new CommandHandler(
             this.pokemonBoxManager,
-            this.partyManager,
             this.bagManager,
             this.userDaoManager,
             this.gameStateManager,
+            this.partyManager,
             this.biomeHandler,
             this.pokeDexManager,
             this.achievementManager,
@@ -286,14 +297,20 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             });
 
             // MARK: TEST difficult
-            const maxLevel = 8;
-            for (let level = 1; level <= maxLevel; level++) {
-                await this.difficultyManager.unlockNextLevel();
-            }
+            // const maxLevel = 8;
+            // for (let level = 1; level <= maxLevel; level++) {
+            //     await this.difficultyManager.unlockNextLevel();
+            // }
         }
 
         vscode.window.showInformationMessage('Global storage 已重置！');
-        PokemonViewProvider.providers.forEach(p => p.updateViews());
+        PokemonViewProvider.providers.forEach(p => {
+            p.updateViews();
+            p._view?.webview.postMessage({
+                type: MessageType.Reset
+            });
+        });
+         
     }
 
     public resolveWebviewView(
@@ -392,8 +409,8 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             if (message.command === MessageType.GetGameStateData) {
                 this.commandHandler.handleGetGameStateData();
             }
-            if (message.command === MessageType.UpdateOpponentInParty) {
-                await this.commandHandler.handleUpdateOpponentInParty(message as UpdateOpponentInPartyPayload);
+            if (message.command === MessageType.UpdateOpponentsInParty) {
+                await this.commandHandler.handleUpdateOpponentsInParty(message as UpdateOpponentsInPartyPayload);
             }
             if (message.command === MessageType.UpdateDefenderPokemonUid) {
                 await this.commandHandler.handleUpdateDefenderPokemonUid(message as UpdateDefenderPokemonUidPayload);
@@ -471,6 +488,9 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                 await this.commandHandler.handleRecordBattleFinished(message as RecordBattleFinishedPayload);
             }
 
+            if (message.command === MessageType.UnlockNextLevel) {
+                await this.commandHandler.handleUnlockNextLevel();
+            }
 
         });
 

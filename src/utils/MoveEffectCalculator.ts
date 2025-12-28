@@ -196,7 +196,9 @@ export const MoveEffectCalculator = {
 
         if (isHit && move.meta) {
             // 1. Ailment (Status Condition)
-            if (move.meta.ailment !== 'none' && move.meta.ailment_chance > 0) {
+            if (move.meta.ailment !== 'none' && move.meta.ailment_chance >= 0) {
+                console.log(`[MoveEffectCalculator] Checking ailment application for move ${move.name}`);
+                console.log(`[MoveEffectCalculator] Ailment: ${move.meta.ailment}, Chance: ${move.meta.ailment_chance}%`);
                 const chance = move.meta.ailment_chance === 0 ? 100 : move.meta.ailment_chance; // 0 usually means 100% if ailment is set, but let's follow chance if > 0
                 if (Math.random() * 100 < chance) {
                     // Map API ailment names to PokemonAilment type

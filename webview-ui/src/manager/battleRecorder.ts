@@ -10,7 +10,6 @@ export interface BattleRecoderInitProps {
     myPokemonRef: React.RefObject<PokemonDao|undefined>;
     opponentPokemonRef: React.RefObject<PokemonDao|undefined>;
     myPartyRef: React.RefObject<PokemonDao[]>;
-    battleBiomeRef: React.RefObject<string>;
 }
 
 export interface BattleRecorderHandler {

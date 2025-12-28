@@ -65,7 +65,7 @@ export interface RemoveFromPartyPayload {
 }
 
 export interface UpdatePartyPokemonPayload {
-    pokemon: PokemonDao;
+    pokemons?: PokemonDao[];
 }
 
 export interface UseMedicineInBagPayload {
@@ -100,8 +100,8 @@ export interface SetGameStateDataPayload {
     gameStateData: GameStateData;
 }
 
-export interface UpdateOpponentInPartyPayload {
-    opponentPokemon: PokemonDao;
+export interface UpdateOpponentsInPartyPayload {
+    opponentPokemons: PokemonDao[];
 }
 
 export interface UpdateDefenderPokemonUidPayload {
@@ -149,3 +149,5 @@ export interface SetAutoEncounterPayload {
 export interface SetDDAEnabledPayload {
     enabled: boolean;
 }
+
+export interface UnlockNextLevelPayload {}

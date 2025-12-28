@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { AchievementAnalyzer, AchievementStatistics, RecordBattleActionPayload, RecordBattleCatchPayload, RecordBattleFinishedPayload, RecordItemActionPayload } from '../utils/AchievementCritiria';
+import { AchievementAnalyzer, AchievementStatistics, RecordBattleActionPayload, RecordBattleCatchPayload, RecordBattleFinishedPayload, RecordItemActionPayload, RecordEncounterPayload, RecordEvolvePayload, RecordLearnMoveFromMachinePayload } from '../utils/AchievementCritiria';
 import GlobalStateKey from '../utils/GlobalStateKey';
 import { SequentialExecutor } from '../utils/SequentialExecutor';
 import { GlobalMutex } from '../utils/GlobalMutex';
@@ -45,6 +45,21 @@ export class AchievementManager {
         return this.achievementStatistics;
     }
 
+    public async onEvolve(payload: RecordEvolvePayload): Promise<void> {
+        await this.performTransaction((stats) => {
+            const analyzer = new AchievementAnalyzer(stats);
+            analyzer.onEvolve(payload);
+            return analyzer.getStatistics();
+        });
+    }
+
+    public async onLearnMoveFromMachine(payload: RecordLearnMoveFromMachinePayload): Promise<void> {
+        await this.performTransaction((stats) => {
+            const analyzer = new AchievementAnalyzer(stats);
+            analyzer.onLearnMoveFromMachine(payload);
+            return analyzer.getStatistics();
+        });
+    }
 
     private async performTransaction(modifier: (statistic: AchievementStatistics) => AchievementStatistics): Promise<void> {
         await this.saveQueue.execute(async () => {
@@ -99,6 +114,16 @@ export class AchievementManager {
             });
             console.log("AchievementManager: onItemAction updated statistics:", analyzer.getStatistics());
             console.log("AchievementManager: onItemAction payload:", payload);
+            return analyzer.getStatistics();
+        });
+    }
+
+    public async onEncounter(payload: RecordEncounterPayload): Promise<void> {
+        await this.performTransaction((stats) => {
+            const analyzer = new AchievementAnalyzer(stats);
+            analyzer.onEncounter({
+                ...payload
+            });
             return analyzer.getStatistics();
         });
     }

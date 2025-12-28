@@ -2,16 +2,18 @@ import * as vscode from 'vscode';
 import { SequentialExecutor } from '../utils/SequentialExecutor';
 import { GameState } from '../dataAccessObj/GameState';
 import GlobalStateKey from '../utils/GlobalStateKey';
-import { PokemonDao } from '../dataAccessObj/pokemon';
+import { MAX_PARTY_SIZE, PokemonDao } from '../dataAccessObj/pokemon';
 import { BattleMode, GameStateData } from '../dataAccessObj/gameStateData';
 import { EncounterResult } from '../core/EncounterHandler';
 import { GlobalMutex } from '../utils/GlobalMutex';
+import { TrainerData } from '../dataAccessObj/trainerData';
 
 export class GameStateManager {
     private static instance: GameStateManager;
     // 記憶體快取 (只供讀取與 UI 顯示)
     private gameStateData: GameStateData = {
         battleMode: undefined,
+        trainerData: undefined,
         state: GameState.Searching,
         encounterResult: undefined,
         opponentParty: [],
@@ -55,16 +57,18 @@ export class GameStateManager {
     }
 
 
-    public async updateOpponentInParty(opponentParty: PokemonDao): Promise<void> {
+    public async updateOpponentsInParty(opponentPartys: PokemonDao[]): Promise<void> {
         await this.performTransaction((data) => {
             if (data.opponentParty) {
                 data.opponentParty.map((p, index) => {
-                    if (p.uid === opponentParty.uid) {
-                        data.opponentParty![index] = opponentParty;
-                    }
+                    opponentPartys.forEach(element => {
+                        if (p.uid === element.uid) {
+                            data.opponentParty![index] = element;
+                        }
+                    });
                 });
             } else {
-                data.opponentParty = [opponentParty];
+                data.opponentParty = opponentPartys;
             }
             return data;
         });
@@ -98,6 +102,7 @@ export class GameStateManager {
             // 合併預設值 (防止資料欄位缺失)
             const currentData: GameStateData = storedData ?? {
                 battleMode: undefined,
+                trainerData: undefined,
                 state: GameState.Searching,
                 encounterResult: undefined,
                 opponentParty: [],
@@ -122,6 +127,7 @@ export class GameStateManager {
      */
     public async updateGameState(state: GameState, props: {
         battleMode?: BattleMode,
+        trainerData?: TrainerData,
         opponentParty?: PokemonDao[],
         encounterResult?: EncounterResult,
         defenderPokemonUid?: string,
@@ -154,10 +160,13 @@ export class GameStateManager {
         return success;
     }
 
+
+
     public async clear(): Promise<void> {
         await this.performTransaction(() => {
             return {
                 battleMode: undefined,
+                trainerData: undefined,
                 state: GameState.Searching,
                 encounterResult: undefined,
                 defenderPokemonUid: undefined,

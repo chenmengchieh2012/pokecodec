@@ -86,17 +86,19 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
 
     const isExpanded = menuState !== 'main';
 
-    const onMoveClick = (move: PokemonMove) => {
+    const onMoveClick = async (move: PokemonMove) => {
         if (selectedPokemonRef.current && selectedItem) {
             // Using PP medicine on selected move
             handleUseItem(selectedPokemonRef.current, selectedItem, move);
             reset();
             return;
-        } else {
+        } else if(move.pp > 0) {
             setMenuState('main');
             handleOnAttack(move);
             reset();
             return;
+        } else {
+            await dialogBoxRef.current?.setText("This move has no PP left!");
         }
     };
 
@@ -186,7 +188,6 @@ export const BattleControl = forwardRef<BattleControlHandle, BattleControlProps>
                                     key={"move-" + move.name}
                                     className={styles['move-btn']}
                                     onClick={() => onMoveClick(move)}
-                                    disabled={move.pp <= 0}
                                 >
                                     <div className={styles['move-name']}>
                                         <PokemonTypeIcon type={move.type} size={10} className={styles['move-type-icon']} />

@@ -1,6 +1,7 @@
 import { EncounterResult } from "../core/EncounterHandler";
 import { GameState } from "./GameState";
 import { PokemonDao } from "./pokemon";
+import { TrainerData } from "./trainerData";
 
 export const BattleMode = {
     Wild: "wild",
@@ -10,6 +11,7 @@ export const BattleMode = {
 export type BattleMode = typeof BattleMode[keyof typeof BattleMode];
 export interface GameStateData {
     battleMode: BattleMode | undefined;
+    trainerData: TrainerData | undefined;
     state: GameState;
     encounterResult: EncounterResult | undefined;
     opponentParty: PokemonDao[];

@@ -28,6 +28,18 @@ export const SHOP_ITEM_EVOLUTION_NAMES = [
     'moon-stone', 'sun-stone', 'shiny-stone', 'dusk-stone', 'dawn-stone'
 ];
 
+export const ITEM_PP_TREE_BERRY_NAMES = [
+    'leppa-berry'
+];
+
+export const ITEM_HP_TREE_BERRY_NAMES = [
+    'oran-berry', 'sitrus-berry'
+];
+
+export const ITEM_STATUS_TREE_BERRY_NAMES = [
+    'lum-berry', 'cheri-berry', 'chesto-berry', 'pecha-berry', 'rawst-berry', 'aspear-berry'
+];
+
 export const SHOP_ITEM_TM_NAMES = [
     ...Array.from({length: 50}, (_, i) => {
         const num = (i + 1).toString().padStart(2, '0');
@@ -46,6 +58,7 @@ export const SHOP_ITEM_HM_NAMES = [
 export const ItemUITag = {
     Medicine: "MEDICINE",
     Balls: "BALLS",
+    Berry: "BERRY",
     Evolution: "EVOLUTION",
     Machine: "MACHINE",
 } as const;
@@ -62,6 +75,11 @@ export const ItemUiTagItemsMap: Record<ItemUITag, string[]> = {
     ],
     [ItemUITag.Balls]: [
         ...SHOP_ITEMS_BALL_NAMES
+    ],
+    [ItemUITag.Berry]: [
+        ...ITEM_HP_TREE_BERRY_NAMES,
+        ...ITEM_PP_TREE_BERRY_NAMES,
+        ...ITEM_STATUS_TREE_BERRY_NAMES
     ],
     [ItemUITag.Evolution]: [
         ...SHOP_ITEM_EVOLUTION_NAMES

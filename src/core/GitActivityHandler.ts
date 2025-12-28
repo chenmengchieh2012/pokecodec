@@ -3,12 +3,14 @@ import { promisify } from 'util';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { BagManager } from '../manager/bagsManager';
-import { JoinPokemonManager } from '../manager/joinPokemonManager';
 import { ExperienceCalculator } from '../utils/ExperienceCalculator';
 
 import itemData from '../data/items.json';
 import { ItemDao } from '../dataAccessObj/item';
 import { UserDaoManager } from '../manager/userDaoManager';
+import { GameState } from '../dataAccessObj/GameState';
+import { GameStateManager } from '../manager/gameStateManager';
+import { JoinPokemonManager } from '../manager/joinPokemonManager';
 
 const itemDataMap = itemData as Record<string, ItemDao>;
 
@@ -18,7 +20,8 @@ export class GitActivityHandler {
     private static instance: GitActivityHandler;
     private watchers: vscode.FileSystemWatcher[] = [];
     private lastHeadHashes: Map<string, string> = new Map(); // workspaceFolder -> commitHash
-    private partyManager: JoinPokemonManager | undefined;
+    private gameStateManager: GameStateManager | undefined;
+    private partyManager: JoinPokemonManager| undefined;
     private bagManager: BagManager | undefined;
     private userDaoManager: UserDaoManager | undefined;
 
@@ -36,9 +39,10 @@ export class GitActivityHandler {
     }
 
     public initialize() {
-        this.partyManager = JoinPokemonManager.getInstance();
+        this.gameStateManager = GameStateManager.getInstance();
         this.bagManager = BagManager.getInstance();
         this.userDaoManager = UserDaoManager.getInstance();
+        this.partyManager = JoinPokemonManager.getInstance();
 
         // 監聽 workspace 資料夾變化 (例如使用者新增/移除專案資料夾)
         vscode.workspace.onDidChangeWorkspaceFolders(() => {
@@ -126,6 +130,10 @@ export class GitActivityHandler {
     }
 
     private async handleGitChange(folderPath: string) {
+        if( this.gameStateManager?.getGameStateData().state !== GameState.Battle){
+            console.log(`[GitActivityHandler] Skipping Git change processing because game state is not Battle.`);
+            return;
+        }
         const oldHash = this.lastHeadHashes.get(folderPath);
         const newHash = await this.updateLastHeadHash(folderPath);
 
@@ -311,9 +319,9 @@ export class GitActivityHandler {
     }
 
     private updatePokemonStats(data: { linesChanged: number, isBugFix: boolean, commitHash: string }) {
-        if (!this.partyManager) return;
+        if (!this.gameStateManager) return;
 
-        const newParty = JSON.parse(JSON.stringify(this.partyManager.getAll()));
+        const newParty = JSON.parse(JSON.stringify(this.partyManager?.getAll()));
 
         if (newParty.length === 0) return;
 
@@ -350,7 +358,7 @@ export class GitActivityHandler {
                 modifyPokemon.codingStats.bugsFixed += 1;
             }
             // 儲存更新
-            this.partyManager.update(modifyPokemon);
+            this.partyManager?.update(modifyPokemon);
             console.log(`[GitActivityHandler] Updated Pokemon ${modifyPokemon.name} stats!`, modifyPokemon.codingStats);
 
         }

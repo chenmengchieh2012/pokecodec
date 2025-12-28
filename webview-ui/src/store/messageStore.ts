@@ -3,12 +3,12 @@ import { vscode } from '../utilities/vscode';
 import { BiomeData } from '../../../src/dataAccessObj/BiomeData';
 import { ItemDao } from '../../../src/dataAccessObj/item';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
-import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
 import { UserDao } from '../../../src/dataAccessObj/userData';
 import { BoxPayload, PokeDexPayload, DifficultyLevelPayload } from '../../../src/dataAccessObj/MessagePayload';
 import { AchievementStatistics } from '../../../src/utils/AchievementCritiria';
 import { GameStateData } from '../../../src/dataAccessObj/gameStateData';
 import { DifficultyModifiers } from '../../../src/dataAccessObj/DifficultyData';
+import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
 // ============================================================
 // Type Definitions
 // ============================================================
@@ -27,10 +27,10 @@ export type MessageSubscriber<T = unknown> = (message: VSCodeMessage<T>) => void
 /** Store 中的資料參考 */
 export interface StoreRefs {
     bag: ItemDao[] | undefined;
-    party: PokemonDao[] | undefined;
     box: BoxPayload | undefined;
     userInfo: UserDao | undefined;
     gameStateData: GameStateData | undefined;
+    party: PokemonDao[] | undefined;
     biome: BiomeData | undefined;
     pokeDex: PokeDexPayload | undefined;
     achievements: AchievementStatistics | undefined;
@@ -54,6 +54,8 @@ export interface MessageStoreContextValue {
     setRef: <K extends keyof StoreRefs>(key: K, value: StoreRefs[K]) => void;
     /** 檢查是否已初始化完成 */
     isInitialized: () => InitializedStateType;
+    /** 重置 store 狀態 */
+    reset: () => void;
 }
 
 // ============================================================
@@ -66,7 +68,7 @@ export const InitializedState = {
     finished: 'finished',
 } as const;
 
-type InitializedStateType = typeof InitializedState[keyof typeof InitializedState];
+export type InitializedStateType = typeof InitializedState[keyof typeof InitializedState];
 
 class MessageStore {
     private initTimerRef: NodeJS.Timeout | null = null;
@@ -77,10 +79,10 @@ class MessageStore {
     /** 資料參考儲存 */
     private refs: StoreRefs = {
         bag: undefined,
-        party: undefined,
         box: undefined,
         userInfo: undefined,
         gameStateData: undefined,
+        party: undefined,
         biome: undefined,
         pokeDex: undefined,
         achievements: undefined,
@@ -158,11 +160,11 @@ class MessageStore {
      */
     private updateRefs<T = unknown>(message: VSCodeMessage<T>): void {
         switch (message.type) {
+            case MessageType.Reset:
+                this.reset();
+                break;
             case MessageType.BagData:
                 this.refs.bag = (message.data as ItemDao[]) ?? undefined;
-                break;
-            case MessageType.PartyData:
-                this.refs.party = (message.data as PokemonDao[]) ?? undefined;
                 break;
             case MessageType.BoxData:
                 this.refs.box = (message.data as BoxPayload) ?? undefined;
@@ -175,6 +177,9 @@ class MessageStore {
                 break;
             case MessageType.GameStateData:
                 this.refs.gameStateData = (message.data as GameStateData) ?? undefined;
+                break;
+            case MessageType.PartyData:
+                this.refs.party = (message.data as PokemonDao[]) ?? undefined;
                 break;
             case MessageType.BiomeData:
                 this.refs.biome = (message.data as BiomeData) ?? undefined;
@@ -203,10 +208,16 @@ class MessageStore {
             return;
         }
         this.initialized = InitializedState.Initializing;
-
+        this.notify({ type: MessageType.InitializationState, data: this.initialized });
+        
+        if (this.initTimerRef) {
+            console.log('[MessageStore] InitTimer cleared');
+            clearInterval(this.initTimerRef);
+        }
+        
         this.messageHandler = (event: MessageEvent) => {
             // console.log('[MessageStore] Received message from VS Code:', event.data);
-            // console.log('[MessageStore] Current Refs:', this.refs);
+            console.log('[MessageStore] Current Refs:', this.refs);
             // console.log('[MessageStore] Current Initialized State:', this.initialized);
             const message = event.data as VSCodeMessage;
             if (message && message.type) {
@@ -217,10 +228,10 @@ class MessageStore {
                 }
 
                 if (this.refs.bag !== undefined &&
-                    this.refs.party !== undefined &&
                     this.refs.box !== undefined &&
                     this.refs.userInfo !== undefined &&
                     this.refs.gameStateData !== undefined &&
+                    this.refs.party !== undefined &&
                     this.refs.biome !== undefined &&
                     this.refs.pokeDex !== undefined &&
                     this.refs.achievements !== undefined &&
@@ -228,6 +239,7 @@ class MessageStore {
                     this.refs.difficultyLevel !== undefined &&
                     this.initialized === InitializedState.Initializing) {
                     this.initialized = InitializedState.finished;
+                    this.notify({ type: MessageType.InitializationState, data: this.initialized });
                     console.log('[MessageStore] Initialization finished');
                     if (this.initTimerRef) {
                         console.log('[MessageStore] InitTimer cleared');
@@ -258,7 +270,7 @@ class MessageStore {
         vscode.postMessage({ command: MessageType.GetUserInfo });
         // 2. 請求背包資訊
         vscode.postMessage({ command: MessageType.GetBag });
-        // 3. 請求夥伴資訊
+        // 3. 請求隊伍資訊
         vscode.postMessage({ command: MessageType.GetParty });
         // 4. 請求盒子資訊
         vscode.postMessage({ command: MessageType.GetBox });
@@ -283,9 +295,6 @@ class MessageStore {
         if (this.refs.bag !== undefined) {
             this.notify({ type: MessageType.BagData, data: this.refs.bag });
         }
-        if (this.refs.party !== undefined) {
-            this.notify({ type: MessageType.PartyData, data: this.refs.party });
-        }
         if (this.refs.box !== undefined) {
             this.notify({ type: MessageType.BoxData, data: this.refs.box });
         }
@@ -294,6 +303,9 @@ class MessageStore {
         }
         if (this.refs.gameStateData !== undefined) {
             this.notify({ type: MessageType.GameStateData, data: this.refs.gameStateData });
+        }
+        if (this.refs.party !== undefined) {
+            this.notify({ type: MessageType.PartyData, data: this.refs.party });
         }
         if (this.refs.pokeDex !== undefined) {
             this.notify({ type: MessageType.PokeDexData, data: this.refs.pokeDex });
@@ -310,6 +322,31 @@ class MessageStore {
         if (this.refs.difficultyLevel !== undefined) {
             this.notify({ type: MessageType.DifficultyLevelData, data: this.refs.difficultyLevel });
         }
+    }
+
+    /**
+     * 重置 store 狀態，使其回到未初始化狀態
+     * 用於後台重置或重新載入
+     */
+    reset(): void {
+        this.initialized = InitializedState.UnStart;
+        this.refs = {
+            bag: undefined,
+            box: undefined,
+            userInfo: undefined,
+            gameStateData: undefined,
+            party: undefined,
+            biome: undefined,
+            pokeDex: undefined,
+            achievements: undefined,
+            difficultyLevel: undefined,
+            difficultyModifiers: undefined,
+        };
+        this.notify({ type: MessageType.InitializationState, data: this.initialized });
+        console.log('[MessageStore] Reset to uninitialized state');
+        
+        // 重新開始初始化流程
+        this.init();
     }
 
     /**
@@ -412,6 +449,9 @@ export const MessageStoreProvider: React.FC<MessageStoreProviderProps> = ({
         isInitialized: () => {
             return messageStore.isInitialized();
         },
+        reset: () => {
+            messageStore.reset();
+        },
     }), []);
 
     return React.createElement(
@@ -469,4 +509,21 @@ export const useMessageSubscription = <T = unknown>(
         });
         return unsubscribe;
     }, [type, subscribe]);
+};
+
+/**
+ * 取得初始化狀態的 Hook
+ * 當初始化狀態改變時，會觸發組件重新渲染
+ */
+export const useInitializationState = (): InitializedStateType => {
+    const { isInitialized } = useMessageStore();
+    const [state, setState] = React.useState<InitializedStateType>(isInitialized());
+
+    useMessageSubscription<InitializedStateType>(MessageType.InitializationState, (message) => {
+        if (message.data) {
+            setState(message.data);
+        }
+    });
+
+    return state;
 };

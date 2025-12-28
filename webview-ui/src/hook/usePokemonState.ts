@@ -19,7 +19,7 @@ export interface PokemonStateHandler {
     getBuffs: () => PokemonStats;
     getBattleState: () => BattlePokemonState;
     resetFlinch: () => void;
-    throwBall: (ballDao: PokeBallDao, catchBonusPercent: number, onAction: (action: PokemonStateAction) => void) => Promise<boolean>;
+    throwBall: (isCatchAble: boolean, ballDao: PokeBallDao, catchBonusPercent: number, onAction: (action: PokemonStateAction) => void) => Promise<boolean>;
     hited: (pokemon: PokemonDao, attackerBuffs: BattlePokemonState, move: PokemonMove) => Promise<{ newHp: number; moveEffectResult: MoveEffectResult; }>;
     randomMove: () => PokemonMove;
     useMoveEffect: (moveEffectResult: MoveEffectResult) => void;
@@ -63,7 +63,12 @@ export const usePokemonState = (dialogRef: React.RefObject<BattleControlHandle |
         await dialogRef.current?.setText(`Go! ${pokemon.name.toUpperCase()}!`);
     }, [dialogRef]);
 
-    const handleThrowBall = useCallback(async (ballDao: PokeBallDao, catchBonusPercent: number, onAction: (action: PokemonStateAction) => void) => {
+    const handleThrowBall = useCallback(async (isCatchAble: boolean, ballDao: PokeBallDao, catchBonusPercent: number, onAction: (action: PokemonStateAction) => void) => {
+        if (!isCatchAble) {
+            await dialogRef.current?.setText(`It won't have any effect!`);
+            return false;
+        }
+
         const currentPokemon = pokemonRef.current;
         if (!currentPokemon) {
             throw new Error("No pokemon available for random move selection.");

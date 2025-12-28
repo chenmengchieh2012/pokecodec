@@ -31,6 +31,10 @@
       {
         "command": "pokemon.printDifficultyHistory",
         "title": "Pokemon: Print Difficulty History"
+      },
+      {
+        "command": "pokecodec.printAchievementStats",
+        "title": "Pokecodec: Print Achievement Stats"
       }
     ],
     "viewsContainers": {
