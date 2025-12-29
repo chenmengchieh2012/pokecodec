@@ -84,7 +84,8 @@ suite('DifficultyManager Test Suite', () => {
             battleResult: result,
             remainingHpPercent: hp,
             playerFainted: fainted,
-            isShiny: isShiny
+            isShiny: isShiny,
+            biomeType: 'forest',
         };
     }
 

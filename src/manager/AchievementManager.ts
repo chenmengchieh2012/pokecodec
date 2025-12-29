@@ -53,10 +53,10 @@ export class AchievementManager {
         });
     }
 
-    public async onLearnMoveFromMachine(payload: RecordLearnMoveFromMachinePayload): Promise<void> {
+    public async onLearnMoveFromMachine(_: RecordLearnMoveFromMachinePayload): Promise<void> {
         await this.performTransaction((stats) => {
             const analyzer = new AchievementAnalyzer(stats);
-            analyzer.onLearnMoveFromMachine(payload);
+            analyzer.onLearnMoveFromMachine();
             return analyzer.getStatistics();
         });
     }

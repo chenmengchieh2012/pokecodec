@@ -51,8 +51,7 @@ export class GameStateManager {
     }
 
     public getGameStateData(): GameStateData {
-        console.log("GameState.getGameState:", this.gameStateData.state);
-        console.log("GameState.getEncounterResult:", this.gameStateData.encounterResult);
+        console.log("GameState.getGameState:", this.gameStateData);
         return this.gameStateData; // 回傳複製品以防外部修改
     }
 
@@ -134,18 +133,16 @@ export class GameStateManager {
         opponentPokemonUid?: string
     }): Promise<boolean> {
         let success = false;
-        const { battleMode, opponentParty, encounterResult, defenderPokemonUid, opponentPokemonUid } = props;
+        const { battleMode, trainerData, opponentParty, encounterResult, defenderPokemonUid, opponentPokemonUid } = props;
         await this.performTransaction((data) => {
             if (state === GameState.Searching || state === GameState.Caught) {
                 data.battleMode = undefined;
+                data.trainerData = undefined;
                 data.encounterResult = undefined!;
             } else if (state === GameState.Battle || state === GameState.WildAppear || state === GameState.TrainerAppear) {
-                //if (encounterResult !== undefined) {
                 data.encounterResult = encounterResult;
-                //}
-                //if (battleMode !== undefined) {
                 data.battleMode = battleMode;
-                //}
+                data.trainerData = trainerData;
             }
             if (opponentParty) {
                 data.opponentParty = opponentParty;

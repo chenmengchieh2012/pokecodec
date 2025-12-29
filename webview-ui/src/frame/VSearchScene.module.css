@@ -291,7 +291,7 @@
 
 .npcButton {
   width: 98px;
-  height: 32px;
+  height: fit-content;
   background-color: #ff5555;
   border: 2px solid #800000;
   border-radius: 4px;

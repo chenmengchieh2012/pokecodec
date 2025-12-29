@@ -745,7 +745,7 @@ export class AchievementAnalyzer {
         }
     }
 
-    public onLearnMoveFromMachine(data: RecordLearnMoveFromMachinePayload) {
+    public onLearnMoveFromMachine() {
         this.update({ key: 'movesTaught', operation: 'increment' });
     }
 }

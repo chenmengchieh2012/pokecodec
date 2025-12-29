@@ -83,6 +83,7 @@ describe('VBattleCanvas', () => {
             <VBattleCanvas
                 myPokemon={mockMyPokemon}
                 opponentPokemon={mockOpponentPokemon}
+                battleMode={undefined}
             />
         );
 
@@ -103,6 +104,7 @@ describe('VBattleCanvas', () => {
             <VBattleCanvas
                 myPokemon={mockMyPokemon}
                 opponentPokemon={shinyOpponent}
+                battleMode={undefined}
             />
         );
 
@@ -126,6 +128,7 @@ describe('VBattleCanvas', () => {
                 ref={ref}
                 myPokemon={mockMyPokemon}
                 opponentPokemon={mockOpponentPokemon}
+                battleMode={undefined}
             />
         );
 
@@ -166,6 +169,7 @@ describe('VBattleCanvas', () => {
             <VBattleCanvas
                 myPokemon={mockMyPokemon}
                 opponentPokemon={mockOpponentPokemon}
+                battleMode={undefined}
             />
         );
 

@@ -105,7 +105,7 @@ describe('usePokemonState', () => {
 
         let success;
         await act(async () => {
-            success = await result.current.handler.throwBall(mockBall, 1, () => { });
+            success = await result.current.handler.throwBall(true, mockBall, 1, () => { });
         });
 
         expect(success).toBe(true);
@@ -137,7 +137,7 @@ describe('usePokemonState', () => {
 
         let success;
         await act(async () => {
-            success = await result.current.handler.throwBall(mockBall, 1, () => { });
+            success = await result.current.handler.throwBall(true, mockBall, 1, () => { });
         });
 
         expect(success).toBe(false);

@@ -59,6 +59,22 @@ vi.mock('../utilities/SequentialExecutor', () => {
     }
 });
 
+vi.mock('../../../src/utils/ItemEffectStrategy', () => {
+    return {
+        ItemEffectStrategy: class {
+            constructor(public pokemon: any, public item: any) {}
+            setEffectingMoveId() {}
+            async getEffectResult() {
+                return {
+                    pokemon: { ...this.pokemon, currentHp: (this.pokemon.currentHp || 0) + 20 },
+                    itemUsed: true,
+                    usedMessage: 'Used Potion!'
+                };
+            }
+        }
+    }
+});
+
 describe('BattleManager', () => {
     let mockDialogRef: React.RefObject<BattleControlHandle>;
     let mockBattleCanvasRef: React.RefObject<BattleCanvasHandle>;
@@ -256,7 +272,7 @@ describe('BattleManager', () => {
     });
 
     it('handleUseItem: heal hp', async () => {
-        const item = { name: 'Potion', effect: { healHp: 20 } } as ItemDao;
+        const item = { name: 'Potion', effect: { healHp: 20 }, price: 100, category: 'medicine' } as unknown as ItemDao;
         // Mock my pokemon damaged
         const damagedPokemon = { ...mockMyPokemon, currentHp: 10 };
 
@@ -281,13 +297,13 @@ describe('BattleManager', () => {
             item: item
         }));
 
-        // Note: BattleManager doesn't call heal() directly, it sends a message to extension.
-        // So we shouldn't expect mockMyPokemonHandler.heal to be called here.
-        // Instead, we expect the message to be sent.
+        // Since damagedPokemon is the current pokemon, refreshPokemon should be called
+        expect(mockMyPokemonHandler.refreshPokemon).toHaveBeenCalled();
+
+        // Also check for RecordItemAction
         expect(mockPostMessage).toHaveBeenCalledWith(expect.objectContaining({
-            command: MessageType.UseMedicineInBag,
-            item: item,
-            pokemonUid: damagedPokemon.uid
+            command: MessageType.RecordItemAction,
+            action: "use"
         }));
     });
 

@@ -90,7 +90,7 @@ export const PokemonFactory = {
     createWildPokemonInstance: async (pokemonEncounterData: PokeEncounterData,difficultyManager: DifficultyManager, filePath?: string, fixLevel?: number): Promise<PokemonDao> => {
         // 從資料庫取得寶可夢基本資料
         const finalPokemonId = pokemonEncounterData.pokemonId;
-        const depth = pokemonEncounterData.minDepth;
+        // const depth = pokemonEncounterData.minDepth;
 
         // Use local data instead of fetch
         const pokemonData = pokemonDataMap[String(finalPokemonId)];

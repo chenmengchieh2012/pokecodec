@@ -9,6 +9,9 @@ import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
 import { UserDao } from '../../../src/dataAccessObj/userData';
 import { DifficultyLevelPayload, GoTriggerEncounterPayload, SetDifficultyLevelPayload } from '../../../src/dataAccessObj/MessagePayload';
 import { MAX_DIFFICULTY_LEVEL } from '../../../src/dataAccessObj/DifficultyData';
+import trainerData from '../../../src/data/trainers.json';
+import { TrainerData } from '../../../src/dataAccessObj/trainerData';
+const trainers = trainerData as TrainerData[];
 interface SearchSceneProps {
     myPokemon?: PokemonDao;
     biomeType?: number; // 新增：接收外部傳入的生態系 index (0-4)
@@ -83,6 +86,22 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
         const randomPos = canWalkTiles.sort((a,b) => random(a.x, b.y)).slice(0, 5);
         return randomPos.map(pos => ({ ...pos, type: random(pos.x, pos.y) < 0.5 ? 0 : 1 }));
     },[pos.x, pos.y])
+
+
+    const nextGrade = useMemo(()=>{
+        const maximunUnlocked = difficultyLevelPayload?.maxUnlocked;
+        if(maximunUnlocked === undefined){
+            return "UNKNOWN"
+        }
+        if(maximunUnlocked >= MAX_DIFFICULTY_LEVEL){
+            return "GOD"
+        }
+        const nextTrainerTitle = trainers[maximunUnlocked+1]
+        if(nextTrainerTitle == undefined) {
+            return "UNKNOWN"
+        }
+        return nextTrainerTitle.title
+    },[difficultyLevelPayload])
 
     
 
@@ -270,7 +289,7 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
                     )}
 
                     {INITIAL_MAP.map((row, y) => (
-                        row.map((cellValue, x) => {
+                        row.map((_, x) => {
                             const isPlayerHere = (x === pos.x && y === pos.y);
                             const itemHere = mapItems.find(item => item.x === x && item.y === y);
                             return (
@@ -354,7 +373,7 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
                         onClick={handleBattleTrainer}
                         title="Battle NPC"
                     >
-                    UPGRADE
+                    UPGRAGE<br/>{nextGrade}
                     </button>
                 </div>
                 </>

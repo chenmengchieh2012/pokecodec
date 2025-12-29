@@ -58,7 +58,6 @@ export interface BattleManagerState {
 
 export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerProps): [BattleManagerState, BattleManagerMethod] => {
     const initializationState = useInitializationState();
-    console.log("[BattleManager] Initializing BattleManager...",initializationState);
     const [opponentParty, setOpponentParty] = React.useState<PokemonDao[]>([]);
     const [processingCount, setProcessingCount] = React.useState<number>(0);
     const [gameStateData, setGameStateData] = React.useState<GameStateData | undefined>(undefined);
@@ -159,13 +158,6 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
         runAttemptsRef.current = 0;
         catchAttemptsRef.current = 0;
     }, [gameStateData, opponentParty.length, opponentPokemonHandler]);
-
-    useEffect(() => {
-        if (initializationState === InitializedState.finished) {
-            checkMyPokemonIsReady(myPartyRef.current)
-            return;
-        }
-    }, [checkMyPokemonIsReady, initializationState]);
 
     // 1. 初始化 SequentialExecutor
     // 使用 useRef 確保在整個 Component 生命週期中只有這一個 Queue
@@ -823,7 +815,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
 
             if (success) {
                 battleCanvasRef.current?.handleRunAway()
-                await dialogBoxRef.current?.setText("Got away safely!");
+                await dialogBoxRef.current?.setText("Run away safely!");
                 onBattleEvent({
                     type: BattleEventType.Escaped,
                     state: 'finish',
@@ -939,6 +931,30 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
     }, [battleCanvasRef, dialogBoxRef, myPokemonHandler, onBattleEvent, opponentPokemonHandler])
 
 
+    useEffect(() => {
+        if (initializationState === InitializedState.finished) {
+            checkMyPokemonIsReady(myPartyRef.current)
+            doAction(async () => {
+                const newGameState = gameStateDataRef.current;
+                if( newGameState === undefined ){
+                    return;
+                }
+                // 如果是從暫停恢復戰鬥，雙方寶可夢都已存在
+                if (newGameState.opponentParty && newGameState.opponentParty.length > 0 &&
+                    newGameState.opponentPokemonUid && newGameState.defenderPokemonUid 
+                    && opponentPokemonRef.current == undefined
+                ) {
+                    await initBattleEncounter(newGameState);
+                    await dialogBoxRef.current?.setText("Battle Resumed!");
+                }
+
+            });
+            return;
+        } 
+    }, [checkMyPokemonIsReady, dialogBoxRef, doAction, initBattleEncounter, initializationState]);
+
+
+
     useMessageSubscription<GameStateData>(MessageType.GameStateData, async (message) => {
         
         const newGameState = message.data;
@@ -980,7 +996,6 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                 }
             }
 
-
             vscode.postMessage({
                 command: MessageType.SetGameStateData,
                 gameStateData: {
@@ -1002,26 +1017,10 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
         
         if (newGameState?.state === GameState.Searching) {
             console.log("[BattleManager] GameStateData indicates Searching state:", newGameState);
-            // 沒辦法因為可能前台重置，這裡一定要檢查
-            // if(myPartyRef.current.length > 0){
-            //     checkMyPokemonIsReady(myPartyRef.current);
-            // }
-            // 重置對方寶可夢狀態
             opponentPokemonHandler.resetPokemon();
             return;
         } else if (newGameState?.state === GameState.Battle) {
-            console.log("[BattleManager] GameStateData indicates Battle state:", newGameState);
-            doAction(async () => {
-                if (newGameState.opponentParty && newGameState.opponentParty.length > 0 &&
-                    // 如果是從暫停恢復戰鬥，雙方寶可夢都已存在
-                    newGameState.opponentPokemonUid && newGameState.defenderPokemonUid &&
-                    myPokemonRef.current == undefined && opponentPokemonRef.current == undefined
-                ) {
-                    await initBattleEncounter(newGameState);
-                    await dialogBoxRef.current?.setText("Battle Resumed!");
-                }
-
-            });
+            return;
 
         } else if (newGameState?.state === GameState.WildAppear || newGameState?.state === GameState.TrainerAppear) {
 

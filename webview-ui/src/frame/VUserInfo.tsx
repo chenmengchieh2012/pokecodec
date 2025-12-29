@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import styles from './VUserInfo.module.css';
 import { useMessageStore, useMessageSubscription } from '../store/messageStore';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
@@ -8,6 +8,11 @@ import { IoSettingsSharp, IoArrowUndo, IoCaretBack, IoCaretForward } from 'react
 import { DifficultyModifiers, ModifierType } from '../../../src/dataAccessObj/DifficultyData';
 
 import { DifficultyLevelPayload, SetDDAEnabledPayload } from '../../../src/dataAccessObj/MessagePayload';
+import trainerData from "../../../src/data/trainers.json"
+import { TrainerData } from '../../../src/dataAccessObj/trainerData';
+
+const trainers = trainerData as TrainerData[];
+
 
 const formatPlaytime = (ms: number) => {
     const totalSeconds = Math.floor(ms / 1000);
@@ -103,15 +108,23 @@ const VUserInfo = (props: { setIsFlipped: React.Dispatch<React.SetStateAction<bo
     const { setIsFlipped } = props;
     const messageStore = useMessageStore();
     const defaultUser = messageStore.getRefs().userInfo;
+    const difficultyLevel = messageStore.getRefs().difficultyLevel;
     const [user, setUser] = useState<UserDao | undefined>(defaultUser);
 
     useMessageSubscription<UserDao>(MessageType.UserData, (message) => {
         setUser(message.data);
     });
 
+    const myGrade = useMemo(()=>{
+        const maxUnlocked = difficultyLevel?.maxUnlocked || 1;
+        const alreadyWinTrainers = trainers[maxUnlocked]
+        return alreadyWinTrainers.title
+    },[difficultyLevel])
+
     if (!user) {
         return <div className={styles.loading}>Loading Trainer Card...</div>;
     }
+
 
     return (
         <div className={styles.trainerCard}>
@@ -138,6 +151,10 @@ const VUserInfo = (props: { setIsFlipped: React.Dispatch<React.SetStateAction<bo
                     <div className={styles.row}>
                         <span className={styles.label}>STARTER</span>
                         <span className={styles.value}>{user.starter === 'pikachu' ? 'Pikachu' : 'Eevee'}</span>
+                    </div>
+                    <div className={styles.row}>
+                        <span className={styles.label}>GRADE</span>
+                        <span className={styles.value}>{myGrade}</span>
                     </div>
                 </div>
 

@@ -1,4 +1,3 @@
-import { PokemonType } from "./pokemon";
 
 export interface PokeEncounterData {
     pokemonId: number;

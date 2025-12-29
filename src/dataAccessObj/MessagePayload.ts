@@ -2,7 +2,6 @@ import { ItemDao } from './item';
 import { PokemonDao } from './pokemon';
 import { PokeDexEntry, PokeDexEntryStatus } from './PokeDex';
 import { GameStateData } from './gameStateData';
-import { GameState } from './GameState';
 import { DifficultyLevelConfig, EncounterRecord } from './DifficultyData';
 export interface BoxPayload {
     pokemons: PokemonDao[];

@@ -1,4 +1,4 @@
-import { ItemDao, ItemEffect } from "../dataAccessObj/item";
+import { ItemDao } from "../dataAccessObj/item";
 import { PokemonDao } from "../dataAccessObj/pokemon";
 
 export class ItemEffectStrategy {

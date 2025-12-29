@@ -287,7 +287,7 @@ const MoveSelector: React.FC<MoveSelectorProps> = ({ isInParty, pokemon, moves }
         newMovesList[editingSlot] = newMove;
         newPokemon.pokemonMoves = newMovesList;
         const updatePartyPayload: UpdatePartyPokemonPayload = {
-            pokemon: newPokemon
+            pokemons: [newPokemon]
         };
         if (isInParty) {
             vscode.postMessage({
