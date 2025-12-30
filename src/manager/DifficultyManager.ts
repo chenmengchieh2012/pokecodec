@@ -553,6 +553,12 @@ export class DifficultyManager {
         };
     }
 
+
+    public async checkDbEmpty(): Promise<boolean> {
+        const currentLevel = this.context.globalState.get(this.KEY_CURRENT_LEVEL);
+        return currentLevel === undefined;
+    }
+
     public clear(): void {
         this.history = [];
         this.ddaEnabled = false;

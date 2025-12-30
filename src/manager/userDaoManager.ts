@@ -121,6 +121,11 @@ export class UserDaoManager {
         }
     }
 
+    public async checkDbEmpty(): Promise<boolean> {
+        const data = this.context.globalState.get<UserDao>(this.STORAGE_KEY);
+        return data === undefined;
+    }
+
     public async clear(): Promise<void> {
         await this.performTransaction(() => {
             return { money: 50000, autoEncounter: true };

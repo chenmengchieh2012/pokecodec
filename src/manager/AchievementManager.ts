@@ -133,5 +133,10 @@ export class AchievementManager {
         this.achievementStatistics = AchievementAnalyzer.getDefaultStatistics();
     }
 
+    public async checkDbEmpty(): Promise<boolean> {
+        const data = this.context.globalState.get<AchievementStatistics>(this.STORAGE_KEY);
+        return data === undefined;
+    }
+
 
 }

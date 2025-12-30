@@ -29,9 +29,7 @@ export const VBattlePage = () => {
   return (
     <div className={styles["game-container"]}>
       {gameState === GameState.Searching ? (
-        <VSearchScene
-          myPokemon={myPokemon}
-        />
+        <VSearchScene myParty={myParty}/>
       ) : (
         <>
           <VBattleCanvas

@@ -1,4 +1,4 @@
-import { useCallback, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { PokemonDao } from "../../../src/dataAccessObj/pokemon";
 import { vscode } from "../utilities/vscode";
 import { MessageType } from "../../../src/dataAccessObj/messageType";
@@ -6,66 +6,69 @@ import { MoveEffectResult } from "../../../src/utils/MoveEffectCalculator";
 import { PokemonMove } from "../../../src/dataAccessObj/pokeMove";
 import { getDefaultBattleCummulativeStats, RecordBattleActionPayload, RecordBattleCatchPayload, RecordBattleCummulativeStats, RecordBattleFinishedPayload } from "../../../src/utils/AchievementCritiria";
 
-export interface BattleRecoderInitProps {
-    myPokemonRef: React.RefObject<PokemonDao|undefined>;
-    opponentPokemonRef: React.RefObject<PokemonDao|undefined>;
-    myPartyRef: React.RefObject<PokemonDao[]>;
-}
 
 export interface BattleRecorderHandler {
-    onBattleFinished: () => void;
+    onBattleFinished: (
+        myPokemon: PokemonDao | undefined,
+        opponentPokemon: PokemonDao | undefined,
+        myParty: PokemonDao[]
+    ) => void;
     onBattleAction: (
         isSwitch: boolean,
-        myPokemonMoveEffectResult?: MoveEffectResult, 
-        opponentPokemonMoveEffectResult?: MoveEffectResult,
-        myPokemonMove?: PokemonMove,
-        opponentPokemonMove?: PokemonMove,
+        myPokemonMoveEffectResult: MoveEffectResult | undefined,
+        opponentPokemonMoveEffectResult: MoveEffectResult | undefined,
+        myPokemonMove: PokemonMove | undefined,
+        opponentPokemonMove: PokemonMove | undefined,
+        opponentPokemon: PokemonDao | undefined
     ) => void;
-    onCatch: () => void;
+    onCatch: (
+        opponentPokemon: PokemonDao | undefined,
+        biome: string
+    ) => void;
 }
 
-export const BattleRecorder = (props: BattleRecoderInitProps) => {
-    const battleCummulativeStatsRef = useRef< RecordBattleCummulativeStats>(getDefaultBattleCummulativeStats());
-    const myPokemonRef = props.myPokemonRef;;
-    const opponentPokemonRef = props.opponentPokemonRef;
-    const myPartyRef = props.myPartyRef;
-    const biomeRef = useRef<string>("");
+export const BattleRecorder = () => {
+    const battleCummulativeStatsRef = useRef<RecordBattleCummulativeStats>(getDefaultBattleCummulativeStats());
 
-
-    const onBattleFinished = useCallback((): void => {
-        if (!myPokemonRef.current || !opponentPokemonRef.current) {
+    const onBattleFinished = useCallback((
+        myPokemon: PokemonDao | undefined,
+        opponentPokemon: PokemonDao | undefined,
+        myParty: PokemonDao[]
+    ): void => {
+        if (!myPokemon || !opponentPokemon) {
             console.warn("BattleRecorder: Missing Pokemon data on battle finished.");
             return;
         }
-        const won = myPokemonRef.current.currentHp > 0 && opponentPokemonRef.current.currentHp <= 0;
+        const won = myPokemon.currentHp > 0 && opponentPokemon.currentHp <= 0;
         const stats = battleCummulativeStatsRef.current;
-        const payload:  RecordBattleFinishedPayload = {
+        const payload: RecordBattleFinishedPayload = {
             won: won,
-            myParty: myPartyRef.current.map(p => ({ 
+            myParty: myParty.map(p => ({ 
                 id: p.id,
                 level: p.level,
                 hp: p.currentHp,
                 types: p.types,
             })),
             opponent: {
-                level: opponentPokemonRef.current.level,
-                types: opponentPokemonRef.current.types,
-                isLegendary: opponentPokemonRef.current.isLegendary,
+                level: opponentPokemon.level,
+                types: opponentPokemon.types,
+                isLegendary: opponentPokemon.isLegendary,
             }, 
             stats: stats
         }
         vscode.postMessage({
-            command: MessageType. RecordBattleFinished,
+            command: MessageType.RecordBattleFinished,
             ...payload
         });
-    },[myPartyRef, myPokemonRef, opponentPokemonRef]);
+    }, []);
 
     const onBattleAction = useCallback((
         isSwitch: boolean,
-        myPokemonMoveEffectResult?: MoveEffectResult, 
-        opponentPokemonMoveEffectResult?: MoveEffectResult,
-        myPokemonMove?: PokemonMove,
-        opponentPokemonMove?: PokemonMove,
+        myPokemonMoveEffectResult: MoveEffectResult | undefined, 
+        opponentPokemonMoveEffectResult: MoveEffectResult | undefined,
+        myPokemonMove: PokemonMove | undefined,
+        opponentPokemonMove: PokemonMove | undefined,
+        opponentPokemon: PokemonDao | undefined
     )=>{
         battleCummulativeStatsRef.current.turns += 1;
         const damageDealt = myPokemonMoveEffectResult ? myPokemonMoveEffectResult.damage : 0;
@@ -74,7 +77,7 @@ export const BattleRecorder = (props: BattleRecoderInitProps) => {
         const isCritical = (myPokemonMoveEffectResult && myPokemonMoveEffectResult.isCritical) || (opponentPokemonMoveEffectResult && opponentPokemonMoveEffectResult.isCritical) || false;
         const isSuperEffective = (myPokemonMoveEffectResult && myPokemonMoveEffectResult.effectiveness > 1) || (opponentPokemonMoveEffectResult && opponentPokemonMoveEffectResult.effectiveness > 1) || false;
        
-        const isOHKO = (opponentPokemonMoveEffectResult && (opponentPokemonRef.current && opponentPokemonMoveEffectResult.damage >= opponentPokemonRef.current?.currentHp)) || false;
+        const isOHKO = (opponentPokemonMoveEffectResult && (opponentPokemon && opponentPokemonMoveEffectResult.damage >= opponentPokemon.currentHp)) || false;
         const transformUsed = myPokemonMove?.name === 'transform' || false;
         const ppRunOut = (myPokemonMove && myPokemonMove.pp <= 0) || false;
         const leerGlareUsed = (myPokemonMove && (myPokemonMove.name ==='leer' || myPokemonMove.name ==='glare')) || false;
@@ -105,26 +108,29 @@ export const BattleRecorder = (props: BattleRecoderInitProps) => {
         }
 
         vscode.postMessage({
-            command: MessageType. RecordBattleAction,
+            command: MessageType.RecordBattleAction,
             ...payload
         });
-    }, [opponentPokemonRef]);
+    }, []);
 
-    const onCatch = useCallback((): void => {
-        if(opponentPokemonRef.current == undefined) {
+    const onCatch = useCallback((
+        opponentPokemon: PokemonDao | undefined,
+        biome: string
+    ): void => {
+        if(opponentPokemon == undefined) {
             console.warn("BattleRecorder: Missing Pokemon data on catch.");
             return;
         }
         const hour = new Date().getHours();
         const payload :  RecordBattleCatchPayload = {
             pokemon: {
-                id: opponentPokemonRef.current.id,
-                types: opponentPokemonRef.current.types,
-                isLegendary: opponentPokemonRef.current.isLegendary,
-                isShiny: opponentPokemonRef.current.isShiny
+                id: opponentPokemon.id,
+                types: opponentPokemon.types,
+                isLegendary: opponentPokemon.isLegendary,
+                isShiny: opponentPokemon.isShiny
             },
             location: {
-                biome: biomeRef.current
+                biome: biome
             },
             isCritical: Math.random() < 0.25, // Placeholder logic for critical catch
             time: hour
@@ -133,11 +139,11 @@ export const BattleRecorder = (props: BattleRecoderInitProps) => {
             command: MessageType.RecordBattleCatch,
             ...payload
         });
-    }, [opponentPokemonRef]);
+    }, []);
 
-    return {
+    return useMemo(() => ({
         onBattleFinished,
         onBattleAction,
         onCatch,
-    }
+    }), [onBattleFinished, onBattleAction, onCatch]);
 }

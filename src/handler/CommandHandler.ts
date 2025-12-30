@@ -636,8 +636,9 @@ export class CommandHandler {
             const myFirstPartyPokemon = this.partyManager.getAll().filter(p => p.currentHp > 0);
             if (myFirstPartyPokemon.length >= 0) {
                 console.log('[Extension] Healthy Pokemon found in party, proceeding with encounter.');
+                // 如果視圖不可見，跳過 Appear 階段，直接進入戰鬥狀態
                 await this.gameStateManager.updateGameState(
-                    GameState.WildAppear,
+                    GameState.Battle,
                     {
                         battleMode: BattleMode.Wild,
                         trainerData: undefined,
@@ -660,12 +661,13 @@ export class CommandHandler {
     }
 
     public async handleNPCTriggerEncounter() {
-        // MARK: [TODO] Generate NPC Encounter Event
         let trainnerPokemons: PokemonDao[] = [];
         let maxDifficultyLevel = this.difficultyManager.getMaxUnlockedLevel();
         if (maxDifficultyLevel > MAX_DIFFICULTY_LEVEL || maxDifficultyLevel < 1) {
+            console.error(`[Extension] Invalid difficulty level ${maxDifficultyLevel}`);
             return;
         }
+
         const trainer = trainerDatas[maxDifficultyLevel - 1];
         if (!trainer) {
             console.error(`[Extension] Trainer data not found for difficulty level ${maxDifficultyLevel}`);

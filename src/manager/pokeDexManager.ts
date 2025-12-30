@@ -5,7 +5,7 @@ import { SequentialExecutor } from '../utils/SequentialExecutor';
 import { GlobalMutex } from '../utils/GlobalMutex';
 
 
-const VaildGens: string[] = [PokeDex__GEN1]
+const VaildGens: string[] = [PokeDex__GEN1];
 export class PokeDexManager {
     private static instance: PokeDexManager;
     private context: vscode.ExtensionContext;
@@ -143,5 +143,11 @@ export class PokeDexManager {
             dexData.push({ id: i, status: PokeDexEntryStatus.Unknown });
         }
         return dexData;
+    }
+
+    public async checkDbEmpty(): Promise<boolean> {
+        const key = this.getStorageKey(this.currentGen);
+        const data = this.context.globalState.get(key);
+        return data === undefined;
     }
 }

@@ -11,6 +11,7 @@ import { UserDaoManager } from '../manager/userDaoManager';
 import { GameState } from '../dataAccessObj/GameState';
 import { GameStateManager } from '../manager/gameStateManager';
 import { JoinPokemonManager } from '../manager/joinPokemonManager';
+import { PokemonDao } from '../dataAccessObj/pokemon';
 
 const itemDataMap = itemData as Record<string, ItemDao>;
 
@@ -51,11 +52,6 @@ export class GitActivityHandler {
 
         // 初始設定
         this.setupWatchers();
-    }
-
-    public dispose() {
-        this.watchers.forEach(w => w.dispose());
-        this.watchers = [];
     }
 
     private async findGitRoot(folderPath: string): Promise<string | null> {
@@ -130,7 +126,7 @@ export class GitActivityHandler {
     }
 
     private async handleGitChange(folderPath: string) {
-        if( this.gameStateManager?.getGameStateData().state !== GameState.Battle){
+        if( this.gameStateManager?.getGameStateData().state === GameState.Battle){
             console.log(`[GitActivityHandler] Skipping Git change processing because game state is not Battle.`);
             return;
         }
@@ -171,7 +167,7 @@ export class GitActivityHandler {
 
             // 過濾掉空行，確保我們拿到的是有內容的行
             const lines = statOutput.trim().split('\n').filter(line => line.trim().length > 0);
-            if (lines.length < 2) return;
+            if (lines.length < 2) { return; }
 
             const metaInfo = lines[0];
             // 統計資訊通常在最後一行
@@ -228,7 +224,7 @@ export class GitActivityHandler {
     private giveMoneyToPlayer(folderPath: string, linesChanged: number) {
         const userInfo = this.userDaoManager?.getUserInfo();
         // 根據 linesChanged 給予玩家遊戲幣
-        if (!userInfo) return;
+        if (!userInfo) { return; }
 
         const moneyEarned = Math.max(1, Math.floor(linesChanged / 10)); // 每 10 行程式碼給 1 遊戲幣
         // 最高給予 100 遊戲幣
@@ -286,31 +282,32 @@ export class GitActivityHandler {
                 console.warn(`[GitActivityHandler] Item data not found for ${selectedItemName}`);
             }
         } else {
-            const balls = ['poke_ball', 'great_ball', 'ultra_ball'];
-            const medicalItems = ['potion', 'super_potion', 'hyper_potion', 'full_restore', 'revive'];
+            const balls = ['poke-ball', 'great-ball', 'ultra-ball'];
+            const medicalItems = ['potion', 'super-potion', 'full-restore', 'revive'];
 
             // poke_ball * 3, great_ball *2, ultra_ball *1
             // potion *3, super_potion *2, hyper_potion *1, full_restore *1, revive *1
             const rarityWeightedList = [
                 ...balls.flatMap((ball, idx) => {
-                    if (ball === 'poke_ball') return [ball, ball, ball];
-                    if (ball === 'great_ball') return [ball, ball];
+                    if (ball === 'poke-ball') { return [ball, ball, ball]; }
+                    if (ball === 'great-ball') { return [ball, ball]; }
                     return [ball];
                 }),
                 ...medicalItems.flatMap((item, idx) => {
-                    if (item === 'potion') return [item, item, item];
-                    if (item === 'super_potion') return [item, item];
+                    if (item === 'potion') { return [item, item, item]; }
+                    if (item === 'super-potion') { return [item, item]; }
                     return [item];
                 })
             ];
             const flatList = rarityWeightedList.flat();
             const randomIndex = Math.floor(Math.random() * flatList.length);
             const selectedBallName = flatList[randomIndex];
+            console.log(`[GitActivityHandler] Selected common item: ${selectedBallName}`);
             givenItem = itemDataMap[selectedBallName];
             console.log(`[GitActivityHandler] Given common item ${givenItem.name} to player for coding effort.`);
         }
 
-        if (givenItem != undefined) {
+        if (givenItem !== undefined) {
             // 將道具加入玩家背包
             this.bagManager?.add(givenItem, 1);
             console.log(`[GitActivityHandler] Given item ${givenItem.name} to player for coding effort.`);
@@ -319,13 +316,14 @@ export class GitActivityHandler {
     }
 
     private updatePokemonStats(data: { linesChanged: number, isBugFix: boolean, commitHash: string }) {
-        if (!this.gameStateManager) return;
+        if (!this.gameStateManager) { return; }
 
-        const newParty = JSON.parse(JSON.stringify(this.partyManager?.getAll()));
+        const newParty: PokemonDao[] = JSON.parse(JSON.stringify(this.partyManager?.getAll()));
 
-        if (newParty.length === 0) return;
+        if (newParty.length === 0) { return; }
 
         // 紀錄codingStats在PokemonDao中
+        const newModifyPokemonList: PokemonDao[] = [];
         for (let modifyPokemon of newParty) {
 
 
@@ -358,10 +356,16 @@ export class GitActivityHandler {
                 modifyPokemon.codingStats.bugsFixed += 1;
             }
             // 儲存更新
-            this.partyManager?.update(modifyPokemon);
             console.log(`[GitActivityHandler] Updated Pokemon ${modifyPokemon.name} stats!`, modifyPokemon.codingStats);
-
+            newModifyPokemonList.push(modifyPokemon);
         }
+        this.partyManager?.update(newModifyPokemonList);
 
+    }
+
+    public dispose() {
+        this._onDidProcessCommit.dispose();
+        this.watchers.forEach(w => w.dispose());
+        this.watchers = [];
     }
 }

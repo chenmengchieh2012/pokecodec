@@ -46,7 +46,7 @@ export const ExperienceCalculator = {
         let newPokemon: PokemonDao = JSON.parse(JSON.stringify(pokemon));
 
         // MARK: Temporary fix for EXP gain bug
-        newPokemon.currentExp += (expGained + 10000);
+        newPokemon.currentExp += (expGained);
 
         // Check for level up
         // Assuming currentExp is "Relative EXP since last level"

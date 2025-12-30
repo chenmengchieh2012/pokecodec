@@ -1,11 +1,8 @@
 
 
 export const BattleEventType = {
-    Start: 'Start',
     RoundFinish: 'RoundFinish',
-    AllMyPokemonFainted: 'AllMyPokemonFainted',
     MyPokemonFaint: 'MyPokemonFaint',
-    WildPokemonFaint: 'WildPokemonFaint',
     WildPokemonCatched: 'WildPokemonCatched',
     Escaped: 'Escaped',
     UnKnownError: 'UnKnownError'
@@ -13,11 +10,8 @@ export const BattleEventType = {
 
 export type BattleEventType = typeof BattleEventType[keyof typeof BattleEventType];
 
-export type BattleState = 'finish' | 'ongoing';
-
 export interface BattleEvent {
     type: BattleEventType;
-    state: BattleState;
 }
 
 export const BattleType = {

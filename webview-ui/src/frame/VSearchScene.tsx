@@ -1,20 +1,19 @@
-import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import styles from './VSearchScene.module.css';
-import { BIOME_BACKGROUNDS } from '../utilities/biomeAssets';
-import { useMessageStore, useMessageSubscription } from '../store/messageStore';
-import { resolveAssetUrl, vscode } from '../utilities/vscode';
-import { BiomeType, BiomeData } from '../../../src/dataAccessObj/BiomeData';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import trainerData from '../../../src/data/trainers.json';
+import { BiomeData, BiomeType } from '../../../src/dataAccessObj/BiomeData';
+import { MAX_DIFFICULTY_LEVEL } from '../../../src/dataAccessObj/DifficultyData';
+import { DifficultyLevelPayload, GoTriggerEncounterPayload, SetDifficultyLevelPayload } from '../../../src/dataAccessObj/MessagePayload';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
 import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
-import { UserDao } from '../../../src/dataAccessObj/userData';
-import { DifficultyLevelPayload, GoTriggerEncounterPayload, SetDifficultyLevelPayload } from '../../../src/dataAccessObj/MessagePayload';
-import { MAX_DIFFICULTY_LEVEL } from '../../../src/dataAccessObj/DifficultyData';
-import trainerData from '../../../src/data/trainers.json';
 import { TrainerData } from '../../../src/dataAccessObj/trainerData';
+import { UserDao } from '../../../src/dataAccessObj/userData';
+import { useMessageStore, useMessageSubscription } from '../store/messageStore';
+import { BIOME_BACKGROUNDS } from '../utilities/biomeAssets';
+import { resolveAssetUrl, vscode } from '../utilities/vscode';
+import styles from './VSearchScene.module.css';
 const trainers = trainerData as TrainerData[];
 interface SearchSceneProps {
-    myPokemon?: PokemonDao;
-    biomeType?: number; // 新增：接收外部傳入的生態系 index (0-4)
+    myParty: PokemonDao[];
 }
 
 // 0:地板, 1:障礙物
@@ -45,22 +44,40 @@ const INITIAL_MAP = [
 const OBSTACLES = [1];
 const EMOTES = ["♥", "♪", "!", "...", "?"];
 
-export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
+export const VSearchScene: React.FC<SearchSceneProps> = ({
+    myParty
+}) => {
     const messageStore = useMessageStore(); // 確保訂閱生效
     const defaultBiome = messageStore.getRefs().biome
     const defaultDifficultyLevel = messageStore.getRefs().difficultyLevel;
+    const myPokemon = useMemo(()=>{
+        console.log("[BattleManager] gogoing to update myPokemon due to PartyData received.");
+        // 在搜尋狀態下收到隊伍更新，檢查目前出戰寶可夢是否還能戰鬥
+        // 這不是剛啟動的狀態，是中途收到隊伍更新
+        // 因為是searching狀態，所以直接換第一隻還活著的寶可夢出場
+        if (myParty == undefined || myParty.length === 0) {
+            console.log("[BattleManager] No Pokemon in party to set as myPokemon.");
+            return;
+        }
+        const myFirstHealthyPokemon = myParty.find(p => p.ailment !== 'fainted');
+        if (myFirstHealthyPokemon) {
+            console.log("[BattleManager] Switched to first healthy Pokemon in party:", myFirstHealthyPokemon.name.toUpperCase());
+            return myFirstHealthyPokemon;
+        } else {
+            // 全部暈倒，重設出場寶可夢
+            console.log("[BattleManager] All Pokemon fainted in party, resetting battle Pokemon.");
+            return undefined
+        }
+    },[myParty])
 
     const [pos, setPos] = useState({ x: 10, y: 10 });
     const [direction, setDirection] = useState<'left' | 'right'>('right');
     const [emote, setEmote] = useState<string | null>(null);
-
+    const [transitionStage, setTransitionStage] = useState<'idle' | 'fading-in'>('idle');
+    const currentBiomeTypeRef = React.useRef<BiomeType>(defaultBiome ? defaultBiome.biomeType : BiomeType.None);
     const [bgImage, setBgImage] = useState(defaultBiome ? BIOME_BACKGROUNDS[defaultBiome.biomeType] : BIOME_BACKGROUNDS[BiomeType.None]);
     const [nextBgImage, setNextBgImage] = useState<string | null>(null);
-    
-    // const prevBiomeRef = useRef<BiomeData | undefined>(undefined);
-    const currentBiomeRef = useRef<BiomeData | undefined>(undefined);
 
-    const [transitionStage, setTransitionStage] = useState<'idle' | 'fading-in' | 'fading-out'>('idle');
     const [enableAutoEncounter, setEnableAutoEncounter] = useState(true);
     const [isEncountering, setIsEncountering] = useState(false);
     const [difficultyLevelPayload, setDifficultyLevelPayload] = useState<DifficultyLevelPayload| undefined>(defaultDifficultyLevel);
@@ -103,7 +120,19 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
         return nextTrainerTitle.title
     },[difficultyLevelPayload])
 
-    
+
+    useMessageSubscription<BiomeData>(MessageType.BiomeData, (message) => {
+        const biomeData = message.data;
+        if (!biomeData) return;
+        if(currentBiomeTypeRef.current === biomeData.biomeType){
+            return
+        }else{
+            console.log("[VSearchScene] Biome changed to:", biomeData.biomeType);
+            setNextBgImage(BIOME_BACKGROUNDS[biomeData.biomeType]);
+            setTransitionStage('fading-in');
+            currentBiomeTypeRef.current = biomeData.biomeType;
+        }
+    });
 
     useMessageSubscription<void>(MessageType.TriggerEncounter, () => {
         setIsEncountering(true);
@@ -129,28 +158,10 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({ myPokemon }) => {
         }
     });
 
-    useMessageSubscription(MessageType.BiomeData, (message) => {
-        const newBiomeData = (message.data as BiomeData);
-        const newBg = BIOME_BACKGROUNDS[newBiomeData.biomeType];
 
-        // 如果是第一次收到或是背景圖真的有變
-        if (newBg !== bgImage && newBg !== nextBgImage) {
-             if (!bgImage) {
-                 // 初始沒有背景，直接設定
-                 setBgImage(newBg);
-                 currentBiomeRef.current = newBiomeData;
-             } else {
-                 // 有舊背景，開始轉場 (Fade In New Image)
-                 setNextBgImage(newBg);
-                 setTransitionStage('fading-in');
-                 currentBiomeRef.current = newBiomeData;
-             }
-        }
-    });
 
     const onBackgroundAnimationEnd = () => {
         if (transitionStage === 'fading-in' && nextBgImage) {
-            // Animation complete: New image becomes current
             setBgImage(nextBgImage);
             setNextBgImage(null);
             setTransitionStage('idle');

@@ -49,7 +49,7 @@ import { DifficultyManager } from './manager/DifficultyManager';
 
 const itemDataMap = itemData as unknown as Record<string, ItemDao>;
 
-export function activate(context: vscode.ExtensionContext) {
+export async function activate(context: vscode.ExtensionContext) {
     // 在 activate 函式一開始執行
 
     // 🔥 清除所有全域儲存 (測試用)
@@ -69,7 +69,7 @@ export function activate(context: vscode.ExtensionContext) {
     const gameStateManager = GameStateManager.initialize(context);
     const achievementManager = AchievementManager.initialize(context);
     const difficultyManager = DifficultyManager.initialize(context);
-    context.subscriptions.push({ dispose: () => difficultyManager.dispose() });
+    context.subscriptions.push(difficultyManager);
 
     if (gameStateManager.getGameStateData()?.state !== GameState.Searching) {
         gameStateManager.updateGameState(GameState.Searching, {});
@@ -77,25 +77,40 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Initialize Biome Data Handler
     const biomeHandler = BiomeDataHandler.initialize(context, userDaoManager, difficultyManager);
-    context.subscriptions.push({ dispose: () => biomeHandler.dispose() });
+    context.subscriptions.push(biomeHandler);
 
     // Initialize Session Handler
     const sessionHandler = SessionHandler.initialize(context);
-    context.subscriptions.push({ dispose: () => sessionHandler.dispose() });
+    context.subscriptions.push(sessionHandler);
 
     // Initialize Git Activity Handler
     const gitHandler = GitActivityHandler.getInstance();
     gitHandler.initialize();
-    context.subscriptions.push({ dispose: () => gitHandler.dispose() });
+    context.subscriptions.push(gitHandler);
 
     const gameProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'game', context });
     const backpackProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'backpack', context });
     const computerProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'computer', context });
     const shopProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'shop', context });
 
-
-    var BiomeIndex = -1;
-
+    // 🔥 首次安裝時執行重置
+    const isFirstRun = context.globalState.get('isFirstRun', true);
+    if (isFirstRun) {
+        await context.globalState.update('isFirstRun', false);
+        if(await achievementManager.checkDbEmpty()){
+            console.log('[Activate] First run detected: Achievement database is empty. Initializing achievement statistics.');
+            await achievementManager.clear();
+        }
+        if(await difficultyManager.checkDbEmpty()){
+            await difficultyManager.clear();
+        }
+        if(await pokeDexManager.checkDbEmpty()){
+            await pokeDexManager.clear();
+        }
+        if(await userDaoManager.checkDbEmpty()){
+            await userDaoManager.clear();
+        }
+    }
 
     context.subscriptions.push(
         vscode.window.registerWebviewViewProvider('pokemonReact', gameProvider),
@@ -156,8 +171,8 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
     private gameStateManager: GameStateManager;
     private achievementManager: AchievementManager;
     private difficultyManager: DifficultyManager;
-
     private biomeHandler: BiomeDataHandler;
+
     private gitHandler: GitActivityHandler;
     private sessionHandler: SessionHandler;
 
@@ -193,7 +208,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             this.pokeDexManager,
             this.achievementManager,
             this.difficultyManager,
-            _context
+            this._context
         );
         PokemonViewProvider.providers.push(this);
 
@@ -237,7 +252,8 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                 this.partyManager.getAll().length > 0 &&
                 this.partyManager.getAll().some(p => p.currentHp > 0)) {
                 const randomEncounterChance = Math.random();
-                if (randomEncounterChance < 0.2) { // 20% 機率觸發隨機遭遇
+                // MARK: TEST 100% 機率觸發隨機遭遇
+                if (randomEncounterChance < 1) { // 20% 機率觸發隨機遭遇
                     this.commandHandler.handleWildTriggerEncounter();
                 }
             }
@@ -322,6 +338,8 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
 
         // 畫面開啟時，檢查當前編輯器的 Biome
         this.biomeHandler.checkActiveEditor();
+
+
 
         // 當 View 變為可見時，立即更新資料
         webviewView.onDidChangeVisibility(() => {

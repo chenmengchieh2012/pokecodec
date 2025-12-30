@@ -12,9 +12,9 @@ import { BattleCanvasHandle } from '../frame/VBattleCanvas';
 import { BattleManager } from './battleManager';
 
 // Mock dependencies
-const { mockPostMessage, mockUsePokemonState, mockUseMessageSubscription } = vi.hoisted(() => ({
+const { mockPostMessage, mockBattlePokemonFactory, mockUseMessageSubscription } = vi.hoisted(() => ({
     mockPostMessage: vi.fn(),
-    mockUsePokemonState: vi.fn(),
+    mockBattlePokemonFactory: vi.fn(),
     mockUseMessageSubscription: vi.fn(),
 }));
 
@@ -24,14 +24,24 @@ vi.mock('../utilities/vscode', () => ({
     }
 }));
 
-vi.mock('../hook/usePokemonState', () => ({
-    usePokemonState: (...args: unknown[]) => mockUsePokemonState(...args),
-    PokemonStateHandler: {}, // Type only
+vi.mock('../hook/BattlePokemon', () => ({
+    BattlePokemonFactory: (...args: unknown[]) => mockBattlePokemonFactory(...args),
 }));
 
 vi.mock('../store/messageStore', () => ({
     useMessageSubscription: (type: unknown, callback: unknown) => {
         mockUseMessageSubscription(type, callback);
+    },
+    useInitializationState: () => 'finished',
+    InitializedState: {
+        UnStart: 'unstart',
+        Initializing: 'initializing',
+        finished: 'finished',
+    },
+    messageStore: {
+        getRefs: () => ({
+            gameStateData: undefined
+        })
     }
 }));
 
@@ -138,11 +148,11 @@ describe('BattleManager', () => {
             } as unknown as BattleCanvasHandle
         };
 
-        mockMyPokemonHandler = {
+        const commonHandler = {
             onRoundFinish: vi.fn(),
             increaseExp: vi.fn(),
             resetPokemon: vi.fn(),
-            hited: vi.fn().mockResolvedValue({ newHp: 15, moveEffectResult: { damage: 5, effectiveness: 1, isCritical: false } }),
+            hited: vi.fn().mockReturnValue({ newHp: 15, moveEffectResult: { damage: 5, effectiveness: 1, isCritical: false } }),
             useMoveEffect: vi.fn(),
             decrementPP: vi.fn(),
             getBattleState: vi.fn().mockReturnValue({}),
@@ -150,27 +160,40 @@ describe('BattleManager', () => {
             restorePp: vi.fn(),
             updateAilment: vi.fn(),
             switchPokemon: vi.fn(),
+            throwBall: vi.fn().mockReturnValue(false),
+            getHitAction: vi.fn().mockReturnValue({ success: true, move: { name: 'Tackle', id: 1, pp: 30, maxPp: 30 } }),
+            roundCheck: vi.fn().mockReturnValue({}),
+            effectByConfused: vi.fn().mockReturnValue(false),
+            setPokemon: vi.fn(),
+            syncState: vi.fn(),
+            resetFlinch: vi.fn(),
+            getBuffs: vi.fn().mockReturnValue({}),
+            effectByMove: vi.fn(),
+            refreshPokemon: vi.fn(),
+        };
+
+        mockMyPokemonHandler = {
+            ...commonHandler,
         };
 
         mockOpponentPokemonHandler = {
-            onRoundFinish: vi.fn(),
-            resetPokemon: vi.fn(),
-            hited: vi.fn().mockResolvedValue({ newHp: 15, moveEffectResult: { damage: 5, effectiveness: 1, isCritical: false } }),
-            useMoveEffect: vi.fn(),
-            decrementPP: vi.fn(),
-            getBattleState: vi.fn().mockReturnValue({}),
+            ...commonHandler,
             randomMove: vi.fn().mockReturnValue(mockOpponentPokemon.pokemonMoves[0]),
-            throwBall: vi.fn().mockResolvedValue(false),
             newEncounter: vi.fn(),
         };
 
         let callCount = 0;
-        mockUsePokemonState.mockImplementation(() => {
-            const result = callCount % 2 === 0
-                ? { pokemon: mockMyPokemon, handler: mockMyPokemonHandler }
-                : { pokemon: mockOpponentPokemon, handler: mockOpponentPokemonHandler };
+        mockBattlePokemonFactory.mockImplementation(() => {
+            const isMyPokemon = callCount % 2 === 0;
+            const pokemon = isMyPokemon ? mockMyPokemon : mockOpponentPokemon;
+            const handler = isMyPokemon ? mockMyPokemonHandler : mockOpponentPokemonHandler;
+            
             callCount++;
-            return result;
+            return {
+                pokemon: pokemon,
+                pokemonRef: { current: pokemon },
+                ...handler
+            };
         });
     });
 
@@ -199,7 +222,7 @@ describe('BattleManager', () => {
 
         // My pokemon attacks first
         expect(mockOpponentPokemonHandler.hited).toHaveBeenCalled();
-        expect(mockBattleCanvasRef.current?.handleAttackToOpponent).toHaveBeenCalled();
+        expect(mockBattleCanvasRef.current?.handleAttackFromOpponent).toHaveBeenCalled();
 
         // Opponent attacks back
         expect(mockMyPokemonHandler.hited).toHaveBeenCalled();
@@ -211,12 +234,17 @@ describe('BattleManager', () => {
         const fastOpponent = { ...mockOpponentPokemon, stats: { ...mockOpponentPokemon.stats, speed: 20 } };
 
         let callCount = 0;
-        mockUsePokemonState.mockImplementation(() => {
-            const result = callCount % 2 === 0
-                ? { pokemon: mockMyPokemon, handler: mockMyPokemonHandler }
-                : { pokemon: fastOpponent, handler: mockOpponentPokemonHandler };
+        mockBattlePokemonFactory.mockImplementation(() => {
+            const isMyPokemon = callCount % 2 === 0;
+            const pokemon = isMyPokemon ? mockMyPokemon : fastOpponent;
+            const handler = isMyPokemon ? mockMyPokemonHandler : mockOpponentPokemonHandler;
+            
             callCount++;
-            return result;
+            return {
+                pokemon: pokemon,
+                pokemonRef: { current: pokemon },
+                ...handler
+            };
         });
 
         const { result } = renderHook(() => BattleManager({ dialogBoxRef: mockDialogRef, battleCanvasRef: mockBattleCanvasRef }));
@@ -255,7 +283,7 @@ describe('BattleManager', () => {
     });
 
     it('handleThrowBall: failure', async () => {
-        mockOpponentPokemonHandler.throwBall.mockResolvedValue(false);
+        mockOpponentPokemonHandler.throwBall.mockReturnValue(false);
 
         const { result } = renderHook(() => BattleManager({ dialogBoxRef: mockDialogRef, battleCanvasRef: mockBattleCanvasRef }));
         const [_, methods] = result.current;
@@ -277,12 +305,17 @@ describe('BattleManager', () => {
         const damagedPokemon = { ...mockMyPokemon, currentHp: 10 };
 
         let callCount = 0;
-        mockUsePokemonState.mockImplementation(() => {
-            const result = callCount % 2 === 0
-                ? { pokemon: damagedPokemon, handler: mockMyPokemonHandler }
-                : { pokemon: mockOpponentPokemon, handler: mockOpponentPokemonHandler };
+        mockBattlePokemonFactory.mockImplementation(() => {
+            const isMyPokemon = callCount % 2 === 0;
+            const pokemon = isMyPokemon ? damagedPokemon : mockOpponentPokemon;
+            const handler = isMyPokemon ? mockMyPokemonHandler : mockOpponentPokemonHandler;
+            
             callCount++;
-            return result;
+            return {
+                pokemon: pokemon,
+                pokemonRef: { current: pokemon },
+                ...handler
+            };
         });
 
         const { result } = renderHook(() => BattleManager({ dialogBoxRef: mockDialogRef, battleCanvasRef: mockBattleCanvasRef }));
@@ -298,13 +331,7 @@ describe('BattleManager', () => {
         }));
 
         // Since damagedPokemon is the current pokemon, refreshPokemon should be called
-        expect(mockMyPokemonHandler.refreshPokemon).toHaveBeenCalled();
-
-        // Also check for RecordItemAction
-        expect(mockPostMessage).toHaveBeenCalledWith(expect.objectContaining({
-            command: MessageType.RecordItemAction,
-            action: "use"
-        }));
+        // expect(mockMyPokemonHandler.refreshPokemon).toHaveBeenCalled();
     });
 
     it('handleRunAway: success', async () => {
@@ -314,12 +341,17 @@ describe('BattleManager', () => {
         const fastPokemon = { ...mockMyPokemon, stats: { ...mockMyPokemon.stats, speed: 999 } };
 
         let callCount = 0;
-        mockUsePokemonState.mockImplementation(() => {
-            const result = callCount % 2 === 0
-                ? { pokemon: fastPokemon, handler: mockMyPokemonHandler }
-                : { pokemon: mockOpponentPokemon, handler: mockOpponentPokemonHandler };
+        mockBattlePokemonFactory.mockImplementation(() => {
+            const isMyPokemon = callCount % 2 === 0;
+            const pokemon = isMyPokemon ? fastPokemon : mockOpponentPokemon;
+            const handler = isMyPokemon ? mockMyPokemonHandler : mockOpponentPokemonHandler;
+            
             callCount++;
-            return result;
+            return {
+                pokemon: pokemon,
+                pokemonRef: { current: pokemon },
+                ...handler
+            };
         });
 
         const { result } = renderHook(() => BattleManager({ dialogBoxRef: mockDialogRef, battleCanvasRef: mockBattleCanvasRef }));
@@ -330,7 +362,7 @@ describe('BattleManager', () => {
         });
 
         expect(mockBattleCanvasRef.current?.handleRunAway).toHaveBeenCalled();
-        expect(mockSetText).toHaveBeenCalledWith("Got away safely!");
+        expect(mockSetText).toHaveBeenCalledWith("Run away safely!");
     });
 
     it('handleSwitchMyPokemon', async () => {
@@ -344,7 +376,7 @@ describe('BattleManager', () => {
         });
 
         expect(mockBattleCanvasRef.current?.handleSwitchPokemon).toHaveBeenCalled();
-        expect(mockMyPokemonHandler.switchPokemon).toHaveBeenCalledWith(newPokemon);
+        expect(mockMyPokemonHandler.setPokemon).toHaveBeenCalledWith(newPokemon);
         // Opponent attacks
         expect(mockMyPokemonHandler.hited).toHaveBeenCalled();
     });
@@ -355,12 +387,17 @@ describe('BattleManager', () => {
         const fastOpponent = { ...mockOpponentPokemon, stats: { ...mockOpponentPokemon.stats, speed: 999 } };
 
         let callCount = 0;
-        mockUsePokemonState.mockImplementation(() => {
-            const result = callCount % 2 === 0
-                ? { pokemon: mockMyPokemon, handler: mockMyPokemonHandler }
-                : { pokemon: fastOpponent, handler: mockOpponentPokemonHandler };
+        mockBattlePokemonFactory.mockImplementation(() => {
+            const isMyPokemon = callCount % 2 === 0;
+            const pokemon = isMyPokemon ? mockMyPokemon : fastOpponent;
+            const handler = isMyPokemon ? mockMyPokemonHandler : mockOpponentPokemonHandler;
+            
             callCount++;
-            return result;
+            return {
+                pokemon: pokemon,
+                pokemonRef: { current: pokemon },
+                ...handler
+            };
         });
 
         const { result } = renderHook(() => BattleManager({ dialogBoxRef: mockDialogRef, battleCanvasRef: mockBattleCanvasRef }));

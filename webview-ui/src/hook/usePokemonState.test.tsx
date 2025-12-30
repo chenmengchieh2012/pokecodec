@@ -1,12 +1,11 @@
-import { act, renderHook } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { PokeBallDao } from '../../../src/dataAccessObj/pokeBall';
-import { PokemonDao, PokemonStateAction } from '../../../src/dataAccessObj/pokemon';
+import { renderHook, act } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { BattlePokemonFactory } from './BattlePokemon';
+import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
 import { PokemonMove } from '../../../src/dataAccessObj/pokeMove';
-import { BattlePokemonState, MoveEffectCalculator, MoveEffectResult } from '../../../src/utils/MoveEffectCalculator';
-import { BattleControlHandle } from '../frame/BattleControl';
-import { usePokemonState } from './usePokemonState';
+import { MoveEffectCalculator } from '../../../src/utils/MoveEffectCalculator';
 import { ExperienceCalculator } from '../../../src/utils/ExperienceCalculator';
+import { PokeBallDao } from '../../../src/dataAccessObj/pokeBall';
 
 // Mock dependencies
 vi.mock('../../../src/utils/MoveEffectCalculator', () => ({
@@ -21,10 +20,7 @@ vi.mock('../../../src/utils/ExperienceCalculator', () => ({
     }
 }));
 
-describe('usePokemonState', () => {
-    let mockDialogRef: React.RefObject<BattleControlHandle>;
-    let mockSetText: ReturnType<typeof vi.fn>;
-
+describe('BattlePokemonFactory', () => {
     const mockPokemon: PokemonDao = {
         uid: 'test-uid',
         id: 25,
@@ -34,237 +30,136 @@ describe('usePokemonState', () => {
         maxHp: 20,
         stats: { hp: 20, attack: 10, defense: 10, specialAttack: 10, specialDefense: 10, speed: 10 },
         pokemonMoves: [
-            { name: 'Thunder Shock', pp: 30, maxPp: 30 } as unknown as PokemonMove,
-            { name: 'Quick Attack', pp: 30, maxPp: 30 } as unknown as PokemonMove
+            { id: 1, name: 'Thunder Shock', pp: 30, maxPp: 30 } as unknown as PokemonMove,
+            { id: 2, name: 'Quick Attack', pp: 30, maxPp: 30 } as unknown as PokemonMove
         ],
         isShiny: false,
         exp: 0,
-        types: ['electric']
+        types: ['electric'],
+        ailment: 'healthy'
     } as unknown as PokemonDao;
 
     beforeEach(() => {
-        mockSetText = vi.fn().mockResolvedValue(undefined);
-        mockDialogRef = {
-            current: {
-                setText: mockSetText,
-            } as unknown as BattleControlHandle
-        };
         vi.clearAllMocks();
     });
 
-    afterEach(() => {
-        vi.restoreAllMocks();
+    it('should initialize with undefined pokemon', () => {
+        const { result } = renderHook(() => BattlePokemonFactory());
+        expect(result.current.pokemon).toBeUndefined();
     });
 
-    it('initializes with default pokemon and state', () => {
-        const { result } = renderHook(() => usePokemonState(mockDialogRef, {
-            defaultPokemon: mockPokemon,
-            defaultPokemonState: { action: PokemonStateAction.None }
-        }));
+    it('should set pokemon and sync state', () => {
+        const { result } = renderHook(() => BattlePokemonFactory());
+
+        act(() => {
+            result.current.setPokemon(mockPokemon);
+            result.current.syncState();
+        });
 
         expect(result.current.pokemon).toEqual(mockPokemon);
     });
 
-    it('handles switchPokemon', async () => {
-        const { result } = renderHook(() => usePokemonState(mockDialogRef, {
-            defaultPokemon: undefined,
-            defaultPokemonState: undefined
-        }));
-
-        const newPokemon = { ...mockPokemon, name: 'Bulbasaur' };
-
-        await act(async () => {
-            await result.current.handler.switchPokemon(newPokemon);
+    it('should handle taking damage (hited)', () => {
+        const { result } = renderHook(() => BattlePokemonFactory());
+        
+        // Setup pokemon
+        act(() => {
+            result.current.setPokemon(mockPokemon);
+            result.current.syncState();
         });
 
-        expect(result.current.pokemon).toEqual(newPokemon);
-        expect(mockSetText).toHaveBeenCalledWith('Go! BULBASAUR!');
-    });
-
-    it('handles throwBall success', async () => {
-        const { result } = renderHook(() => usePokemonState(mockDialogRef, {
-            defaultPokemon: mockPokemon,
-            defaultPokemonState: { action: PokemonStateAction.None }
-        }));
-
-        const mockBall: PokeBallDao = {
-            id: 1,
-            name: 'Poke Ball',
-            apiName: 'poke-ball',
-            catchRateModifier: 1,
-            price: 200,
-            sellPrice: 100,
-            pocket: 'balls',
-            totalSize: 1,
-            description: 'A device for catching wild Pokemon.',
-            isConsumable: true
-        } as unknown as PokeBallDao;
-
-        // Mock Math.random to return small value (success)
-        vi.spyOn(Math, 'random').mockReturnValue(0.1);
-
-        let success;
-        await act(async () => {
-            success = await result.current.handler.throwBall(true, mockBall, 1, () => { });
+        // Mock damage calculation
+        const mockDamage = 5;
+        vi.mocked(MoveEffectCalculator.calculateEffect).mockReturnValue({
+            damage: mockDamage,
+            effectiveness: 1,
+            isCritical: false,
+            isHit: true,
+            ailment: undefined,
+            flinched: false,
+            confused: false,
+            attackerStatChanges: undefined,
+            defenderStatChanges: undefined
         });
-
-        expect(success).toBe(true);
-        expect(mockSetText).toHaveBeenCalledWith('POKé BALL!!!');
-        expect(mockSetText).toHaveBeenCalledWith('All right! PIKACHU was caught!');
-    });
-
-    it('handles throwBall failure', async () => {
-        const { result } = renderHook(() => usePokemonState(mockDialogRef, {
-            defaultPokemon: mockPokemon,
-            defaultPokemonState: { action: PokemonStateAction.None }
-        }));
-
-        const mockBall: PokeBallDao = {
-            id: 1,
-            name: 'Poke Ball',
-            apiName: 'poke-ball',
-            catchRateModifier: 1,
-            price: 200,
-            sellPrice: 100,
-            pocket: 'balls',
-            totalSize: 1,
-            description: 'A device for catching wild Pokemon.',
-            isConsumable: true
-        } as unknown as PokeBallDao;
-
-        // Mock Math.random to return <= 0.4 (failure)
-        vi.spyOn(Math, 'random').mockReturnValue(0.3);
-
-        let success;
-        await act(async () => {
-            success = await result.current.handler.throwBall(true, mockBall, 1, () => { });
-        });
-
-        expect(success).toBe(false);
-        expect(mockSetText).toHaveBeenCalledWith('Darn! The POKéMON broke free!');
-    });
-
-    it('handles hited (taking damage)', async () => {
-        const { result } = renderHook(() => usePokemonState(mockDialogRef, {
-            defaultPokemon: mockPokemon,
-            defaultPokemonState: { action: PokemonStateAction.None }
-        }));
 
         const attacker = { ...mockPokemon, name: 'Attacker' };
-        const attackerBuffs: BattlePokemonState = {
-            effectStats: { hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 },
-            flinched: false, confused: false
-        };
-        const move = { name: 'Tackle', power: 40 } as PokemonMove;
-        const damageResult: MoveEffectResult = {
-            damage: 5, isCritical: false, effectiveness: 1, isHit: true, flinched: false, ailment: undefined
-        };
+        const move = mockPokemon.pokemonMoves[0];
+        const attackerBuffs = result.current.getBattleState();
 
-        (MoveEffectCalculator.calculateEffect as unknown as ReturnType<typeof vi.fn>).mockReturnValue(damageResult);
-
-        await act(async () => {
-            await result.current.handler.hited(attacker, attackerBuffs, move);
+        act(() => {
+            result.current.hited(attacker, attackerBuffs, move);
+            result.current.syncState();
         });
 
         expect(result.current.pokemon?.currentHp).toBe(15); // 20 - 5
-        expect(MoveEffectCalculator.calculateEffect).toHaveBeenCalled();
     });
 
-    it('handles hited (fainting)', async () => {
-        const { result } = renderHook(() => usePokemonState(mockDialogRef, {
-            defaultPokemon: mockPokemon,
-            defaultPokemonState: { action: PokemonStateAction.None }
-        }));
-
-        const attacker = { ...mockPokemon, name: 'Attacker' };
-        const attackerBuffs: BattlePokemonState = {
-            effectStats: { hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 },
-            flinched: false, confused: false
-        };
-        const move = { name: 'Hyper Beam', power: 150 } as PokemonMove;
-        const damageResult: MoveEffectResult = {
-            damage: 25, isCritical: false, effectiveness: 1, isHit: true, flinched: false, ailment: undefined
-        }; // More than 20 HP
-
-        (MoveEffectCalculator.calculateEffect as unknown as ReturnType<typeof vi.fn>).mockReturnValue(damageResult);
-
-        await act(async () => {
-            await result.current.handler.hited(attacker, attackerBuffs, move);
+    it('should handle throwing a ball', () => {
+        const { result } = renderHook(() => BattlePokemonFactory());
+        
+        act(() => {
+            result.current.setPokemon(mockPokemon);
+            result.current.syncState();
         });
 
-        expect(result.current.pokemon?.currentHp).toBe(0);
+        const mockBall: PokeBallDao = {
+            id: 'poke-ball',
+            name: 'Poke Ball',
+            catchRateModifier: 1,
+            price: 200,
+            description: 'A device for catching wild Pokemon.',
+            apiName: 'poke-ball'
+        } as unknown as PokeBallDao;
+
+        // Mock Math.random to ensure catch success
+        const originalRandom = Math.random;
+        Math.random = vi.fn(() => 0); 
+
+        let success = false;
+        act(() => {
+            success = result.current.throwBall(mockBall, 0);
+            result.current.syncState();
+        });
+
+        expect(success).toBe(true);
+        expect(result.current.pokemon?.caughtBall).toBe('poke-ball');
+
+        Math.random = originalRandom;
     });
 
-    it('handles heal', async () => {
-        const damagedPokemon = { ...mockPokemon, currentHp: 10 };
-        const { result } = renderHook(() => usePokemonState(mockDialogRef, {
-            defaultPokemon: damagedPokemon,
-            defaultPokemonState: { action: PokemonStateAction.None }
-        }));
-
-        await act(async () => {
-            await result.current.handler.heal(5);
+    it('should handle experience gain and level up', () => {
+        const { result } = renderHook(() => BattlePokemonFactory());
+        
+        act(() => {
+            result.current.setPokemon(mockPokemon);
+            result.current.syncState();
         });
 
-        expect(result.current.pokemon?.currentHp).toBe(15);
-
-        await act(async () => {
-            await result.current.handler.heal(100); // Overheal
-        });
-
-        expect(result.current.pokemon?.currentHp).toBe(20); // Max HP
-    });
-
-    it('handles decrementPP', () => {
-        const { result } = renderHook(() => usePokemonState(mockDialogRef, {
-            defaultPokemon: mockPokemon,
-            defaultPokemonState: { action: PokemonStateAction.None }
-        }));
-
-        const move = mockPokemon.pokemonMoves[0];
+        const leveledUpPokemon = { ...mockPokemon, level: 6 };
+        vi.mocked(ExperienceCalculator.addExperience).mockReturnValue(leveledUpPokemon);
 
         act(() => {
-            result.current.handler.decrementPP(move);
+            const { isLevelUp } = result.current.increaseExp(100);
+            result.current.syncState();
+            expect(isLevelUp).toBe(true);
         });
 
-        expect(result.current.pokemon?.pokemonMoves[0].pp).toBe(29);
+        expect(result.current.pokemon?.level).toBe(6);
     });
 
-    it('handles increaseExp', () => {
-        const { result } = renderHook(() => usePokemonState(mockDialogRef, {
-            defaultPokemon: mockPokemon,
-            defaultPokemonState: { action: PokemonStateAction.None }
-        }));
-
-        const leveledUpPokemon = { ...mockPokemon, level: 6, exp: 100 };
-        (ExperienceCalculator.addExperience as unknown as ReturnType<typeof vi.fn>).mockReturnValue(leveledUpPokemon);
-
+    it('should reset pokemon', () => {
+        const { result } = renderHook(() => BattlePokemonFactory());
+        
         act(() => {
-            result.current.handler.increaseExp(50);
+            result.current.setPokemon(mockPokemon);
+            result.current.syncState();
         });
 
-        expect(ExperienceCalculator.addExperience).toHaveBeenCalledWith(mockPokemon, 50);
-        expect(result.current.pokemon).toEqual(leveledUpPokemon);
-    });
-
-    it('handles randomMove', () => {
-        const { result } = renderHook(() => usePokemonState(mockDialogRef, {
-            defaultPokemon: mockPokemon,
-            defaultPokemonState: { action: PokemonStateAction.None }
-        }));
-
-        const move = result.current.handler.randomMove();
-        expect(mockPokemon.pokemonMoves).toContainEqual(move);
-    });
-
-    it('handles resetPokemon', () => {
-        const { result } = renderHook(() => usePokemonState(mockDialogRef, {
-            defaultPokemon: mockPokemon,
-            defaultPokemonState: { action: PokemonStateAction.None }
-        }));
+        expect(result.current.pokemon).toBeDefined();
 
         act(() => {
-            result.current.handler.resetPokemon();
+            result.current.resetPokemon();
+            result.current.syncState();
         });
 
         expect(result.current.pokemon).toBeUndefined();
