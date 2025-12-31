@@ -1,6 +1,6 @@
 import styles from './EvolutionModal.module.css';
 import { resolveAssetUrl, vscode } from '../utilities/vscode';
-import { EvolutionTrigger, PokemonDao, RawPokemonData } from '../../../src/dataAccessObj/pokemon';
+import { EvolutionTrigger, getName, PokemonDao, RawPokemonData } from '../../../src/dataAccessObj/pokemon';
 import pokemonGen1Data from "../../../src/data/pokemonGen1.json";
 import { useMemo } from 'react';
 import { EvolvePokemonPayload, UseItemPayload } from '../../../src/dataAccessObj/MessagePayload';
@@ -88,7 +88,7 @@ export const EvolutionModal: React.FC<EvolutionModalProps> = ({ pokemon, onClose
                     <div className={styles.evolutionRow}>
                         <div className={styles.evolutionSprite}>
                             <img src={resolveAssetUrl(`./sprites/pokemon/${pokemon.isShiny ? 'shiny' : 'normal'}/${pokemon.id}.gif`)} alt={pokemon.name} />
-                            <span>{pokemon.name.toUpperCase()}</span>
+                            <span>{getName(pokemon).toUpperCase()}</span>
                         </div>
                         <div className={styles.evolutionArrow}>➔</div>
                         <div className={styles.evolutionSprite}>

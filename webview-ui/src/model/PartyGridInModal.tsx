@@ -1,5 +1,5 @@
 import React from 'react';
-import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
+import { getName, PokemonDao } from '../../../src/dataAccessObj/pokemon';
 import styles from './PartyGridInModal.module.css';
 import { resolveAssetUrl } from '../utilities/vscode';
 
@@ -43,7 +43,7 @@ export const PartyGridInModal: React.FC<PartyGridInModalProps> = ({ party, onPok
                             {/* 右側：資訊欄 (名字 + 血條 + 數值) */}
                             <div className={styles['party-info']}>
                                 <div className={styles['party-name']}>
-                                    <div>{p.name.toUpperCase()}</div>   
+                                    <div>{getName(p).toUpperCase()}</div>   
                                     <div className={styles['hp-text']}>
                                         {current}/{max}
                                     </div>

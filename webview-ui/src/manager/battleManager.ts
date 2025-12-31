@@ -364,6 +364,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
             }
             case BattleEventType.WildPokemonCatched: {
                 await addPokemonExpAndAddGift(needUpdateMyPokemons)
+                onBattleFinish('caught');
                 break;
             }
             case BattleEventType.Escaped:

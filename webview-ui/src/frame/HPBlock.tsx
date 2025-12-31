@@ -113,7 +113,7 @@ export const VHPBlock = React.forwardRef<VHPBlockHandle, VHPBlockProps>(({ pokem
                         <span
                             key={idx}
                             className={`${styles['party-ball']} ${ballClass}`}
-                            title={pkmn ? `${pkmn.name} Lv.${pkmn.level}` : 'Empty'}
+                            title={pkmn ? `${pkmn.nickname ? truncateName(pkmn.nickname) : pkmn.name} Lv.${pkmn.level}` : 'Empty'}
                         />
                     );
                 })}
