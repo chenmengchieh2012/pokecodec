@@ -32,7 +32,7 @@ vi.mock('../store/messageStore', () => ({
     useMessageSubscription: (type: unknown, callback: unknown) => {
         mockUseMessageSubscription(type, callback);
     },
-    useInitializationState: () => 'finished',
+    // useInitializationState: () => 'finished',
     InitializedState: {
         UnStart: 'unstart',
         Initializing: 'initializing',

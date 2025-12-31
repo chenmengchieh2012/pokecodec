@@ -19,7 +19,7 @@ export class PokeDexManager {
     private constructor(context: vscode.ExtensionContext) {
         this.context = context;
         this.saveQueue = new SequentialExecutor(new GlobalMutex(context, 'pokedex.lock'));
-        this.reload();
+        this._loadFromDisk();
     }
 
     public static getInstance(): PokeDexManager {
@@ -47,7 +47,7 @@ export class PokeDexManager {
         return `${this.STORAGE_KEY_BASE}-${suffix}`;
     }
 
-    public reload() {
+    private _loadFromDisk() {
         this.currentGen = this.context.globalState.get<string>(this.CURRENT_GEN_KEY, 'GEN 1');
 
         // Load currently supported generations
@@ -60,6 +60,12 @@ export class PokeDexManager {
             const key = this.getStorageKey(gen);
             const data = this.context.globalState.get<PokeDexEntry[]>(key, []);
             this.dexDataMap.set(gen, data);
+        });
+    }
+
+    public async reload() {
+        await this.saveQueue.execute(async () => {
+            this._loadFromDisk();
         });
     }
 

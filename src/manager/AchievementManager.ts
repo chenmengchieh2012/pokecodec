@@ -16,7 +16,7 @@ export class AchievementManager {
     private constructor(context: vscode.ExtensionContext) {
         this.context = context;
         this.saveQueue = new SequentialExecutor(new GlobalMutex(context, 'achievement.lock'));
-        this.reload();
+        this._loadFromDisk();
     }
 
     public static getInstance(): AchievementManager {
@@ -37,8 +37,14 @@ export class AchievementManager {
         return AchievementManager.instance;
     }
 
-    public reload() {
+    private _loadFromDisk() {
         this.achievementStatistics = this.context.globalState.get<AchievementStatistics>(this.STORAGE_KEY, AchievementAnalyzer.getDefaultStatistics());
+    }
+
+    public async reload() {
+        await this.saveQueue.execute(async () => {
+            this._loadFromDisk();
+        });
     }
 
     public getStatistics(): AchievementStatistics {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styles from './PokemonInfoModal.module.css';
 import { getBallUrl } from '../utilities/util';
-import { EvolutionTrigger, PokemonDao, RawPokemonData } from '../../../src/dataAccessObj/pokemon';
+import { EvolutionTrigger, getName, PokemonDao, RawPokemonData } from '../../../src/dataAccessObj/pokemon';
 import { PokemonMove } from '../../../src/dataAccessObj/pokeMove';
 import { resolveAssetUrl, vscode } from '../utilities/vscode';
 import pokemonGen1Data from '../../../src/data/pokemonGen1.json';
@@ -38,9 +38,12 @@ export const PokemonInfoModal: React.FC<PokemonInfoModalProps> = ({ isInParty, p
         if (editedNickName.trim() && editedNickName !== pokemon.name) {
             const newPokemon = { ...pokemon, nickname: editedNickName.trim() };
             if (isInParty) {
+                const updatePartyPayload: UpdatePartyPokemonPayload = {
+                    pokemons: [newPokemon]
+                };
                 vscode.postMessage({
                     command: MessageType.UpdatePartyPokemon,
-                    pokemon: newPokemon
+                    ...updatePartyPayload
                 });
             }
         }
@@ -138,7 +141,7 @@ export const PokemonInfoModal: React.FC<PokemonInfoModalProps> = ({ isInParty, p
                                             style={{ cursor: isInParty ? 'pointer' : 'default' }}
                                         >
                                             {pokemon.gender === 'Male' ? <GiMale /> : <GiFemale />}
-                                            {pokemon.nickname || pokemon.name}
+                                            {getName(pokemon)}
 
                                         </div>
                                     )}

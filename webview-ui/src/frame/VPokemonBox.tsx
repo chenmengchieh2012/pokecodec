@@ -1,12 +1,12 @@
 import React, { useCallback, useState } from 'react';
-import { vscode, resolveAssetUrl } from '../utilities/vscode';
-import styles from './VPokemonBox.module.css';
+import { BoxPayload } from '../../../src/dataAccessObj/MessagePayload';
+import { MessageType } from '../../../src/dataAccessObj/messageType';
+import { getName, PokemonDao } from '../../../src/dataAccessObj/pokemon';
 import { PokemonInfoModal } from '../model/PokemonInfoModal';
 import { useMessageStore, useMessageSubscription } from '../store/messageStore';
-import { MessageType } from '../../../src/dataAccessObj/messageType';
-import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
-import { BoxPayload } from '../../../src/dataAccessObj/MessagePayload';
+import { resolveAssetUrl, vscode } from '../utilities/vscode';
 import { EmeraldTabPanel } from './EmeraldTabPanel';
+import styles from './VPokemonBox.module.css';
 
 
 const IconTrash = () => (
@@ -200,7 +200,7 @@ export const VPokemonBox = () => {
                         onDragStart={(e) => handleDragStart(e, p)}
                         onDragOver={handleDragOver}
                         onDrop={(e) => handleDrop(e, p)}
-                        title={p.name.toUpperCase()}
+                        title={getName(p)}
                     >
                         {selectedIds.has(p.uid) && <div className={styles.checkMark}>✔</div>}
                         {p.isShiny && !selectedIds.has(p.uid) && <div className={styles.shinyMark}>✨</div>}

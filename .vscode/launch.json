@@ -14,26 +14,6 @@
             ],
             "outFiles": ["${workspaceFolder}/out/**/*.js"],
             "preLaunchTask": "${defaultBuildTask}"
-        },
-        {
-            "name": "Host B (Shared Data)",
-            "type": "extensionHost",
-            "request": "launch",
-            "runtimeExecutable": "${execPath}",
-            "args": [
-                "--extensionDevelopmentPath=${workspaceFolder}",
-                // 使用與 Host A 完全相同的路徑
-                "--user-data-dir=${workspaceFolder}/.vscode/test-user-data",
-				"--new-window"
-            ],
-            "outFiles": ["${workspaceFolder}/out/**/*.js"],
-            "preLaunchTask": "${defaultBuildTask}"
-        }
-    ],
-    "compounds": [
-        {
-            "name": "Launch Both Hosts",
-            "configurations": ["Host A (Shared Data)", "Host B (Shared Data)"]
         }
     ]
 }

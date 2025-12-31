@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as difficultyConfig from '../data/difficultyConfig.json';
 import { SequentialExecutor } from '../utils/SequentialExecutor';
+import { GlobalMutex } from '../utils/GlobalMutex';
 
 import pokemonGen1Data from '../data/pokemonGen1.json';
 import { RawPokemonData } from '../dataAccessObj/pokemon';
@@ -37,8 +38,9 @@ export class DifficultyManager {
 
     private constructor(context: vscode.ExtensionContext) {
         this.context = context;
-        this.executor = new SequentialExecutor();
-        this.loadState();
+        // 使用 GlobalMutex 確保跨視窗的寫入安全
+        this.executor = new SequentialExecutor(new GlobalMutex(context, 'difficulty.lock'));
+        this._loadFromDisk();
     }
 
     /**
@@ -71,13 +73,29 @@ export class DifficultyManager {
     }
 
     /**
-     * 從 globalState 載入儲存的狀態
+     * 內部同步讀取 (僅供 Constructor 或 Queue 內部使用)
      */
-    private loadState() {
+    private _loadFromDisk() {
         this.currentLevel = this.context.globalState.get<number>(this.KEY_CURRENT_LEVEL, 1);
         this.maxUnlockedLevel = this.context.globalState.get<number>(this.KEY_MAX_UNLOCKED, 1);
         this.ddaEnabled = this.context.globalState.get<boolean>(this.KEY_DDA_ENABLED, true);
         this.history = this.context.globalState.get<EncounterRecord[]>(this.KEY_HISTORY, []);
+    }
+
+    /**
+     * 從硬碟讀取最新資料到記憶體 (更新快取)
+     */
+    public async reload() {
+        await this.executor.execute(async () => {
+            this._loadFromDisk();
+        });
+    }
+
+    /**
+     * (已棄用) 請改用 reload()
+     */
+    public loadState() {
+        this.reload();
     }
 
     /**
@@ -561,7 +579,7 @@ export class DifficultyManager {
 
     public clear(): void {
         this.history = [];
-        this.ddaEnabled = false;
+        this.ddaEnabled = true;
         this.currentLevel = 1;
         this.maxUnlockedLevel = 1;
         this.saveState();

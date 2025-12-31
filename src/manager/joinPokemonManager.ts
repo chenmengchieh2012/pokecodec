@@ -17,7 +17,7 @@ export class JoinPokemonManager {
     private constructor(context: vscode.ExtensionContext) {
         this.context = context;
         this.saveQueue = new SequentialExecutor(new GlobalMutex(context, 'party.lock'));
-        this.reload();
+        this._loadFromDisk();
     }
 
     public static getInstance(): JoinPokemonManager {
@@ -32,13 +32,19 @@ export class JoinPokemonManager {
         return JoinPokemonManager.instance;
     }
 
-    public reload() {
+    private _loadFromDisk() {
         const data = this.context.globalState.get<PokemonDao[]>(this.STORAGE_KEY);
         if (data) {
             this.party = data;
         } else {
             this.party = [];
         }
+    }
+
+    public async reload() {
+        await this.saveQueue.execute(async () => {
+            this._loadFromDisk();
+        });
     }
 
     public getAll(): PokemonDao[] {

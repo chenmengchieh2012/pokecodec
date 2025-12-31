@@ -1,6 +1,5 @@
-import { useImperativeHandle, useState } from "react";
-import type { PokemonDao } from "../../../src/dataAccessObj/pokemon"
-import React from "react";
+import React, { useImperativeHandle, useState } from "react";
+import { type PokemonDao } from "../../../src/dataAccessObj/pokemon";
 import styles from "./HPBlock.module.css";
 
 
@@ -41,6 +40,10 @@ export const VHPBlock = React.forwardRef<VHPBlockHandle, VHPBlockProps>(({ pokem
 
     const hpPercentage = (pokemonData.currentHp / pokemonData.maxHp) * 100;
     const expPercentage = (pokemonData.currentExp / pokemonData.toNextLevelExp) * 100;
+
+    const truncateName = (name: string) => {
+        return name.length > 10 ? name.substring(0, 10) + '...' : name;
+    };
 
     // 計算血條顏色
     const getHpColor = (percentage: number) => {
@@ -124,7 +127,7 @@ export const VHPBlock = React.forwardRef<VHPBlockHandle, VHPBlockProps>(({ pokem
         <div className={`${styles.hud} ${animClass === 'anim-catch' ? styles['anim-catch'] : ''}`}>
             {/* 隊伍精靈球圖示 */}
             <div className={styles['pokemon-info']}>
-                <span className={styles['pokemon-name']}>{pokemonData.name.toUpperCase()}</span>
+                <span className={styles['pokemon-name']}>{pokemonData.nickname ? truncateName(pokemonData.nickname) : pokemonData.name}</span>
                 {getAilmentBadge()}
                 <span className={styles['pokemon-gender']} style={{ color: genderColor }}>{genderSymbol}</span>
                 <span className={styles['pokemon-lv']}>Lv{pokemonData.level}</span>

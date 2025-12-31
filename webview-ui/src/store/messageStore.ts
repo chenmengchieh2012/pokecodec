@@ -36,6 +36,11 @@ export interface StoreRefs {
     achievements: AchievementStatistics | undefined;
     difficultyModifiers: DifficultyModifiers | undefined;
     difficultyLevel: DifficultyLevelPayload | undefined;
+    sessionStatus: SessionStatusPayload | undefined;
+}
+
+export interface SessionStatusPayload {
+    active: boolean;
 }
 
 /** MessageStore Context 的值類型 */
@@ -88,6 +93,7 @@ class MessageStore {
         achievements: undefined,
         difficultyLevel: undefined,
         difficultyModifiers: undefined,
+        sessionStatus: undefined,
     };
     /** 是否已初始化 */
     private initialized: InitializedStateType = InitializedState.UnStart;
@@ -193,6 +199,16 @@ class MessageStore {
             case MessageType.DifficultyLevelData:
                 this.refs.difficultyLevel = (message.data as DifficultyLevelPayload) ?? undefined;
                 break;
+            case MessageType.SessionStatus:{ 
+                const newStatus = (message.data as SessionStatusPayload);
+                // 如果從 inactive 變成 active，代表重新獲得控制權，需要重新拉取資料
+                if (this.refs.sessionStatus?.active === false && newStatus?.active === true) {
+                    console.log('[MessageStore] Session reactivated, refreshing all data...');
+                    this.reset();
+                }
+                this.refs.sessionStatus = newStatus ?? undefined;
+                break; 
+            }
             default:
                 // 非資料更新類型，無需更新 refs
                 break;
@@ -322,6 +338,9 @@ class MessageStore {
         if (this.refs.difficultyLevel !== undefined) {
             this.notify({ type: MessageType.DifficultyLevelData, data: this.refs.difficultyLevel });
         }
+        if (this.refs.sessionStatus !== undefined) {
+            this.notify({ type: MessageType.SessionStatus, data: this.refs.sessionStatus });
+        }
     }
 
     /**
@@ -341,6 +360,7 @@ class MessageStore {
             achievements: undefined,
             difficultyLevel: undefined,
             difficultyModifiers: undefined,
+            sessionStatus: undefined,
         };
         this.notify({ type: MessageType.InitializationState, data: this.initialized });
         console.log('[MessageStore] Reset to uninitialized state');
@@ -483,48 +503,58 @@ export const useMessageStore = (): MessageStoreContextValue => {
  * 
  * @param type 訊息類型
  * @param callback 回調函數
+ * @param isValid 可選的檢查函數，若返回 false 則不執行 callback (支援 Ref)
  * 
  * @example
  * ```tsx
  * useMessageSubscription(MessageType.BagData, (message) => {
  *     setItems(message.data);
- * });
+ * }, () => isReadyRef.current);
  * ```
  */
 export const useMessageSubscription = <T = unknown>(
     type: MessageType,
-    callback: MessageSubscriber<T>
+    callback: MessageSubscriber<T>,
+    isValid?: () => boolean
 ): void => {
     const { subscribe } = useMessageStore();
     const callbackRef = useRef(callback);
+    const isValidRef = useRef(isValid);
 
     // 更新 callback ref
     useEffect(() => {
         callbackRef.current = callback;
-    }, [callback]);
+        isValidRef.current = isValid;
+    }, [callback, isValid]);
 
     useEffect(() => {
         const unsubscribe = subscribe(type, (message) => {
+            if (isValidRef.current && !isValidRef.current()) {
+                return;
+            }
             callbackRef.current(message as VSCodeMessage<T>);
         });
         return unsubscribe;
     }, [type, subscribe]);
 };
 
-/**
- * 取得初始化狀態的 Hook
- * 當初始化狀態改變時，會觸發組件重新渲染
- */
-export const useInitializationState = (): InitializedStateType => {
-    const { isInitialized } = useMessageStore();
-    const [state, setState] = React.useState<InitializedStateType>(isInitialized());
 
-    useMessageSubscription<InitializedStateType>(MessageType.InitializationState, (message) => {
+
+/**
+ * 取得 Session Lock 狀態的 Hook
+ * 當狀態改變時，會觸發組件重新渲染
+ */
+export const useSessionStatus = (): boolean => {
+    const { getRefs } = useMessageStore();
+    // 預設為 true (active)，避免一開始就顯示鎖定畫面，直到收到 false
+    const [isActive, setIsActive] = React.useState<boolean>(getRefs().sessionStatus?.active ?? true);
+
+    useMessageSubscription<SessionStatusPayload>(MessageType.SessionStatus, (message) => {
         if (message.data) {
-            setState(message.data);
+            setIsActive(message.data.active);
         }
     });
 
-    return state;
+    return isActive;
 };
 

@@ -42,11 +42,12 @@ import { RecordBattleActionPayload, RecordBattleCatchPayload, RecordBattleFinish
 import pokemonGen1Data from '../data/pokemonGen1.json';
 import moveData from '../data/pokemonMoves.json';
 import { GameState } from '../dataAccessObj/GameState';
-import { PokemonDao, RawPokemonData } from '../dataAccessObj/pokemon';
+import { getName, PokemonDao, RawPokemonData } from '../dataAccessObj/pokemon';
 import { pokemonMoveInit } from '../dataAccessObj/pokeMove';
 import { BiomeType } from '../dataAccessObj/BiomeData';
 import { BattleMode } from '../dataAccessObj/gameStateData';
 import { DifficultyManager } from '../manager/DifficultyManager';
+import { SessionLockManager } from '../manager/SessionLockManager';
 
 import rawTrainers from '../data/trainers.json';
 import { TrainerData } from '../dataAccessObj/trainerData';
@@ -66,6 +67,7 @@ export class CommandHandler {
     private readonly pokeDexManager: PokeDexManager;
     private readonly achievementManager: AchievementManager;
     private readonly difficultyManager: DifficultyManager;
+    private readonly sessionLockManager: SessionLockManager;
 
     private readonly biomeHandler: BiomeDataHandler;
 
@@ -81,6 +83,7 @@ export class CommandHandler {
         pokeDexManager: PokeDexManager,
         achievementManager: AchievementManager,
         difficultyManager: DifficultyManager,
+        sessionLockManager: SessionLockManager,
         context: vscode.ExtensionContext,
     ) {
         this.pokemonBoxManager = pokemonBoxManager;
@@ -92,6 +95,7 @@ export class CommandHandler {
         this.pokeDexManager = pokeDexManager;
         this.achievementManager = achievementManager;
         this.difficultyManager = difficultyManager;
+        this.sessionLockManager = sessionLockManager;
     }
 
     public setHandlerContext(handlerContext: HandlerContext): void {
@@ -334,7 +338,7 @@ export class CommandHandler {
                     await this.pokemonBoxManager.remove(uid);
                     // Update both views
                     this.handlerContext.updateAllViews();
-                    vscode.window.showInformationMessage(`Added ${pokemon.name} to party!`);
+                    vscode.window.showInformationMessage(`Added ${getName(pokemon)} to party!`);
                 } else {
                     vscode.window.showErrorMessage('Party is full!');
                 }
@@ -419,7 +423,7 @@ export class CommandHandler {
                 await this.bagManager.useItem(payload.item.id, 1);
             }
 
-            vscode.window.showInformationMessage(`Used ${payload.item.name} on ${updatedPokemon.name}. ${usedMessage}`);
+            vscode.window.showInformationMessage(`Used ${payload.item.name} on ${getName(updatedPokemon)}. ${usedMessage}`);
 
             this.handlerContext.updateAllViews();
         } else {
@@ -598,6 +602,14 @@ export class CommandHandler {
         });
     }
 
+    public handleSessionStatus() {
+        const isLockedByMe = this.sessionLockManager.isLockedByMe();
+        this.handlerContext.postMessage({
+            type: MessageType.SessionStatus,
+            data: { active: isLockedByMe }
+        });
+    }
+
     // ==================== Trigger Encounter ====================
     public async handleWildTriggerEncounter() {
         const encounterEvent = await this.biomeHandler.getEncountered();
@@ -637,8 +649,9 @@ export class CommandHandler {
             if (myFirstPartyPokemon.length >= 0) {
                 console.log('[Extension] Healthy Pokemon found in party, proceeding with encounter.');
                 // 如果視圖不可見，跳過 Appear 階段，直接進入戰鬥狀態
+                // 好像可以前端處理
                 await this.gameStateManager.updateGameState(
-                    GameState.Battle,
+                    GameState.TrainerAppear,
                     {
                         battleMode: BattleMode.Wild,
                         trainerData: undefined,

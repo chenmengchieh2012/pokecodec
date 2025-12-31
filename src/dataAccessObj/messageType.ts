@@ -18,6 +18,7 @@ export const MessageType = {
     DifficultyLevelData: 'difficultyLevelData',
     EncounterHistoryData: 'encounterHistoryData',
     InitializationState: 'initializationState',
+    SessionStatus: 'sessionStatus',
     Reset: 'reset',
 
     // Request types (from webview to extension)

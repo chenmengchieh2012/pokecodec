@@ -42,7 +42,7 @@
         {
           "id": "pokemon-sidebar",
           "title": "Pokemon Tools",
-          "icon": "$(heart)"
+          "icon": "resources/sidebar-icon.svg"
         }
       ],
       "panel": [

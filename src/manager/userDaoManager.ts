@@ -21,7 +21,7 @@ export class UserDaoManager {
     private constructor(context: vscode.ExtensionContext) {
         this.context = context;
         this.saveQueue = new SequentialExecutor(new GlobalMutex(context, 'user.lock'));
-        this.reload();
+        this._loadFromDisk();
     }
 
     public static getInstance(): UserDaoManager {
@@ -36,11 +36,17 @@ export class UserDaoManager {
         return UserDaoManager.instance;
     }
 
-    public reload() {
+    private _loadFromDisk() {
         const data = this.context.globalState.get<UserDao>(this.STORAGE_KEY);
         if (data) {
             this.userDao = { ...this.userDao, ...data };
         }
+    }
+
+    public async reload() {
+        await this.saveQueue.execute(async () => {
+            this._loadFromDisk();
+        });
     }
 
     public getUserInfo(): UserDao {

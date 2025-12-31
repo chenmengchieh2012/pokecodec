@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import { BattleControlHandle } from "../frame/BattleControl";
 import { BattleCanvasHandle } from "../frame/VBattleCanvas";
 import { BattlePokemonFactory, RoundCheckResult } from "../hook/BattlePokemon";
-import { InitializedState, messageStore, useInitializationState, useMessageSubscription } from "../store/messageStore";
+import { InitializedState, messageStore, useMessageSubscription } from "../store/messageStore";
 import { SequentialExecutor } from "../utilities/SequentialExecutor";
 import { vscode } from "../utilities/vscode";
 // import { EncounterResult } from "../../../src/core/EncounterHandler";
@@ -15,7 +15,7 @@ import { AddItemPayload, RecordEncounterPayload, SetGameStateDataPayload, Update
 import { MessageType } from "../../../src/dataAccessObj/messageType";
 import { PokeBallDao } from "../../../src/dataAccessObj/pokeBall";
 import { PokeDexEntryStatus } from "../../../src/dataAccessObj/PokeDex";
-import { getGenById, PokemonDao } from "../../../src/dataAccessObj/pokemon";
+import { getDialogName, getGenById, PokemonDao } from "../../../src/dataAccessObj/pokemon";
 import { PokemonMove } from "../../../src/dataAccessObj/pokeMove";
 import { ExperienceCalculator } from "../../../src/utils/ExperienceCalculator";
 import { ITEM_HP_TREE_BERRY_NAMES, ITEM_PP_TREE_BERRY_NAMES, ITEM_STATUS_TREE_BERRY_NAMES } from "../utilities/ItemName";
@@ -55,8 +55,6 @@ export interface BattleManagerState {
 }
 
 export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerProps): [BattleManagerState, BattleManagerMethod] => {
-    const initializationState = useInitializationState();
-
     const [opponentParty, setOpponentParty, opponentPartyRef] = useSyncedState<PokemonDao[]>([]);
     const [processingCount, setProcessingCount ] = useSyncedState<number>(0);
     const [gameStateData, setGameStateData, gameStateDataRef] = useSyncedState<GameStateData | undefined>(undefined);
@@ -79,7 +77,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
             return false;
         }
         // 有寶可夢隊伍，更新隊伍資料
-        myPartyRef.current = newParty;
+        // myPartyRef.current = newParty;
         setMyParty(newParty);
 
         // 全部暈倒
@@ -122,13 +120,13 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                     console.log("[BattleManager] Switching to first healthy Pokemon in party for Searching state:", pkmn.name.toUpperCase());
                     myBattlePokemon.setPokemon(pkmn);
                     myBattlePokemon.syncState();
-                    await dialogBoxRef.current?.setText(`Go! ${pkmn.name.toUpperCase()}!`);
+                    await dialogBoxRef.current?.setText(`Go! ${getDialogName(pkmn)}!`);
                     break;
                 }
             }
         }
 
-    }, [setMyParty, myBattlePokemon, dialogBoxRef, gameStateDataRef, myPartyRef]);
+    }, [setMyParty, myBattlePokemon, dialogBoxRef, gameStateDataRef]);
 
     // 1. 初始化 SequentialExecutor
     // 使用 useRef 確保在整個 Component 生命週期中只有這一個 Queue
@@ -165,7 +163,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                 const {isLevelUp} = myBattlePokemon.increaseExp(expGain);
                 myBattlePokemon.syncState();
                 if(isLevelUp){
-                    await dialogBoxRef.current?.setText(`${CapitalizeFirstLetter(myBattlePokemon.pokemonRef.current!.name)} leveled up to Lv${myBattlePokemon.pokemonRef.current!.level}!`);
+                    await dialogBoxRef.current?.setText(`${CapitalizeFirstLetter(getDialogName(myBattlePokemon.pokemonRef.current!))} leveled up to Lv${myBattlePokemon.pokemonRef.current!.level}!`);
                 }
             }
         }
@@ -189,7 +187,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
             });
         }
         
-        await dialogBoxRef.current?.setText(`${opponentBattlePokemon.pokemonRef.current?.name.toUpperCase()} fainted!`);
+        await dialogBoxRef.current?.setText(`${opponentBattlePokemon.pokemonRef.current ? getDialogName(opponentBattlePokemon.pokemonRef.current).toUpperCase() : '???'} fainted!`);
         await dialogBoxRef.current?.setText(`Gained ${expGain} EXP!`);
         console.log("[BattleManager] Opponent Fainted");
 
@@ -281,7 +279,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                 myPartyRef.current
             )
 
-           await new Promise(r => setTimeout(r, 500));
+        //    await new Promise(r => setTimeout(r, 500));
             
             vscode.postMessage({
                 command: MessageType.SetGameStateData,
@@ -351,10 +349,10 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                 opponentBattlePokemon.syncState();
 
                 if (myBattlePokemon.pokemonRef.current) {
-                    await handleRoundCheckResult(myBattlePokemon.pokemonRef.current.name.toUpperCase(), myRoundCheckResult);
+                    await handleRoundCheckResult(getDialogName(myBattlePokemon.pokemonRef.current).toUpperCase(), myRoundCheckResult);
                 }
                 if (opponentBattlePokemon.pokemonRef.current) {
-                    await handleRoundCheckResult(opponentBattlePokemon.pokemonRef.current.name.toUpperCase(), opponentRoundCheckResult);
+                    await handleRoundCheckResult(getDialogName(opponentBattlePokemon.pokemonRef.current).toUpperCase(), opponentRoundCheckResult);
                 }
 
                 const opponentPokemonFainted = opponentBattlePokemon.pokemonRef.current?.currentHp === 0;
@@ -517,40 +515,6 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
 
     }, [battleCanvasRef, dialogBoxRef, gameStateDataRef, myBattlePokemon, myPartyRef, opponentBattlePokemon, setOpponentParty])
 
-
-    const hasInitializedRef = useRef(false);
-
-    useEffect(() => {
-        console.log("[BattleManager] Initialization State Changed:", initializationState);
-        if (initializationState === InitializedState.finished && !hasInitializedRef.current) {
-            hasInitializedRef.current = true;
-            doAction(async () => {
-                const newstate = messageStore.getRefs().gameStateData
-                setGameStateData(newstate);
-                console.log("[BattleManager] Initialization finished, setting my first Pokemon in party.");
-                await initialize(messageStore.getRefs().party || []);
-                const newGameState = messageStore.getRefs().gameStateData;
-                difficultyModifiersRef.current = messageStore.getRefs().difficultyModifiers
-                if( newGameState === undefined ){
-                    return;
-                }
-                // 如果是從暫停恢復戰鬥，雙方寶可夢都已存在
-                if (newGameState.opponentParty && newGameState.opponentParty.length > 0 &&
-                    newGameState.opponentPokemonUid && newGameState.defenderPokemonUid 
-                    && opponentBattlePokemon.pokemonRef.current == undefined
-                    && newGameState.state === GameState.Battle 
-                ) {
-                    await initializeBattle(newGameState);
-                    await dialogBoxRef.current?.setText("Battle Resumed!");
-                }
-
-            });
-            return;
-        } 
-    }, [dialogBoxRef, doAction, gameStateDataRef, initializationState, initialize, initializeBattle, myPartyRef, opponentBattlePokemon.pokemonRef, setGameStateData]);
-
-
-
     useMessageSubscription<GameStateData>(MessageType.GameStateData, async (message) => {
         
         const newGameState = message.data;
@@ -581,13 +545,53 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
         } else if (newGameState?.state === GameState.Battle) {
             gameStateDataRef.current = newGameState;
             console.log("[BattleManager] GameStateData indicates Battle state:", newGameState);
+            doAction(async () => {
+                const newstate = messageStore.getRefs().gameStateData
+                setGameStateData(newstate);
+                console.log("[BattleManager] Initialization finished, setting my first Pokemon in party.");
+                console.log("[BattleManager] Retrieved GameStateData:", newstate);
+                console.log("[BattleManager] Retrieved opponentBattlePokemon:", opponentBattlePokemon.pokemonRef.current);
+                console.log("[BattleManager] Retrieved myParty:", messageStore.getRefs().party);
+                difficultyModifiersRef.current = messageStore.getRefs().difficultyModifiers
+                if( newstate === undefined ){
+                    return;
+                }
+                // 如果是從暫停恢復戰鬥，雙方寶可夢都已存在
+                if (newstate.opponentParty && newstate.opponentParty.length > 0 &&
+                    newstate.opponentPokemonUid && newstate.defenderPokemonUid 
+                    && (opponentBattlePokemon.pokemonRef.current == undefined || 
+                        opponentParty.length === 0 )
+                ) {
+                    await initialize(messageStore.getRefs().party || []);
+                    await initializeBattle(newstate);
+                    // 更新 GameStateData，確保 extension 端同步
+                    const payload: SetGameStateDataPayload = {
+                        gameStateData: {
+                            ...newstate,
+                            state: GameState.Battle,
+                        }
+                    };
+                    console.log("[BattleManager] Updating GameStateData to Battle:", payload);
+
+                    vscode.postMessage({
+                        command: MessageType.SetGameStateData,
+                        ...payload
+                    });
+                    await dialogBoxRef.current?.setText("Battle Resumed!");
+                }
+
+            });
+            
             return;
         } else if (newGameState?.state === GameState.WildAppear || newGameState?.state === GameState.TrainerAppear) {
-
             // 新的野生遭遇或訓練家遭遇
             doAction(async () => {
                 if (newGameState.defenderPokemonUid !== undefined) {
+                    const newstate = messageStore.getRefs().gameStateData
+                    setGameStateData(newstate);
+                    await initialize(messageStore.getRefs().party || []);
                     await initializeBattle(newGameState);
+                    difficultyModifiersRef.current = messageStore.getRefs().difficultyModifiers
                     console.log("Start initializing BattleControl...");
 
                     // 更新 GameStateData，確保 extension 端同步
@@ -608,8 +612,8 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                         await dialogBoxRef.current?.setText(`Trainer ${newGameState.trainerData?.name} wants to battle!`);
                         await dialogBoxRef.current?.setText(`${newGameState.trainerData?.dialog.intro}`);
                     }
-                    const opponentPokemonName = opponentBattlePokemon.pokemonRef.current?.name.toUpperCase() || "???";
-                    const myPokemonName = myBattlePokemon.pokemonRef.current?.name.toUpperCase() || "???";
+                    const opponentPokemonName = opponentBattlePokemon.pokemonRef.current ? getDialogName(opponentBattlePokemon.pokemonRef.current).toUpperCase() : "???";
+                    const myPokemonName = myBattlePokemon.pokemonRef.current ? getDialogName(myBattlePokemon.pokemonRef.current).toUpperCase() : "???";
                     await dialogBoxRef.current?.setText(`A wild ${opponentPokemonName} appeared!`);
                     await dialogBoxRef.current?.setText(`Go! ${myPokemonName}!`);
                 } else {
@@ -625,7 +629,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                 type: BattleEventType.UnKnownError,
             });
         }
-    });
+    }, () => messageStore.isInitialized() === InitializedState.finished);
 
     useMessageSubscription<PokemonDao[]>(MessageType.PartyData, async (message) => {
         doAction(async () => {
@@ -641,7 +645,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                 const myCurrentPokemon = myBattlePokemon.pokemonRef.current
                 if (myCurrentPokemon && myCurrentPokemon.ailment === 'fainted') {
                     battleCanvasRef.current?.handleMyPokemonFaint()
-                    await dialogBoxRef.current?.setText(`${myCurrentPokemon?.name.toUpperCase()} fainted!`);
+                    await dialogBoxRef.current?.setText(`${getDialogName(myCurrentPokemon).toUpperCase()} fainted!`);
                     // 我的寶可夢暈倒了，檢查隊伍中是否還有其他可用的寶可夢
                     const filterMyParty = myPartyRef.current.filter(p => p.uid !== myCurrentPokemon?.uid && p.currentHp > 0);
                     console.log("[BattleManager] Fainted Pokemon detected, available party:", filterMyParty);
@@ -674,7 +678,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                 if (opponentCurrentPokemon && opponentCurrentPokemon.ailment === 'fainted') {
                     // 對方的寶可夢暈倒了，檢查隊伍中是否還有其他可用的寶可夢
                     battleCanvasRef.current?.handleOpponentPokemonFaint()
-                    await dialogBoxRef.current?.setText(`${opponentCurrentPokemon?.name.toUpperCase()} fainted!`);
+                    await dialogBoxRef.current?.setText(`${getDialogName(opponentCurrentPokemon).toUpperCase()} fainted!`);
                     const filterOpponentParty = opponentPartyRef.current.filter(p => p.uid !== opponentCurrentPokemon?.uid && p.currentHp > 0);
                     console.log("[BattleManager] Opponent Fainted Pokemon detected, available party:", filterOpponentParty);
                     if (filterOpponentParty.length === 0) {
@@ -686,12 +690,12 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                     } else {
                         // 有可用的寶可夢，對方自動換下一隻
                         const nextOpponent = filterOpponentParty[0];
-                        await dialogBoxRef.current?.setText(`Opponent sent out ${nextOpponent.name.toUpperCase()}!`);
+                        await dialogBoxRef.current?.setText(`Opponent sent out ${getDialogName(nextOpponent).toUpperCase()}!`);
 
                         // 切換對方寶可夢
                         opponentBattlePokemon.setPokemon(nextOpponent);
                         opponentBattlePokemon.syncState();
-                        await dialogBoxRef.current?.setText(`GO! ${nextOpponent.name.toUpperCase()}!`);
+                        await dialogBoxRef.current?.setText(`GO! ${getDialogName(nextOpponent).toUpperCase()}!`);
                         // 播放對方換人動畫
                         battleCanvasRef.current?.handleOpponentSwitchPokemon();
                         console.log("[BattleManager] Opponent switched to:", nextOpponent.name);   

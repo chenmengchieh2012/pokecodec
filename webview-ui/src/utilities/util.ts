@@ -2,6 +2,7 @@
 
 import { resolveAssetUrl } from "./vscode";
 
+
 export const getBallUrl = (ballName: string = 'poke-ball') => {
     const nameMap: { [key: string]: string } = {
         'poke-ball': 'poke-ball',

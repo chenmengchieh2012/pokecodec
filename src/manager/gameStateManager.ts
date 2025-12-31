@@ -28,7 +28,7 @@ export class GameStateManager {
     private constructor(context: vscode.ExtensionContext) {
         this.context = context;
         this.saveQueue = new SequentialExecutor(new GlobalMutex(context, 'gamestate.lock'));
-        this.reload();
+        this._loadFromDisk();
     }
 
     public static getInstance(): GameStateManager {
@@ -43,11 +43,23 @@ export class GameStateManager {
         return GameStateManager.instance;
     }
 
-    public reload() {
+    /**
+     * 內部同步讀取 (僅供 Constructor 或 Queue 內部使用)
+     */
+    private _loadFromDisk() {
         const data = this.context.globalState.get<GameStateData>(this.STORAGE_KEY);
         if (data) {
             this.gameStateData = data;
         }
+    }
+
+    /**
+     * 重新載入資料 (排入 Queue 以避免競爭)
+     */
+    public async reload() {
+        await this.saveQueue.execute(async () => {
+            this._loadFromDisk();
+        });
     }
 
     public getGameStateData(): GameStateData {
@@ -138,15 +150,14 @@ export class GameStateManager {
             if (state === GameState.Searching || state === GameState.Caught) {
                 data.battleMode = undefined;
                 data.trainerData = undefined;
+                data.opponentParty = [];
                 data.encounterResult = undefined!;
             } else if (state === GameState.Battle || state === GameState.WildAppear || state === GameState.TrainerAppear) {
                 data.encounterResult = encounterResult;
                 data.battleMode = battleMode;
                 data.trainerData = trainerData;
             }
-            if (opponentParty) {
-                data.opponentParty = opponentParty;
-            }
+            data.opponentParty = opponentParty || []; 
             data.defenderPokemonUid = defenderPokemonUid;
             data.opponentPokemonUid = opponentPokemonUid;
             data.state = state;

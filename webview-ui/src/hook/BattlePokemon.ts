@@ -413,7 +413,9 @@ export const BattlePokemonFactory = ():BattlePokemon => {
         getHitAction: getHitAction,
         roundCheck: handleRoundCheck,
         effectByConfused: handleEffectByConfused,
-        setPokemon: (pokemon) => (nextRoundPokemonRef.current = pokemon),
+        setPokemon: (pokemon) => (
+            nextRoundPokemonRef.current = pokemon
+        ),
         syncState: synchronized,
     }), [handleThrowBall, handleHited, handleResetPokemon, handleHeal, handleUpdateAilment, handleDecrementPP, handleIncreaseExperience, handleEffectByMove, handleGetBattleState, handleResetFlinch, getHitAction, handleRoundCheck, handleEffectByConfused, synchronized]);
     return {

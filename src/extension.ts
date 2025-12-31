@@ -46,6 +46,7 @@ import { PokeDexManager } from './manager/pokeDexManager';
 import { UserDaoManager } from './manager/userDaoManager';
 import { RecordBattleActionPayload, RecordBattleCatchPayload, RecordBattleFinishedPayload, RecordItemActionPayload } from './utils/AchievementCritiria';
 import { DifficultyManager } from './manager/DifficultyManager';
+import { SessionLockManager } from './manager/SessionLockManager';
 
 const itemDataMap = itemData as unknown as Record<string, ItemDao>;
 
@@ -70,9 +71,51 @@ export async function activate(context: vscode.ExtensionContext) {
     const achievementManager = AchievementManager.initialize(context);
     const difficultyManager = DifficultyManager.initialize(context);
     context.subscriptions.push(difficultyManager);
+    
+    const gameStateData = gameStateManager.getGameStateData();
+    if (gameStateData.state !== GameState.Searching) {
+        console.log("[Activate] Non-searching game state detected on activation:", gameStateData.state);
+        // 強制重設遊戲狀態為 Searching，避免因為開發中斷而卡在其他狀態
+        // 但可能切換畫面時會有問題，所以先註解掉
+        // 所以要做deep check
+        if(gameStateData.state === GameState.Battle){
+            let isVaild = true
+            // 進行戰鬥狀態資料合法性檢查
+            const party = partyManager.getAll();
+            // 1. 檢查隊伍ID 是否存在
+            const defenderPokemonUid = gameStateData.defenderPokemonUid;
+            const opponentPokemonUid = gameStateData.opponentPokemonUid;
+            if(!defenderPokemonUid || !opponentPokemonUid){
+                console.log("[Activate] Invalid battle state detected: Missing defender or opponent Pokemon UID. Resetting to Searching state.");
+                isVaild = false;
+            }
+            // 2. 檢查隊伍中是否有對應的寶可夢
+            const defenderPokemon = party.find(p => p.uid === defenderPokemonUid);
+            if(!defenderPokemon){
+                console.log("[Activate] Invalid battle state detected: Defender Pokemon not found in party. Resetting to Searching state.");
+                isVaild = false;
+            }
+            const opponentPokemon = gameStateData.opponentParty?.find(p => p.uid === opponentPokemonUid);
+            if(!opponentPokemon){
+                console.log("[Activate] Invalid battle state detected: Opponent Pokemon not found in opponent party. Resetting to Searching state.");
+                isVaild = false;
+            }
+            // 3. 檢查雙方寶可夢是否有血量
+            if(defenderPokemon && defenderPokemon.currentHp <= 0){
+                console.log("[Activate] Invalid battle state detected: Defender Pokemon has 0 HP. Resetting to Searching state.");
+                await partyManager.update([{...defenderPokemon, ailment:'fainted'}])
+                isVaild = false;
+            }
+            if(opponentPokemon && opponentPokemon.currentHp <= 0){
+                console.log("[Activate] Invalid battle state detected: Opponent Pokemon has 0 HP. Resetting to Searching state.");
+                isVaild = false;
+            }
 
-    if (gameStateManager.getGameStateData()?.state !== GameState.Searching) {
-        gameStateManager.updateGameState(GameState.Searching, {});
+            // 根據檢查結果決定是否重設狀態
+            if(!isVaild){
+                await gameStateManager.updateGameState(GameState.Searching, {});
+            }
+        }
     }
 
     // Initialize Biome Data Handler
@@ -87,6 +130,11 @@ export async function activate(context: vscode.ExtensionContext) {
     const gitHandler = GitActivityHandler.getInstance();
     gitHandler.initialize();
     context.subscriptions.push(gitHandler);
+
+    // Initialize Session Lock Manager
+    const sessionLockManager = SessionLockManager.getInstance(context);
+    await sessionLockManager.start();
+    context.subscriptions.push(sessionLockManager);
 
     const gameProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'game', context });
     const backpackProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'backpack', context });
@@ -171,6 +219,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
     private gameStateManager: GameStateManager;
     private achievementManager: AchievementManager;
     private difficultyManager: DifficultyManager;
+    private sessionLockManager: SessionLockManager;
     private biomeHandler: BiomeDataHandler;
 
     private gitHandler: GitActivityHandler;
@@ -195,6 +244,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         this.gitHandler = GitActivityHandler.getInstance();
         this.sessionHandler = SessionHandler.getInstance();
         this.difficultyManager = DifficultyManager.getInstance();
+        this.sessionLockManager = SessionLockManager.getInstance();
         this._extensionUri = extensionUri;
         this._viewType = viewType;
         this._context = _context;
@@ -208,6 +258,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             this.pokeDexManager,
             this.achievementManager,
             this.difficultyManager,
+            this.sessionLockManager,
             this._context
         );
         PokemonViewProvider.providers.push(this);
@@ -251,11 +302,18 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                 this.gameStateManager.getGameStateData().state === GameState.Searching &&
                 this.partyManager.getAll().length > 0 &&
                 this.partyManager.getAll().some(p => p.currentHp > 0)) {
-                const randomEncounterChance = Math.random();
-                // MARK: TEST 100% 機率觸發隨機遭遇
-                if (randomEncounterChance < 1) { // 20% 機率觸發隨機遭遇
-                    this.commandHandler.handleWildTriggerEncounter();
-                }
+                    if(this.sessionLockManager.isLockedByMe() === false){
+                        console.log('[Extension] Auto Encounter skipped: Session is locked by another instance.');
+                        return;
+                    }
+                    const randomEncounterChance = Math.random();
+                    // MARK: TEST 100% 機率觸發隨機遭遇
+
+                    const isProduction = this._context.extensionMode === vscode.ExtensionMode.Production;
+                    const chanceThreshold = isProduction ? 0.2 : 1.0;
+                    if (randomEncounterChance < chanceThreshold) { // 20% 機率觸發隨機遭遇
+                        this.commandHandler.handleWildTriggerEncounter();
+                    }
             }
         });
 
@@ -294,23 +352,29 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         if (!isProduction) {
 
             // full two box starter to party
+            // 避免一次 await 太多次，改用 Promise.all 或分批處理
+            const promises = [];
             for (let i = 0; i < PokemonBoxManager.getMaxBoxCapacity() * 2; i++) {
-                let debugPokemon = await PokemonFactory.createWildPokemonInstance({
-                    pokemonId: Math.floor(Math.random() * 150) + 1,
-                    nameZh: '',
-                    nameEn: '',
-                    minDepth: 0,
-                    encounterRate: 0
-                }, this.difficultyManager, 'test/file/path', undefined);
-                await this.pokemonBoxManager.add(debugPokemon);
+                promises.push((async () => {
+                    let debugPokemon = await PokemonFactory.createWildPokemonInstance({
+                        pokemonId: Math.floor(Math.random() * 150) + 1,
+                        nameZh: '',
+                        nameEn: '',
+                        minDepth: 0,
+                        encounterRate: 0
+                    }, this.difficultyManager, 'test/file/path', undefined);
+                    await this.pokemonBoxManager.add(debugPokemon);
+                })());
             }
+            await Promise.all(promises);
 
             // MARK: TEST all TM
             const allTMItems = Object.values(itemDataMap).filter(item => item.apiName.startsWith('tm'));
             console.log('[ResetStorage] Adding all TM items:', allTMItems.map(i => i.apiName));
-            allTMItems.map(async (tmItem) => {
+            // 使用 Promise.all 等待所有 TM 加入完成
+            await Promise.all(allTMItems.map(async (tmItem) => {
                 await this.bagManager.add(tmItem, 1);
-            });
+            }));
 
             // MARK: TEST difficult
             // const maxLevel = 8;
@@ -345,6 +409,14 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
         webviewView.onDidChangeVisibility(() => {
             if (webviewView.visible) {
                 this.updateViews();
+                this.commandHandler.handleSessionStatus();
+            }
+        });
+
+        // 監聽 Session Lock 狀態變化
+        this.sessionLockManager.onDidLockStatusChange((isLocked) => {
+            if (webviewView.visible) {
+                this.commandHandler.handleSessionStatus();
             }
         });
 
@@ -563,6 +635,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                 
                 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} https: data:; style-src ${webview.cspSource} 'unsafe-inline'; script-src 'nonce-${nonce}' ${webview.cspSource}; connect-src https://pokeapi.co;">
                 
+                <base href="${baseUri}/">
                 <link rel="stylesheet" href="${styleUri}">
                 <title>Pokemon React Prod</title>
                 <script nonce="${nonce}">

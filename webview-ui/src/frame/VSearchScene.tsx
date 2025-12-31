@@ -48,6 +48,7 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({
     myParty
 }) => {
     const messageStore = useMessageStore(); // 確保訂閱生效
+    // const initalizeState = useInitializationState()
     const defaultBiome = messageStore.getRefs().biome
     const defaultDifficultyLevel = messageStore.getRefs().difficultyLevel;
     const myPokemon = useMemo(()=>{
@@ -55,8 +56,12 @@ export const VSearchScene: React.FC<SearchSceneProps> = ({
         // 在搜尋狀態下收到隊伍更新，檢查目前出戰寶可夢是否還能戰鬥
         // 這不是剛啟動的狀態，是中途收到隊伍更新
         // 因為是searching狀態，所以直接換第一隻還活著的寶可夢出場
+        // if(initalizeState !== 'finished'){
+        //     return undefined
+        // }
+
         if (myParty == undefined || myParty.length === 0) {
-            console.log("[BattleManager] No Pokemon in party to set as myPokemon.");
+            console.log("[BattleManager] No Pokemon in party to set as myPokemon.",myParty);
             return;
         }
         const myFirstHealthyPokemon = myParty.find(p => p.ailment !== 'fainted');

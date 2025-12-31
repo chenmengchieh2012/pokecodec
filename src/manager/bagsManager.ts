@@ -18,7 +18,7 @@ export class BagManager {
     private constructor(context: vscode.ExtensionContext) {
         this.context = context;
         this.saveQueue = new SequentialExecutor(new GlobalMutex(context, 'bag.lock'));
-        this.reload(); // 初始化快取
+        this._loadFromDisk(); // 初始化快取
     }
 
     public static getInstance(): BagManager {
@@ -34,9 +34,9 @@ export class BagManager {
     }
 
     /**
-     * 從硬碟讀取最新資料到記憶體 (更新快取)
+     * 內部同步讀取 (僅供 Constructor 或 Queue 內部使用)
      */
-    public reload() {
+    private _loadFromDisk() {
         const data = this.context.globalState.get<ItemDao[]>(this.STORAGE_KEY);
         if (data) {
             this.items = data.map(item => ({
@@ -46,6 +46,15 @@ export class BagManager {
         } else {
             this.items = [];
         }
+    }
+
+    /**
+     * 從硬碟讀取最新資料到記憶體 (更新快取)
+     */
+    public async reload() {
+        await this.saveQueue.execute(async () => {
+            this._loadFromDisk();
+        });
     }
 
     /**

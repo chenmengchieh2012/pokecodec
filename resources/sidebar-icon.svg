@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+  <!-- Top Half -->
+  <path d="M2.05 11 A 10 10 0 0 1 21.95 11 H 15.87 A 4 4 0 0 0 8.13 11 H 2.05 Z" />
+  <!-- Bottom Half -->
+  <path d="M2.05 13 A 10 10 0 0 0 21.95 13 H 15.87 A 4 4 0 0 1 8.13 13 H 2.05 Z" />
+  <!-- Button -->
+  <circle cx="12" cy="12" r="2" />
+</svg>

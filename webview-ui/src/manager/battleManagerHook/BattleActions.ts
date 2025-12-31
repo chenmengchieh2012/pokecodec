@@ -3,7 +3,7 @@ import { BattleEvent, BattleEventType } from "../../../../src/dataAccessObj/Game
 import { ItemDao } from "../../../../src/dataAccessObj/item";
 import { MessageType } from "../../../../src/dataAccessObj/messageType";
 import { PokeBallDao } from "../../../../src/dataAccessObj/pokeBall";
-import { getGenById, PokemonDao, PokemonStateAction } from "../../../../src/dataAccessObj/pokemon";
+import { getDialogName, getGenById, PokemonDao, PokemonStateAction } from "../../../../src/dataAccessObj/pokemon";
 import { PokemonMove } from "../../../../src/dataAccessObj/pokeMove";
 import { RecordItemActionPayload } from "../../../../src/utils/AchievementCritiria";
 import { ItemEffectStrategy } from "../../../../src/utils/ItemEffectStrategy";
@@ -52,18 +52,18 @@ export const BattleActions = ({
         if (attackerPokemon?.ailment === 'paralysis') {
             const rand = Math.random();
             if (rand < 0.25) {
-                await dialogBoxRef.current?.setText(`${attackerPokemon.name.toUpperCase()} is paralyzed! It can't move!`);
+                await dialogBoxRef.current?.setText(`${getDialogName(attackerPokemon)} is paralyzed! It can't move!`);
                 return false;
             }
         }
 
         if (attackerPokemon?.ailment === 'sleep' && attackerMove.name !== 'snore' && attackerMove.name !== 'sleep talk') {
-            await dialogBoxRef.current?.setText(`${attackerPokemon.name.toUpperCase()} is fast asleep!`);
+            await dialogBoxRef.current?.setText(`${getDialogName(attackerPokemon)} is fast asleep!`);
             return false;
         }
 
         if (attackerPokemon?.ailment === 'freeze' && attackerMove.name !== 'thaw') {
-            await dialogBoxRef.current?.setText(`${attackerPokemon.name.toUpperCase()} is frozen solid! It can't move!`);
+            await dialogBoxRef.current?.setText(`${getDialogName(attackerPokemon)} is frozen solid! It can't move!`);
             return false;
         }
         return true;
@@ -193,8 +193,14 @@ export const BattleActions = ({
             const firstHitAction = (defeatPokemonSpeed >= opponentPokemonSpeed) ? defeatHitAction : opponentHitAction;
             const secondHitAction = (defeatPokemonSpeed >= opponentPokemonSpeed) ? opponentHitAction : defeatHitAction;
             const { moveEffectResult: firstAttackMoveEffectResult, remainingHp: remainHP } = await attack(firstAttackPokemon, secondAttackPokemon, firstHitAction);
+            defeat.syncState();
+            opponent.syncState();
+            // 等待第一回合攻擊動畫與血量扣除完成
+
             if( remainHP > 0 ){
                 const { moveEffectResult: secondAttackMoveEffectResult } = await attack(secondAttackPokemon, firstAttackPokemon, secondHitAction);
+                defeat.syncState();
+                opponent.syncState();
                 battleRecorder.onBattleAction(
                     false,
                     firstAttackPokemon === defeat ? firstAttackMoveEffectResult : secondAttackMoveEffectResult,

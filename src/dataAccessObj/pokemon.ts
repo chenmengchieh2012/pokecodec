@@ -1,6 +1,18 @@
 import { PokeDex__GEN1 } from "./PokeDex";
 import { PokemonMove } from "./pokeMove";
 
+export const getName = (pokemon: PokemonDao): string => {
+    return pokemon.nickname && pokemon.nickname.trim() !== ''
+        ? pokemon.nickname
+        : pokemon.name;
+};
+
+export const getDialogName = (pokemon: PokemonDao): string => {
+    return pokemon.nickname && pokemon.nickname.trim() !== ''
+        ? pokemon.nickname
+        : pokemon.name.toUpperCase();
+};
+
 export const MAX_PARTY_SIZE = 6;
 export type PokemonType = 
     | 'normal' | 'fire' | 'water' | 'grass' | 'electric' | 'ice' 
