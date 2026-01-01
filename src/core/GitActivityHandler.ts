@@ -330,10 +330,12 @@ export class GitActivityHandler {
             /**
              * 更新寶可夢的經驗值與等級
              */
+            const MAX_EXP_GAIN = Math.floor(modifyPokemon.toNextLevelExp * 0.5); // 單次 Commit 最多獲得 50% 升級所需經驗值
             const expGain = Math.max(1, Math.floor(data.linesChanged / newParty.length)); // 每隻寶可夢分得的經驗值
-            modifyPokemon.currentExp = (modifyPokemon.currentExp || 0) + expGain;
-            modifyPokemon = ExperienceCalculator.addExperience(modifyPokemon, expGain);
-            console.log(`[GitActivityHandler] Gave ${expGain} EXP to Pokemon ${modifyPokemon.name}. New EXP: ${modifyPokemon.currentExp}, Level: ${modifyPokemon.level}`);
+            const cappedExpGain = Math.min(expGain, MAX_EXP_GAIN);
+            modifyPokemon.currentExp = (modifyPokemon.currentExp || 0) + cappedExpGain;
+            modifyPokemon = ExperienceCalculator.addExperience(modifyPokemon, cappedExpGain);
+            console.log(`[GitActivityHandler] Gave ${cappedExpGain} EXP to Pokemon ${modifyPokemon.name}. New EXP: ${modifyPokemon.currentExp}, Level: ${modifyPokemon.level}`);
 
 
             /**

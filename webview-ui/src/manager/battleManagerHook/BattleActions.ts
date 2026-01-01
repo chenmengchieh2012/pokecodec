@@ -219,7 +219,7 @@ export const BattleActions = ({
                     opponentPokemon
                 )
             }
-            onBattleEvent({
+            await onBattleEvent({
                 type: BattleEventType.RoundFinish,
             });
 
@@ -313,7 +313,7 @@ export const BattleActions = ({
                     });
                     battleRecorder.onCatch(opponent.pokemonRef.current, biomeType)
                 }
-                onBattleEvent({
+                await onBattleEvent({
                     type: BattleEventType.WildPokemonCatched,
                 });
             } else {
@@ -326,7 +326,7 @@ export const BattleActions = ({
                 }
                 // 沒抓到，對方攻擊
                 handleOneSidedAttackFromOpponentLogic(defender, opponent);
-                onBattleEvent({
+                await onBattleEvent({
                     type: BattleEventType.RoundFinish,
                 });
             }
@@ -410,7 +410,7 @@ export const BattleActions = ({
             // 3. Opponent turn
             // 對方攻擊
             await handleOneSidedAttackFromOpponentLogic(defender, opponent);
-            onBattleEvent({
+            await onBattleEvent({
                 type: BattleEventType.RoundFinish,
             });
         } catch(e){
@@ -479,14 +479,14 @@ export const BattleActions = ({
             if (success) {
                 battleCanvasRef.current?.handleRunAway()
                 await dialogBoxRef.current?.setText("Run away safely!");
-                onBattleEvent({
+                await onBattleEvent({
                     type: BattleEventType.Escaped,
                 });
             } else {
                 await dialogBoxRef.current?.setText("Can't escape!");
                 // Opponent attacks
                 await handleOneSidedAttackFromOpponentLogic(defender, opponent);
-                onBattleEvent({
+                await onBattleEvent({
                     type: BattleEventType.RoundFinish,
                 });
             }

@@ -111,7 +111,7 @@ export const PokemonFactory = {
             // 2. Get Base Level from Difficulty Level (1-9)
             // Level 1 -> 5, Level 9 -> 85
             const difficultyLevel = difficultyManager?.getCurrentLevel() ?? 1;
-            const baseDifficultyLevel = (difficultyLevel - 1) * 10 + 1;
+            const baseDifficultyLevel = (difficultyLevel - 1) * 10 + 3;
 
             // 3. Get DDA Offset
             const modifiers = difficultyManager?.getModifiers() ?? { levelOffset: 0 };

@@ -279,7 +279,7 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                 myPartyRef.current
             )
 
-        //    await new Promise(r => setTimeout(r, 500));
+            await new Promise(r => setTimeout(r, 500));
             
             vscode.postMessage({
                 command: MessageType.SetGameStateData,
@@ -311,14 +311,14 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
                 await dialogBoxRef.current?.setText(`You lost to Trainer ${gameStateDataRef.current?.trainerData?.name}!`);
                 await dialogBoxRef.current?.setText(`${gameStateDataRef.current?.trainerData?.dialog.win}`);
                 // 等待 1 秒讓玩家看完對話
-                await new Promise(r => setTimeout(r, 1000));
+                await new Promise(r => setTimeout(r, 500));
                 
                 trainerTalk = gameStateDataRef.current?.trainerData?.dialog.win || "";
             }
             await dialogBoxRef.current?.setText(`You defeated Trainer ${gameStateDataRef.current?.trainerData?.name}!`);
             await dialogBoxRef.current?.setText(`${trainerTalk}`);
             // 等待 1 秒讓玩家看完對話
-            await new Promise(r => setTimeout(r, 1000));
+            await new Promise(r => setTimeout(r, 500));
             
             vscode.postMessage({
                 command: MessageType.SetGameStateData,
@@ -637,18 +637,29 @@ export const BattleManager = ({ dialogBoxRef, battleCanvasRef }: BattleManagerPr
             const newParty = message.data ?? [];
             myPartyRef.current = newParty;
             setMyParty(newParty);
+
+            // 同步戰鬥中寶可夢的 nickname（避免戰鬥結束後 nickname 被覆蓋）
+            const myCurrentPokemon = myBattlePokemon.pokemonRef.current;
+            if (myCurrentPokemon) {
+                const updatedPokemon = newParty.find(p => p.uid === myCurrentPokemon.uid);
+                if (updatedPokemon) {
+                    myBattlePokemon.setPokemon(updatedPokemon);
+                    myBattlePokemon.syncState();
+                }
+            }
+
             const currentState = gameStateDataRef.current?.state;
             if (currentState === GameState.Battle) {
                 // 每次RoundFinish後會Update
                 // Update 後檢查是否還有下一輪
                 // 檢查我方出戰寶可夢是否暈倒
 
-                const myCurrentPokemon = myBattlePokemon.pokemonRef.current
-                if (myCurrentPokemon && myCurrentPokemon.ailment === 'fainted') {
+                const myCurrentPokemonInBattle = myBattlePokemon.pokemonRef.current
+                if (myCurrentPokemonInBattle && myCurrentPokemonInBattle.ailment === 'fainted') {
                     battleCanvasRef.current?.handleMyPokemonFaint()
-                    await dialogBoxRef.current?.setText(`${getDialogName(myCurrentPokemon).toUpperCase()} fainted!`);
+                    await dialogBoxRef.current?.setText(`${getDialogName(myCurrentPokemonInBattle).toUpperCase()} fainted!`);
                     // 我的寶可夢暈倒了，檢查隊伍中是否還有其他可用的寶可夢
-                    const filterMyParty = myPartyRef.current.filter(p => p.uid !== myCurrentPokemon?.uid && p.currentHp > 0);
+                    const filterMyParty = myPartyRef.current.filter(p => p.uid !== myCurrentPokemonInBattle?.uid && p.currentHp > 0);
                     console.log("[BattleManager] Fainted Pokemon detected, available party:", filterMyParty);
                     if (filterMyParty.length === 0) {
                         // 沒有可用的寶可夢了，戰鬥結束

@@ -1,15 +1,61 @@
-# Achievement System TODO List
 
-This document tracks the implementation status of the Achievement System.
+## 手機home 開始
+1.1 vscode 傳送第一個金鑰+2fa seed+六隻寶可夢(隊伍)資訊到手機 (qrcode)
+  - 手機綁定後可後續進行 2FA (手機產生數字，vscode 輸入)
+  - 2FA 在vscode 驗證後，在vscode 上鎖
+  - qrocde 上 hash 上面所有資訊當成crc (驗證綁定用)
+  - 後續若在其他台電腦，也可用這crc 當成綁定
 
-## Implemented Logic
 
-### Exploration
-- [x] **ID 59-62**: Biome Encounters (Forest, Cave, Urban, Water)
-  - Implemented `onEncounter` in `AchievementAnalyzer` and hooked it in `CommandHandler`.
+1.2 更改綁定(改了隊伍後想重新綁定)
+  - 手機端重新掃描qrcode，生成新的crc
+  - 走回1.1
 
-### Growth
-- [x] **ID 6, 47**: `evolutionsTriggered` (Evolution Time, Evolution Master)
-  - Implemented `onEvolve` in `AchievementAnalyzer` and hooked it in `CommandHandler`.
-- [x] **ID 73**: `movesTaught` (Move Tutor)
-  - Implemented `onLearnMove` in `AchievementAnalyzer` and hooked it in `CommandHandler` (via Item).
+
+2. 手機資料結構
+  - 電腦id: 
+    - 綁定增量序號
+    - CRC
+    - 電腦的2fa金鑰
+  - 六隻寶可夢完整資訊
+  - 版本號：<電腦ID>-<增量序號>
+
+3. 電腦資料結構
+  - 綁定狀態
+  - 綁定紀錄序號
+  - 上次解除綁定的序號
+  
+
+3. vscode同步手機
+  - 先觀察目前手機版本迭代資訊
+  - VS Code 傳送 新的版本號 => [Base: v8] + [New Data] + [New CRC: v9]
+  - 手機檢查： 手機看到 (Base: v8)，比對自己資料庫裡該電腦的最後紀錄。
+    - 如果手機紀錄該電腦也是 v8 => 驗證通過，允許更新。
+    - 如果手機紀錄是 v7 或 v9 => 拒絕同步，代表該電腦跳過還原或重複同步。
+    - 拒絕同步的狀態下，就只能走 4.1 (不能走1.2，因為其他電腦會有問題)
+  - 進行2fa確認已經收到收機內
+
+4. 手機還原vscode(vscode 綁定狀態下，且隊伍相同)
+  - 因為有用2fa ，所以手機一定有資訊
+  - 還原不使用2fa
+  - 還原時： 手機傳給 VS Code 資料 + 一個 SessionCRC (例如 v8)。
+  - 透過增量還原
+    綁定id: 用uid 最後兩碼就可以，因為已經綁定了
+    CRC: 必須要，建議 1~2 碼（防止手殘輸入錯誤或版本跳號）。
+    HP: 建議傳「目前的絕對值」，因為 HP 變動最頻繁，用增量反而容易亂。
+    Moves: 建議 「有換才傳」，沒換時 Flag 設為 0，這樣輸入長度會立刻減半。
+    LOC/Bugs/Commits: 傳增量。
+  - 必須要在上鎖的才可以進行還原
+    
+
+4.1 手機還原至電腦失效(強制還原)
+  - 於其他電腦發現與手機隊伍不同的時候 (已綁定也可能發生)
+    - vscode 向手機要求所有數據，並將所有資訊同步回其他電腦
+      - 若發現手機寶可夢還在vscode box 或隊伍內，就更新
+      - 若發現 vscode 不存在(vscode 沒有，手機有)，則新增寶可夢
+      - 若發現 vscode 有其他不是手機內的寶可夢(vscode有，手機沒有)，則移轉到box中
+  - 於其他電腦發現與手機隊伍相同，卻與之前手機紀錄電腦資訊不符合
+    - 手機直接覆蓋現有資訊
+
+5.0 強制解鎖
+  - 相當於reset，之後換新手機走回1.1

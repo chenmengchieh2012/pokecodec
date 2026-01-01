@@ -46,10 +46,10 @@ export interface PokemonDao {
     id: number;
     name: string;
     nickname?: string;
-    level: number;
-    currentHp: number;
-    maxHp: number;
-    ailment?: PokemonAilment; // Status condition (burn, paralysis, etc.)
+    level: number; // 會變動
+    currentHp: number; // 會變動
+    maxHp: number; 
+    ailment?: PokemonAilment; // Status condition (burn, paralysis, etc.) // 會變動
     
     // Stats
     stats: PokemonStats; // Actual stats (calculated)
