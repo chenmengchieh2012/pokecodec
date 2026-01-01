@@ -430,7 +430,8 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
     }
 
     public async unlockDevice() {
-        await this.partyManager.unlock();
+        const currentLockId = this.partyManager.getDeviceBindState().lockId;
+        await this.partyManager.unlock(currentLockId);
         PokemonViewProvider.providers.forEach(p => p.updateViews());
     }
 

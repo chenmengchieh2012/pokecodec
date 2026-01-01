@@ -151,7 +151,7 @@ export interface SetDDAEnabledPayload {
 
 export interface SetDeviceLockPayload {
     isLocked: boolean;
-    newLockId?: number;
+    newLockId: number;
 }
 
 export interface VerifyTwoFactorPayload {

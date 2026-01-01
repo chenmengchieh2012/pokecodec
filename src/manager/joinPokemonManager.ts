@@ -224,15 +224,14 @@ export class JoinPokemonManager {
      * 解除綁定（解鎖）
      * @returns 解除綁定的序號
      */
-    public async unlock(): Promise<number> {
-        const currentLockId = this.deviceBindState.lockId;
+    public async unlock(newLockId: number): Promise<number> {
         this.deviceBindState = {
             ...this.deviceBindState,
             isLock: false,
-            lastUnlockId: currentLockId,
+            lastUnlockId: newLockId,
         };
         await this._saveDeviceBindState();
-        return currentLockId;
+        return newLockId;
     }
 
     /**

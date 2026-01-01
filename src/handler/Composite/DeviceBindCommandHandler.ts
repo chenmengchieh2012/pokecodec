@@ -82,7 +82,7 @@ export class DeviceBindCommandHandler {
             if (payload.isLocked && payload.newLockId) {
                 await this.partyManager.lock(payload.newLockId);
             } else {
-                await this.partyManager.unlock();
+                await this.partyManager.unlock(payload.newLockId!);
             }
             this.handlerContext.updateAllViews();
         } catch (error) {
@@ -329,7 +329,7 @@ export class DeviceBindCommandHandler {
             // 4. unlock if locked
             const isCurrentlyLocked = this.partyManager.isDeviceLocked();
             if (isCurrentlyLocked) {
-                await this.partyManager.unlock();
+                await this.partyManager.unlock(data.lockId);
             }
 
             // 5. Notify Success
