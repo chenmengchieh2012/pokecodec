@@ -149,4 +149,17 @@ export interface SetDDAEnabledPayload {
     enabled: boolean;
 }
 
+export interface SetDeviceLockPayload {
+    isLocked: boolean;
+    newLockId?: number;
+}
+
+export interface VerifyTwoFactorPayload {
+    token: string;
+}
+
+export interface BindCodePayload {
+    qrCodeDataUrl: string;
+}
+
 export interface UnlockNextLevelPayload {}

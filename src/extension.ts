@@ -35,7 +35,9 @@ import {
     UpdateOpponentPokemonUidPayload,
     SetDDAEnabledPayload,
     SetDifficultyLevelPayload,
-    RecordEncounterPayload
+    RecordEncounterPayload,
+    SetDeviceLockPayload,
+    VerifyTwoFactorPayload
 } from './handler';
 import { AchievementManager } from './manager/AchievementManager';
 import { BagManager } from './manager/bagsManager';
@@ -47,11 +49,15 @@ import { UserDaoManager } from './manager/userDaoManager';
 import { RecordBattleActionPayload, RecordBattleCatchPayload, RecordBattleFinishedPayload, RecordItemActionPayload } from './utils/AchievementCritiria';
 import { DifficultyManager } from './manager/DifficultyManager';
 import { SessionLockManager } from './manager/SessionLockManager';
+import { TwoFACertificate } from './utils/TwoFACertificate';
+import { DeviceBindState } from './dataAccessObj/DeviceBindState';
+import { setGlobalStateEnvPrefix } from './utils/GlobalStateKey';
 
 const itemDataMap = itemData as unknown as Record<string, ItemDao>;
 
 export async function activate(context: vscode.ExtensionContext) {
     // 在 activate 函式一開始執行
+    setGlobalStateEnvPrefix(context.extensionMode === vscode.ExtensionMode.Production);
 
     // 🔥 清除所有全域儲存 (測試用)
     // context.globalState.keys().forEach(key => {
@@ -175,6 +181,29 @@ export async function activate(context: vscode.ExtensionContext) {
         })
     );
 
+
+    // 🔥 新增指令：解鎖裝置
+    context.subscriptions.push(
+        vscode.commands.registerCommand('pokemon.unlockDevice', async () => {
+            await gameProvider.unlockDevice();
+            vscode.window.showInformationMessage('Device has been unlocked.');
+        })
+    );
+
+    // 🔥 新增指令：綁定裝置
+    context.subscriptions.push(
+        vscode.commands.registerCommand('pokemon.bindDevice', async () => {
+            await gameProvider.bindDevice();
+        })
+    );
+
+    // 🔥 新增指令：匯入綁定碼
+    context.subscriptions.push(
+        vscode.commands.registerCommand('pokemon.importBindCode', async () => {
+            await gameProvider.importBindCode();
+        })
+    );
+
     // 🔥 新增指令：列印難度歷史
     context.subscriptions.push(
         vscode.commands.registerCommand('pokemon.printDifficultyHistory', () => {
@@ -268,7 +297,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
             postMessage: (msg: unknown) => this._view?.webview.postMessage(msg),
             updateAllViews: () => PokemonViewProvider.providers.forEach(p => p.updateViews()),
             updateAchievementsView: () => {
-                this.commandHandler.handleGetAchievements();
+                this.commandHandler.achievementCommandHandler.handleGetAchievements();
             },
             isViewVisible: () => this._view?.visible ?? false
         };
@@ -287,7 +316,7 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                 return;
             }
             if (this.gameStateManager.getGameStateData()?.state === GameState.Searching) {
-                this.commandHandler.handleGetBiomeData();
+                this.commandHandler.battleCommandHandler.handleGetBiomeData();
             }
         });
 
@@ -306,35 +335,42 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                         console.log('[Extension] Auto Encounter skipped: Session is locked by another instance.');
                         return;
                     }
+
+                    if(this.partyManager.isDeviceLocked()){
+                        console.log('[Extension] Auto Encounter skipped: Device is locked.');
+                        return;
+                    }
+
                     const randomEncounterChance = Math.random();
                     // MARK: TEST 100% 機率觸發隨機遭遇
 
                     const isProduction = this._context.extensionMode === vscode.ExtensionMode.Production;
                     const chanceThreshold = isProduction ? 0.2 : 1.0;
                     if (randomEncounterChance < chanceThreshold) { // 20% 機率觸發隨機遭遇
-                        this.commandHandler.handleWildTriggerEncounter();
+                        this.commandHandler.battleCommandHandler.handleWildTriggerEncounter();
                     }
             }
         });
 
         this.difficultyManager.onDidRecordEncounter(() => {
             if (this._view?.visible) {
-                this.commandHandler.handleGetDifficultyModifiers();
+                this.commandHandler.difficultyCommandHandler.handleGetDifficultyModifiers();
             }
         });
     }
 
     public updateViews() {
         if (this._view) {
-            this.commandHandler.handleGetParty();
-            this.commandHandler.handleGetCurrentBox();
-            this.commandHandler.handleGetBag();
+            this.commandHandler.pokemonCommandHandler.handleGetParty();
+            this.commandHandler.pokemonCommandHandler.handleGetCurrentBox();
+            this.commandHandler.itemCommandHandler.handleGetBag();
             this.commandHandler.handleGetUserInfo();
-            this.commandHandler.handleGetGameStateData();
-            this.commandHandler.handleGetCurrentPokeDex();
-            this.commandHandler.handleGetAchievements();
-            this.commandHandler.handleGetBiomeData();
-            this.commandHandler.handleGetDifficultyLevel();
+            this.commandHandler.battleCommandHandler.handleGetGameStateData();
+            this.commandHandler.achievementCommandHandler.handleGetCurrentPokeDex();
+            this.commandHandler.achievementCommandHandler.handleGetAchievements();
+            this.commandHandler.battleCommandHandler.handleGetBiomeData();
+            this.commandHandler.difficultyCommandHandler.handleGetDifficultyLevel();
+            this.commandHandler.deviceBindCommandHandler.handleGetDeviceBindState();
         }
     }
 
@@ -393,6 +429,19 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
          
     }
 
+    public async unlockDevice() {
+        await this.partyManager.unlock();
+        PokemonViewProvider.providers.forEach(p => p.updateViews());
+    }
+
+    public async bindDevice() {
+        await this.commandHandler.deviceBindCommandHandler.handleGetBindCode();
+    }
+
+    public async importBindCode() {
+        await this.commandHandler.deviceBindCommandHandler.handleImportBindCode();
+    }
+
     public resolveWebviewView(
         webviewView: vscode.WebviewView,
         context: vscode.WebviewViewResolveContext,
@@ -440,49 +489,65 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                 await this.commandHandler.handleResetStorage(() => this.resetStorage());
             }
             if (message.command === MessageType.Catch) {
-                await this.commandHandler.handleCatch(message as CatchPayload);
+                await this.commandHandler.pokemonCommandHandler.handleCatch(message as CatchPayload);
             }
             if (message.command === MessageType.GetBox) {
-                this.commandHandler.handleGetBox((message as any).boxIndex);
+                this.commandHandler.pokemonCommandHandler.handleGetBox((message as any).boxIndex);
             }
             if (message.command === MessageType.DeletePokemon) {
-                await this.commandHandler.handleDeletePokemon(message as DeletePokemonPayload);
+                await this.commandHandler.pokemonCommandHandler.handleDeletePokemon(message as DeletePokemonPayload);
             }
             if (message.command === MessageType.ReorderBox) {
-                await this.commandHandler.handleReorderBox(message as ReorderBoxPayload);
+                await this.commandHandler.pokemonCommandHandler.handleReorderBox(message as ReorderBoxPayload);
             }
             if (message.command === MessageType.ReorderParty) {
-                await this.commandHandler.handleReorderParty(message as ReorderPartyPayload);
+                await this.commandHandler.pokemonCommandHandler.handleReorderParty(message as ReorderPartyPayload);
             }
             if (message.command === MessageType.BatchMoveToBox) {
-                await this.commandHandler.handleBatchMoveToBox(message as BatchMoveToBoxPayload);
+                await this.commandHandler.pokemonCommandHandler.handleBatchMoveToBox(message as BatchMoveToBoxPayload);
             }
             if (message.command === MessageType.GetParty) {
-                this.commandHandler.handleGetParty();
+                this.commandHandler.pokemonCommandHandler.handleGetParty();
             }
             if (message.command === MessageType.AddToParty) {
-                await this.commandHandler.handleAddToParty(message as AddToPartyPayload);
+                await this.commandHandler.pokemonCommandHandler.handleAddToParty(message as AddToPartyPayload);
             }
             if (message.command === MessageType.RemoveFromParty) {
-                await this.commandHandler.handleRemoveFromParty(message as RemoveFromPartyPayload);
+                await this.commandHandler.pokemonCommandHandler.handleRemoveFromParty(message as RemoveFromPartyPayload);
             }
             if (message.command === MessageType.UpdatePartyPokemon) {
-                await this.commandHandler.handleUpdatePartyPokemon(message as UpdatePartyPokemonPayload);
+                await this.commandHandler.pokemonCommandHandler .handleUpdatePartyPokemon(message as UpdatePartyPokemonPayload);
             }
+
+            if (message.command === MessageType.EvolvePokemon) {
+                await this.commandHandler.pokemonCommandHandler.handleEvolvePokemon(message as EvolvePokemonPayload);
+            }
+
+            if (message.command === MessageType.SelectStarter) {
+                await this.commandHandler.pokemonCommandHandler.handleSelectStarter(message as any);
+            }
+
+            if (message.command === MessageType.GetDeviceBindState) {
+                this.commandHandler.deviceBindCommandHandler.handleGetDeviceBindState();
+            }
+            if (message.command === MessageType.SetDeviceLock) {
+                await this.commandHandler.deviceBindCommandHandler.handleSetDeviceLock(message as SetDeviceLockPayload);
+            }
+
             if (message.command === MessageType.GetBag) {
-                this.commandHandler.handleGetBag();
+                this.commandHandler.itemCommandHandler.handleGetBag();
             }
             if (message.command === MessageType.UseMedicineInBag) {
-                await this.commandHandler.handleUseMedicineInBag(message as UseMedicineInBagPayload);
+                await this.commandHandler.itemCommandHandler.handleUseMedicineInBag(message as UseMedicineInBagPayload);
             }
             if (message.command === MessageType.UseItem) {
-                await this.commandHandler.handleUseItem(message as UseItemPayload);
+                await this.commandHandler.itemCommandHandler.handleUseItem(message as UseItemPayload);
             }
             if (message.command === MessageType.AddItem) {
-                await this.commandHandler.handleAddItem(message as AddItemPayload);
+                await this.commandHandler.itemCommandHandler.handleAddItem(message as AddItemPayload);
             }
             if (message.command === MessageType.RemoveItem) {
-                await this.commandHandler.handleRemoveItem(message as RemoveItemPayload);
+                await this.commandHandler.itemCommandHandler.handleRemoveItem(message as RemoveItemPayload);
             }
             if (message.command === MessageType.GetUserInfo) {
                 this.commandHandler.handleGetUserInfo();
@@ -491,95 +556,89 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
                 await this.commandHandler.handleUpdateMoney(message as UpdateMoneyPayload);
             }
             if (message.command === MessageType.SetAutoEncounter) {
-                await this.commandHandler.handleSetAutoEncounter(message as SetAutoEncounterPayload);
+                await this.commandHandler.battleCommandHandler.handleSetAutoEncounter(message as SetAutoEncounterPayload);
             }
             if (message.command === MessageType.SetGameStateData) {
-                await this.commandHandler.handleSetGameStateData(message as SetGameStateDataPayload);
+                await this.commandHandler.battleCommandHandler.handleSetGameStateData(message as SetGameStateDataPayload);
             }
             if (message.command === MessageType.GetGameStateData) {
-                this.commandHandler.handleGetGameStateData();
+                this.commandHandler.battleCommandHandler.handleGetGameStateData();
             }
             if (message.command === MessageType.UpdateOpponentsInParty) {
-                await this.commandHandler.handleUpdateOpponentsInParty(message as UpdateOpponentsInPartyPayload);
+                await this.commandHandler.battleCommandHandler.handleUpdateOpponentsInParty(message as UpdateOpponentsInPartyPayload);
             }
             if (message.command === MessageType.UpdateDefenderPokemonUid) {
-                await this.commandHandler.handleUpdateDefenderPokemonUid(message as UpdateDefenderPokemonUidPayload);
+                await this.commandHandler.battleCommandHandler.handleUpdateDefenderPokemonUid(message as UpdateDefenderPokemonUidPayload);
             }
 
             if (message.command === MessageType.UpdateOpponentPokemonUid) {
-                await this.commandHandler.handleUpdateOpponentPokemonUid(message as UpdateOpponentPokemonUidPayload);
+                await this.commandHandler.battleCommandHandler.handleUpdateOpponentPokemonUid(message as UpdateOpponentPokemonUidPayload);
             }
 
             if (message.command === MessageType.GetPokeDex) {
-                this.commandHandler.handleGetPokeDex(message as GetPokeDexPayload);
+                this.commandHandler.achievementCommandHandler.handleGetPokeDex(message as GetPokeDexPayload);
             }
 
             if (message.command === MessageType.UpdatePokeDex) {
-                await this.commandHandler.handleUpdatePokeDex(message as UpdatePokeDexPayload);
+                await this.commandHandler.achievementCommandHandler.handleUpdatePokeDex(message as UpdatePokeDexPayload);
             }
 
-            if (message.command === MessageType.EvolvePokemon) {
-                await this.commandHandler.handleEvolvePokemon(message as EvolvePokemonPayload);
-            }
-
-            if (message.command === MessageType.SelectStarter) {
-                await this.commandHandler.handleSelectStarter(message as any);
-            }
 
             if (message.command === MessageType.GoTriggerEncounter) {
                 if (this.gameStateManager.getGameStateData()?.state === GameState.Searching) {
                     if (message.triggerType === 'wild') {
-                        await this.commandHandler.handleWildTriggerEncounter();
+                        await this.commandHandler.battleCommandHandler.handleWildTriggerEncounter();
                     } else if (message.triggerType === 'npc') {
-                        await this.commandHandler.handleNPCTriggerEncounter();
+                        await this.commandHandler.battleCommandHandler.handleNPCTriggerEncounter();
                     }
                 }
             }
 
             // Difficulty
             if (message.command === MessageType.GetDifficultyModifiers) {
-                await this.commandHandler.handleGetDifficultyModifiers();
-            }
-            if (message.command === MessageType.RecordEncounter) {
-                await this.commandHandler.handleRecordEncounter(message as RecordEncounterPayload);
+                await this.commandHandler.difficultyCommandHandler.handleGetDifficultyModifiers();
             }
             if (message.command === MessageType.GetDifficultyLevel) {
-                await this.commandHandler.handleGetDifficultyLevel();
+                await this.commandHandler.difficultyCommandHandler.handleGetDifficultyLevel();
             }
             if (message.command === MessageType.SetDifficultyLevel) {
-                await this.commandHandler.handleSetDifficultyLevel(message as SetDifficultyLevelPayload);
+                await this.commandHandler.difficultyCommandHandler.handleSetDifficultyLevel(message as SetDifficultyLevelPayload);
             }
             if (message.command === MessageType.SetDDAEnabled) {
-                await this.commandHandler.handleSetDDAEnabled(message as SetDDAEnabledPayload);
+                await this.commandHandler.difficultyCommandHandler.handleSetDDAEnabled(message as SetDDAEnabledPayload);
             }
 
             if (message.command === MessageType.GetBiome) {
                 const filePath = message.filePath as string;
-                await this.commandHandler.handleGetBiomeData();
+                await this.commandHandler.battleCommandHandler.handleGetBiomeData();
             }
 
             if (message.command === MessageType.GetAchievements) {
-                await this.commandHandler.handleGetAchievements();
+                await this.commandHandler.achievementCommandHandler.handleGetAchievements();
+            }
+
+            if (message.command === MessageType.RecordEncounter) {
+                await this.commandHandler.achievementCommandHandler.handleRecordEncounter(message as RecordEncounterPayload);
             }
 
             if (message.command === MessageType.RecordBattleAction) {
-                await this.commandHandler.handleRecordBattleAction(message as RecordBattleActionPayload);
+                await this.commandHandler.achievementCommandHandler.handleRecordBattleAction(message as RecordBattleActionPayload);
             }
 
             if (message.command === MessageType.RecordItemAction) {
-                await this.commandHandler.handleRecordItemAction(message as RecordItemActionPayload);
+                await this.commandHandler.achievementCommandHandler.handleRecordItemAction(message as RecordItemActionPayload);
             }
 
             if (message.command === MessageType.RecordBattleCatch) {
-                await this.commandHandler.handleRecordCatchInBattle(message as RecordBattleCatchPayload);
+                await this.commandHandler.achievementCommandHandler.handleRecordCatchInBattle(message as RecordBattleCatchPayload);
             }
 
             if (message.command === MessageType.RecordBattleFinished) {
-                await this.commandHandler.handleRecordBattleFinished(message as RecordBattleFinishedPayload);
+                await this.commandHandler.achievementCommandHandler.handleRecordBattleFinished(message as RecordBattleFinishedPayload);
             }
 
             if (message.command === MessageType.UnlockNextLevel) {
-                await this.commandHandler.handleUnlockNextLevel();
+                await this.commandHandler.difficultyCommandHandler.handleUnlockNextLevel();
             }
 
         });
@@ -660,87 +719,3 @@ function getNonce() {
     }
     return text;
 }
-
-export const defaultPokemon: PokemonDao = {
-    uid: 'player-pikachu',
-    id: 25,
-    name: 'pikachu',
-    level: 40,
-    currentHp: 200,
-    maxHp: 200,
-    stats: { hp: 20, attack: 12, defense: 10, specialAttack: 11, specialDefense: 11, speed: 0 },
-    iv: { hp: 31, attack: 31, defense: 31, specialAttack: 31, specialDefense: 31, speed: 0 },
-    ev: { hp: 0, attack: 0, defense: 0, specialAttack: 0, specialDefense: 0, speed: 0 },
-    types: ['electric'],
-    gender: 'male',
-    nature: 'hardy',
-    ability: 'static',
-    isHiddenAbility: false,
-    isLegendary: false,
-    isMythical: false,
-    height: 4,
-    weight: 60,
-    baseExp: 112,
-    currentExp: 0,
-    toNextLevelExp: 100,
-    isShiny: false,
-    originalTrainer: 'Player',
-    caughtDate: Date.now(),
-    caughtBall: 'poke-ball',
-    ailment: 'healthy',
-    pokemonMoves: [
-        {
-            id: 1,
-            name: 'thunder-shock',
-            power: 40,
-            type: 'electric',
-            accuracy: 100,
-            pp: 30,
-            maxPP: 30,
-            effect: '',
-            priority: 0,
-        },
-        {
-            id: 2,
-            name: 'quick-attack',
-            power: 40,
-            type: 'normal',
-            accuracy: 100,
-            pp: 30,
-            maxPP: 30,
-            effect: '',
-            priority: 1,
-        },
-        {
-            id: 3,
-            name: 'electro-ball',
-            power: 60,
-            type: 'electric',
-            accuracy: 100,
-            pp: 10,
-            maxPP: 10,
-            effect: '',
-            priority: 0,
-        },
-        {
-            id: 4,
-            name: 'double-team',
-            power: 0,
-            type: 'normal',
-            accuracy: 0,
-            pp: 15,
-            maxPP: 15,
-            effect: 'Raises evasion.',
-            priority: 0,
-        }
-    ],
-    baseStats: { hp: 35, attack: 55, defense: 40, specialAttack: 50, specialDefense: 50, speed: 90 },
-    codingStats: {
-        caughtRepo: 'example-repo',
-        favoriteLanguage: 'TypeScript',
-        linesOfCode: 1500,
-        bugsFixed: 25,
-        commits: 100,
-        coffeeConsumed: 50
-    }
-};

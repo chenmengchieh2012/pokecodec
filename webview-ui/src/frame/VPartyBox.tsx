@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import styles from './VPartyBox.module.css';
-import { vscode, resolveAssetUrl } from '../utilities/vscode';
-import { PokemonInfoModal } from '../model/PokemonInfoModal';
-import { getBallUrl } from '../utilities/util';
-import { useMessageStore, useMessageSubscription } from '../store/messageStore';
 import { MessageType } from '../../../src/dataAccessObj/messageType';
 import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
+import { PokemonInfoModal } from '../model/PokemonInfoModal';
+import { useIsLockParty, useMessageStore, useMessageSubscription } from '../store/messageStore';
+import { getBallUrl } from '../utilities/util';
+import { resolveAssetUrl, vscode } from '../utilities/vscode';
+import styles from './VPartyBox.module.css';
 
 
 export const VPartyBox = () => {
@@ -14,6 +14,7 @@ export const VPartyBox = () => {
     const [party, setParty] = useState<PokemonDao[]>(defaultParty);
     const [selectedPokemon, setSelectedPokemon] = useState<PokemonDao | null>(null);
     const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+    const isLock = useIsLockParty();
     
     useMessageSubscription<PokemonDao[]>(MessageType.PartyData, (message) => {
         const partyDataPayload: PokemonDao[]| undefined = message.data;
@@ -75,6 +76,7 @@ export const VPartyBox = () => {
     };
 
     return (
+        <>
         <div className={styles.partyGrid}>
             {party.map((pokemon, index) => {
                 const ballType = pokemon.caughtBall ? pokemon.caughtBall : 'poke-ball'; 
@@ -90,6 +92,7 @@ export const VPartyBox = () => {
                         onDrop={(e) => handleDrop(e, index)}
                     >
                         {/* --- 常駐大預覽卡 + 小球 --- */}
+                        {!isLock && (
                         <div className={styles.previewCard}>
                             {pokemon.isShiny && <div className={styles.shinyMark}>✨</div>}
                             <img 
@@ -108,12 +111,14 @@ export const VPartyBox = () => {
                                 />
                             </div>
                         </div>
+                        )}
                         
                         {/* 下方小球 */}
                         <img 
                             src={getBallUrl(ballType)} 
                             alt="Ball" 
                             className={styles.ballBase}
+                            style={isLock ? { width: '40px', height: '40px', marginBottom: '10px' } : {}}
                         />
                     </div>
                 );
@@ -122,7 +127,7 @@ export const VPartyBox = () => {
             {/* 補滿 6 個空格 */}
             {Array.from({ length: Math.max(0, 6 - party.length) }).map((_, idx) => (
                 <div key={`empty-${idx}`} className={styles.emptySlot}>
-                    <div className={styles.emptyPreview}></div>
+                    {!isLock && <div className={styles.emptyPreview}></div>}
                     <div className={styles.emptyBall}></div>
                 </div>
             ))}
@@ -138,5 +143,6 @@ export const VPartyBox = () => {
                 />
             )}
         </div>
+        </>
     );
 };

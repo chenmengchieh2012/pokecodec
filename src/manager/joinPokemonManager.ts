@@ -3,13 +3,19 @@ import { PokemonDao } from '../dataAccessObj/pokemon';
 import { SequentialExecutor } from '../utils/SequentialExecutor';
 import GlobalStateKey from '../utils/GlobalStateKey';
 import { GlobalMutex } from '../utils/GlobalMutex';
+import { DeviceBindState } from '../dataAccessObj/DeviceBindState';
+import { TwoFACertificate } from '../utils/TwoFACertificate';
+
+
 
 export class JoinPokemonManager {
     private static instance: JoinPokemonManager;
     // 記憶體快取
     private party: PokemonDao[] = [];
+    private deviceBindState: DeviceBindState;
     private context: vscode.ExtensionContext;
     private readonly STORAGE_KEY = GlobalStateKey.PARTY_DATA;
+    private readonly DEVICE_BIND_STATE_KEY = GlobalStateKey.DEVICE_BIND_STATE;
     private readonly MAX_PARTY_SIZE = 6;
 
     private saveQueue: SequentialExecutor;
@@ -17,7 +23,18 @@ export class JoinPokemonManager {
     private constructor(context: vscode.ExtensionContext) {
         this.context = context;
         this.saveQueue = new SequentialExecutor(new GlobalMutex(context, 'party.lock'));
+        this.deviceBindState = this._getDefaultDeviceBindState();
         this._loadFromDisk();
+    }
+
+    private _getDefaultDeviceBindState(): DeviceBindState {
+        return {
+            isLock: false,
+            lockId: 0,
+            lastUnlockId: 0,
+            twoFactorSecret: '',
+            twoFactorLastVerified: 0,
+        };
     }
 
     public static getInstance(): JoinPokemonManager {
@@ -38,6 +55,13 @@ export class JoinPokemonManager {
             this.party = data;
         } else {
             this.party = [];
+        }
+
+        const bindState = this.context.globalState.get<DeviceBindState>(this.DEVICE_BIND_STATE_KEY);
+        if (bindState) {
+            this.deviceBindState = bindState;
+        } else {
+            this.deviceBindState = this._getDefaultDeviceBindState();
         }
     }
 
@@ -160,8 +184,160 @@ export class JoinPokemonManager {
     }
 
     public async clear(): Promise<void> {
+        await this.resetBindState();
         await this.performTransaction(() => {
             return [];
+        });
+    }
+
+    // ==================== Device Bind State Methods ====================
+
+    /**
+     * 取得目前的綁定狀態
+     */
+    public getDeviceBindState(): DeviceBindState {
+        return { ...this.deviceBindState };
+    }
+
+    /**
+     * 檢查是否已綁定
+     */
+    public isDeviceLocked(): boolean {
+        return this.deviceBindState.isLock;
+    }
+
+    /**
+     * 執行綁定（上鎖）
+     * @returns 新的綁定序號
+     */
+    public async lock(newLockId: number): Promise<number> {
+        this.deviceBindState = {
+            ...this.deviceBindState,
+            isLock: true,
+            lockId: newLockId,
+        };
+        await this._saveDeviceBindState();
+        return newLockId;
+    }
+
+    /**
+     * 解除綁定（解鎖）
+     * @returns 解除綁定的序號
+     */
+    public async unlock(): Promise<number> {
+        const currentLockId = this.deviceBindState.lockId;
+        this.deviceBindState = {
+            ...this.deviceBindState,
+            isLock: false,
+            lastUnlockId: currentLockId,
+        };
+        await this._saveDeviceBindState();
+        return currentLockId;
+    }
+
+    /**
+     * 強制重置綁定狀態（用於強制解鎖場景）
+     */
+    public async resetBindState(): Promise<void> {
+        this.deviceBindState = this._getDefaultDeviceBindState();
+        await this._saveDeviceBindState();
+    }
+
+    // MARK: 測試用，僅重置版本資訊
+    public async resetOnlyVersion(version: number): Promise<void> {
+        await this.saveQueue.execute(async () => {
+            const bindState = this.context.globalState.get<DeviceBindState>(this.DEVICE_BIND_STATE_KEY);
+            if (bindState) {
+                const newBindState = {
+                    ...bindState,
+                    lockId: version,
+                    lastUnlockId: version,
+                };
+                await this.context.globalState.update(this.DEVICE_BIND_STATE_KEY, newBindState);
+                this.deviceBindState = newBindState;
+            }
+        });
+    }
+
+    // ==================== 2FA Methods ====================
+
+    /**
+     * 取得或產生 2FA Secret
+     * 如果尚未綁定且沒有 Secret，會產生一個新的
+     */
+    public async getOrGenerateTwoFactorSecret(): Promise<string> {
+        if (this.deviceBindState.twoFactorSecret) {
+            return this.deviceBindState.twoFactorSecret;
+        }
+        
+        // 只有在未鎖定狀態下才能產生新的 Secret
+        if (!this.deviceBindState.isLock) {
+            const newSecret = TwoFACertificate.generateSecret();
+            this.deviceBindState = {
+                ...this.deviceBindState,
+                twoFactorSecret: newSecret
+            };
+            await this._saveDeviceBindState();
+            return newSecret;
+        }
+        
+        throw new Error("Device is locked but no 2FA secret found.");
+    }
+
+    /**
+     * 驗證 2FA Token
+     * @param token 使用者輸入的 6 位數驗證碼
+     */
+    public async verifyTwoFactor(token: string): Promise<boolean> {
+        if (!this.deviceBindState.twoFactorSecret) {
+            return false;
+        }
+
+        const result = TwoFACertificate.verifyTokenWithState(
+            this.deviceBindState.twoFactorSecret,
+            token,
+            this.deviceBindState.twoFactorLastVerified
+        );
+
+        if (result.isValid && result.newCounter) {
+            this.deviceBindState = {
+                ...this.deviceBindState,
+                twoFactorLastVerified: result.newCounter
+            };
+            await this._saveDeviceBindState();
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * 匯入資料
+     */
+    public async importData(party: PokemonDao[], secret: string, lockId: number): Promise<void> {
+        await this.saveQueue.execute(async () => {
+            // Update Party
+            await this.context.globalState.update(this.STORAGE_KEY, party);
+            this.party = party;
+
+            // Update Bind State
+            this.deviceBindState = {
+                ...this.deviceBindState,
+                twoFactorSecret: secret,
+                lockId: lockId,
+                // 匯入後保持解鎖狀態，等待使用者手動鎖定或驗證
+                isLock: false 
+            };
+            await this.context.globalState.update(this.DEVICE_BIND_STATE_KEY, this.deviceBindState);
+        });
+    }
+
+    /**
+     * 儲存綁定狀態到磁碟
+     */
+    private async _saveDeviceBindState(): Promise<void> {
+        await this.saveQueue.execute(async () => {
+            await this.context.globalState.update(this.DEVICE_BIND_STATE_KEY, this.deviceBindState);
         });
     }
 }

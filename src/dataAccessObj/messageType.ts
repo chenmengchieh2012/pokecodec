@@ -19,6 +19,7 @@ export const MessageType = {
     EncounterHistoryData: 'encounterHistoryData',
     InitializationState: 'initializationState',
     SessionStatus: 'sessionStatus',
+    DeviceBindStateData: 'deviceBindStateData',
     Reset: 'reset',
 
     // Request types (from webview to extension)
@@ -31,8 +32,12 @@ export const MessageType = {
     GetBiome: 'getBiome',
     GetPokeDex: 'getPokeDex',
     GetAchievements: 'getAchievements',
+    GetTwoFactorSecret: 'getTwoFactorSecret',
+    GetDeviceBindState: 'getDeviceBindState',
 
     // Action types
+    SetDeviceLock: 'setDeviceLock',
+    VerifyTwoFactor: 'verifyTwoFactor',
     SetGameStateData: 'setGameStateData',
     UpdateOpponentsInParty: 'updateOpponentInParty',
     UpdateDefenderPokemonUid: 'updateDefenderPokemonUid',

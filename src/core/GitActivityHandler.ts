@@ -130,6 +130,11 @@ export class GitActivityHandler {
             console.log(`[GitActivityHandler] Skipping Git change processing because game state is not Battle.`);
             return;
         }
+
+        if(this.partyManager && this.partyManager.isDeviceLocked()){
+            console.log('[SessionHandler] Device is locked, skipping playtime save.');
+            return;
+        }
         const oldHash = this.lastHeadHashes.get(folderPath);
         const newHash = await this.updateLastHeadHash(folderPath);
 

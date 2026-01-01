@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bind Device</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: white; 
+            color: black;
+            font-family: sans-serif;
+        }
+        img {
+            width: 600px;
+            max-width: 90%;
+            height: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background: white;
+        }
+        h2 {
+            margin-bottom: 20px;
+        }
+        .input-group {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        input {
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 150px;
+            text-align: center;
+        }
+        button {
+            padding: 8px 16px;
+            font-size: 16px;
+            background-color: #007acc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #005999;
+        }
+        .status {
+            margin-top: 10px;
+            font-weight: bold;
+            height: 20px;
+        }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h2>掃描以綁定裝置</h2>
+    <img src="${qrCodeDataUrl}" />
+    <p>請使用手機 App 掃描此 QR Code。</p>
+    <p style="font-size: 0.8em; color: #666;">格式: GZIP Compressed JSON (Base64)</p>
+    
+    <div class="input-group">
+        <input type="text" id="tokenInput" placeholder="輸入 6 位數驗證碼" maxlength="6" />
+        <button id="verifyBtn">驗證</button>
+    </div>
+    <div id="status" class="status"></div>
+
+    <script>
+        const vscode = acquireVsCodeApi();
+        const verifyBtn = document.getElementById('verifyBtn');
+        const tokenInput = document.getElementById('tokenInput');
+        const statusDiv = document.getElementById('status');
+
+        verifyBtn.addEventListener('click', () => {
+            const token = tokenInput.value;
+            if (token.length === 6) {
+                statusDiv.textContent = '驗證中...';
+                statusDiv.className = 'status';
+                vscode.postMessage({
+                    command: 'verify',
+                    token: token
+                });
+            } else {
+                statusDiv.textContent = '請輸入 6 位數驗證碼。';
+                statusDiv.className = 'status error';
+            }
+        });
+
+        window.addEventListener('message', event => {
+            const message = event.data;
+            switch (message.command) {
+                case 'verifyResult':
+                    if (message.success) {
+                        statusDiv.textContent = '驗證成功！';
+                        statusDiv.className = 'status success';
+                        tokenInput.value = '';
+                    } else {
+                        statusDiv.textContent = '驗證碼無效，請重試。';
+                        statusDiv.className = 'status error';
+                    }
+                    break;
+                case 'updateQR':
+                    const img = document.querySelector('img');
+                    if (img) {
+                        img.src = message.qrCodeDataUrl;
+                    }
+                    if (message.message) {
+                        statusDiv.textContent = message.message;
+                        statusDiv.className = 'status success';
+                    }
+                    break;
+            }
+        });
+    </script>
+</body>
+</html>

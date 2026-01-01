@@ -35,18 +35,6 @@
     - 拒絕同步的狀態下，就只能走 4.1 (不能走1.2，因為其他電腦會有問題)
   - 進行2fa確認已經收到收機內
 
-4. 手機還原vscode(vscode 綁定狀態下，且隊伍相同)
-  - 因為有用2fa ，所以手機一定有資訊
-  - 還原不使用2fa
-  - 還原時： 手機傳給 VS Code 資料 + 一個 SessionCRC (例如 v8)。
-  - 透過增量還原
-    綁定id: 用uid 最後兩碼就可以，因為已經綁定了
-    CRC: 必須要，建議 1~2 碼（防止手殘輸入錯誤或版本跳號）。
-    HP: 建議傳「目前的絕對值」，因為 HP 變動最頻繁，用增量反而容易亂。
-    Moves: 建議 「有換才傳」，沒換時 Flag 設為 0，這樣輸入長度會立刻減半。
-    LOC/Bugs/Commits: 傳增量。
-  - 必須要在上鎖的才可以進行還原
-    
 
 4.1 手機還原至電腦失效(強制還原)
   - 於其他電腦發現與手機隊伍不同的時候 (已綁定也可能發生)
@@ -59,3 +47,15 @@
 
 5.0 強制解鎖
   - 相當於reset，之後換新手機走回1.1
+
+## 2FA 實作流程 (基於 TwoFACertificate.ts)
+1. **綁定階段 (Binding)**
+   - 產生 Secret: `TwoFACertificate.generateSecret()`
+   - 儲存 Secret: 存入 `deviceBindState.twoFactorSecret`
+   - 顯示 QR Code: 使用 `QrcodeGenerator` 顯示 Secret 給使用者掃描
+
+2. **驗證階段 (Verification)**
+   - 使用者輸入 6 位數 Token
+   - 驗證: `TwoFACertificate.verifyToken(secret, token)`
+   - 防重放: 檢查 `verifiedCounter > deviceBindState.twoFactorLastVerified`
+   - 更新狀態: 更新 `twoFactorLastVerified`

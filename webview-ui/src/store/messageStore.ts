@@ -9,6 +9,7 @@ import { AchievementStatistics } from '../../../src/utils/AchievementCritiria';
 import { GameStateData } from '../../../src/dataAccessObj/gameStateData';
 import { DifficultyModifiers } from '../../../src/dataAccessObj/DifficultyData';
 import { PokemonDao } from '../../../src/dataAccessObj/pokemon';
+import { DeviceBindState } from '../../../src/dataAccessObj/DeviceBindState';
 // ============================================================
 // Type Definitions
 // ============================================================
@@ -37,6 +38,7 @@ export interface StoreRefs {
     difficultyModifiers: DifficultyModifiers | undefined;
     difficultyLevel: DifficultyLevelPayload | undefined;
     sessionStatus: SessionStatusPayload | undefined;
+    deviceBindState: DeviceBindState | undefined;
 }
 
 export interface SessionStatusPayload {
@@ -94,6 +96,7 @@ class MessageStore {
         difficultyLevel: undefined,
         difficultyModifiers: undefined,
         sessionStatus: undefined,
+        deviceBindState: undefined,
     };
     /** 是否已初始化 */
     private initialized: InitializedStateType = InitializedState.UnStart;
@@ -199,7 +202,16 @@ class MessageStore {
             case MessageType.DifficultyLevelData:
                 this.refs.difficultyLevel = (message.data as DifficultyLevelPayload) ?? undefined;
                 break;
-            case MessageType.SessionStatus:{ 
+            case MessageType.DeviceBindStateData:{
+                const newdeviceBindState = (message.data as DeviceBindState) ?? undefined;
+                // 如果從 isLock = true 變成 isLock = false，代表裝置解鎖，需要重新拉取資料
+                if (this.refs.deviceBindState?.isLock === true && newdeviceBindState?.isLock === false) {
+                    console.log('[MessageStore] Session reactivated, refreshing all data...');
+                    this.reset();
+                }
+                this.refs.deviceBindState = newdeviceBindState;
+                break;
+            }case MessageType.SessionStatus:{ 
                 const newStatus = (message.data as SessionStatusPayload);
                 // 如果從 inactive 變成 active，代表重新獲得控制權，需要重新拉取資料
                 if (this.refs.sessionStatus?.active === false && newStatus?.active === true) {
@@ -208,8 +220,7 @@ class MessageStore {
                 }
                 this.refs.sessionStatus = newStatus ?? undefined;
                 break; 
-            }
-            default:
+            }default:
                 // 非資料更新類型，無需更新 refs
                 break;
         }
@@ -253,6 +264,7 @@ class MessageStore {
                     this.refs.achievements !== undefined &&
                     this.refs.difficultyModifiers !== undefined &&
                     this.refs.difficultyLevel !== undefined &&
+                    this.refs.deviceBindState !== undefined &&
                     this.initialized === InitializedState.Initializing) {
                     this.initialized = InitializedState.finished;
                     this.notify({ type: MessageType.InitializationState, data: this.initialized });
@@ -298,9 +310,11 @@ class MessageStore {
         vscode.postMessage({ command: MessageType.GetPokeDex });
         // 8. 請求成就資料
         vscode.postMessage({ command: MessageType.GetAchievements });
-        // 9. 請求難度修正值
+        // 9. 請求裝置綁定狀態
+        vscode.postMessage({ command: MessageType.GetDeviceBindState });
+        // 10. 請求難度資料
         vscode.postMessage({ command: MessageType.GetDifficultyModifiers });
-        // 10. 請求難度等級資料
+        // 11. 請求難度等級資料
         vscode.postMessage({ command: MessageType.GetDifficultyLevel });
     }
 
@@ -341,6 +355,9 @@ class MessageStore {
         if (this.refs.sessionStatus !== undefined) {
             this.notify({ type: MessageType.SessionStatus, data: this.refs.sessionStatus });
         }
+        if (this.refs.deviceBindState !== undefined) {
+            this.notify({ type: MessageType.DeviceBindStateData, data: this.refs.deviceBindState });
+        }
     }
 
     /**
@@ -361,6 +378,7 @@ class MessageStore {
             difficultyLevel: undefined,
             difficultyModifiers: undefined,
             sessionStatus: undefined,
+            deviceBindState: undefined,
         };
         this.notify({ type: MessageType.InitializationState, data: this.initialized });
         console.log('[MessageStore] Reset to uninitialized state');
@@ -556,5 +574,22 @@ export const useSessionStatus = (): boolean => {
     });
 
     return isActive;
+};
+
+/**
+ * 取得 Party Lock 狀態的 Hook
+ * 當狀態改變時，會觸發組件重新渲染
+ */
+export const useIsLockParty = (): boolean => {
+    const { getRefs } = useMessageStore();
+    const [isLock, setIsLock] = React.useState<boolean>(getRefs().deviceBindState?.isLock ?? false);
+
+    useMessageSubscription<DeviceBindState>(MessageType.DeviceBindStateData, (message) => {
+        if (message.data) {
+            setIsLock(message.data.isLock);
+        }
+    });
+
+    return isLock;
 };
 
