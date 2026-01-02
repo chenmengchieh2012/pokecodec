@@ -204,6 +204,19 @@ export async function activate(context: vscode.ExtensionContext) {
         })
     );
 
+    // 🔥 新增指令：下載並匯入 Party
+    context.subscriptions.push(
+        vscode.commands.registerCommand('pokemon.downloadAndImportParty', async () => {
+            const filename = await vscode.window.showInputBox({
+                placeHolder: 'Enter filename (e.g. party.txt)',
+                prompt: 'Download and Import Party from Gist'
+            });
+            if (filename) {
+                await gameProvider.downloadAndImportParty(filename);
+            }
+        })
+    );
+
     // 🔥 新增指令：列印難度歷史
     context.subscriptions.push(
         vscode.commands.registerCommand('pokemon.printDifficultyHistory', () => {
@@ -441,6 +454,10 @@ class PokemonViewProvider implements vscode.WebviewViewProvider {
 
     public async importBindCode() {
         await this.commandHandler.deviceBindCommandHandler.handleImportBindCode();
+    }
+
+    public async downloadAndImportParty(filename: string) {
+        await this.commandHandler.deviceBindCommandHandler.handleDownloadAndImportParty(filename);
     }
 
     public resolveWebviewView(

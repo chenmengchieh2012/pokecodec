@@ -116,6 +116,7 @@ export class DeviceBindCommandHandler {
             // 初始 QR Code 都只包含 Secret，不包含 Party 資料
             // 必須通過 2FA 驗證後，才會產生包含 Party 資料的 QR Code
             const payload = {
+                type: 'bindSetup',
                 secret: secret,
                 party: [], 
                 lockId: -1,
@@ -171,6 +172,7 @@ export class DeviceBindCommandHandler {
                                     // 驗證成功後，無論是 Setup Mode 還是 Re-sync，都重新產生包含完整資料的 QR Code
                                     // Regenerate QR with full data
                                     const fullPayload = {
+                                        type: 'party',
                                         secret: secret,
                                         party: minimizedParty,
                                         lockId: bindState.lockId+1,
@@ -225,6 +227,73 @@ export class DeviceBindCommandHandler {
             return;
         }
 
+        await this.processImportedData(input);
+    }
+
+    public async handleDownloadAndImportParty(filename: string): Promise<void> {
+        try {
+            // 1. Get GIST_URL from settings
+            const config = vscode.workspace.getConfiguration('pokecodec');
+            const gistUrl = config.get<string>('gistUrl');
+            
+            if (!gistUrl) {
+                throw new Error('GIST_URL not configured in settings (pokecodec.gistUrl)');
+            }
+            
+            // 2. Construct URL
+            // Remove trailing slash if present
+            const baseUrl = gistUrl.endsWith('/') ? gistUrl.slice(0, -1) : gistUrl;
+            const targetUrl = `${baseUrl}/raw/pokecodec-party-${filename}.txt`;
+            
+            console.log(`[CommandHandler] Downloading party from: ${targetUrl}`);
+
+            // 3. Download content
+            const content = await this.downloadContent(targetUrl);
+
+            if (!content.startsWith('GZIP:')) {
+                throw new Error('Downloaded content does not start with GZIP:');
+            }
+
+            // 4. Process
+            await this.processImportedData(content);
+
+        } catch (error) {
+            console.error('[CommandHandler] Download and Import failed:', error);
+            vscode.window.showErrorMessage('Failed to download and import data: ' + (error as Error).message);
+        }
+    }
+
+    private async downloadContent(url: string): Promise<string> {
+        const https = require('https');
+        return new Promise<string>((resolve, reject) => {
+            const request = https.get(url, (res: any) => {
+                // Handle Redirects
+                if (res.statusCode === 301 || res.statusCode === 302 || res.statusCode === 307 || res.statusCode === 308) {
+                    if (res.headers.location) {
+                        console.log(`[CommandHandler] Redirecting to: ${res.headers.location}`);
+                        this.downloadContent(res.headers.location)
+                            .then(resolve)
+                            .catch(reject);
+                        return;
+                    } else {
+                        reject(new Error(`Redirect status ${res.statusCode} but no location header found`));
+                        return;
+                    }
+                }
+
+                if (res.statusCode !== 200) {
+                    reject(new Error(`Failed to download: Status Code ${res.statusCode}`));
+                    return;
+                }
+                let data = '';
+                res.on('data', (chunk: any) => data += chunk);
+                res.on('end', () => resolve(data.trim()));
+            });
+            request.on('error', (err: any) => reject(err));
+        });
+    }
+
+    private async processImportedData(input: string): Promise<void> {
         try {
             const data = RestoreCodeExtractor.extract(input);
             console.log('[CommandHandler] Imported Bind Code Data:', data);

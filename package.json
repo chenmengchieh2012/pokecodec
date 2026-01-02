@@ -45,6 +45,10 @@
         "title": "Pokemon: Import Bind Code"
       },
       {
+        "command": "pokemon.downloadAndImportParty",
+        "title": "Pokemon: Download and Import Party"
+      },
+      {
         "command": "pokemon.unlockDevice",
         "title": "Pokemon: Unlock Device"
       }
@@ -72,6 +76,11 @@
           "type": "string",
           "default": "",
           "description": "Manually specify the Git root path. If empty, it will be auto-detected."
+        },
+        "pokecodec.gistUrl": {
+          "type": "string",
+          "default": "",
+          "description": "Base URL for Gist raw content (e.g. https://gist.githubusercontent.com/username/gist_id/)"
         }
       }
     },
