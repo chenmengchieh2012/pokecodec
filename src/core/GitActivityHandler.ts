@@ -204,7 +204,6 @@ export class GitActivityHandler {
             const statsLine = lines[lines.length - 1];
 
             const [hash, author, message] = metaInfo.split('|');
-
             // 解析 statsLine
             // e.g. " 1 file changed, 12 insertions(+), 5 deletions(-)"
             const insertionsMatch = statsLine.match(/(\d+) insertion/);
