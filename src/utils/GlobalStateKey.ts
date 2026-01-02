@@ -17,6 +17,9 @@ const GlobalStateKey = {
     get ACHIEVEMENT() { return `${ENV_PREFIX}pokemon-achievement-data`; },
     get SESSION_LOCK() { return `${ENV_PREFIX}pokemon-session-lock`; },
     get DEVICE_BIND_STATE() { return `${ENV_PREFIX}pokemon-device-bind-state`; },
+    get HAS_MIGRATED_TO_002() { return `${ENV_PREFIX}hasMigratedTo002`; },
+    get EXTENSION_VERSION() { return `${ENV_PREFIX}extensionVersion`; },
+    get IS_FIRST_RUN() { return `${ENV_PREFIX}isFirstRun`; },
 };
 
 export default GlobalStateKey;

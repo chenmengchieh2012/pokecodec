@@ -52,7 +52,7 @@ import { SessionLockManager } from './manager/SessionLockManager';
 import { MigrationManager } from './manager/MigrationManager';
 import { TwoFACertificate } from './utils/TwoFACertificate';
 import { DeviceBindState } from './dataAccessObj/DeviceBindState';
-import { setGlobalStateEnvPrefix } from './utils/GlobalStateKey';
+import GlobalStateKey, { setGlobalStateEnvPrefix } from './utils/GlobalStateKey';
 
 const itemDataMap = itemData as unknown as Record<string, ItemDao>;
 
@@ -79,8 +79,11 @@ export async function activate(context: vscode.ExtensionContext) {
     const difficultyManager = DifficultyManager.initialize(context);
     context.subscriptions.push(difficultyManager);
 
+    
+
     // Initialize Migration Manager and perform checks
     const migrationManager = MigrationManager.initialize(context, userDaoManager, bagManager);
+    // migrationManager.reset();
     await migrationManager.checkAndPerformMigrations();
 
     const gameStateData = gameStateManager.getGameStateData();
@@ -153,9 +156,9 @@ export async function activate(context: vscode.ExtensionContext) {
     const shopProvider = new PokemonViewProvider({ extensionUri: context.extensionUri, viewType: 'shop', context });
 
     // 🔥 首次安裝時執行重置
-    const isFirstRun = context.globalState.get('isFirstRun', true);
+    const isFirstRun = context.globalState.get(GlobalStateKey.IS_FIRST_RUN, true);
     if (isFirstRun) {
-        await context.globalState.update('isFirstRun', false);
+        await context.globalState.update(GlobalStateKey.IS_FIRST_RUN, false);
         if(await achievementManager.checkDbEmpty()){
             console.log('[Activate] First run detected: Achievement database is empty. Initializing achievement statistics.');
             await achievementManager.clear();
