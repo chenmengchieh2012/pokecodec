@@ -49,6 +49,7 @@ import { UserDaoManager } from './manager/userDaoManager';
 import { RecordBattleActionPayload, RecordBattleCatchPayload, RecordBattleFinishedPayload, RecordItemActionPayload } from './utils/AchievementCritiria';
 import { DifficultyManager } from './manager/DifficultyManager';
 import { SessionLockManager } from './manager/SessionLockManager';
+import { MigrationManager } from './manager/MigrationManager';
 import { TwoFACertificate } from './utils/TwoFACertificate';
 import { DeviceBindState } from './dataAccessObj/DeviceBindState';
 import { setGlobalStateEnvPrefix } from './utils/GlobalStateKey';
@@ -77,7 +78,11 @@ export async function activate(context: vscode.ExtensionContext) {
     const achievementManager = AchievementManager.initialize(context);
     const difficultyManager = DifficultyManager.initialize(context);
     context.subscriptions.push(difficultyManager);
-    
+
+    // Initialize Migration Manager and perform checks
+    const migrationManager = MigrationManager.initialize(context, userDaoManager, bagManager);
+    await migrationManager.checkAndPerformMigrations();
+
     const gameStateData = gameStateManager.getGameStateData();
     if (gameStateData.state !== GameState.Searching) {
         console.log("[Activate] Non-searching game state detected on activation:", gameStateData.state);

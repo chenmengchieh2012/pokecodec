@@ -255,9 +255,9 @@ export class GitActivityHandler {
         // 根據 linesChanged 給予玩家遊戲幣
         if (!userInfo) { return; }
 
-        const moneyEarned = Math.max(1, Math.floor(linesChanged / 10)); // 每 10 行程式碼給 1 遊戲幣
+        const moneyEarned = Math.max(1, Math.floor(linesChanged/3)); // 每 10 行程式碼給 1 遊戲幣
         // 最高給予 100 遊戲幣
-        const cappedMoney = Math.min(moneyEarned, 100);
+        const cappedMoney = Math.min(moneyEarned, 300);
         this.userDaoManager?.updateMoney(cappedMoney);
         console.log(`[GitActivityHandler] Given ${cappedMoney} money to player for coding effort.`);
         vscode.window.showInformationMessage(`You earned ${cappedMoney} PokéDollars for your coding effort!`);
@@ -366,6 +366,41 @@ export class GitActivityHandler {
             modifyPokemon.currentExp = (modifyPokemon.currentExp || 0) + cappedExpGain;
             modifyPokemon = ExperienceCalculator.addExperience(modifyPokemon, cappedExpGain);
             console.log(`[GitActivityHandler] Gave ${cappedExpGain} EXP to Pokemon ${modifyPokemon.name}. New EXP: ${modifyPokemon.currentExp}, Level: ${modifyPokemon.level}`);
+
+            /**
+             * 回復 PP (Power Points)
+             * 規則：
+             * 1. 基礎回復：只要有 Commit，全隊回復 1 點 PP
+             * 2. 比例回復：每 50 行程式碼，額外回復 1 點 PP
+             * 3. 全滿獎勵：當行數 >= 300 行時，全隊 PP 全滿
+             */
+            if (data.linesChanged >= 300) {
+                // 全滿獎勵
+                modifyPokemon.pokemonMoves.forEach(move => {
+                    move.pp = move.maxPP;
+                });
+                console.log(`[GitActivityHandler] Fully restored PP for Pokemon ${modifyPokemon.name} (Commit > 300 lines)`);
+            } else {
+                // 基礎 + 比例回復
+                const baseRestore = 1;
+                const bonusRestore = Math.floor(data.linesChanged / 50);
+                const totalRestore = baseRestore + bonusRestore;
+                
+                modifyPokemon.pokemonMoves.forEach(move => {
+                    // 按照 maxPP 比例回復 (如果需要更精細的比例，可以用 move.maxPP * percentage)
+                    // 但這裡依照需求 "公式我希望按照本來的maxpp比例回覆"
+                    // 這裡的理解是：回復量 = (totalRestore / 100) * maxPP ? 
+                    // 或者是：回復量 = totalRestore (固定值) 但受限於 maxPP?
+                    // 根據上下文 "行數至少要300行，其他依照比例"，推測是指 300 行 = 100% 回復
+                    // 所以回復比例 = linesChanged / 300
+                    
+                    const restoreRatio = Math.min(1.0, data.linesChanged / 300);
+                    const restoreAmount = Math.max(1, Math.floor(move.maxPP * restoreRatio));
+                    
+                    move.pp = Math.min(move.maxPP, move.pp + restoreAmount);
+                });
+                console.log(`[GitActivityHandler] Restored PP for Pokemon ${modifyPokemon.name} based on lines changed (${data.linesChanged})`);
+            }
 
 
             /**

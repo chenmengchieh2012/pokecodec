@@ -157,7 +157,7 @@ export const BattlePokemonFactory = ():BattlePokemon => {
         const currentHp = nextRoundPokemon.currentHp;
 
         let newHp = currentHp;
-        if (damage > 0) {
+        if (damage > 0 || currentHp < 0) {
             newHp = Math.max(0, currentHp - damage);
             nextRoundPokemonRef.current = { ...nextRoundPokemon, currentHp: newHp };
         }
@@ -323,7 +323,7 @@ export const BattlePokemonFactory = ():BattlePokemon => {
                 result.isWakedUp = true;
             } else {
                 result.isSleeping = true;
-                nextRoundPokemon.currentHp = Math.min(nextRoundPokemon.maxHp, nextRoundPokemon.currentHp + Math.floor(nextRoundPokemon.maxHp / 8));
+                nextRoundPokemon.currentHp = Math.max(0, Math.min(nextRoundPokemon.maxHp, nextRoundPokemon.currentHp + Math.floor(nextRoundPokemon.maxHp / 8)));
             }
         }
 
@@ -414,7 +414,7 @@ export const BattlePokemonFactory = ():BattlePokemon => {
         roundCheck: handleRoundCheck,
         effectByConfused: handleEffectByConfused,
         setPokemon: (pokemon) => (
-            nextRoundPokemonRef.current = pokemon
+            nextRoundPokemonRef.current = { ...pokemon, currentHp: Math.max(0, pokemon.currentHp) }
         ),
         syncState: synchronized,
     }), [handleThrowBall, handleHited, handleResetPokemon, handleHeal, handleUpdateAilment, handleDecrementPP, handleIncreaseExperience, handleEffectByMove, handleGetBattleState, handleResetFlinch, getHitAction, handleRoundCheck, handleEffectByConfused, synchronized]);

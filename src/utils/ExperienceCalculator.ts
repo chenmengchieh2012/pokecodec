@@ -70,7 +70,9 @@ export const ExperienceCalculator = {
             newPokemon.stats.speed = ExperienceCalculator.calculateStat(newPokemon.baseStats.speed, newPokemon.iv.speed, newPokemon.ev.speed, newPokemon.level);
 
             // Heal HP by the amount increased (standard RPG behavior)
-            newPokemon.currentHp += hpDiff;
+            // Bonus: Heal 10% of max HP on level up
+            newPokemon.currentHp += hpDiff + Math.floor(newHp * 0.1);
+            newPokemon.currentHp = Math.min(Math.max(0, newPokemon.currentHp), newHp);
             newPokemon.maxHp = newHp;
 
             // Ensure move is learned if applicable

@@ -7,7 +7,7 @@ import { GlobalMutex } from '../utils/GlobalMutex';
 export class UserDaoManager {
     private static instance: UserDaoManager;
     // 記憶體快取 (只供讀取與 UI 顯示)
-    private userDao: UserDao = { money: 50000, autoEncounter: true };
+    private userDao: UserDao = { money: 5000, autoEncounter: true };
     private context: vscode.ExtensionContext;
     private readonly STORAGE_KEY = GlobalStateKey.USER_DATA;
 
@@ -134,7 +134,17 @@ export class UserDaoManager {
 
     public async clear(): Promise<void> {
         await this.performTransaction(() => {
-            return { money: 50000, autoEncounter: true };
+            return { money: 5000, autoEncounter: true };
         });
+    }
+
+    public async resetMoney(amount: number): Promise<number> {
+        let previousMoney = 0;
+        await this.performTransaction((data) => {
+            previousMoney = data.money;
+            data.money = amount;
+            return data;
+        });
+        return previousMoney;
     }
 }
