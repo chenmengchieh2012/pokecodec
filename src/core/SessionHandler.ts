@@ -6,6 +6,7 @@ export class SessionHandler {
     private static instance: SessionHandler;
     private startTime: number;
     private accumulatedTime: number;
+    private pendingTime: number = 0;
     private isFocused: boolean;
     private intervalId: NodeJS.Timeout | undefined;
     private readonly SAVE_INTERVAL = 60000; // Save every minute
@@ -67,7 +68,7 @@ export class SessionHandler {
         if (this.isFocused) {
             currentSession = Date.now() - this.startTime;
         }
-        return this.accumulatedTime + currentSession;
+        return this.accumulatedTime + this.pendingTime + currentSession;
     }
 
     public savePlaytime(props: {onTrigger: boolean}) {
@@ -81,24 +82,28 @@ export class SessionHandler {
         if (this.isFocused) {
             const now = Date.now();
             diff = now - this.startTime;
-            this.accumulatedTime += diff;
             this.startTime = now; // Reset start time
         }
 
-        // Save to user data
-        if (this.accumulatedTime > 0) {
+        this.pendingTime += diff;
+
+        // Save to user data only if pending time >= 59 minute
+        if (this.pendingTime >= this.SAVE_INTERVAL-1000) {
+            this.accumulatedTime += this.pendingTime;
             if(this.userDaoManager && this.joinPokemonManager) {
                 // 這裡的邏輯是：每分鐘獲得 5 元
                 // 但我們不能用 accumulatedTime (總時間) 來算，否則會重複給錢
                 // 應該只針對「這次新增的時間 (diff)」來給錢
-                const moneyEarned = (5 * diff) / (60 * 1000); 
+                const moneyEarned = (5 * this.pendingTime) / (60 * 1000); 
                 this.userDaoManager.updatePlaytimeAndMoney(this.accumulatedTime, moneyEarned, props.onTrigger);
             }
+            this.pendingTime = 0;
         }
     }
 
     public clear() {
         this.accumulatedTime = 0;
+        this.pendingTime = 0;
         this.startTime = Date.now();
         this.isFocused = vscode.window.state.focused;
     }

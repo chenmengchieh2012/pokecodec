@@ -25,6 +25,7 @@ export class GitActivityHandler {
     private partyManager: JoinPokemonManager| undefined;
     private bagManager: BagManager | undefined;
     private userDaoManager: UserDaoManager | undefined;
+    private processingQueue: Promise<void> = Promise.resolve();
 
     // 使用 EventEmitter 來支援多個監聽者
     private _onDidProcessCommit = new vscode.EventEmitter<void>();
@@ -126,37 +127,61 @@ export class GitActivityHandler {
     }
 
     private async handleGitChange(folderPath: string) {
-        if( this.gameStateManager?.getGameStateData().state === GameState.Battle){
-            console.log(`[GitActivityHandler] Skipping Git change processing because game state is not Battle.`);
-            return;
-        }
+        this.processingQueue = this.processingQueue.then(async () => {
+            await this._processGitChange(folderPath);
+        }).catch(err => {
+            console.error('[GitActivityHandler] Error in processing queue:', err);
+        });
+    }
 
+    private async _processGitChange(folderPath: string) {
         if(this.partyManager && this.partyManager.isDeviceLocked()){
             console.log('[SessionHandler] Device is locked, skipping playtime save.');
             return;
         }
+        
+        if( this.gameStateManager?.getGameStateData().state === GameState.Battle){
+            console.log(`[GitActivityHandler] Game is in Battle state. Waiting for return to Searching...`);
+            let waitTime = 0;
+            const MAX_WAIT_TIME = 180; // 3 minutes timeout
+            while(this.gameStateManager?.getGameStateData().state !== GameState.Searching){
+                if (waitTime >= MAX_WAIT_TIME) {
+                    console.warn('[GitActivityHandler] Timeout waiting for battle to end. Skipping commit processing for now (will be processed on next Git activity).');
+                    return;
+                }
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                waitTime++;
+            }
+            console.log(`[GitActivityHandler] Returned to Searching state. Resuming Git change processing.`);
+        }
+
         const oldHash = this.lastHeadHashes.get(folderPath);
         const newHash = await this.updateLastHeadHash(folderPath);
 
         if (newHash && oldHash && newHash !== oldHash) {
-            // Hash 改變了，代表有新的 Commit (或是切換分支，或是 Pull)
-            // 我們需要進一步檢查這是不是一個新的 Commit
-            // 簡單起見，我們假設只要 HEAD 變了且不是切換分支造成的，就是一次 Commit 活動
-            // 為了更精確，我們可以檢查 git log -1 的時間是否很近
-
             console.log(`[GitActivityHandler] Git change detected in ${folderPath}. ${oldHash} -> ${newHash}`);
+            
+            try {
+                const { stdout } = await execAsync(`git log --reverse --format="%H" ${oldHash}..${newHash}`, { cwd: folderPath });
+                const commits = stdout.trim().split('\n').filter(h => h.length > 0);
 
-            await this.processCommit(folderPath, newHash);
+                if (commits.length > 0) {
+                    console.log(`[GitActivityHandler] Processing ${commits.length} commits...`);
+                    for (const commit of commits) {
+                        await this.processCommit(folderPath, commit);
+                    }
+                } else {
+                    await this.processCommit(folderPath, newHash);
+                }
+            } catch (error) {
+                console.error(`[GitActivityHandler] Error getting commit range:`, error);
+                await this.processCommit(folderPath, newHash);
+            }
         }
     }
 
     private async processCommit(folderPath: string, commitHash: string) {
         try {
-            // 取得 Commit 詳細資訊：Hash, Author Name, Subject, Insertions, Deletions
-            // --numstat 格式: insertions deletions filename
-            // 這裡我們只取總結
-            const { stdout } = await execAsync(`git show --stat --format="%H|%an|%s" ${commitHash}`, { cwd: folderPath });
-
             // 解析輸出 (git show --stat 的輸出比較雜，這裡簡化處理)
             // 更好的方式是用 git log -1 --shortstat
             // 使用 LC_ALL=C 強制輸出英文，避免語系問題導致解析失敗
@@ -240,14 +265,13 @@ export class GitActivityHandler {
     }
 
     private giveItemsToPlayer(folderPath: string, linesChanged: number) {
-        // 根據 linesChanged 決定給予道具的機率
-        // 這裡我們簡單設定：每 50 行程式碼，有 10% 機率獲得一個小道具
-
-        const chance = Math.min(0.2, (linesChanged / 50) * 0.1); // 最多 20% 機率
+        const chance = Math.min(0.2, (linesChanged / 50) * 0.1); // 最多 20% 機率收到招式學習器
 
         let givenItem: ItemDao | undefined = undefined;
+
+        // 根據機率決定是否給予招式學習器
         if (Math.random() < chance) {
-            // 隨機選擇一個道具給玩家
+            // 隨機選擇一個招式學習器給予玩家
             const TMPrefix = "tm";
             const allTMApiName = [...Array.from({ length: 50 }, (_, i) => {
                 const num = (i + 1).toString().padStart(2, '0');
@@ -286,7 +310,9 @@ export class GitActivityHandler {
             if (!givenItem) {
                 console.warn(`[GitActivityHandler] Item data not found for ${selectedItemName}`);
             }
-        } else {
+        } 
+        // 沒收到 TM 的話，給予一般道具 (寶貝球或藥水)
+        else {
             const balls = ['poke-ball', 'great-ball', 'ultra-ball'];
             const medicalItems = ['potion', 'super-potion', 'full-restore', 'revive'];
 
