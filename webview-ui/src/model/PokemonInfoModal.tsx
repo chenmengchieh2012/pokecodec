@@ -370,7 +370,7 @@ interface QrcodeModalHandler {
     show: (url: string) => void;
 }
 
-const QrcodeModal = React.forwardRef<QrcodeModalHandler,unknown>((props, ref) => {
+const QrcodeModal = React.forwardRef<QrcodeModalHandler,unknown>((_, ref) => {
     const [isShow, setShow] = useState(false);
     const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
 
