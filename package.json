@@ -1,8 +1,12 @@
 {
   "name": "pokecodec",
-  "publisher": "pokecodec",
+  "publisher": "XOMJOX",
   "displayName": "pokecodec",
   "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chenmengchieh2012/pokecodec.git"
+  },
   "version": "0.0.2",
   "engines": {
     "vscode": "^1.106.1"
