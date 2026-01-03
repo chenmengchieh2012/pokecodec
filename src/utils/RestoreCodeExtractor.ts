@@ -1,20 +1,9 @@
 import * as zlib from 'zlib';
+import { BindPayload } from '../dataAccessObj/BindPayload';
 
-export interface MinimizedMove {
-    id: number;
-    pp: number;
-    maxPP: number;
-}
-
-export interface RestoreData {
-    secret: string;
-    party: any[]; 
-    lockId: number;
-    timestamp: number;
-}
 
 export class RestoreCodeExtractor {
-    public static extract(code: string): RestoreData {
+    public static extract(code: string): BindPayload {
         if (!code.startsWith('GZIP:')) {
             throw new Error('Invalid format. Code must start with "GZIP:"');
         }
@@ -24,6 +13,6 @@ export class RestoreCodeExtractor {
         const jsonString = zlib.gunzipSync(compressed).toString();
         const data = JSON.parse(jsonString);
 
-        return data as RestoreData;
+        return data as BindPayload;
     }
 }

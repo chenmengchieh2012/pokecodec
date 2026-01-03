@@ -49,6 +49,10 @@
         "title": "Pokemon: Download and Import Party"
       },
       {
+        "command": "pokemon.downloadAndImportBox",
+        "title": "Pokemon: Download and Import Box"
+      },
+      {
         "command": "pokemon.unlockDevice",
         "title": "Pokemon: Unlock Device"
       }
@@ -81,6 +85,11 @@
           "type": "string",
           "default": "",
           "description": "Base URL for Gist raw content (e.g. https://gist.githubusercontent.com/username/gist_id/)"
+        },
+        "pokecodec.httpProxy": {
+          "type": "string",
+          "default": "",
+          "description": "HTTP Proxy URL (e.g. http://127.0.0.1:7890)"
         }
       }
     },
@@ -136,6 +145,9 @@
     "typescript-eslint": "^8.46.3"
   },
   "dependencies": {
+    "@types/pako": "^2.0.4",
+    "https-proxy-agent": "^7.0.6",
+    "pako": "^2.1.0",
     "qrcode": "^1.5.4",
     "uuid": "^13.0.0"
   }

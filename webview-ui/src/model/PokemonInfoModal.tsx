@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useImperativeHandle, useState } from 'react';
 import styles from './PokemonInfoModal.module.css';
 import { getBallUrl } from '../utilities/util';
 import { EvolutionTrigger, getName, PokemonDao, RawPokemonData } from '../../../src/dataAccessObj/pokemon';
@@ -11,6 +11,9 @@ import { PokemonTypeIcon } from '../utilities/pokemonTypeIcon';
 import { EvolutionModal } from './EvolutionModal';
 import { LearnableMoveListModal } from './LearnableMoveListModal';
 import { GiFemale, GiMale } from 'react-icons/gi';
+import { MdQrCode } from 'react-icons/md';
+import { QRCodeHelper } from '../utilities/QRCodeHelper';
+import { BindBoxPayload, TransferPokemon } from '../../../src/dataAccessObj/BindPayload';
 
 const IconClose = () => (
     <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" /></svg>
@@ -30,6 +33,33 @@ export const PokemonInfoModal: React.FC<PokemonInfoModalProps> = ({ isInParty, p
     const [showEvolutionModal, setShowEvolutionModal] = useState(false);
     const editNickNameRef = React.useRef<HTMLInputElement>(null);
     const [isEditingNickName, setIsEditingNickName] = useState(false);
+    const qrcodeModalRef = React.useRef<QrcodeModalHandler>(null);
+
+    const handleGenerateQRCode = async () => {
+        const transferPokemon: TransferPokemon = {
+            ...pokemon,
+            stats: {}, // Minimize stats
+            pokemonMoves: pokemon.pokemonMoves.map(m => ({
+                name: m.name,
+                pp: m.pp,
+                maxPP: m.maxPP
+            }))
+        };
+        const bindPayload: BindBoxPayload = {
+            type: 'box',
+            secret: '', // No secret needed for QR code generation
+            transferPokemons: [transferPokemon],
+            lockId: 0,
+            timestamp: Date.now()
+        };
+
+        try {
+            const url = await QRCodeHelper.generateCompressedQRCode(bindPayload);
+            qrcodeModalRef.current?.show(url);
+        } catch (error) {
+            console.error('Failed to generate QR code:', error);
+        }
+    };
 
     const handleNameSave = () => {
         const editNickNameRefCurrent = editNickNameRef.current;
@@ -69,6 +99,7 @@ export const PokemonInfoModal: React.FC<PokemonInfoModalProps> = ({ isInParty, p
 
     return (
         <div className={styles.modalOverlay} onClick={onClose}>
+            <QrcodeModal ref={qrcodeModalRef} />
             <div className={styles.summaryCard} onClick={(e) => e.stopPropagation()}>
                 {/* Header */}
                 <div className={styles.summaryHeader}>
@@ -82,9 +113,14 @@ export const PokemonInfoModal: React.FC<PokemonInfoModalProps> = ({ isInParty, p
                                 EVOLVE!
                             </button>
                         )}
+                        
+
                         <button className={styles.withdrawBtn} onClick={() => onAction(pokemon)}>
                             {actionLabel}
                         </button>
+                        <div className={styles.iconBox} onClick={handleGenerateQRCode} title="Generate QR Code">
+                            <MdQrCode size={18} />
+                        </div>
                         <div className={styles.iconBox} onClick={onClose}>
                             <IconClose />
                         </div>
@@ -329,3 +365,32 @@ const MoveSelector: React.FC<MoveSelectorProps> = ({ isInParty, pokemon, moves }
         </>
     );
 };
+
+interface QrcodeModalHandler {
+    show: (url: string) => void;
+}
+
+const QrcodeModal = React.forwardRef<QrcodeModalHandler,unknown>((props, ref) => {
+    const [isShow, setShow] = useState(false);
+    const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
+
+    useImperativeHandle(ref, () => ({
+        show: (url: string) => {
+            setQrCodeUrl(url);
+            setShow(true);
+        }
+    }));
+
+    if (!isShow || !qrCodeUrl) return null;
+    return <>
+        <div className={styles.qrCodeOverlay}>
+            <div className={styles.qrCodeContainer} onClick={e => {
+                e.stopPropagation()
+                setQrCodeUrl(null);
+                setShow(false);
+            }}>
+                <img src={qrCodeUrl} alt="Pokemon QR Code" style={{maxWidth: '100%', maxHeight: '80vh'}} />
+            </div>
+        </div>
+    </>
+});

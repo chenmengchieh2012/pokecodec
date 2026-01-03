@@ -21,6 +21,9 @@ import { QrcodeGenerator } from "../../utils/QrcodeGenerator";
 import { RestoreCodeExtractor } from "../../utils/RestoreCodeExtractor";
 import { MessageType } from '../../dataAccessObj/messageType';
 import { PokemonDao, RawPokemonData } from '../../dataAccessObj/pokemon';
+import { BindSetupPayload, BindPartyPayload, TransferPokemon, TransferMove, BindPayload } from '../../dataAccessObj/BindPayload';
+import { QRCodeHelper } from '../../utils/QRCodeHelper';
+import { HttpsProxyAgent } from 'https-proxy-agent';
 
 const pokemonDataMap = pokemonGen1Data as unknown as Record<string, RawPokemonData>;
 const pokemonMoveDataMap = moveData as unknown as Record<string, any>;
@@ -99,7 +102,7 @@ export class DeviceBindCommandHandler {
             const party = this.partyManager.getAll();
             
             // Minimize party data to reduce size
-            const minimizedParty = party.map(p => {
+            const minimizedParty: TransferPokemon[] = party.map(p => {
                 return {
                     ...p,
                     stats: {},
@@ -115,37 +118,16 @@ export class DeviceBindCommandHandler {
             // 無論是首次設定 (Setup Mode) 還是重新同步 (Re-sync)
             // 初始 QR Code 都只包含 Secret，不包含 Party 資料
             // 必須通過 2FA 驗證後，才會產生包含 Party 資料的 QR Code
-            const payload = {
+            const payload: BindSetupPayload = {
                 type: 'bindSetup',
                 secret: secret,
-                party: [], 
+                transferPokemons: [], 
                 lockId: -1,
                 timestamp: Date.now()
             };
             
-            // 3. Calculate Hash (CRC)
-            const payloadString = JSON.stringify(payload);
-            const hash = crypto.createHash('sha256').update(payloadString).digest('hex');
-            
-            const finalData = {
-                ...payload,
-                hash: hash
-            };
-
-            // 4. Compress and Generate QR Code
-            const finalJson = JSON.stringify(finalData);
-            const compressed = zlib.gzipSync(finalJson);
-            const base64Data = compressed.toString('base64');
-            
-            // Use the compressed base64 string for QR code
-            // Prefix with "GZIP:" to let the scanner know it's compressed
-            const qrContent = `GZIP:${base64Data}`;
-            
-            // QR Code Capacity Check (Version 40, Byte Mode, Level M ~= 2331 chars)
-            const maxCapacity = 2331; 
-            console.log(`[CommandHandler] Payload Size: ${qrContent.length} chars. Usage: ~${((qrContent.length / maxCapacity) * 100).toFixed(1)}% of max limit (Level M).`);
-
-            const qrCodeDataUrl = await QrcodeGenerator.generate(qrContent);
+            // 3. Compress and Generate QR Code
+            const qrCodeDataUrl = await QRCodeHelper.generateCompressedQRCode(payload);
             console.log('[CommandHandler] Generated Bind QR Code Data URL. Length:', qrCodeDataUrl.length);
 
             // 5. Open in new Webview Panel
@@ -171,20 +153,15 @@ export class DeviceBindCommandHandler {
                                     
                                     // 驗證成功後，無論是 Setup Mode 還是 Re-sync，都重新產生包含完整資料的 QR Code
                                     // Regenerate QR with full data
-                                    const fullPayload = {
+                                    const fullPayload: BindPartyPayload = {
                                         type: 'party',
                                         secret: secret,
-                                        party: minimizedParty,
+                                        transferPokemons: minimizedParty,
                                         lockId: bindState.lockId+1,
                                         timestamp: Date.now()
                                     };
-                                    const fullPayloadString = JSON.stringify(fullPayload);
-                                    const fullHash = crypto.createHash('sha256').update(fullPayloadString).digest('hex');
-                                    const fullFinalData = { ...fullPayload, hash: fullHash };
-                                    const fullCompressed = zlib.gzipSync(JSON.stringify(fullFinalData));
-                                    const fullBase64Data = fullCompressed.toString('base64');
-                                    const fullQrContent = `GZIP:${fullBase64Data}`;
-                                    const fullQrCodeDataUrl = await QrcodeGenerator.generate(fullQrContent);
+                                    
+                                    const fullQrCodeDataUrl = await QRCodeHelper.generateCompressedQRCode(fullPayload);
                                     
                                     panel.webview.postMessage({ 
                                         command: 'updateQR', 
@@ -227,10 +204,17 @@ export class DeviceBindCommandHandler {
             return;
         }
 
-        await this.processImportedData(input);
+        const data = RestoreCodeExtractor.extract(input);
+        if(data.type === 'party'){
+            await this.processImportedPartyData(data);
+        }
+        if(data.type === 'box'){
+            await this.processImportedBoxData(data);
+        }
     }
 
-    public async handleDownloadAndImportParty(filename: string): Promise<void> {
+
+    public async handleDownloadAndImportParty(filename: string, importType:'box' | 'party'): Promise<void> {
         try {
             // 1. Get GIST_URL from settings
             const config = vscode.workspace.getConfiguration('pokecodec');
@@ -243,7 +227,8 @@ export class DeviceBindCommandHandler {
             // 2. Construct URL
             // Remove trailing slash if present
             const baseUrl = gistUrl.endsWith('/') ? gistUrl.slice(0, -1) : gistUrl;
-            const targetUrl = `${baseUrl}/raw/pokecodec-party-${filename}.txt`;
+            const prefix = importType === 'box' ? 'pokecodec-box' : 'pokecodec-party';
+            const targetUrl = `${baseUrl}/raw/${prefix}-${filename}.txt`;
             
             console.log(`[CommandHandler] Downloading party from: ${targetUrl}`);
 
@@ -253,9 +238,15 @@ export class DeviceBindCommandHandler {
             if (!content.startsWith('GZIP:')) {
                 throw new Error('Downloaded content does not start with GZIP:');
             }
+            const data = RestoreCodeExtractor.extract(content);
 
             // 4. Process
-            await this.processImportedData(content);
+            if(data.type === 'party' && importType === 'party'){
+                await this.processImportedPartyData(data);
+            }
+            if(data.type === 'box' && importType === 'box'){
+                await this.processImportedBoxData(data);
+            }
 
         } catch (error) {
             console.error('[CommandHandler] Download and Import failed:', error);
@@ -263,10 +254,104 @@ export class DeviceBindCommandHandler {
         }
     }
 
+
+    public async processImportedBoxData(data: BindPayload): Promise<void> {
+        try {
+            console.log('[CommandHandler] Processing Imported Box Data:', data);
+
+            if (!data.transferPokemons || data.transferPokemons.length === 0) {
+                vscode.window.showWarningMessage('No Pokemon found in the imported data.');
+                return;
+            }
+
+            // Restore full move data
+            const restoredPokemons = data.transferPokemons.map((p: TransferPokemon) => {
+                const restoredMoves: PokemonMove[] = p.pokemonMoves.map((m: TransferMove) => {
+                    const moveDetails = pokemonMoveDataMap[m.name];
+                    if (moveDetails && m.name === moveDetails.name) {
+                        return {
+                            ...moveDetails,
+                            pp: m.pp,
+                            maxPP: m.maxPP
+                        };
+                    }
+                    return m as unknown as PokemonMove;
+                });
+
+                return {
+                    ...p,
+                    stats: p.baseStats,
+                    pokemonMoves: restoredMoves
+                } as PokemonDao;
+            });
+
+            // Add to Box
+            let successCount = 0;
+            const currentParty = this.partyManager.getAll();
+
+            for (const pokemon of restoredPokemons) {
+                try {
+                    // Check if in Party
+                    const inParty = currentParty.find(p => p.uid === pokemon.uid);
+                    if (inParty) {
+                        vscode.window.showErrorMessage(`Pokemon ${pokemon.name} (UID: ${pokemon.uid.substring(0, 8)}...) is currently in your Party. Cannot import to Box.`);
+                        continue;
+                    }
+
+                    const existingPokemon = this.pokemonBoxManager.get(pokemon.uid);
+                    
+                    if (existingPokemon) {
+                        const selection = await vscode.window.showWarningMessage(
+                            `Pokemon ${pokemon.name} (UID: ${pokemon.uid.substring(0, 8)}...) already exists in Box. Overwrite?`,
+                            'Yes',
+                            'No'
+                        );
+                        
+                        if (selection === 'Yes') {
+                            await this.pokemonBoxManager.update(pokemon);
+                            successCount++;
+                        }
+                    } else {
+                        await this.pokemonBoxManager.add(pokemon);
+                        successCount++;
+                    }
+                } catch (error) {
+                    console.error(`[CommandHandler] Failed to add/update pokemon ${pokemon.name}:`, error);
+                }
+            }
+
+            if (successCount > 0) {
+                vscode.window.showInformationMessage(`Successfully imported ${successCount} Pokemon to Box!`);
+                this.handlerContext.updateAllViews();
+            } else {
+                vscode.window.showWarningMessage('Failed to import any Pokemon to Box.');
+            }
+
+        } catch (error) {
+            console.error('[CommandHandler] Import Box Data failed:', error);
+            vscode.window.showErrorMessage('Failed to import box data: ' + (error as Error).message);
+        }
+    }
+
     private async downloadContent(url: string): Promise<string> {
         const https = require('https');
+        const config = vscode.workspace.getConfiguration('pokecodec');
+        let proxyUrl = config.get<string>('httpProxy');
+
+        // Fallback to VS Code's global http.proxy setting if not set in extension
+        if (!proxyUrl || proxyUrl.trim() === '') {
+            const httpConfig = vscode.workspace.getConfiguration('http');
+            proxyUrl = httpConfig.get<string>('proxy');
+        }
+        
+        const options: any = {};
+        if (proxyUrl && proxyUrl.trim() !== '') {
+            console.log(`[CommandHandler] Using Proxy: ${proxyUrl}`);
+            options.agent = new HttpsProxyAgent(proxyUrl);
+        }
+
         return new Promise<string>((resolve, reject) => {
-            const request = https.get(url, (res: any) => {
+            const request = https.get(url, options, (res: any) => {
                 // Handle Redirects
                 if (res.statusCode === 301 || res.statusCode === 302 || res.statusCode === 307 || res.statusCode === 308) {
                     if (res.headers.location) {
@@ -293,9 +378,8 @@ export class DeviceBindCommandHandler {
         });
     }
 
-    private async processImportedData(input: string): Promise<void> {
+    private async processImportedPartyData(data: BindPayload): Promise<void> {
         try {
-            const data = RestoreCodeExtractor.extract(input);
             console.log('[CommandHandler] Imported Bind Code Data:', data);
 
             // Force Update Check
@@ -326,19 +410,18 @@ export class DeviceBindCommandHandler {
             }
 
             // Restore full move data from minimized party
-            const restoredParty = data.party.map((p: PokemonDao) => {
-                const restoredMoves: PokemonMove[] = p.pokemonMoves.map((m: any) => {
+            const restoredParty = data.transferPokemons.map((p: TransferPokemon) => {
+                const restoredMoves: PokemonMove[] = p.pokemonMoves.map((m: TransferMove) => {
                     const moveDetails = pokemonMoveDataMap[m.name];
                     console.log(`[CommandHandler] Restoring move for Pokemon ${p.name}:`, m, moveDetails);
-                    if(m.name === moveDetails?.name){
-                        // If both id and name match, no need to restore
+                    if(moveDetails && m.name === moveDetails.name){
                         return {
                             ...moveDetails,
-                            pp: moveDetails.pp,
-                            maxPP: moveDetails.pp
+                            pp: m.pp,
+                            maxPP: m.maxPP
                         };
                     }
-                    return m;
+                    return m as unknown as PokemonMove;
                 });
                 if(restoredMoves.length !== p.pokemonMoves.length){
                     console.warn(`[CommandHandler] Move restoration mismatch for Pokemon ${p.name}. Expected ${p.pokemonMoves.length}, got ${restoredMoves.length}`);

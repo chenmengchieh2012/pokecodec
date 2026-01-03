@@ -1,18 +1,13 @@
 import * as vscode from 'vscode';
-import { BiomeDataHandler } from "../../core/BiomeHandler";
+import { PokemonFactory } from '../../core/CreatePokemonHandler';
 import { AddToPartyPayload, BatchMoveToBoxPayload, BoxPayload, CatchPayload, DeletePokemonPayload, EvolvePokemonPayload, HandlerContext, RemoveFromPartyPayload, ReorderBoxPayload, ReorderPartyPayload, UpdatePartyPokemonPayload } from "../../dataAccessObj/MessagePayload";
-import { AchievementManager } from "../../manager/AchievementManager";
-import { BagManager } from "../../manager/bagsManager";
-import { DifficultyManager } from "../../manager/DifficultyManager";
-import { GameStateManager } from "../../manager/gameStateManager";
-import { JoinPokemonManager } from "../../manager/joinPokemonManager";
-import { PokemonBoxManager } from "../../manager/pokeBoxManager";
-import { PokeDexManager } from "../../manager/pokeDexManager";
-import { SessionLockManager } from "../../manager/SessionLockManager";
-import { UserDaoManager } from "../../manager/userDaoManager";
 import { MessageType } from '../../dataAccessObj/messageType';
 import { getName } from '../../dataAccessObj/pokemon';
-import { PokemonFactory } from '../../core/CreatePokemonHandler';
+import { AchievementManager } from "../../manager/AchievementManager";
+import { DifficultyManager } from "../../manager/DifficultyManager";
+import { JoinPokemonManager } from "../../manager/joinPokemonManager";
+import { PokemonBoxManager } from "../../manager/pokeBoxManager";
+import { UserDaoManager } from "../../manager/userDaoManager";
 
 export class PokemonCommandHandler {
     private readonly pokemonBoxManager: PokemonBoxManager;

@@ -140,7 +140,7 @@ export const initPokemonDao: () => PokemonDao = () => ({
 
 export const initialPokemonState: () => PokemonState = () => ({
     action: PokemonStateAction.None,
-})
+});
 
 export const getGenById = (id: number): string|undefined => {
     if (id <= 151) {
