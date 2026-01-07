@@ -128,6 +128,7 @@ export class BagManager {
      * 使用道具
      */
     public async useItem(itemId: string | number, count: number = 1): Promise<boolean> {
+        console.log(`[BagManager] useItem called. ItemID: ${itemId}, Count: ${count}`);
         let success = false;
 
         await this.performTransaction((currentItems) => {

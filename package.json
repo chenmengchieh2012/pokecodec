@@ -152,7 +152,6 @@
     "@types/pako": "^2.0.4",
     "https-proxy-agent": "^7.0.6",
     "pako": "^2.1.0",
-    "qrcode": "^1.5.4",
-    "uuid": "^13.0.0"
+    "qrcode": "^1.5.4"
   }
 }

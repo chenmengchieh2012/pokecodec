@@ -223,9 +223,16 @@ export const VShop = () => {
                 <div className={styles.dialogOverlay} onClick={() => setIsDialogOpen(false)}>
                     <div className={styles.dialogBox} onClick={e => e.stopPropagation()}>
                         <div className={styles.dialogHeader}>
-                            <div className={styles.headerTopRow}>
-                                <div className={styles.itemNameLarge}>{CapitalizeFirstLetter(selectedItem.name)}</div>
-                                <button className={styles.closeBtn} onClick={() => setIsDialogOpen(false)}>×</button>
+                            <div className={styles.headerTop}>
+                                <div className={styles.headerTopRow}>
+                                    <div className={styles.itemNameLarge}>{CapitalizeFirstLetter(selectedItem.name)}</div>
+                                    <button className={styles.closeBtn} onClick={() => setIsDialogOpen(false)}>×</button>
+                                </div>
+                                <div className={styles.headerBottomRow}>
+                                    <div className={styles.itemDescription}>
+                                        {selectedItem.description || "No description available."}
+                                    </div>
+                                </div>
                             </div>
                             <div className={styles.headerContent}>
                                 <img src={resolveAssetUrl(`./sprites/items/${selectedItem.apiName}.png`)} alt={selectedItem.name} className={styles.dialogIcon} />

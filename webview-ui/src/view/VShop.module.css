@@ -209,8 +209,16 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 2px solid #e0e0e0;
     padding-bottom: 4px;
+}
+
+
+.headerBottomRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 4px;
+    border-bottom: 2px solid #e0e0e0;
 }
 
 .closeBtn {
@@ -294,12 +302,13 @@
     text-transform: uppercase;
 }
 
-.headerBottomRow {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 4px;
+.itemDescription {
+    font-size: 10px;
+    color: #7f8c8d;
+    line-height: 1.2;
+    min-height: 32px;
 }
+
 
 .quantityControl {
     display: flex;

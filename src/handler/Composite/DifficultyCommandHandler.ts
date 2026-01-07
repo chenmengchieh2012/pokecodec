@@ -1,19 +1,7 @@
 import * as vscode from 'vscode';
-import { BiomeDataHandler } from "../../core/BiomeHandler";
 import { DifficultyLevelPayload, HandlerContext, SetDDAEnabledPayload, SetDifficultyLevelPayload } from "../../dataAccessObj/MessagePayload";
-import { AchievementManager } from "../../manager/AchievementManager";
-import { BagManager } from "../../manager/bagsManager";
-import { DifficultyManager } from "../../manager/DifficultyManager";
-import { GameStateManager } from "../../manager/gameStateManager";
-import { JoinPokemonManager } from "../../manager/joinPokemonManager";
-import { PokemonBoxManager } from "../../manager/pokeBoxManager";
-import { PokeDexManager } from "../../manager/pokeDexManager";
-import { SessionLockManager } from "../../manager/SessionLockManager";
-import { UserDaoManager } from "../../manager/userDaoManager";
-import { BattleCommandHandler } from "./BattleCommandHandler";
-import { ItemCommandHandler } from "./ItemCommandHandler";
-import { PokemonCommandHandler } from "./PokemonCommandHandler";
 import { MessageType } from '../../dataAccessObj/messageType';
+import { DifficultyManager } from "../../manager/DifficultyManager";
 
 export class DifficultyCommandHandler {
     private readonly difficultyManager: DifficultyManager;
